@@ -280,6 +280,6 @@ The status line that calls it is workBenches'
 
 Both commands parse and run under bash 3.2, which is what macOS ships. Neither
 uses `mapfile`, associative arrays, `readlink -f` or GNU-only flags.
-`tests/test_claude_current.py`, `tests/test_claude_restart_check.py` and
-`tests/test_lane_start_claude_current.py` are their suites, and every one of
+`code/tests/test_claude_current.py`, `code/tests/test_claude_restart_check.py` and
+`code/tests/test_lane_start_claude_current.py` are their suites, and every one of
 them runs against fakes. None reaches npm or runs a real Claude Code.
