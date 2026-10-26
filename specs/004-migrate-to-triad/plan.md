@@ -23,6 +23,15 @@ paths are resolved: 18 spec, 40 code, six root, zero dropped. There are
 This is an inspected preliminary baseline; regenerate
 after planning lands and the actual cutover source is frozen.
 
+*Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186):* the cutover source was frozen at `main`
+`33ce26dffc5286e68f1d29ab5c6458edef0330c0` (200 tracked paths, 156 commits), and the plan
+regenerated for it with openRepoShape `190133d5e704e380c430f87ca9c4e31746de0012` (v1.1.0)
+places 108 spec, 86 code and six root paths, zero dropped, with 42 follow-ups. Brett Heap
+approved it at Gate C. Its [published copy](adoption-plan-cutover-2026-10-26.yaml) and the
+[as-built record](cutover-as-built-2026-10-26.md) set this baseline against the cutover's.
+The adoption mapping linked above is now run C's rehearsal input, as its own header says.
+
 Main advanced with merged PR #134 and matches the read-only GitHub observation;
 #61 and #146 remain included. There are six
 worktrees and six local branches, including this planning checkout and the
