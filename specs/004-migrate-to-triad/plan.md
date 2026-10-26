@@ -92,14 +92,25 @@ Recommended active-work dispositions are proposals, not merge/closure actions:
 | Work | Proposed treatment |
 | --- | --- |
 | `001-separate-swap-ctx-handoff` | Continue from committed, clean head `3c26041`; preserve the complete branch delta, restored rollover/workspace packets and launcher/broker contracts. Migrate to paired `001` worktrees; keep tasks, evidence, roles and activation gates. |
-| PR #97 | Preserve its current advanced recovery branch, review history and diagnostic role separately from managed LS authority and PR #121. Carry useful diagnostics under feature 001's service authority without merging unchanged or auto-closing through adoption. |
-| PR #121 / feature `005-supervised-legacy-ctx` | Preserve complete staged/unstaged/untracked contents and the full legacy authority decision. Continue paired `005` worktrees for confirmed legacy-only supervised restart; managed/unknown ownership refuses. Keep the existing merge hold and PR #97 ownership separate. The full proposal/decision/specs stay in spec, implementation/tests in code; this authority decision is not a bounded local amendment. |
+| PR #97 | **Overridden 2026-10-22: see the note after this table.** Preserve its current advanced recovery branch, review history and diagnostic role separately from managed LS authority and PR #121. Carry useful diagnostics under feature 001's service authority without merging unchanged or auto-closing through adoption. |
+| PR #121 / feature `005-supervised-legacy-ctx` | **Overridden 2026-10-22: see the note after this table.** Preserve complete staged/unstaged/untracked contents and the full legacy authority decision. Continue paired `005` worktrees for confirmed legacy-only supervised restart; managed/unknown ownership refuses. Keep the existing merge hold and PR #97 ownership separate. The full proposal/decision/specs stay in spec, implementation/tests in code; this authority decision is not a bounded local amendment. |
 | PR #146 / `fix/107-pty-driver-bound-and-lane-per-call-cost` | Merged as `82ecebe`; checkout and local branch removed during concurrent cleanup. Included by baseline extraction; do not replay separately. |
 | PR #134 / `feat/claude-current` | Merged as `daed209`; the retained clean checkout at `11037f0` is preservation history. Resolver/checker, installer, preflight/fencing, timeout tests and manual are included by the regenerated baseline. Do not replay separately or retire the checkout as part of planning. |
 | PR #61 | Merged as `14641fd`, an ancestor of current main; included by baseline extraction. Do not replay the retired claim-takeover branch separately. |
 | Retired `002`, `003`, lclaude and detached worktrees | Removed from current registrations/local branches by cleanup. Verify cleanup/preservation receipts; remove from the active replay queue and do not recreate them from the old snapshot. |
 | Remote-only preservation refs | `chore/preserve-local-planning-20261003` and `takeover/ort-a9-dirty-snapshot-20260913` remain locally observed remote-tracking refs with no checkout; review as preservation history, not active writers. |
 | Migration feature `004` | Previous refresh committed at `dda91f1`; existing checkout reused for this update. This full proposal and canonical feature files stay in spec; any genuine bounded implementation amendments belong in code. |
+
+**Overridden, 2026-10-22: the rows for opensoft/openRepoTools#97 and for
+opensoft/openRepoTools#121 with feature `005-supervised-legacy-ctx`.** Brett Heap
+chose option A of lane 1's card 16 in round 7 of his rulings (answered
+2026-10-22T14:53:08Z; relayed in opensoft/openRepoTools#186 comment
+6343863633), in his words "Option A (Recommended)": no continuation. Feature
+`005-supervised-legacy-ctx`'s bookkeeping closes as a spec-only change after the
+cutover, and the 8 open tasks of opensoft/openRepoTools#97's change wait for a
+later numbered feature. The two rows, which say to preserve
+opensoft/openRepoTools#97's branch and to continue paired `005` worktrees, are
+named as overridden and stay as written, as history.
 
 **Gate A:** every preserved object is attributable and restorable; no active
 writer can silently invalidate capture. Baseline, visibility and work
