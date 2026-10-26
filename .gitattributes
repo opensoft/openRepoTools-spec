@@ -1,0 +1,10 @@
+# LF IN EVERY WORKTREE, as these documents had before the split into three
+# repositories: the monorepo's `* text=auto eol=lf` covered them, and a
+# superproject's attributes never reach into a submodule's worktree, so the
+# rule travels with this leg. The code leg's hygiene tests read the manuals in
+# `docs/` and match their lines; a CRLF checkout would make those matches about
+# line endings rather than about content.
+#
+# NO PATH IS LISTED BY NAME. Every file here is text.
+
+* text=auto eol=lf
