@@ -65,6 +65,21 @@ artifacts. Derive counts from the lists; source comments with historical counts
 are not the contract. Hooks stay in the user's existing settings, preserving
 unrelated entries. No machine-specific config enters a payload archive.
 
+*Refreshed 2026-10-26, at `33ce26d`, the source of rehearsal D and of the cutover,
+whose installer is the code leg's `openRepoTools` byte for byte (blob `ca4fc44`;
+the Gate B walk at rehearsal D, line 24):* the counts above are `daed209`'s.
+`INSTALLABLES` now holds 17 names (`openRepoTools:1292`), `lanes-index` and
+`lane-worktrees` having come with opensoft/openRepoTools#164 and
+opensoft/openRepoTools#168, and the three skills (`SKILLS`, `:2280`) and three
+command files (`COMMANDS`, `:2293`) each still have two destinations, so an
+install places 29 files and writes 29 receipt rows. The two hook entries are
+merged only once the path both of them call answers `guard`
+(`hook_target_answers`, `:2384`; opensoft/openRepoTools#237): twenty-nine
+artifacts always, plus the two hook entries once that path answers (`:57–58`).
+Rehearsal D measured it: main's and the candidate's `--install` each said "17 of
+17 placed", with 29 receipt rows, and both hook entries were merged with the
+gate open and neither with it closed.
+
 ## Compatibility acceptance
 
 All rows below are pending measured tests in fresh disposable homes/remotes.
@@ -87,6 +102,18 @@ They describe coverage for the existing executable tasks, not completion claims.
 | WIP init/template lookup | Code dependency pin selects upstream templates; workspace writer restrictions unchanged. |
 | Missing nested dependency in standalone code | Existing documented test skips remain; composed acceptance requires complete dependencies. |
 | Linux/macOS Bash 3.2 and Windows/WSL policies | Correct parses/platform gates; no new Bash features or PowerShell implementation. |
+
+*Dated note, 2026-10-26 (the Gate B walk at rehearsal D, line 23):* the last row
+of the table above describes the platform jobs as they were before
+opensoft/openRepoTools#227 (`aaa7bc8`), which removed `tests-macos`,
+`tests-windows` and `parse-macos` on Brett Heap's decision of 2026-10-15: CI runs
+on Linux only, and the one bash 3.2 parse is `release.yml`'s macOS install leg.
+Two later installer changes are in no part of this design:
+opensoft/openRepoTools#237's hook gate, which merges the two hook entries only
+once the path they call answers `guard`, and opensoft/openRepoTools#228's pipx
+link, beside which `--install` places 16 of the 17 commands, leaves
+`openRepoTools` to pipx and writes 28 receipt rows (`openRepoTools:2163` at
+`33ce26d`).
 
 Tests and fixtures need explicit **code**, **spec**, **assembly** and
 **dependency** roots. In particular, `tests/test_repo_hygiene.py` reads the root

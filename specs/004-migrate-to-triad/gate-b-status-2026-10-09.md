@@ -70,6 +70,23 @@ MET 25 · PARTLY 20 · OPEN 0 · AFTER-GATE-C 1 (they were 27 · 18 · 0 · 1).
   32 and 46).
 - The measurements are lane 1's, in its private prep of 2026-10-19. The rows say what ran.
 
+**Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186): superseded.** The Gate B status walk at rehearsal D,
+`gate-b-status-2026-10-22.md`, supersedes this walk for the 46 checklist lines. It is on
+the evidence branch `004-migrate-to-triad-rehearsal-d` of opensoft/openRepoTools, at
+`b0eb112`, until a spec-only continuation (T017) carries it into this leg. Its section 1
+gives each line's status and evidence at rehearsal D, and its section 5 lists what this
+file owes. The cells below stay as written, as history, and the counts above are this
+walk's of 2026-10-19. What that section 5 owes this file follows. Each entry names the
+checklist line, and the line of its cell in this file at `33ce26d`, before this block:
+- **Line 29, the cell at `:184` (its item 1, a dated note).** The cell predates `aa14de3`:
+  opensoft/openRepoTools#195 landed as `aa14de3`, with lane 3's LAND at `fb77bed` and on
+  the delta to `e378871` (PR reviews 5481360555 and 5508055705) and lane 1's delta LAND
+  (5484079561), and lane 2 confirmed opensoft/openRepoTools#193's item 15 fixed and the
+  item-4 refusals holding (opensoft/openRepoTools#186 comment 6103529172). Rehearsal D ran
+  composed (3009 tests) and standalone, whose 33 skips each name their root. The line is
+  MET WITH NOTE at D.
+
 **By:** lane openRepoTools-1's reviewer, under [#186](https://github.com/opensoft/openRepoTools/issues/186).
 It ran read-only everywhere except this file and its own scratch. A first, unpublished pass was
 made at 13:27Z–13:50Z; section 1 says which statuses moved since.
