@@ -203,7 +203,7 @@ pinned shape files. Put `Read AGENTS-shape.md first...` guidance first in root
 agent instructions and bootstrap shape-aware OpenSpec/Speckit only when both
 legs exist. Prepare continued-feature translations and disposable workflow
 checks from Phase 5 in the candidate before the final migration batch; actual
-lane rebinding still waits for reviewed cutover. After implementation and verification, reconcile the net tested
+lane rebinding still waits for reviewed cutover. *(Overridden 2026-10-23: see the note after this paragraph.)* After implementation and verification, reconcile the net tested
 effect in one final spec batch: governing specs/contracts/design, dated departures,
 as-built record, all amendment dispositions, evidence, deferred ideas and the
 actual landed code commit. Retain superseded/reverted/deferred history while
@@ -212,6 +212,18 @@ Code may land first; completed assembly advancement waits for reconciliation
 to land and matching spec/code pins. Close the reconciliation issue after the
 spec PR lands; the feature landing record tracks the assembly PR. Advance
 gitlinks, pin digests and workflow SHAs together using the standard bump tool.
+
+**Overridden, 2026-10-23: the sentence above that has continued-feature
+translations and disposable workflow checks prepared in the candidate before the
+final migration batch** (lines 186 to 188 of this file at `33ce26d`). Brett Heap
+chose "Met by receipts; translate after (Recommended)" in round 20 of his
+rulings (answered 2026-10-23T12:24:37Z; relayed in opensoft/openRepoTools#186
+comment 6364869132): lane 1's card 15, the work dispositions table v2.1 and P8's
+disposable half of T018 meet Gate D's first clause, and the T016 and T017
+translations follow the root-split merge. The sentence is named as overridden,
+as card 16's ruling named the two rows of the table above, and stays as
+written, as history; lane rebinding still waits for the reviewed cutover.
+`tasks.md` names its twin the same way.
 
 **Gate D:** prepared continued-feature receipts and disposable workflow checks
 are reviewed; final reconciliation and matching spec/code commits are landed;

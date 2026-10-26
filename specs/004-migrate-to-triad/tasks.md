@@ -167,10 +167,21 @@ T007–T010 may progress within the rehearsed topology after byte accounting.
 T011 closes Gate B. T012 requires Gate A/B and is the real-creation approval
 boundary. T013–T015 precede root adoption merge. Prepare T016–T017 translations
 and T018 disposable workflow checks in the candidate after legs exist, before
-T015's final reconciliation. Actual T018 lane rebinding follows reviewed root
+T015's final reconciliation. *(Overridden 2026-10-23: see the note below.)*
+Actual T018 lane rebinding follows reviewed root
 adoption/cutover and safe breakpoints. T019 requires validated retained feature
 receipts; later behavior changes reopen reconciliation before another completed
 assembly advancement.
+
+*Overridden, 2026-10-23:* the sentence above that prepares the T016–T017
+translations and T018's disposable workflow checks in the candidate before
+T015's final reconciliation (lines 165 to 167 of this file at `33ce26d`). Brett
+Heap chose "Met by receipts; translate after (Recommended)" in round 20 of his
+rulings (answered 2026-10-23T12:24:37Z; relayed in opensoft/openRepoTools#186
+comment 6364869132): lane 1's card 15, the work dispositions table v2.1 and P8's
+disposable half of T018 meet Gate D's first clause, and the T016 and T017
+translations follow the root-split merge. The sentence is named as overridden,
+as its twin in `plan.md` is, and stays as written, as history.
 
 ## Requirement coverage
 
