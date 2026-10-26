@@ -115,6 +115,11 @@ results stand as recorded. The files at those paths are now the regenerated and 
 not results for them. A third code-leg patch, T009's `t009-assembly-caps.patch` (`2dd4aac2…b2bbe5`), goes on
 after steps 10 and 11 and sets the assembly-root length caps the re-cut needs.
 
+*Noted 2026-10-26 (step 14; lane 3's NIT 2 on opensoft/openRepoTools#299, comment 6317075196):* step 14
+applied the earlier `t010-assembly-exact-pin-job.patch` (`6ee09f00…74670b`), and its result stands as
+recorded; the file at that path is now the one regenerated on 2026-10-21 for the runner pin
+(`60245cb9…f0f653`), so that result is not a result for it.
+
 What was checked at each step:
 
 - **The PR commits are the PR heads.** Every path #190 touches has `b50f197`'s blob after

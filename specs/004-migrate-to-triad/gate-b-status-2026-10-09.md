@@ -86,6 +86,13 @@ checklist line, and the line of its cell in this file at `33ce26d`, before this 
   item-4 refusals holding (opensoft/openRepoTools#186 comment 6103529172). Rehearsal D ran
   composed (3009 tests) and standalone, whose 33 skips each name their root. The line is
   MET WITH NOTE at D.
+- **Line 32, the cell at `:187` (its item 2, lane 3's NIT 4 on
+  opensoft/openRepoTools#299, comment 6317075196).** The cell names two differences
+  between the regenerated assembly patch's runner comment and
+  opensoft/openRepoTools#296's (`THIS` for `EVERY`, and no Python 3.9 clause). There is
+  a third: the inserted ", which this job's suite runs,". The comment is at the patch's
+  lines 63–65, and the one it follows at lines 55–57 of `.github/workflows/tests.yml` at
+  `33ce26d`.
 
 **By:** lane openRepoTools-1's reviewer, under [#186](https://github.com/opensoft/openRepoTools/issues/186).
 It ran read-only everywhere except this file and its own scratch. A first, unpublished pass was
