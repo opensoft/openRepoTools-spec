@@ -56,10 +56,16 @@ reconciliation. Schema/routing/distribution/placement automation is pending.
 | --- | --- | --- |
 | Assembly `openRepoTools` | `AGENTS.md`, `CLAUDE.md`, `README.md`, `LICENSE`, `.gitattributes`, `.gitignore`; generated manifest/Makefile/validators and assembly pins | Front door and project coordination across legs. |
 | Spec `openRepoTools-spec` | `openspec/`, `specs/`, `docs/`; feature 001's retained `ideation/` and restored planning packets | Product requirements, decisions and manual; feature-only paths need separate replay accounting. |
-| Code `openRepoTools-code` | All executable tools, `repos.tsv`, `commands/`, `skills/`, `tests/`, implementation CI | Shipped implementation and its installer payload. |
+| Code `openRepoTools-code` | All executable tools, `repos.tsv`, `commands/`, `skills/`, `tests/`, implementation CI; its own `.gitattributes`, added after extraction | Shipped implementation and its installer payload. Git never applies the assembly's `.gitattributes` inside a submodule, so the leg carries the LF rule its bash files and byte-for-byte installer checks need. |
 | Code dependency unit | Original `.gitmodules`, `upstream/openRepoShape`, `contracts/openreposhape-pin.yaml` | Keep module registration, exact gitlink and dependency lock together. |
 | Code amendment exception | Genuine bounded `features/<NNN-feature>/openspec/` records, deltas and evidence references | Relative changes against an approved spec baseline; explicitly review placement until upstream qualification. No such tracked paths were observed in the current source or retained feature heads. |
 | Root workflow bootstrap | `.specify/`, project agent links and selected feature pointer | Currently local/ignored; capture config and regenerate shape-aware root scaffolding. |
+
+Extraction gives each original front-door file one owner, the assembly. T006's leg patches then
+add new files to the legs: each leg's own `AGENTS.md`, `CLAUDE.md`, `README.md`, `LICENSE` and
+`.gitattributes`, and the code leg's `.gitignore`. `spec-0001` also re-points three test paths in
+the spec leg's `docs/README-claude-current.md`. These are reviewed changes after byte accounting,
+not moved paths, so the adoption mapping does not change.
 
 After byte-preserving extraction, add a root installation entry point that
 resolves the exact code pin. The original installer implementation moves to
