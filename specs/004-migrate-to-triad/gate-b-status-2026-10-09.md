@@ -93,6 +93,15 @@ checklist line, and the line of its cell in this file at `33ce26d`, before this 
   a third: the inserted ", which this job's suite runs,". The comment is at the patch's
   lines 63–65, and the one it follows at lines 55–57 of `.github/workflows/tests.yml` at
   `33ce26d`.
+- **Line 31, the cell at `:186` (its item 3).** The cell says that about forty other
+  conditional skips can still pass a composed run and that none fires on `ubuntu-24.04`.
+  That is stale: there a composed run skips 66 conditional cases, 60 zsh tests, 1
+  byte-count test and 5 wheel tests (lane 2, opensoft/openRepoTools#186 comment
+  6327803546). Brett Heap ruled on Ask 5 on 2026-10-22 (round 4) that T014 installs zsh
+  in `composed.yml`, so that the 60 zsh tests run and 6 skips remain, as in rehearsal D's
+  composed run on a bench that has zsh. The assembly root's `composed.yml` installs it
+  from the cutover's root follow-up row 6a (`9e5cca2`). The line is MET WITH NOTE at D
+  either way, on Brett Heap's round 10 ruling ("Accept without job 5").
 
 **By:** lane openRepoTools-1's reviewer, under [#186](https://github.com/opensoft/openRepoTools/issues/186).
 It ran read-only everywhere except this file and its own scratch. A first, unpublished pass was
