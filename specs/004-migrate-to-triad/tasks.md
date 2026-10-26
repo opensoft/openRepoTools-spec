@@ -80,6 +80,8 @@ integration/preservation evidence and refreshed execution approval.
   macOS install leg.
   Verify the exact rehearsed composed state passes required checks and the
   compatibility matrix, recording failures rather than deleting assertions.
+  Hosted-runner checks that need the real leg repositories run at T015 against
+  the real exact assembled head.
 - [ ] T011 [US1] Rehearse restoration/rollback of the local candidate and
   installed payload using preserved artifacts. Verify user work/jobs/claims
   survive and no force push, destructive reset or workspace-pointer rewrite
