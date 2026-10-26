@@ -52,6 +52,16 @@ main `f87fd5a` only in the implementation it hands over to.
 `cddd1f7`, `8246983` and `a74c7fc` alike. So r3 measured the code now on `main`.
 
 *Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186): the candidate since this record.* This is r2's record, with
+r3's in section 9, and it is not refreshed in its sections 2 to 5 form. The candidate of
+record at Gate C is rehearsal D's: D's record, `adopter-rehearsal-2026-10-21.md`, gives it
+in its section "The candidate (stage 4, v0)". That record is on the evidence branch
+`004-migrate-to-triad-rehearsal-d` of opensoft/openRepoTools, at `94f8a3c`, until a
+spec-only continuation (T017) carries it into this leg. What the cutover itself built is
+in [cutover-as-built-2026-10-26.md](cutover-as-built-2026-10-26.md), beside this record.
+The sections below stay as written, as history.
+
+*Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
 opensoft/openRepoTools#186): the opensoft/openRepoTools#180 pointers.* Lines 261, 262,
 282, 316 and 380 of this record, as it was at `33ce26d`, name opensoft/openRepoTools#180
 for the row-stamp cases that fail under `tests/run.sh`'s long run root. That issue was
