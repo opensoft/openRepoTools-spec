@@ -75,8 +75,9 @@ integration/preservation evidence and refreshed execution approval.
   existing upstream pin checks run against code Git identity and required
   composed checks cannot silently skip absent spec/dependency context.
 - [ ] T010 [US3] Adapt implementation CI and root exact-pin integration checks
-  with explicit compatible checkout context; preserve current Linux/macOS/
-  Windows/WSL policies, Bash 3.2 parsing and serialized `tests/run.sh` locking.
+  with explicit compatible checkout context; preserve the Linux-only policy and
+  serialized `tests/run.sh` locking, the bash 3.2 parse living in `release.yml`'s
+  macOS install leg.
   Verify the exact rehearsed composed state passes required checks and the
   compatibility matrix, recording failures rather than deleting assertions.
 - [ ] T011 [US1] Rehearse restoration/rollback of the local candidate and

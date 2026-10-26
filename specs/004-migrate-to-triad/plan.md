@@ -131,8 +131,9 @@ test-root context, CI layout, agent pointers, docs paths and workflow bootstrap
 in the rehearsed arrangement. Record their patches and resulting commits so
 real execution can apply the reviewed changes after source verification.
 Add leg root guidance without overwriting original root guidance. Preserve
-the Bash 3.2 floor and original no-submodule test behavior, while requiring
-complete dependencies for composed acceptance.
+the Linux-only policy and serialized `tests/run.sh` locking, the bash 3.2 parse
+living in `release.yml`'s macOS install leg, and the original no-submodule test
+behavior, while requiring complete dependencies for composed acceptance.
 
 Operate full proposals from the intended feature spec checkout and bounded
 amendments from the code feature folder. Verify checkout, branch and root for
@@ -254,8 +255,10 @@ and claims are not rewritten to hide a failure.
 
 ## Technical context and checks
 
-Implementation remains Bash (macOS 3.2), Python standard-library tooling and
-Git/GitHub workflows. Run build/test/CLI work in the project bench, with shared
+Implementation remains Bash, Python standard-library tooling and Git/GitHub
+workflows, under the Linux-only policy and serialized `tests/run.sh` locking,
+the bash 3.2 parse living in `release.yml`'s macOS install leg. Run
+build/test/CLI work in the project bench, with shared
 `tests/run.sh` locking. No real repository is created for a test. The local
 constitution is an unfilled template; no ratification is inferred. Preserve
 the existing root rules, standard pin checks and global workflow protocols.

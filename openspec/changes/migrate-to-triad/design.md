@@ -121,9 +121,11 @@ and shape placement automation are pending, not delivered by this migration.
 Code CI runs implementation checks; root CI validates manifest/pins and the
 exact composed assembly. Supply explicit code/spec/assembly roots to tests
 that inspect docs or history; preserve the nested dependency pin assertions
-in the code Git repository. Use the canonical serialized `tests/run.sh`,
-Bash 3.2 parsing and current platform/fixture timing policies. Missing-spec
-context cannot turn a required integration check into a silent skip.
+in the code Git repository. Use the canonical `tests/run.sh` with the
+Linux-only policy and serialized `tests/run.sh` locking, the bash 3.2 parse
+living in `release.yml`'s macOS install leg, and current fixture timing
+policies. Missing-spec context cannot turn a required integration check into
+a silent skip.
 
 Prepare code/spec PRs together. At the first bounded amendment create one spec
 reconciliation issue; collect net tested effects, all dispositions, dated
