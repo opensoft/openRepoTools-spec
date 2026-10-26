@@ -51,6 +51,20 @@ main `f87fd5a` only in the implementation it hands over to.
 `f87fd5a`. Its tree, `d77e80b3`, is `8246983`'s, and `openRepoTools` is blob `7aa697c` at
 `cddd1f7`, `8246983` and `a74c7fc` alike. So r3 measured the code now on `main`.
 
+*Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186): the opensoft/openRepoTools#180 pointers.* Lines 261, 262,
+282, 316 and 380 of this record, as it was at `33ce26d`, name opensoft/openRepoTools#180
+for the row-stamp cases that fail under `tests/run.sh`'s long run root. That issue was
+closed with opensoft/openRepoTools#215 (`61a7378`), which moved only `repoA11b`'s tail
+case. The cases it left are opensoft/openRepoTools#304's: `repoA-1` and `repoCase-1`
+(`tests/test_lane_helpers.sh:1272` and `:8552` at `33ce26d`; rehearsal D's record, P3),
+and `repoMIX-1` (`:8645`), which lane 3 found on 2026-10-22 (opensoft/openRepoTools#186
+comment 6342130291). Their fix is the code leg's `1e6f2d1`, merged by
+opensoft/openRepoTools-code#1 as `2a057a6d` on 2026-10-26. So read those five lines as
+pointers to opensoft/openRepoTools#304. Line 404 is a list of the issues read with `gh`,
+and stays as it is. The lines stay as written, as history. Lane 3 named the 18 pointers of
+this kind, in four files (opensoft/openRepoTools#186 comment 6332521834).
+
 ## 1. Inputs
 
 Every input was read without checking it out in any existing worktree. Patches were

@@ -41,6 +41,20 @@ reproduction of run B into disposable local remotes (adopter `check` and
 the October 7 receipt — spec `558a12b`, code `6d52162` — and is superseded by
 run C for everything below.
 
+*Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186): the opensoft/openRepoTools#180 pointers.* Lines 300, 305,
+306, 369 and 477 of this record, as it was at `33ce26d`, name opensoft/openRepoTools#180
+for the row-stamp cases that fail under `tests/run.sh`'s long run root, which `exact-pins`
+inherits. That issue was closed with opensoft/openRepoTools#215 (`61a7378`), which moved
+only `repoA11b`'s tail case. The cases it left are opensoft/openRepoTools#304's: `repoA-1`
+and `repoCase-1` (`tests/test_lane_helpers.sh:1272` and `:8552` at `33ce26d`; rehearsal
+D's record, P3), and `repoMIX-1` (`:8645`), which lane 3 found on 2026-10-22
+(opensoft/openRepoTools#186 comment 6342130291). Their fix is the code leg's `1e6f2d1`,
+merged by opensoft/openRepoTools-code#1 as `2a057a6d` on 2026-10-26. So read those five
+lines as pointers to opensoft/openRepoTools#304. The lines stay as written, as history.
+Lane 3 named the 18 pointers of this kind, in four files (opensoft/openRepoTools#186
+comment 6332521834).
+
 ## 1. What the split breaks — measured before the change
 
 The suite at run C's code leg `73b04d6` (that is, `main` without PR #190), run

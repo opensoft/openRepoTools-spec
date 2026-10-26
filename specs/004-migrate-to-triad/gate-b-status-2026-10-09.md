@@ -102,6 +102,17 @@ checklist line, and the line of its cell in this file at `33ce26d`, before this 
   composed run on a bench that has zsh. The assembly root's `composed.yml` installs it
   from the cutover's root follow-up row 6a (`9e5cca2`). The line is MET WITH NOTE at D
   either way, on Brett Heap's round 10 ruling ("Accept without job 5").
+- **The opensoft/openRepoTools#180 pointers, the cells and lines at `:187`, `:189`,
+  `:327`, `:511` and `:640` (its item 4).** They name opensoft/openRepoTools#180 for the
+  row-stamp cases that fail under `tests/run.sh`'s long run root, the one `composed.yml`'s
+  suite inherits. That issue was closed with opensoft/openRepoTools#215 (`61a7378`), which
+  moved only `repoA11b`'s tail case. The cases it left are opensoft/openRepoTools#304's:
+  `repoA-1` and `repoCase-1` (`tests/test_lane_helpers.sh:1272` and `:8552` at `33ce26d`;
+  rehearsal D's record, P3), and `repoMIX-1` (`:8645`), which lane 3 found on 2026-10-22
+  (opensoft/openRepoTools#186 comment 6342130291). Their fix is the code leg's `1e6f2d1`,
+  merged by opensoft/openRepoTools-code#1 as `2a057a6d` on 2026-10-26. So read those five
+  as pointers to opensoft/openRepoTools#304. Lane 3 named the 18 pointers of this kind, in
+  four files (opensoft/openRepoTools#186 comment 6332521834).
 
 **By:** lane openRepoTools-1's reviewer, under [#186](https://github.com/opensoft/openRepoTools/issues/186).
 It ran read-only everywhere except this file and its own scratch. A first, unpublished pass was

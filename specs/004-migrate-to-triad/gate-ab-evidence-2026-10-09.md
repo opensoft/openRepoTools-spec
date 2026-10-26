@@ -43,6 +43,21 @@ inventory. Section 7 is what Gate B still lacks.
   real home or the register.
 - **Gate B is still open.** Section 7 lists what is missing.
 
+*Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186): the opensoft/openRepoTools#180 pointers.* Lines 436, 520 and
+628 of this record, as it was at `33ce26d`, name opensoft/openRepoTools#180 as what
+`composed.yml` must settle before it is relied on, because it runs the suite through
+`tests/run.sh`, under whose long run root the row-stamp cases fail. That issue was closed
+with opensoft/openRepoTools#215 (`61a7378`), which moved only `repoA11b`'s tail case. The
+cases it left are opensoft/openRepoTools#304's: `repoA-1` and `repoCase-1`
+(`tests/test_lane_helpers.sh:1272` and `:8552` at `33ce26d`; rehearsal D's record, P3),
+and `repoMIX-1` (`:8645`), which lane 3 found on 2026-10-22 (opensoft/openRepoTools#186
+comment 6342130291). Their fix is the code leg's `1e6f2d1`, merged by
+opensoft/openRepoTools-code#1 as `2a057a6d` on 2026-10-26. So read those three lines as
+pointers to opensoft/openRepoTools#304. The lines stay as written, as history. Lane 3
+named the 18 pointers of this kind, in four files (opensoft/openRepoTools#186 comment
+6332521834).
+
 ## 1. Restore rehearsal of the source
 
 The source is the Gate A backup `prep-20261007T100559Z` (host-local, read-only). The
