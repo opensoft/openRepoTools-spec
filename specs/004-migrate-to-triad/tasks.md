@@ -75,10 +75,13 @@ integration/preservation evidence and refreshed execution approval.
   existing upstream pin checks run against code Git identity and required
   composed checks cannot silently skip absent spec/dependency context.
 - [ ] T010 [US3] Adapt implementation CI and root exact-pin integration checks
-  with explicit compatible checkout context; preserve current Linux/macOS/
-  Windows/WSL policies, Bash 3.2 parsing and serialized `tests/run.sh` locking.
+  with explicit compatible checkout context; preserve the Linux-only policy and
+  serialized `tests/run.sh` locking, the bash 3.2 parse living in `release.yml`'s
+  macOS install leg.
   Verify the exact rehearsed composed state passes required checks and the
   compatibility matrix, recording failures rather than deleting assertions.
+  Hosted-runner checks that need the real leg repositories run at T015 against
+  the real exact assembled head.
 - [ ] T011 [US1] Rehearse restoration/rollback of the local candidate and
   installed payload using preserved artifacts. Verify user work/jobs/claims
   survive and no force push, destructive reset or workspace-pointer rewrite
@@ -164,10 +167,21 @@ T007–T010 may progress within the rehearsed topology after byte accounting.
 T011 closes Gate B. T012 requires Gate A/B and is the real-creation approval
 boundary. T013–T015 precede root adoption merge. Prepare T016–T017 translations
 and T018 disposable workflow checks in the candidate after legs exist, before
-T015's final reconciliation. Actual T018 lane rebinding follows reviewed root
+T015's final reconciliation. *(Overridden 2026-10-23: see the note below.)*
+Actual T018 lane rebinding follows reviewed root
 adoption/cutover and safe breakpoints. T019 requires validated retained feature
 receipts; later behavior changes reopen reconciliation before another completed
 assembly advancement.
+
+*Overridden, 2026-10-23:* the sentence above that prepares the T016–T017
+translations and T018's disposable workflow checks in the candidate before
+T015's final reconciliation (lines 165 to 167 of this file at `33ce26d`). Brett
+Heap chose "Met by receipts; translate after (Recommended)" in round 20 of his
+rulings (answered 2026-10-23T12:24:37Z; relayed in opensoft/openRepoTools#186
+comment 6364869132): lane 1's card 15, the work dispositions table v2.1 and P8's
+disposable half of T018 meet Gate D's first clause, and the T016 and T017
+translations follow the root-split merge. The sentence is named as overridden,
+as its twin in `plan.md` is, and stays as written, as history.
 
 ## Requirement coverage
 

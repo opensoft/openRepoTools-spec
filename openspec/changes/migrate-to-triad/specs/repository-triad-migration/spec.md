@@ -42,10 +42,10 @@ Original worktrees and installed tools SHALL remain available until acceptance.
 
 ### Requirement: Installation retains the public interface and one revision
 
-Existing one-line installation, command names, payload destinations/modes,
-skills/hooks/receipts and supported fork/ref/local invocation SHALL remain
-usable. An adopted assembly entry point SHALL resolve one immutable code
-revision for the complete installation. Missing/inconsistent pin evidence
+The migration SHALL keep the existing one-line installation, command names,
+payload destinations/modes, skills/hooks/receipts and supported fork/ref/local
+invocation usable. An adopted assembly entry point SHALL resolve one immutable
+code revision for the complete installation. Missing/inconsistent pin evidence
 SHALL refuse before partial installation. Installed tools SHALL function
 without a developer assembly checkout.
 

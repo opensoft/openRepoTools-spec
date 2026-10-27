@@ -70,6 +70,92 @@ MET 25 · PARTLY 20 · OPEN 0 · AFTER-GATE-C 1 (they were 27 · 18 · 0 · 1).
   32 and 46).
 - The measurements are lane 1's, in its private prep of 2026-10-19. The rows say what ran.
 
+**Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186): superseded.** The Gate B status walk at rehearsal D,
+`gate-b-status-2026-10-22.md`, supersedes this walk for the 46 checklist lines. It is on
+the evidence branch `004-migrate-to-triad-rehearsal-d` of opensoft/openRepoTools, at
+`b0eb112`, until a spec-only continuation (T017) carries it into this leg. Its section 1
+gives each line's status and evidence at rehearsal D, and its section 5 lists what this
+file owes. The cells below stay as written, as history, and the counts above are this
+walk's of 2026-10-19. What that section 5 owes this file follows. Each entry names the
+checklist line, and the line of its cell in this file at `33ce26d`, before this block:
+- **Line 29, the cell at `:184` (its item 1, a dated note).** The cell predates `aa14de3`:
+  opensoft/openRepoTools#195 landed as `aa14de3`, with lane 3's LAND at `fb77bed` and on
+  the delta to `e378871` (PR reviews 5481360555 and 5508055705) and lane 1's delta LAND
+  (5484079561), and lane 2 confirmed opensoft/openRepoTools#193's item 15 fixed and the
+  item-4 refusals holding (opensoft/openRepoTools#186 comment 6103529172). Rehearsal D ran
+  composed (3009 tests) and standalone, whose 33 skips each name their root. The line is
+  MET WITH NOTE at D.
+- **Line 32, the cell at `:187` (its item 2, lane 3's NIT 4 on
+  opensoft/openRepoTools#299, comment 6317075196).** The cell names two differences
+  between the regenerated assembly patch's runner comment and
+  opensoft/openRepoTools#296's (`THIS` for `EVERY`, and no Python 3.9 clause). There is
+  a third: the inserted ", which this job's suite runs,". The comment is at the patch's
+  lines 63–65, and the one it follows at lines 55–57 of `.github/workflows/tests.yml` at
+  `33ce26d`.
+- **Line 31, the cell at `:186` (its item 3).** The cell says that about forty other
+  conditional skips can still pass a composed run and that none fires on `ubuntu-24.04`.
+  That is stale: there a composed run skips 66 conditional cases, 60 zsh tests, 1
+  byte-count test and 5 wheel tests (lane 2, opensoft/openRepoTools#186 comment
+  6327803546). Brett Heap ruled on Ask 5 on 2026-10-22 (round 4) that T014 installs zsh
+  in `composed.yml`, so that the 60 zsh tests run and 6 skips remain, as in rehearsal D's
+  composed run on a bench that has zsh. The assembly root's `composed.yml` installs it
+  from the cutover's root follow-up row 6a (`9e5cca2`). The line is MET WITH NOTE at D
+  either way, on Brett Heap's round 10 ruling ("Accept without job 5").
+- **The opensoft/openRepoTools#180 pointers, the cells and lines at `:187`, `:189`,
+  `:327`, `:511` and `:640` (its item 4).** They name opensoft/openRepoTools#180 for the
+  row-stamp cases that fail under `tests/run.sh`'s long run root, the one `composed.yml`'s
+  suite inherits. That issue was closed with opensoft/openRepoTools#215 (`61a7378`), which
+  moved only `repoA11b`'s tail case. The cases it left are opensoft/openRepoTools#304's:
+  `repoA-1` and `repoCase-1` (`tests/test_lane_helpers.sh:1272` and `:8552` at `33ce26d`;
+  rehearsal D's record, P3), and `repoMIX-1` (`:8645`), which lane 3 found on 2026-10-22
+  (opensoft/openRepoTools#186 comment 6342130291). Their fix is the code leg's `1e6f2d1`,
+  merged by opensoft/openRepoTools-code#1 as `2a057a6d` on 2026-10-26. So read those five
+  as pointers to opensoft/openRepoTools#304. Lane 3 named the 18 pointers of this kind, in
+  four files (opensoft/openRepoTools#186 comment 6332521834).
+- **The stale cells and lines (its item 5).** Each is stale against sources now on
+  opensoft/openRepoTools#186 and `main`, and the walk at rehearsal D gives each line's
+  update in its section 1:
+  - Line 2 (`:157`): e4 is approved (opensoft/openRepoTools#186 comment 6313886489), and
+    rehearsal D's record settles opensoft/openRepoTools#193's item 12 for D's bench, which
+    has no `ensurepip`, so its venv used `--without-pip`.
+  - Line 12 (`:167`): the cell names `7f84ca4`, and the pinned openRepoShape is now
+    `190133d`, whose own checks are green.
+  - Line 17 (`:172`): the cell leads with 342 passed, where lane 3's review of the re-cut
+    `assembly-0001` cites 374 on q4d (opensoft/openRepoTools#266's NIT 4, PR comment
+    6275785285). It also ties the `.gitattributes` hunk to the nine-path block, where the
+    hunk's only trailing context is `190133d`'s `EOL_BLOCK_HEAD` line, so a later pin
+    re-checks it (NIT 1).
+  - Lines 23, 24 and 29 (`:178`, `:179` and `:184`): item 1's notes, in this block and in
+    `installer-design.md`.
+  - Line 25 (`:180`): "CHANGES REQUIRED" and "Not landed" are stale. Lane 3 measured that
+    the T007 v3 patch meets T3's required change (PR review 5481368376 on
+    opensoft/openRepoTools#196, finding 1) and LANDed the refold (delta review
+    5560058266); opensoft/openRepoTools#191 landed as `a74c7fc`, and
+    opensoft/openRepoTools#196 as `983d8c7`.
+  - Line 32 (`:187`): items 2 and 4 in this block. The fix for its residual at D,
+    opensoft/openRepoTools#304, is the code leg's `1e6f2d1`.
+  - Line 33 (`:188`): this batch restates T010's platform clause,
+    `openspec/changes/migrate-to-triad/design.md:121–126` and `plan.md:127–129` and `:251`
+    in lane 3's wording (Ask 7(d)), the wording the cell says the line can then be met on.
+  - Line 46 (`:201`): each T006–T010 patch now has its review record (the walk at
+    rehearsal D, its line 46).
+  - The "not on `main`" remarks in lines 36 (`:191`), 39 (`:194`) and 40 (`:195`): those
+    records are on `main` since opensoft/openRepoTools#196 landed as `983d8c7`.
+  - Line 40's count (`:195`), "7 patches" and "eight files now": `patches/` holds nine
+    patch files, four at its top and five under `patches/t006/` (lane 2's NIT 7,
+    opensoft/openRepoTools#186 comment 6333755295).
+  - Section 4(d) (`:502`, `:504`, `:515–516` and `:529`) names `tests-windows`,
+    `parse-macos` and `tests-macos`, which opensoft/openRepoTools#227 (`aaa7bc8`) removed.
+    Restated without them, its basis is this: the code these jobs test ran green on hosted
+    runners at `33ce26d` (run 39614104431), in four jobs, `guard-launch-mode`, `tests`,
+    `tests-no-submodule` and `package`; and by Brett Heap's ruling on Ask 6 (2026-10-22,
+    round 4, option 1) the hosted runs of the code leg's `tests.yml` jobs and of the
+    assembly's `composed.yml` move to T015, before the root adoption merge.
+  - The API-call count at `:531` and `:611`, 5 per install, is the T007 v2 patch's. The v3
+    patch makes 6 api.github.com requests per install, the root 2 and the implementation 4
+    (`installer-2026-10-08.md:234`).
+
 **By:** lane openRepoTools-1's reviewer, under [#186](https://github.com/opensoft/openRepoTools/issues/186).
 It ran read-only everywhere except this file and its own scratch. A first, unpublished pass was
 made at 13:27Z–13:50Z; section 1 says which statuses moved since.

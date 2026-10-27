@@ -51,6 +51,30 @@ main `f87fd5a` only in the implementation it hands over to.
 `f87fd5a`. Its tree, `d77e80b3`, is `8246983`'s, and `openRepoTools` is blob `7aa697c` at
 `cddd1f7`, `8246983` and `a74c7fc` alike. So r3 measured the code now on `main`.
 
+*Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186): the candidate since this record.* This is r2's record, with
+r3's in section 9, and it is not refreshed in its sections 2 to 5 form. The candidate of
+record at Gate C is rehearsal D's: D's record, `adopter-rehearsal-2026-10-21.md`, gives it
+in its section "The candidate (stage 4, v0)". That record is on the evidence branch
+`004-migrate-to-triad-rehearsal-d` of opensoft/openRepoTools, at `94f8a3c`, until a
+spec-only continuation (T017) carries it into this leg. What the cutover itself built is
+in [cutover-as-built-2026-10-26.md](cutover-as-built-2026-10-26.md), beside this record.
+The sections below stay as written, as history.
+
+*Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186): the opensoft/openRepoTools#180 pointers.* Lines 261, 262,
+282, 316 and 380 of this record, as it was at `33ce26d`, name opensoft/openRepoTools#180
+for the row-stamp cases that fail under `tests/run.sh`'s long run root. That issue was
+closed with opensoft/openRepoTools#215 (`61a7378`), which moved only `repoA11b`'s tail
+case. The cases it left are opensoft/openRepoTools#304's: `repoA-1` and `repoCase-1`
+(`tests/test_lane_helpers.sh:1272` and `:8552` at `33ce26d`; rehearsal D's record, P3),
+and `repoMIX-1` (`:8645`), which lane 3 found on 2026-10-22 (opensoft/openRepoTools#186
+comment 6342130291). Their fix is the code leg's `1e6f2d1`, merged by
+opensoft/openRepoTools-code#1 as `2a057a6d` on 2026-10-26. So read those five lines as
+pointers to opensoft/openRepoTools#304. Line 404 is a list of the issues read with `gh`,
+and stays as it is. The lines stay as written, as history. Lane 3 named the 18 pointers of
+this kind, in four files (opensoft/openRepoTools#186 comment 6332521834).
+
 ## 1. Inputs
 
 Every input was read without checking it out in any existing worktree. Patches were
@@ -114,6 +138,11 @@ results stand as recorded. The files at those paths are now the regenerated and 
 (`1406ead3…ef6d56`, `2ec48bbf…eaead7`), made against the files #228's series leaves, so these two results are
 not results for them. A third code-leg patch, T009's `t009-assembly-caps.patch` (`2dd4aac2…b2bbe5`), goes on
 after steps 10 and 11 and sets the assembly-root length caps the re-cut needs.
+
+*Noted 2026-10-26 (step 14; lane 3's NIT 2 on opensoft/openRepoTools#299, comment 6317075196):* step 14
+applied the earlier `t010-assembly-exact-pin-job.patch` (`6ee09f00…74670b`), and its result stands as
+recorded; the file at that path is now the one regenerated on 2026-10-21 for the runner pin
+(`60245cb9…f0f653`), so that result is not a result for it.
 
 What was checked at each step:
 

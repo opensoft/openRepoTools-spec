@@ -23,6 +23,15 @@ paths are resolved: 18 spec, 40 code, six root, zero dropped. There are
 This is an inspected preliminary baseline; regenerate
 after planning lands and the actual cutover source is frozen.
 
+*Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186):* the cutover source was frozen at `main`
+`33ce26dffc5286e68f1d29ab5c6458edef0330c0` (200 tracked paths, 156 commits), and the plan
+regenerated for it with openRepoShape `190133d5e704e380c430f87ca9c4e31746de0012` (v1.1.0)
+places 108 spec, 86 code and six root paths, zero dropped, with 42 follow-ups. Brett Heap
+approved it at Gate C. Its [published copy](adoption-plan-cutover-2026-10-26.yaml) and the
+[as-built record](cutover-as-built-2026-10-26.md) set this baseline against the cutover's.
+The adoption mapping linked above is now run C's rehearsal input, as its own header says.
+
 Main advanced with merged PR #134 and matches the read-only GitHub observation;
 #61 and #146 remain included. There are six
 worktrees and six local branches, including this planning checkout and the
@@ -56,10 +65,16 @@ reconciliation. Schema/routing/distribution/placement automation is pending.
 | --- | --- | --- |
 | Assembly `openRepoTools` | `AGENTS.md`, `CLAUDE.md`, `README.md`, `LICENSE`, `.gitattributes`, `.gitignore`; generated manifest/Makefile/validators and assembly pins | Front door and project coordination across legs. |
 | Spec `openRepoTools-spec` | `openspec/`, `specs/`, `docs/`; feature 001's retained `ideation/` and restored planning packets | Product requirements, decisions and manual; feature-only paths need separate replay accounting. |
-| Code `openRepoTools-code` | All executable tools, `repos.tsv`, `commands/`, `skills/`, `tests/`, implementation CI | Shipped implementation and its installer payload. |
+| Code `openRepoTools-code` | All executable tools, `repos.tsv`, `commands/`, `skills/`, `tests/`, implementation CI; its own `.gitattributes`, added after extraction | Shipped implementation and its installer payload. Git never applies the assembly's `.gitattributes` inside a submodule, so the leg carries the LF rule its bash files and byte-for-byte installer checks need. |
 | Code dependency unit | Original `.gitmodules`, `upstream/openRepoShape`, `contracts/openreposhape-pin.yaml` | Keep module registration, exact gitlink and dependency lock together. |
 | Code amendment exception | Genuine bounded `features/<NNN-feature>/openspec/` records, deltas and evidence references | Relative changes against an approved spec baseline; explicitly review placement until upstream qualification. No such tracked paths were observed in the current source or retained feature heads. |
 | Root workflow bootstrap | `.specify/`, project agent links and selected feature pointer | Currently local/ignored; capture config and regenerate shape-aware root scaffolding. |
+
+Extraction gives each original front-door file one owner, the assembly. T006's leg patches then
+add new files to the legs: each leg's own `AGENTS.md`, `CLAUDE.md`, `README.md`, `LICENSE` and
+`.gitattributes`, and the code leg's `.gitignore`. `spec-0001` also re-points three test paths in
+the spec leg's `docs/README-claude-current.md`. These are reviewed changes after byte accounting,
+not moved paths, so the adoption mapping does not change.
 
 After byte-preserving extraction, add a root installation entry point that
 resolves the exact code pin. The original installer implementation moves to
@@ -86,14 +101,25 @@ Recommended active-work dispositions are proposals, not merge/closure actions:
 | Work | Proposed treatment |
 | --- | --- |
 | `001-separate-swap-ctx-handoff` | Continue from committed, clean head `3c26041`; preserve the complete branch delta, restored rollover/workspace packets and launcher/broker contracts. Migrate to paired `001` worktrees; keep tasks, evidence, roles and activation gates. |
-| PR #97 | Preserve its current advanced recovery branch, review history and diagnostic role separately from managed LS authority and PR #121. Carry useful diagnostics under feature 001's service authority without merging unchanged or auto-closing through adoption. |
-| PR #121 / feature `005-supervised-legacy-ctx` | Preserve complete staged/unstaged/untracked contents and the full legacy authority decision. Continue paired `005` worktrees for confirmed legacy-only supervised restart; managed/unknown ownership refuses. Keep the existing merge hold and PR #97 ownership separate. The full proposal/decision/specs stay in spec, implementation/tests in code; this authority decision is not a bounded local amendment. |
+| PR #97 | **Overridden 2026-10-22: see the note after this table.** Preserve its current advanced recovery branch, review history and diagnostic role separately from managed LS authority and PR #121. Carry useful diagnostics under feature 001's service authority without merging unchanged or auto-closing through adoption. |
+| PR #121 / feature `005-supervised-legacy-ctx` | **Overridden 2026-10-22: see the note after this table.** Preserve complete staged/unstaged/untracked contents and the full legacy authority decision. Continue paired `005` worktrees for confirmed legacy-only supervised restart; managed/unknown ownership refuses. Keep the existing merge hold and PR #97 ownership separate. The full proposal/decision/specs stay in spec, implementation/tests in code; this authority decision is not a bounded local amendment. |
 | PR #146 / `fix/107-pty-driver-bound-and-lane-per-call-cost` | Merged as `82ecebe`; checkout and local branch removed during concurrent cleanup. Included by baseline extraction; do not replay separately. |
 | PR #134 / `feat/claude-current` | Merged as `daed209`; the retained clean checkout at `11037f0` is preservation history. Resolver/checker, installer, preflight/fencing, timeout tests and manual are included by the regenerated baseline. Do not replay separately or retire the checkout as part of planning. |
 | PR #61 | Merged as `14641fd`, an ancestor of current main; included by baseline extraction. Do not replay the retired claim-takeover branch separately. |
 | Retired `002`, `003`, lclaude and detached worktrees | Removed from current registrations/local branches by cleanup. Verify cleanup/preservation receipts; remove from the active replay queue and do not recreate them from the old snapshot. |
 | Remote-only preservation refs | `chore/preserve-local-planning-20261003` and `takeover/ort-a9-dirty-snapshot-20260913` remain locally observed remote-tracking refs with no checkout; review as preservation history, not active writers. |
 | Migration feature `004` | Previous refresh committed at `dda91f1`; existing checkout reused for this update. This full proposal and canonical feature files stay in spec; any genuine bounded implementation amendments belong in code. |
+
+**Overridden, 2026-10-22: the rows for opensoft/openRepoTools#97 and for
+opensoft/openRepoTools#121 with feature `005-supervised-legacy-ctx`.** Brett Heap
+chose option A of lane 1's card 16 in round 7 of his rulings (answered
+2026-10-22T14:53:08Z; relayed in opensoft/openRepoTools#186 comment
+6343863633), in his words "Option A (Recommended)": no continuation. Feature
+`005-supervised-legacy-ctx`'s bookkeeping closes as a spec-only change after the
+cutover, and the 8 open tasks of opensoft/openRepoTools#97's change wait for a
+later numbered feature. The two rows, which say to preserve
+opensoft/openRepoTools#97's branch and to continue paired `005` worktrees, are
+named as overridden and stay as written, as history.
 
 **Gate A:** every preserved object is attributable and restorable; no active
 writer can silently invalidate capture. Baseline, visibility and work
@@ -125,8 +151,9 @@ test-root context, CI layout, agent pointers, docs paths and workflow bootstrap
 in the rehearsed arrangement. Record their patches and resulting commits so
 real execution can apply the reviewed changes after source verification.
 Add leg root guidance without overwriting original root guidance. Preserve
-the Bash 3.2 floor and original no-submodule test behavior, while requiring
-complete dependencies for composed acceptance.
+the Linux-only policy and serialized `tests/run.sh` locking, the bash 3.2 parse
+living in `release.yml`'s macOS install leg, and the original no-submodule test
+behavior, while requiring complete dependencies for composed acceptance.
 
 Operate full proposals from the intended feature spec checkout and bounded
 amendments from the code feature folder. Verify checkout, branch and root for
@@ -185,7 +212,7 @@ pinned shape files. Put `Read AGENTS-shape.md first...` guidance first in root
 agent instructions and bootstrap shape-aware OpenSpec/Speckit only when both
 legs exist. Prepare continued-feature translations and disposable workflow
 checks from Phase 5 in the candidate before the final migration batch; actual
-lane rebinding still waits for reviewed cutover. After implementation and verification, reconcile the net tested
+lane rebinding still waits for reviewed cutover. *(Overridden 2026-10-23: see the note after this paragraph.)* After implementation and verification, reconcile the net tested
 effect in one final spec batch: governing specs/contracts/design, dated departures,
 as-built record, all amendment dispositions, evidence, deferred ideas and the
 actual landed code commit. Retain superseded/reverted/deferred history while
@@ -194,6 +221,18 @@ Code may land first; completed assembly advancement waits for reconciliation
 to land and matching spec/code pins. Close the reconciliation issue after the
 spec PR lands; the feature landing record tracks the assembly PR. Advance
 gitlinks, pin digests and workflow SHAs together using the standard bump tool.
+
+**Overridden, 2026-10-23: the sentence above that has continued-feature
+translations and disposable workflow checks prepared in the candidate before the
+final migration batch** (lines 186 to 188 of this file at `33ce26d`). Brett Heap
+chose "Met by receipts; translate after (Recommended)" in round 20 of his
+rulings (answered 2026-10-23T12:24:37Z; relayed in opensoft/openRepoTools#186
+comment 6364869132): lane 1's card 15, the work dispositions table v2.1 and P8's
+disposable half of T018 meet Gate D's first clause, and the T016 and T017
+translations follow the root-split merge. The sentence is named as overridden,
+as card 16's ruling named the two rows of the table above, and stays as
+written, as history; lane rebinding still waits for the reviewed cutover.
+`tasks.md` names its twin the same way.
 
 **Gate D:** prepared continued-feature receipts and disposable workflow checks
 are reviewed; final reconciliation and matching spec/code commits are landed;
@@ -248,8 +287,10 @@ and claims are not rewritten to hide a failure.
 
 ## Technical context and checks
 
-Implementation remains Bash (macOS 3.2), Python standard-library tooling and
-Git/GitHub workflows. Run build/test/CLI work in the project bench, with shared
+Implementation remains Bash, Python standard-library tooling and Git/GitHub
+workflows, under the Linux-only policy and serialized `tests/run.sh` locking,
+the bash 3.2 parse living in `release.yml`'s macOS install leg. Run
+build/test/CLI work in the project bench, with shared
 `tests/run.sh` locking. No real repository is created for a test. The local
 constitution is an unfilled template; no ratification is inferred. Preserve
 the existing root rules, standard pin checks and global workflow protocols.

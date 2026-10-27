@@ -15,6 +15,15 @@ that branch work. Preserve its contracts, external launcher ownership and
 unmet runtime gates during replay. Removed worktrees are not an active replay queue. The
 [inventory](../../../specs/004-migrate-to-triad/inventory.json) is a snapshot.
 
+*Updated 2026-10-26, in the cutover's final spec reconciliation batch (T015, under
+opensoft/openRepoTools#186):* this is the preliminary baseline. The cutover ran from `main`
+`33ce26dffc5286e68f1d29ab5c6458edef0330c0` (200 tracked paths, 156 commits) with openRepoShape
+`190133d5e704e380c430f87ca9c4e31746de0012` (v1.1.0), on the plan regenerated for that source
+and approved at Gate C. Its
+[published copy](../../../specs/004-migrate-to-triad/adoption-plan-cutover-2026-10-26.yaml)
+and the [as-built record](../../../specs/004-migrate-to-triad/cutover-as-built-2026-10-26.md)
+set this baseline against the cutover's. The paragraph above stays as written, as history.
+
 ## Goals / Non-Goals
 
 Preserve project identity/history, all user work, installed command behavior
@@ -46,6 +55,10 @@ paths: 18 spec, 40 code, six root, none dropped, with 28 follow-ups. It records 
 16 originally unresolved paths and overrides for shipped Markdown payloads
 and the dependency lock. Product documentation/OpenSpec/Speckit go to spec.
 Root owns front-door guidance, license, project metadata and workflow bootstrap.
+
+*Updated 2026-10-26, in the same batch:* the cutover's plan accounts for 200 paths, 108
+spec, 86 code, six root, none dropped, with 42 follow-ups (the note under Context). The
+`adoption-plan.yaml` linked above is now run C's rehearsal input, as its own header says.
 
 Genuine bounded feature amendment records at
 `features/<NNN-feature>/openspec/` are the narrow code exception. Review them
@@ -121,9 +134,11 @@ and shape placement automation are pending, not delivered by this migration.
 Code CI runs implementation checks; root CI validates manifest/pins and the
 exact composed assembly. Supply explicit code/spec/assembly roots to tests
 that inspect docs or history; preserve the nested dependency pin assertions
-in the code Git repository. Use the canonical serialized `tests/run.sh`,
-Bash 3.2 parsing and current platform/fixture timing policies. Missing-spec
-context cannot turn a required integration check into a silent skip.
+in the code Git repository. Use the canonical `tests/run.sh` with the
+Linux-only policy and serialized `tests/run.sh` locking, the bash 3.2 parse
+living in `release.yml`'s macOS install leg, and current fixture timing
+policies. Missing-spec context cannot turn a required integration check into
+a silent skip.
 
 Prepare code/spec PRs together. At the first bounded amendment create one spec
 reconciliation issue; collect net tested effects, all dispositions, dated
