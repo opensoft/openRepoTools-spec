@@ -38,7 +38,8 @@ carries an open question with its options.
 
 ## Dispositions
 
-"P" is a line of the new `proposal.md`. "APPLIED" means the fix is in as the
+"P" is a line of `proposal.md` as the alignment pass left it, at spec commit
+`9f83c3db`; R3's fold, the commit after it, moves them. "APPLIED" means the fix is in as the
 seat wrote it, or in equivalent words. "APPLIED IN PART" means the part a text
 decides is in, and the rest is the open question named.
 
@@ -115,3 +116,17 @@ and Q4 wait for R3 and Q2(b), Q6, Q8, Q11–Q14 carry R2's B1–B8 for Brett
 
 Proposal is aligned with the docs as far as the texts decide. This pass stops
 before the council debate.
+
+## After the alignment pass: R3
+
+R3 (lane openRepoTools-1, #165 comment 6548320294) came in after this pass and
+was folded into `proposal.md` by the next commit, kept apart so that this one
+reviews against the two seats alone. It corrects facts (among them that #160's
+tables cannot be the truth and its `SCHEMA_VERSION` is an exact match, the
+`HOLD`-shaped kinds `RULE6_AWK` does not read, the register's 18 s median write
+gap, the 15 unreadable log lines, and the stale vendored install), records R3's
+proposals as options under Q3–Q9, Q12, Q13 and Q15–Q18, and adds Q19–Q25 for
+R3's further questions. It decides none of them. Where R3 meets a finding:
+QA-1 (Q7, Q15), QA-2 (Q18, R3's question 5), QA-3 (the service's "read fresh"
+bullet: a cache checked by journal seq and digest), QA-5 (Q16), QA-8 (Q3),
+QA-11 (Q4), D8 (Q8(b)) and D12 (Q9).
