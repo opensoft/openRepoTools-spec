@@ -8,16 +8,20 @@ opensoft/openRepoTools-code's, named here as `code/…` relative to the assembly
 root, with line numbers at the code pin `2a057a6d` (the `v1.1.0` tag). A bare
 `#N` below is opensoft/openRepoTools' issue or pull request `#N`.
 
-Status: proposal, with the alignment review's fixes applied. `alignment-review.md`
-beside this file records each finding of the two seats (lane openRepoTools-4's
-Stack Architect, #165 comment 6548171116; lane openRepoTools-2's QA Lead, comment
-6548063141) and what became of it. The council debate, `design.md`, the delta
-specs and `tasks.md` follow, run across lanes as lane 3's note on #165 of
-2026-10-31T18:43Z sets out. The questions under "Open design questions" are for
-that design phase or for Brett Heap; nothing here decides them. R1, R2 and R3 are
-in (R3, the schema, the cutover and the landing: lane openRepoTools-1, #165
-comment 6548320294); R3's findings correct the facts below, and its proposals
-are options under the open questions.
+Status: proposal, with the alignment review's fixes and the council's VALID
+findings applied. `alignment-review.md` beside this file records each finding of
+the two seats (lane openRepoTools-4's Stack Architect, #165 comment 6548171116;
+lane openRepoTools-2's QA Lead, comment 6548063141) and what became of it.
+`council-review.md` does the same for the council's three seats (lane
+openRepoTools-1's product seat, comment 6548737562; lane openRepoTools-4's
+architecture seat, comment 6548690085; lane openRepoTools-2's adversary seat,
+comment 6548670312), and `clarifications.md` carries its NOTED findings for
+`design.md`. `design.md`, the delta specs and `tasks.md` follow, run across lanes
+as lane 3's note on #165 of 2026-10-31T18:43Z sets out. The questions under
+"Open design questions" are for that design phase or for Brett Heap; nothing
+here decides them. R1, R2 and R3 are in (R3, the schema, the cutover and the
+landing: lane openRepoTools-1, #165 comment 6548320294); R3's findings correct
+the facts below, and its proposals are options under the open questions.
 
 ## Why
 
@@ -34,6 +38,27 @@ write is one transaction, the git files are its rendered mirror, and nothing
 falls back to writing the files. Act 2 of that amendment, the tooling, is this
 change. It was scheduled for v1.2.0 after the release work; v1.1.0 is tagged, and
 Brett started it on 2026-10-31.
+
+### What Amendment 23's act 2 leaves for this change
+
+Under Q6's recommended order Amendment 23's act 2 lands before this change's
+write path, and in files mode it already ends the shapes of the 10-09 failure
+and of #145: each writer fetches and fast-forwards before it edits, pushes with
+no pull, replays its one edit on a fresh fast-forward when a push is refused,
+and fails closed at the sixth attempt (its S3–S4). So the tail-append conflict,
+the stacked register commits and the hand recovery are not this change's case
+for SQL (the product seat, P1; the adversary seat, ADV-C9). What only SQL adds:
+
+- claim and hold order decided in one transaction: Amendment 23 keeps
+  `CLAIM-LOST` and exit 7, and orders `HOLD` and `LANDING` by push;
+- a write in milliseconds, rather than at least three git round trips of about
+  1.2 s each plus replays under contention;
+- deciding reads that need no fetch;
+- a cheaper guard.
+
+Brett Heap weighs act 4, and the outage it brings (S3, below), against these
+four. Tests 9 and 10 measure the second and the fourth beside today's files mode
+(P5).
 
 ## The ruling, the evidence and the start
 
@@ -195,13 +220,26 @@ that checks it; the agreement tests are listed together at the end.
   committed: R1 reproduced it on PostgreSQL 16.15, where the second writer
   blocked about a second and then failed, and its `psql` exited 3. The
   transaction re-runs from its reads, so S6's losing claimant sees the winner
-  and exits 2. Exit 69 stays for an unreachable database, any other refusal,
-  and a retry bound spent; the bound is Q15.
+  and exits 2. Exit 69 stays for an unreachable database and any other refusal.
+  A retry bound spent is "register busy", not an outage, and exits with a code
+  of its own that the design names, so a caller such as `lane-start` can tell
+  the two apart (the council's adversary seat, ADV-C7); the bound is Q15.
 - **A COMMIT whose outcome the writer cannot learn** (the connection lost after
   COMMIT was sent) is neither a success nor "nothing written": the row may have
   committed with no render forked. Amendment 23's S4 gives `lanes-edit.sh`'s
   exit 3 to the git analogue, "cannot confirm whether it also reached origin".
-  How this case is reported and recovered is Q16.
+  How this case is reported is Q16. How it is recovered is not left open (the
+  council's adversary seat, ADV-C3). Through `psql` every lost connection looks
+  like this case, since `psql` exits 2 when its connection is lost whether or not
+  COMMIT went out, and a blind retry goes wrong either way: the claim's
+  pre-check leaves out the claimant's own lane (`rows_not_named "$lane"`,
+  `code/lanes-edit.sh:16520`), so the retry appends a second `CLAIMED`, or, under
+  a unique index for one live claim (Q3), it gets a uniqueness error that reads
+  as 69 for a claim that is held. Looking for seq `n+1` cannot tell this write
+  from a rival's that took `n+1`. So each write carries a write id, unique in the
+  journal; after an outcome it cannot learn, the writer reconnects and looks its
+  id up, exits 0 if the write is there and retries cleanly if it is not; and a
+  verb reads the journal by write id and by seq.
 - **Handoffs stay git files** written by the lane itself (Amendment 22, "What
   this amendment does not change"). In Amendment 23's words, "the commits that
   stay git commits everywhere — handoffs, `lane-start`'s stamp, `lane-handoff`'s
@@ -212,14 +250,22 @@ that checks it; the agreement tests are listed together at the end.
   `lane-start`'s stamp (`code/lane-start:4412–4442`), `lane-handoff`'s commit
   (`code/lane-handoff:2673–2684`) and the skill's (`code/skills/handoff/SKILL.md:424–457`).
   Each runs `pull --rebase` and a push with no lock, so on `mode=primary` each
-  would rebase and publish the renderer's unpushed commits (Q6).
+  would rebase and publish the renderer's unpushed commits (Q6). Amendment 23's
+  slices 2a (#312), 2b (#316) and 3 (#311) replace all three with its S3–S4;
+  whether act 4 waits for them is Q6's (the council's product seat, P2).
 - Tests: for each of S1's writes, the projection writer's storage-layer entry
   included (S4), refusal with 69 when the database is unreachable and when it
   refuses the transaction, with the register's rows, the journal and git
   unchanged and no lock left; the same for a failure partway through the
-  transaction; a hand edit through `commit` refused; a queued handoff commit
+  transaction, on a real engine for the writes that change several files
+  (`LANDING` and `LANDED`, `rename-lane`, `retire-rows`, `archive-rows` and
+  `migrate-state-cells`: a failure injected in a late statement leaves the
+  journal, the line store and the head row unchanged; the council's product
+  seat, P11); a hand edit through `commit` refused; a queued handoff commit
   still published; a queued `lanes/` commit refused; a SERIALIZABLE conflict
-  retried, not reported as 69.
+  retried, not reported as 69; a spent retry bound reported as "register busy"
+  with its own code, not 69; a COMMIT in doubt recovered by its write id (test
+  12).
 
 ### The write journal and the renderer (S2, as Amendment 23 amends it)
 
@@ -236,12 +282,49 @@ that checks it; the agreement tests are listed together at the end.
   `lanes/archive/`, and touches nothing else.
 - **Where it commits.** In the checkout of the lane whose write forked it,
   `<W>-lanes/<lane>/`, never `W`, after Amendment 23's S3 checks (Amendment 23,
-  "Relation to Amendment 22").
+  "Relation to Amendment 22"). What those checks are for a renderer that never
+  touches the lane's HEAD, index or working tree is Q27.
 - **Write-behind.** No writer waits on it beyond the fork. A failed render
   leaves SQL true and the mirror behind; `lanes-index status` says by how many
   sequences, and the next render catches up. A renderer that loses a push race
   discards its unpushed render commits, fetches and renders what is still
   missing onto the new tip: never a rebase of a render.
+- **The renderer leaves nothing on a lane's HEAD** (the council's architecture
+  seat, concern 3; the adversary seat, ADV-C6). Committing in place, a render
+  killed between its commit and its push, or stopped at its retry limit, would
+  leave a `lanes/` commit on the lane checkout's HEAD. Amendment 23's S3
+  "unpushed commits" row would then refuse that checkout's next render and its
+  handoff and stamp commits, and the recovery that row prints, the publish act,
+  refuses a `lanes/` commit on `mode=primary` (S1, above). So:
+  - **the form to prefer:** the renderer builds each render commit on
+    `origin/main` in the lane checkout's object store, with a private index
+    (`GIT_INDEX_FILE`, `commit-tree`, the journal's fixed author, committer and
+    dates), and pushes `<sha>:refs/heads/main`. A lost race is then a rejected
+    push with nothing to discard, and the HEAD, index and working tree that the
+    lane's handoff writers own under Amendment 23's S3–S4 are never touched;
+  - **if the design commits in place instead,** the next render in that checkout
+    discards an unpushed render commit before S3's checks, by S2's own discard
+    rule, since SQL holds it. Such a commit is never kept on HEAD the way
+    Amendment 23's S4.5 keeps a writer's, and the publish act still refuses it;
+  - **either form works under either reading of "takes S3's checks"** (Q27).
+    Read as S3's fetch, the private-index form takes the fetch and nothing else.
+    Read as every check, it also runs S3's rows and fast-forward on the lane's
+    checkout under that checkout's lock, and refuses a render only where the
+    checkout is itself in a refused state; the in-place form runs them after
+    its discard.
+- **One render at a time per checkout, and no fork waits,** in the form of
+  `lanes-index`'s `SyncLock` (`code/lanes-index:1540–1543`: "A second sync that
+  finds the lock held leaves a RERUN mark and returns at once"). A fork that
+  finds a render running leaves a rerun mark and exits; the running render reads
+  the journal head again before it lets go, and renders again while the mirror
+  lacks a sequence. Under the private-index form its lock is its own, not the
+  lane's write lock, so `lane-start`'s stamp and `lane-handoff`'s commit never
+  queue behind a render.
+- **A pending hand edit needs a way out on `mode=primary`** (ADV-C6). Amendment
+  23's S3 step 4 refuses every writer but `commit` while one is pending and
+  prints `lanes-edit.sh commit` as the recovery, which refuses on `mode=primary`
+  (Amendment 22's S2). There the refusal names the file and prints a recovery
+  that works: restore the file, and make the write through its verb.
 - **Commits that touch none of the paths it renders are part of the tip it
   renders onto.** Amendment 22's S2 says it of handoffs: "Commits that touch
   nothing under `lanes/` (handoffs, manifests) are simply part of the tip it
@@ -256,6 +339,21 @@ that checks it; the agreement tests are listed together at the end.
   renderer did not make stops it.** It does not render over it; `status`
   reports `diverged at <sha>`; a person's word decides whether that write is
   imported into SQL or reverted.
+- **Each way out of a divergence has a tool** (the council's adversary seat,
+  ADV-C2). As first written neither did: `import --at` loads the whole register
+  and refuses unless the render is byte-identical, so it cannot import one
+  write; a revert is itself a commit to a rendered path that the renderer did
+  not make, so it stops the renderer again; and rollback needs a current mirror,
+  which a stopped renderer never produces. So this change adds a single-write
+  import, which loads the stray commit's line edits into SQL as one journal
+  entry, and a revert the renderer makes, which renders SQL's state over the
+  stray commit; each runs on a person's word and writes the record that clears
+  `diverged at`. A stale writer is the likely source: the adversary seat found
+  `/usr/local/bin/lanes-edit.sh` on py-bench dated 2026-10-07, with 17,046 lines
+  and no hit for `STORE` or `mode=primary` (lane 3's writer saw the same in lane
+  3's container at 2026-10-31T20:46Z), and benches re-install their vendored
+  copy at every start (above). What gates such a writer from outside, and
+  whether that gate is a precondition of act 4, is Q21(b).
 - **`lanes-index status`** adds the mirror's lag and any divergence, and
   **`reconcile`** becomes the proof that the mirror equals the SQL: it
   re-renders what is missing and imports nothing silently (Amendment 22,
@@ -267,7 +365,14 @@ that checks it; the agreement tests are listed together at the end.
   failing renderer delays no writer beyond the fork; a failed render shows its
   lag in `status`, and the next render catches up in order; `status` prints
   `diverged at <sha>` and `reconcile` imports nothing; a render refused by
-  Amendment 23's S3 checks leaves SQL true and is reported.
+  Amendment 23's S3 checks leaves SQL true and is reported; a renderer killed
+  between its commit and its push leaves the lane's next handoff commit and the
+  next render unrefused, with no manual step; a burst of writes from one lane
+  gives at most two renders, and no fork waits; the last write of a burst is
+  rendered even if no later write happens anywhere; the v1.1.0 `lanes-edit.sh`
+  pushing to a primary fixture stops the renderer, and each way out (the write
+  imported, or reverted by the renderer) resumes it, after which `reconcile`
+  passes and rollback works.
 
 ### Readers fail closed (S3)
 
@@ -276,6 +381,20 @@ that checks it; the agreement tests are listed together at the end.
   `next-free`, `managed-projection`, the guard, `lane`, `lane-start`,
   `lane-end`, `lane-handoff` and `lane-rename`. A read that fails refuses with
   69, or 2 in the guard, except where the table below says otherwise.
+- **So a database outage refuses every prompt of every lane** (the council's
+  product seat, P3). The guard fails closed, so while the database is
+  unreachable no lane on a `mode=primary` workstation can be prompted, even for
+  work that touches no register. Amendment 22's clause (a) names the case, the
+  database down while the network and the model are up, as stopping "every
+  `mode=primary` lane's acts", and gives its remedies: the database's return, or
+  S5's rollback from a current mirror. That rollback needs a session the guard
+  does not refuse. So the guard's refusal on an unreachable database names the
+  store, the cause and the two ways out: wait, or run `lanes-index status` and
+  `lanes-index rollback` from a shell or from a `CLAUDE_NO_LANE=1` session,
+  which `skip-no-lane-guard` lets through before any input is read. The manual
+  says the same ("What changes for a lane", below). Whether the guard may
+  instead answer from a mirror proven current while the database is down is
+  Q26.
 - **Reads that decide nothing may read the mirror** and say so: the
   `SessionStart` block and the launcher's bare window reads (Amendment 8,
   offline, always exit 0), and the listings `lanes` and `history` when the
@@ -296,6 +415,8 @@ that checks it; the agreement tests are listed together at the end.
   | Reader | Database unreachable, or the read refused | Source |
   |---|---|---|
   | `who`, `binding`, `live-holder`, `next-free`, `lane`, `lane-end`, `lane-rename` | 69; no answer on stdout | S3 |
+  | `lane-last`, `register-row`, `session-lane`, `canon-lane`, `resolve-home` | 69; no answer on stdout, and never 8 ("no record") for a read that failed | S3; the adversary seat's ADV-C5 |
+  | `register-row-local` | per Q7, which asks what a local row means on `mode=primary` | S3; ADV-C5 |
   | the `UserPromptSubmit` guard | 2 | S1, S3; Amendment 12's D3 |
   | `managed-projection` | 1, UNKNOWN, never 8 | S4 |
   | `lane-start` | per Q8: refuse 69 before the launch, or launch with a note | S3 against Amendment 8(d) and Amendment 23's S3 |
@@ -303,9 +424,21 @@ that checks it; the agreement tests are listed together at the end.
   | the listings `lanes` and `history` | the mirror's answer, the `read: mirror` line, and the listing's own exit | S3 |
   | the `SessionStart` block and the launcher's bare window reads | the mirror, offline; exit 0 | S3; Amendment 8 |
 
+- **The six read verbs added to the table** (`code/lanes-edit.sh:17610`,
+  `:17925`, `:17937`, `:17986`, `:18016`, `:18034`) are ones that callers branch
+  on (ADV-C5). One caller fails open: at `code/lane-start:1154` an unknown code
+  from `canon-lane` is a note and the launch carries on with the name as typed,
+  which the arm above it (`:1145–1151`) says makes "a SECOND row for a lane that
+  has been running all day". A static outage hides it, because the read at
+  `:1555` refuses next; a one-call blip does not. Where `:1154` stands under Q8
+  is recorded there.
 - Tests: each row of the table, for each reader in it, with the rows marked
   "per Q8" written once Q8 is answered; each mirror read prints its line on
-  stderr and keeps its exit.
+  stderr and keeps its exit; a fake `psql` that fails exactly one call, run
+  across each caller's read sequence (ADV-C5); the guard's refusal on an
+  unreachable database naming the store, the cause and both ways out, and
+  `lanes-index status` and `rollback` running with no lane session and no guard
+  (P3).
 
 ### The managed seam (S4)
 
@@ -344,6 +477,19 @@ that checks it; the agreement tests are listed together at the end.
   mirror current and byte-identical to a full render; push one commit removing
   `lanes/STORE`; clear `mode=primary` on every workstation. With the database
   unreachable it proceeds only from a mirror `status` last showed current.
+- **A rollback taken while the database is unreachable cannot set the switch**
+  (the council's adversary seat, ADV-C1). Its first step needs the database, yet
+  S5 lets it go ahead from a mirror last shown current. When the database
+  returns, the switch still says `primary`, and a workstation whose
+  `mode=primary` was not yet cleared would commit SQL writes that no files-mode
+  reader sees: two lanes could then hold one object. So no `mode=primary`
+  writer may commit once a rollback has removed `lanes/STORE`. Either a primary
+  writer also refuses with 69 when its last-fetched tip carries no
+  `lanes/STORE`, or the database's return requires the switch to be set to
+  `files` before any SQL write is accepted; which, is the design's. Under
+  Q4(b)(ii), the spools that prove "current" live where the operator can list
+  every one of them, since a spool in a container that is gone takes its seqs
+  with it.
 - **The import races the register** (R3). The register is written every 18 s at
   the median: 278 commits under `lanes/` since 2026-10-24, the shortest gap 3 s,
   and the `lanes` tree moved twice in the 9 minutes after the commit R3 imported.
@@ -359,7 +505,35 @@ that checks it; the agreement tests are listed together at the end.
   to SQL; the cutover's abort when `main` moved under `lanes/`; rollback leaves
   the files byte-identical, the marker gone and SQL writes refused; rollback with
   the database unreachable proceeding from a mirror last shown current, and
-  refused where the mirror was not last shown current.
+  refused where the mirror was not last shown current; after such a rollback,
+  with the database back, a `mode=primary` writer that was not cleared exits 69
+  and writes nothing (ADV-C1).
+
+### Operator tools for acts 3 and 4
+
+Act 3 is hand work in each environment, and the cutover's last step flips
+`mode=primary` by hand in each, with every write refused until the last flip
+(R3b). This change builds three `lanes-index` subcommands for them, whose names
+are the design's (the council's product seat, P8):
+
+- **An idempotent bootstrap:** the register's schema, the three roles and their
+  GRANTs, made from one admin connection that Brett supplies; it prints the
+  password-file lines for him to place and never stores a secret. The admin
+  connection is used once and held by nothing: clause (b)'s three roles stay the
+  only ones the register's tools hold.
+- **A readiness check, run in each environment:** the installed tools' digests
+  against the release, `psql` present, the configuration readable and saying
+  the mode Q20 expects before the cutover (`mode=index` under its (B)), and each
+  role connecting and refused outside its scope. The runbook (the manual, below)
+  makes its pass a precondition of act 4. It is a check at one moment: a
+  container started after it is not covered (ADV-C2; Q21(b)).
+- **The `mode=primary` flip as a command** (Q20), run once per host where one
+  configuration serves the host (Q23(a)). A read-only mount is flipped from the
+  host, not from a bench.
+- Tests: the bootstrap run twice leaves one schema and the same GRANTs; the
+  readiness check fails on a stale digest, a missing `psql`, an early
+  `mode=primary` and a role with a GRANT outside its scope; the flip writes only
+  `mode=` and keeps the file's 0600 mode.
 
 ### Claim order is commit order (S6)
 
@@ -389,7 +563,11 @@ that checks it; the agreement tests are listed together at the end.
   `HOLD (refresh)` and `QUEUED-HOLD` (R3). So "the earlier commit wins" needs a
   rule for which lines take and release `main`. The report needs `append-line`
   to recognise those shapes, or a verb of their own; which, the rule, and what
-  the later writer then sees, are Q17's.
+  the later writer then sees, are Q17's. Whatever Q17 decides about writing the
+  later line, the later writer's verb exits non-zero, with a code the design
+  names (not 0 and not 69), and prints the earlier line (the council's product
+  seat, P9): an AI lane's landing script that sees exit 0 carries on and merges
+  second, which is the race S6 exists to remove.
 - UTC is still recorded on every line, from the database's clock, so Rule 1's
   four hours and Rule 6's thirty minutes are measured on one clock. It decides
   nothing but durations (Amendment 7(b)). The database's clock stamps the row; a
@@ -401,8 +579,10 @@ that checks it; the agreement tests are listed together at the end.
   290), `WORD` lines whose UTC carries milliseconds, and Amendment 7(b) keeps
   them.
 - Tests, on a real engine (Q1): two concurrent claimants give one `CLAIMED` and
-  one exit 2; two `HOLD`s land in commit order, and the later writer sees the
-  earlier line as Q17 decides.
+  one exit 2; two `HOLD`s land in commit order, and the later writer exits the
+  code the design names, prints the earlier line, and sees it as Q17 decides;
+  ten concurrent writers on distinct objects, none exiting 69 or "register
+  busy" (ADV-C7).
 
 ### Roles (clause (b))
 
@@ -499,6 +679,20 @@ also open a database connection per prompt.
   (`code/openRepoTools:2344`). The client bounds its connect-and-answer wait well
   under that, leaving the direct read room to finish inside it; the bound's
   value is Q2's.
+- **The 5 s is one budget, spent once** (the council's architecture seat,
+  concern 1; the adversary seat, ADV-C4). The client's wait for the service, the
+  fallback's own reads and every database access on the guard's path each get a
+  share, and the shares add up to less than `GUARD_TIMEOUT`, with room to print
+  the refusal. Every connection on that path, the service's and (under Q11(a))
+  the fallback's, sets its own connect timeout, `statement_timeout` and
+  `lock_timeout` within its share. None uses `lanes-index`'s default
+  `PGCONNECT_TIMEOUT=5` (`code/lanes-index:1306`), which is the hook's whole
+  budget, or the 300 s it allows a `psql` run (`:1317`); at the pin,
+  `statement_timeout` and `lock_timeout` appear nowhere in `code/lanes-index`,
+  `code/lanes-edit.sh` or `code/openRepoTools`. The service answers `refuse`
+  before the client's own limit runs out. A database that does not answer is a
+  2 inside the hook, never a kill. Writers get limits of their own, so a hung
+  database gives 69, not a hang.
 - **The socket API is documented** in `docs/README-lanes.md`. It is the surface
   the 001 feature's lanes service (T055) adopts or wraps, so Codex and the
   managed path ask the same question of the same process.
@@ -508,12 +702,17 @@ also open a database connection per prompt.
   says `guard: direct (service unavailable)` on stderr, with the same exit
   code; a service that accepts and never answers gives the fallback line, the
   same exit, and the whole hook inside its 5 s; the database unreachable while
-  the service is up gives 2, never a cached `ok`; a write by another process
+  the service is up gives 2, never a cached `ok`; a database address whose
+  connect never completes, a listener on the loopback address that accepts and
+  never speaks (the fixture's Unix socket never exercises TCP), and a read held
+  behind a lock, each with the service up and with it down: the hook exits 2
+  inside its 5 s, and a writer exits 69 inside its own limit; a write by
+  another process
   between two requests is in the next answer, equal to the direct read; the
   hook's environment, and every environment a session inherits, carries no
   database URL or password (Amendment 14(c)); the service-backed guard answers in
   under 50 ms on the suite's fixture register, measured as Q10 settles and
-  recorded in the PR body.
+  recorded in the PR body, with today's direct guard recorded beside it (P5).
 
 ### The agreement tests
 
@@ -522,7 +721,10 @@ real shared database. The fixture is decided (Q1): a disposable local cluster pe
 suite run, and the existing fake `psql`. R1 lists what only a real engine proves:
 a byte-identical render from real tables, SERIALIZABLE ordering with its 40001,
 real GRANTs, import and rollback round trips, and the measured cost; so at least
-tests 1, 4, 7, 8 and 9 below, and the roles' test. Those are required in CI,
+tests 1, 4, 7, 8 and 9 below, and the roles' test. The council adds test 2's
+failure partway through a write that changes several files (the product seat's
+P11: a fake `psql` shows that no file changed, not that the database undid a
+half-applied write) and tests 11 to 13. Those are required in CI,
 which refuses rather than skips them; elsewhere they skip loudly, naming
 `PG_BIN` and `postgresql-16`. The fake-`psql` tests (argv, connection strings
 and credentials, the 69 refusal, the SQL's shape) always run.
@@ -530,21 +732,48 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 1. The mirror byte-identical to a full render from SQL after each of S1's
    writes, the projection writer's storage-layer entry included.
 2. Refusal, 69, when the database is unreachable, for each of S1's writes:
-   the register's rows, the journal and git unchanged, and no lock left.
+   the register's rows, the journal and git unchanged, and no lock left; and a
+   failure partway through each write that changes several files, on the real
+   engine (P11).
 3. A files-mode writer refusing under the marker.
 4. Two concurrent writers: one `CLAIMED`, the other exit 2; two `HOLD`s in commit
-   order.
-5. Two renderers racing: one commit per sequence, in order.
-6. A stray commit to a rendered path stopping the renderer.
+   order, the later writer exiting the code the design names (P9); ten
+   concurrent writers on distinct objects, none refused as busy (ADV-C7).
+5. Two renderers racing: one commit per sequence, in order; a renderer killed
+   between its commit and its push blocking nothing (the architecture seat's
+   concern 3, ADV-C6).
+6. A stray commit to a rendered path stopping the renderer, and each way out
+   resuming it: the v1.1.0 `lanes-edit.sh` pushing to a primary fixture, then
+   the write imported, or reverted by the renderer (ADV-C2).
 7. The import's byte-identical proof, and its refusal on a difference.
-8. Rollback: files byte-identical, marker gone, SQL writes refused.
+8. Rollback: files byte-identical, marker gone, SQL writes refused; and a
+   rollback with the database unreachable, after which the database's return
+   lets no `mode=primary` writer commit (ADV-C1).
 9. The measured cost of one write, recorded in the PR body: a median and a p95
    over warm runs, with the cold first call beside them, on a named host, store
-   and path (Q10).
+   and path (Q10); and what a lane feels (P5): each verb timed end to end, from
+   exec to exit, warm and cold, for `log NOTED`, `claim`, a landing's five
+   writes and `lane-start --dry-run`, beside the same verbs in files mode on the
+   same host.
 10. The guard through the service: byte-identical answers (stdout, stderr less
     the fallback line, and the exit code), the fallback line, no credential in
     any environment a session inherits, and under 50 ms, recorded in the PR body
-    (Q10).
+    (Q10), with today's direct guard beside it (P5); and the hook inside its
+    5 s against a database that does not answer (the architecture seat's
+    concern 1, ADV-C4).
+11. A lane's day on `mode=primary` (the product seat's P6), on the local cluster
+    with a bare-repo origin: `lane-start` for a new lane, then a resume;
+    `claim`; a `HOLD`, `LANDING` and `LANDED` set; `lane-handoff`; and
+    `lane-end`. After each act the mirror is byte-identical, with one commit per
+    seq, and no handoff commit rewrote a render commit; with the cluster stopped
+    mid-day, the outcomes are Q8's.
+12. A COMMIT in doubt (ADV-C3): a `psql` wrapper that commits and then exits 2,
+    and one that exits 2 without committing. Each ends with exactly one journal
+    entry for the write, and the writer exits 0, after a clean retry where the
+    first COMMIT never landed.
+13. The drill (P7; the adversary seat's ADV-C10): import, cutover, writes, an
+    outage of the database with its refusals, rollback, then a files-mode write
+    that succeeds, while a workstation not yet cleared refuses.
 
 ### The manual
 
@@ -555,13 +784,33 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 - The new section sits beside "The derived index (Amendment 14)"
   (`docs/README-lanes.md:3647`), and the sections that describe writes and
   reads say where `mode=primary` changes them.
+- **It opens with "What changes for a lane"** (the council's product seat, P10):
+  exit 69 and what to do; the guard during an outage and its two ways out (S3);
+  `commit` and hand edits refused; the files as a mirror that lags, and the
+  verbs that give the truth (`who`, `history`, `lanes`, `lanes-index status`);
+  the claim comment's seq and how to find its commit (Q19); the claim loser's 2
+  instead of 7 (Q12); and the later `HOLD` or `LANDING` writer's code (S6). The
+  runbook posts the same text on each project's coordination issue before the
+  window. The cutover changes the tools of every project that shares the
+  register, dormant ones included, and today lanes and Brett read `LANES.md`
+  and the logs directly.
+- **A runbook for acts 3 and 4 and the rollback** (P7): every act, word, command
+  and owner, in order, among them the readiness check in each environment
+  ("Operator tools", above), the freeze (Q4(a)), R3b's smoke test (one `NOTED`,
+  its row, `Register-Seq: 2`, a lag of 0) and the rollback's triggers. It
+  proposes one bench image rebuild that carries both the re-vendor (Q24) and the
+  configuration mount (Q23), since each rebuild ends every lane in the
+  container, and a rehearsal of the real register into a scratch schema before
+  act 4. Test 13 is its drill.
 
 ## Not in this change
 
 - **Act 3, Brett Heap's:** Eagle and Raven configured together, with
   `mode=primary`, `store=postgres`, the register-writer and reader roles, and act
   2 installed on both. Whether `mode=primary` is written at act 3 or at the
-  cutover is Q20; the database itself, and Raven's role, are Q22. Not done: at 2026-10-31T18:51Z the bench this was drafted
+  cutover is Q20; the database itself, and Raven's role, are Q22. This change
+  builds the tools act 3 and the cutover use ("Operator tools", above).
+  Not done: at 2026-10-31T18:51Z the bench this was drafted
   on had no `lanes-index.conf` and `LANES_INDEX_CONFIG` unset, as Amendment 23
   measured on Eagle on 2026-10-17.
 - **Act 4, Brett Heap's:** the cutover in the window he names, and rollback the
@@ -588,8 +837,10 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 - **The 001 feature adopting the socket API** (T055, on opensoft/openRepoTools'
   branch `001-separate-swap-ctx-handoff` at `3c26041`), and telling the Codex
   lane, which goes through Brett.
-- **#145 on a files-mode estate.** S6 removes the end-of-file conflict only where
-  the register is SQL.
+- **#145 on a files-mode estate,** which is Amendment 23's act 2's: its S3–S4
+  re-apply a tail append on a fresh fast-forward instead of rebasing it (P1).
+  S6 removes the end-of-file conflict by transaction only where the register is
+  SQL.
 - **The protocol texts.** Amendments 22 and 23 live in brettheap/new-workstation;
   this change adds no rule and edits no amendment.
 
@@ -666,8 +917,10 @@ R3 completes this order, as a proposal (Q24 and Q25 carry its questions):
   after it lands. `bump-leg.py` is not at the root; it runs from an openRepoShape
   checkout.
 - **Its sequence:** the OpenSpec PR before the feature starts; Speckit 007 from
-  an assembly-root clone; the code PRs, after Amendment 23's slices 1a and 1b
-  (Q6), serialized on `lanes-edit.sh`; the spec docs PR; a draft root PR bumping
+  an assembly-root clone; the code PRs in Q6's order (under its (c), split by
+  seam: the parts that do not run through `lanes-edit.sh`'s write seams first,
+  the write path after Amendment 23's slices 1a and 1b, then the renderer's git
+  half), serialized on `lanes-edit.sh`; the spec docs PR; a draft root PR bumping
   both legs to the PR heads, so `exact-pins` proves code, spec and root docs
   together, the only run that does; the legs landed on the proven heads, then
   the final root bump; v1.2.0 (Q24); the installs, acts 3 and 4, and the archive
@@ -684,6 +937,17 @@ R3c). Q1 is answered. Q2(b), Q6, Q8 and Q11–Q14 carry R2's questions for Brett
 B1–B8; Q15–Q17 carry the QA seat's; R3's twelve questions for Brett and its
 further ones are under Q4, Q6–Q8, Q13, Q17, Q18 and Q19–Q25. Where the reports
 favour an option, the question says which; that is evidence, not a decision.
+
+The council (#165 comments 6548737562, 6548690085 and 6548670312;
+`council-review.md`) judged the questions under their recommended answers and
+adds Q26–Q29. Where a seat differs from a recommendation or adds to it, the
+question says so. Where the product seat only agrees with the recommendation,
+it is listed here rather than under each: Q4(c) (i), Q4(d) (i), Q7 (A), Q12
+(a), Q13 (a), Q14 (refuse `wip init` under `lanes/STORE`), Q18 (A), Q19 (A),
+Q21(a) (A), Q23 (a) and Q24. Round 1 of Brett Heap's questions, put to him on
+2026-10-31 (asked at 20:07Z, corrected at 20:26Z) and not answered when this
+was written, is Q2(a) and (b), Q6, Q8 and Q20; the council's positions are
+recorded under each.
 
 1. **The test strategy: answered.** Brett Heap, in lane 3's session at
    2026-10-31T19:32:08Z, verbatim: "1A and 2A" (#165 comment 6548141614), on
@@ -735,6 +999,17 @@ favour an option, the question says which; that is evidence, not a decision.
      fallback), or does it refuse with 69? Clause (b)'s wording supports the
      first, the fold's "one holder instead of every session" the second; neither
      report favours one.
+   - **Round 1, with the council's positions.** Lane 3's recommendation to Brett
+     on (a) and (b), now also the council's product seat's (P4): each
+     `lanes-edit.sh` write opens its own transaction with its own
+     REGISTER-WRITER credential and goes on when the service is down; the
+     service holds one connection for the guard's reads and the other reads.
+     P4's reason: a local process must not add a second outage mode to writes,
+     which Amendment 22's availability argument does not cover. The
+     architecture seat's concern 1 holds under either answer: every connection,
+     the writers' included, sets its own timeouts (the service, above). The
+     adversary seat takes no position. Whether act 4 waits for the service at
+     all is Q29.
    - (c) Is it one process per workstation or per bench container? Containers on
      one host share the projects mount (Amendment 23's S1), but on 2026-10-23
      lanes found that py-bench and cloud-bench do not share `/tmp`, and
@@ -830,7 +1105,16 @@ favour an option, the question says which; that is evidence, not a decision.
      reorders S5 and needs his word; (iii) none, relying on abort and re-import.
      R3 recommends (i), with a cutover and a rollback rehearsed first on a
      scratch schema, and advises against (iii) at an 18 s median gap. The window
-     and the rollback word are Brett's to name.
+     and the rollback word are Brett's to name. The council's product seat
+     (P13, `clarifications.md`) prefers (ii′): rehearse the import into a
+     scratch schema, then push `lanes/STORE` as the freeze and import at its
+     parent, wherever every environment passes the readiness check ("Operator
+     tools", above), and otherwise (i); it needs no drain and no prompt to each
+     pane, and its minute or two of 69s rehearses the outage path. Against it,
+     from the adversary seat's ADV-C2: a stale writer that does not know the
+     marker pushes files after it, and the readiness check, a check at one
+     moment, cannot rule one out. The adversary seat holds that (i)'s freeze and
+     R3's tree-id abort answer its own earlier case.
    - **(b) For Brett (R3's question 9, from R3b 7): a rollback with the database
      down.** Options: (i) as ratified only, from a mirror last shown current,
      otherwise wait; (ii) also prove "current" from the mirror tip and the
@@ -838,7 +1122,12 @@ favour an option, the question says which; that is evidence, not a decision.
      `Register-Seq` covers every seq still in a writing workstation's local
      spool, written before COMMIT, with R3b's `Register-Head` kept in the
      renderer's status file rather than the commit, so two renderers' commits
-     stay identical. R3 recommends (ii).
+     stay identical. R3 recommends (ii), and the council's product seat agrees.
+     The adversary seat (ADV-C1) finds that (ii)'s proof fails where a spool
+     lives in one environment and is lost with its container, so S5 (above) now
+     requires spools the operator can list; and that under either option a
+     rollback taken with the database down leaves the switch at `primary`,
+     which S5 now answers.
    - **(c) For Brett (R3b's question 5): stranded records.** Options: (i) import
      origin only, and lanes publish or archive their own before the window
      (Amendment 23's S6.3); (ii) harvest local-only lines into SQL at the import.
@@ -871,16 +1160,39 @@ favour an option, the question says which; that is evidence, not a decision.
    change build on that act's publish act (`commit_publish` in its drafts) and
    `<W>-lanes/<lane>/` after its six PRs are re-homed to
    opensoft/openRepoTools-code and land, or carry only what the renderer needs?
-   Who re-homes those PRs, and does this change wait for them? That is for Brett
-   and lane openRepoShape-2, with lane 3.
+   Does this change wait for them? That is for Brett and lane openRepoShape-2,
+   with lane 3. Who re-homes them, and by when, is Q28.
    - **Options:** (a) build all of #165 on today's `commit_push` (R3's (b));
      (b) wait for all six of act 2's PRs to be re-homed and land, then build all
-     of #165 (R3's (a)); (c) split #165: its SQL half now, on `2a057a6d` (the
+     of #165 (R3's (a)); (c) split #165 by seam (the council's architecture
+     seat, concern 2). R3 drew the line between an SQL half on `2a057a6d` (the
      storage layer, the journal, S1's transactions and 69, S3's readers, S4,
      S5's import with its scratch-tree render and proof, S6, the roles and the
-     service), and its git half after act 2 lands (the renderer's commit and
-     push, the files-mode marker refusal, rollback's push, and agreement tests
-     3, 5 and 6); (d) fold act 2 into 007, one design and one test plan, which
+     service) and a git half after act 2 (the renderer's commit and push, the
+     files-mode marker refusal, rollback's push, and agreement tests 3, 5 and
+     6); but on `mode=primary` the write path sits at the three seams
+     slices 1a and 1b rewrite: the path the resolver sets (`LANES_REPO`
+     defaults to `W`, `code/lanes-edit.sh:1053–1056`), `handle_preexisting`
+     before each writing verb's edit (`:2701`), and `commit_push` at the end of
+     each (`:2292`), where `claim`'s race is decided in the `pull --rebase`
+     branch (`CP_AFTER_REBASE`, `:2429–2430`). So:
+     - **now, on `2a057a6d`:** everything that does not run through
+       `lanes-edit.sh`'s write seams: `lanes-index`'s schema, journal, switch
+       and roles; `import --at` with its scratch-tree render and proof; `status`
+       and `reconcile`; the renderer as a pure function from the journal to
+       file images, with no git; the service and its read API; and the readers'
+       SQL path, entered at `register_text_checked` (`code/lanes-edit.sh:3597`);
+     - **after slices 1a and 1b land in the code leg:** the write path: S1's
+       transaction at the commit seam, M4's refusals, S6's pre-check and hold
+       order, and the marker check after S3's fetch;
+     - **then:** the renderer's commit and push, rollback's push, and agreement
+       tests 3, 5 and 6, which wait for 2a and 2b only if the renderer commits
+       on the lane's HEAD (S2, "The renderer leaves nothing on a lane's HEAD");
+     - until the renderer's git half is installed, `lanes-index` refuses
+       `mode=primary`, so a code-leg `main`, or a release cut between the parts,
+       cannot write SQL with no mirror;
+
+     (d) fold act 2 into 007, one design and one test plan, which
      needs openRepoShape-2's release or Brett's ruling and a new independent
      reviewer, since lane 3 reviewed act 2 (R3's (c)). Under (c), R3 adds the
      order of act 2's slices before the git half, its (a′): re-home and land
@@ -898,7 +1210,24 @@ favour an option, the question says which; that is evidence, not a decision.
      verbs that do not fetch before they edit give the marker check nowhere to
      sit. Act 4 cannot run before both halves exist, so the split loses nothing.
      Its cost: the git half waits on another lane's six stacked drafts, and
-     every line number cited here moves.
+     every line number cited here moves. Split by seam, what waits is the write
+     path, on 1a and 1b, and the renderer's git half; the parts off the seams go
+     on now.
+   - **Round 1, with the council's positions.** Lane 3's recommendation to Brett
+     is (c), split by seam as the architecture seat words it, with R3's (a′).
+     The architecture seat's reason: built as R3's line has it, the SQL half
+     adds refusals to code that 1b deletes and hooks its transaction into a
+     `commit_push` that act 2 replaces, so whichever lands second is reworked.
+     The product seat agrees with (c) and (a′) and adds two things (P2). First,
+     act 4 also waits for 2a (#312), 2b (#316) and 3 (#311), with #308
+     trailing: #311 changes the skill's commit block, one of the three handoff
+     blocks S1 (above) names as a hazard, and until 2a and 2b land, launches
+     keep stranding stamps in `W`. Second, the re-homing needs an owner and a
+     date (Q28). On the renderer's merge the two seats differ: the product seat
+     would have it wait for 2a, 2b and 3 as well, the architecture seat for 2a
+     and 2b only if the renderer commits on the lane's HEAD (S2), which the
+     private-index form never does under either reading of Q27. The
+     adversary seat's ADV-C6 bears on the same seam and is met in S2.
 7. **How a writer runs one transaction (R2).** Through `psql` with one
    `BEGIN … COMMIT` session and `ON_ERROR_STOP`, through a `lanes-index`
    subcommand, or through the service? R1 measured 14.7 ms per write through a
@@ -920,7 +1249,8 @@ favour an option, the question says which; that is evidence, not a decision.
      row: a write reads a snapshot at head `n`, runs today's verb code unchanged
      on a scratch copy, and commits SERIALIZABLE only if the head is still `n`;
      if the head moved, or on 40001 or 40P01, it re-reads and re-checks, up to
-     six times, then exits 69 "register busy" (Q15); R3 holds it equivalent to
+     six times, then exits "register busy" (Q15; R3 gave it 69, and S1 above
+     now gives it a code of its own, ADV-C7); R3 holds it equivalent to
      S3's "inside the act's transaction"; (B) a PL/pgSQL function per verb, a
      second copy of every rule; (C) a long-lived `psql` coprocess holding a
      SERIALIZABLE transaction across the bash logic, the writer's form of the
@@ -928,7 +1258,14 @@ favour an option, the question says which; that is evidence, not a decision.
      any of them the retry keys on the SQLSTATE, not on `psql`'s exit code, and
      `Register-Seq` never comes from a SEQUENCE, which leaves gaps and does not
      follow commit order. Against R1's 14.7 ms per write and the register's 18 s
-     median gap, the head row is rarely contended.
+     median gap, the head row is rarely contended. The council's architecture
+     seat agrees, and notes that `lanes-index` already does an optimistic
+     compare-and-swap, (A)'s head row on a small scale; the product seat agrees
+     with (A). The adversary seat (ADV-C7) disputes "rarely contended": the
+     conflict window is the whole verb run on the scratch copy, not 14.7 ms
+     (the helper's bash parse alone measured 33–40 ms), and writes come in
+     bursts (five per landing in about 40 s on 10-09). Test 4's burst case
+     decides it.
 8. **`lane-start`, `lane-handoff` and the handoff skill with the database
    unreachable (R2's B2 and B3, for Brett).** Amendment 22's S3 makes all three
    readers that refuse with 69. Amendment 8(d) and Amendment 23's S3 say a stamp
@@ -960,6 +1297,16 @@ favour an option, the question says which; that is evidence, not a decision.
      and the sidecars untouched. So for `lane-start` only the exit code of a
      refusal that exists today changes. R2's W1–W8 are the same writes. R3's
      option B is (ii) with the handoff also writing nothing.
+   - **Round 1 on (a), with the council's positions.** Lane 3's recommendation
+     to Brett is R3's option A (Finding K, with D8's labelled mirror read under
+     (b)). The adversary seat's ADV-C5 refines option A without changing it:
+     `code/lane-start:1154`, where an unknown code from `canon-lane` is a note
+     and the launch carries on with the name as typed, joins the refusals
+     before anything is renamed or written, since carrying on makes a second row
+     for a lane already running (S3, above); and the six read verbs callers
+     branch on join S3's table. Under (iii), `:1154` would stay a note, and that
+     hazard with it. The product seat agrees with option A. Agreement test 11
+     asserts Q8's outcomes with the cluster stopped (P6).
    - (b) **`lane-handoff` and the skill (B3).** The reads that name the lane come
      before the handoff file is published (`code/lane-handoff:1448–1463`, reads
      at `:1649–1815`, `publish-handoff` at `:2639`;
@@ -980,6 +1327,12 @@ favour an option, the question says which; that is evidence, not a decision.
      Amendment 23's S3 and `R-A11-11`. Its Finding K missed the naming reads
      before the handoff file (the architect's D8), and R3 carries D8's remedy,
      the labelled mirror read, as part of (i).
+   - **Round 1 on (b), with the council's positions.** Lane 3's recommendation
+     is R3's option A, as under (a). The product seat agrees and refines it
+     (P15): with the database down, the 69 note that `lane-handoff` and the
+     skill print names how the `SWAPPING` lane's `PAUSED` record is completed
+     later: the late `PAUSED` path, who runs it, and when. The architecture and
+     adversary seats take no further position.
 9. **Exit codes.** 69 joins `lanes-edit.sh`'s table. Which code does each reader
    return on `mode=primary` where a read fails with 1 or 10 today? S4 keeps
    `managed-projection`'s 1 for an unreachable database where S3 gives the other
@@ -1028,7 +1381,11 @@ favour an option, the question says which; that is evidence, not a decision.
     whenever the service is down. The evidence favours (a): #165's body calls the
     fallback "a READ fallback to the same truth", lane 4's architect seat writes
     it that way, and (b) would block every prompt of every lane on a service
-    outage while the database is up.
+    outage while the database is up. The council: the product seat agrees with
+    (a), and its P4 makes the direct read the path act 4 relies on (Q29); the
+    architecture seat's concern 1 adds that under (a) the fallback's own
+    connection sets its own timeouts inside the 5 s (the service, above). What
+    the guard reads when the database itself is down is Q26.
 12. **A claim loser's exit (R2's B5, for Brett).** Amendment 22's S6 says the
     loser "sees it and exits 2, writing nothing", as #165's body does. The exit
     table gives 7 to "ANOTHER ACT GOT THERE FIRST, and this one wrote nothing.
@@ -1073,8 +1430,10 @@ favour an option, the question says which; that is evidence, not a decision.
     simplest form for a claim; the QA seat's fix is (a). No text sets a bound;
     the nearest is `lanes-edit.sh`'s six attempts for a lost push race
     (Amendment 23's S4). R3's optimistic head row (Q7, its option A) is a form
-    of (a): up to six re-reads on a moved head, 40001 or 40P01, then exit 69
-    "register busy".
+    of (a): up to six re-reads on a moved head, 40001 or 40P01, then "register
+    busy", which R3 gave 69 and S1 (above) now gives a code of its own, so that
+    a caller can tell a busy register from an outage (the council's adversary
+    seat, ADV-C7). Which code, is the design's, with Q9's.
 16. **A COMMIT whose outcome is unknown (the QA seat's QA-5).** Options: (a) an
     exit-3 analogue, "cannot confirm whether it committed", telling the caller
     to look by journal sequence before retrying, as `lanes-edit.sh`'s 3 does for
@@ -1084,14 +1443,21 @@ favour an option, the question says which; that is evidence, not a decision.
     safe. R3's head row gives a write whose COMMIT is in doubt one known seq,
     `n+1`, to look for on reconnect, and its spool entry, written before COMMIT,
     stops a rollback from passing over it (Q4(b)); neither of R3's reports gives
-    the exit code, so that part stays open.
+    the exit code, so that part stays open. The council: the adversary seat's
+    ADV-C3 makes (b)'s key a requirement, as a write id (S1, above), since a
+    look by seq alone cannot tell this write from a rival's that took `n+1`;
+    the product seat (P16, `clarifications.md`) would report the case with exit
+    3, naming what to look for. What stays open is the report's code.
 17. **The later `HOLD` or `LANDING` writer (the QA seat's QA-1; R2's design
     questions).** S6 says the later writer's transaction "reports the earlier
     line to it before it acts". Is that a refusal, and with which code, or a
     report with exit 0, and is the later writer's own line still written? Does
     `append-line` parse the four Rule 6 and Amendment 10 shapes inside the
     transaction, as `lanes-index`'s `REGISTER_KIND_RE` does, or do `HOLD` and
-    `HOLD RELEASED` get a verb of their own? No text decides either.
+    `HOLD RELEASED` get a verb of their own? No text decides either. The
+    council's product seat (P9) makes the later writer's verb exit non-zero
+    with its own code (S6, above), and prefers a verb of its own for `HOLD`, so
+    its shape is checked, over `append-line` parsing free text.
     - **For Brett (R3's question 3, from R3a 2): which lines take or release
       `main`.** Options: (A) strictly, `HOLD` and `LANDING` take it, `HOLD
       RELEASED` and `LANDED` release it; (B) as (A), plus `HOLD WITHDRAWN` and
@@ -1099,7 +1465,7 @@ favour an option, the question says which; that is evidence, not a decision.
       continue the original, and only `LANDED` releases a `LANDING`; (C) on
       primary, `append-line` refuses any other HOLD- or QUEUED-shaped line. R3
       recommends (B): under (A) a withdrawn `HOLD` reads as live for up to 30
-      minutes.
+      minutes. The council's product seat agrees with (B), with P9.
 18. **`lanes/repos.tsv` on a primary estate (R2's design questions; the QA
     seat's QA-2).** It is read by `canon_object`, `resolve-home` and
     `who --landing`, written by no verb, and kept by a person as the alias
@@ -1116,7 +1482,9 @@ favour an option, the question says which; that is evidence, not a decision.
       out of `lanes/` before the cutover; and, for those files, R3b's (D):
       import them as opaque files, edited through a write verb. R3 recommends
       (A), which is what S2 above states after the QA seat's QA-2; Brett's word
-      confirms or changes it.
+      confirms or changes it. Under (A), `claim` reads `repos.tsv` through
+      `resolve_home` (`code/lanes-edit.sh:16509`) outside the transaction (the
+      council's adversary seat, ADV-C10, `clarifications.md`).
 19. **What a claim's comment cites (R3's question 4, from R3a 3; for Brett).**
     Amendment 7's claim comment cites the log commit's sha, which cannot hold
     when the render follows the write. Options: (A) "register seq `<n>`",
@@ -1128,6 +1496,13 @@ favour an option, the question says which; that is evidence, not a decision.
     the workstations act 3 configured". Options: (A) at act 3; (B) at the
     cutover, with act 3 leaving `mode=index`. R3 recommends (B): under (A) every
     write refuses with 69 between acts 3 and 4.
+    - **Round 1, with the council's positions.** Lane 3's recommendation to
+      Brett is (B). The product seat agrees strongly, and adds the flip as a
+      command, run once per host (P8; "Operator tools", above). The adversary
+      seat notes that under (B) no primary writer exists before the flip, so a
+      cutover whose push aborts leaves the switch harmless, and that the abort
+      path should still set the switch back. The architecture seat takes no
+      position.
 21. **Workstations that are not `mode=primary` once `lanes/STORE` exists (R3a's
     question 5, R3b's question 4; R2's design question 8; for Brett).**
     - (a) What an unconfigured workstation's readers do: (A) acts and the guard
@@ -1138,7 +1513,15 @@ favour an option, the question says which; that is evidence, not a decision.
       the renderer's own stop is the guard; (B) a push ruleset on `lanes/**`
       with a renderer identity (a deploy key or an App) as its only bypass,
       which needs that identity, since every writer pushes as brettheap today.
-      R3 recommends (B) if the org's plan supports it.
+      R3 recommends (B) if the org's plan supports it. The council splits. The
+      adversary seat (ADV-C2) makes (B), or an equal server-side gate, a
+      precondition of act 4, (B′): a readiness check before act 4 cannot see a
+      container started after it, and the copy installed on py-bench today has
+      no marker check (S2, above). The product seat (P18, `clarifications.md`)
+      would defer it: it needs a renderer identity that does not exist, and the
+      readiness check meets the stale-install risk first. The architecture seat
+      takes no position. Where the plan does not support (B), whether act 4
+      waits is Brett's.
     - R3's other remedies for a stale writer (S1, above): Amendment 23's slices
       installed first (Q6), a per-environment readiness probe of installed
       digests before act 4, the workBenches re-vendor and image rebuild (Q24),
@@ -1149,7 +1532,16 @@ favour an option, the question says which; that is evidence, not a decision.
     stops with 69: Brett's to choose, and no report settles it. Raven has never
     written the register: (a) configure it with Eagle, as act 3 says; (b) rule
     that Raven is not a writing workstation. R3 recommends (a), because an
-    unconfigured old install could push files later.
+    unconfigured old install could push files later. The council's product seat
+    (P14, `clarifications.md`) offers (c): the database on Eagle, where its
+    outage coincides with the lanes' own, so Amendment 22's availability
+    argument holds; rollback from a current mirror, then a re-import, as the
+    disaster recovery; a downtime limit Brett names; and Raven upgraded to act
+    2's tools but not configured, so the marker stops it. (c) departs from
+    Amendment 22's "Eagle AND Raven configured together" (its S1 and act 3), so
+    it needs his word. Against its recovery, from the adversary seat's ADV-C1:
+    the mirror backs up only what it has rendered, and a write not yet rendered
+    exists only in SQL.
 23. **The configuration and password file on benches (R3's question 11, from
     R3c 6; for Brett).** `~/.config/openRepoTools` is not a bench mount, and the
     file must stay out of git trees and `~/.agents/` (Amendment 14(c)). Options:
@@ -1183,6 +1575,72 @@ favour an option, the question says which; that is evidence, not a decision.
       stray `033-…` branch under opensoft/workBenches#129's stricter "max over
       every place" rule. R3 recommends 007, which "Speckit handoff" below
       names.
+26. **The guard while the database is down (the council's product seat, P3;
+    for Brett).** S3 makes the guard fail closed, so a database outage refuses
+    every prompt of every lane (S3, above). May the guard instead answer from a
+    mirror that Q4(b)(ii)'s proof shows is current, labelled `read: mirror`,
+    while every write and every other deciding read still refuses? Options: (a)
+    yes; (b) no, as S3 is ratified: the guard refuses with 2 until the database
+    returns or a rollback runs. The product seat recommends (a): no binding can
+    change while writes refuse, and it keeps Brett able to talk his lanes
+    through the outage. (a) narrows Amendment 22's S3, which names the guard
+    among the readers that fail closed, so it needs his word. Beside it, from
+    the adversary seat's findings: the proof of "current" fails where a spool
+    is lost with its container (ADV-C1), so (a) needs spools the operator can
+    list; a mirror that a divergence has stopped is not current (ADV-C2); and in
+    an outage that is not estate-wide another environment still writes, so the
+    proof must cover every writing environment's spool. The architecture seat's
+    concern 1 holds either way: the guard decides inside its 5 s. Its relation
+    to Q11: Q11 decides what the guard reads when the service is down and the
+    database is up, this question what it reads when the database itself is
+    down. (a) pairs with Q11(a); under Q11(b) a service outage would refuse
+    every prompt while a database outage would not.
+27. **What "takes S3's checks" means for the renderer (the council's
+    architecture seat, concern 3; for Brett).** Amendment 23's "Relation to
+    Amendment 22" says the renderer "takes S3's checks before it renders" (its
+    lines 339–342). S3's rows protect a lane checkout's HEAD, index and working
+    tree: an operation in progress, a branch that is not `main`, staged entries,
+    unpushed commits, a diverged branch; its step 3 fast-forwards that tree.
+    Options: (a) for a renderer that builds its commit on `origin/main` with a
+    private index and never touches the lane's HEAD, index or working tree,
+    "takes S3's checks" means S3's fetch; (b) as written: the renderer takes
+    every S3 check, and the fast-forward, in the lane's checkout. The
+    architecture seat proposes (a) and asked lane 3 to confirm it. Lane 3
+    agrees with its purpose, but (a) narrows ratified wording, so it is
+    Brett's. S2 (above) is written to work under either. Under (a), the
+    renderer needs neither the lane's lock nor a clean checkout, and a lane's
+    own stranded commit or staged entry never stops the mirror. Under (b), the
+    renderer takes the lane's lock for S3's rows and fast-forward, so that
+    state stops the checkout's renders, and the lane's stamp and handoff
+    commits can queue behind a render. Under both, a render commit built with a
+    private index is never on the HEAD that the handoff blocks rebase, so the
+    renderer's git half need not wait for 2a and 2b (Q6); only an in-place
+    renderer would.
+28. **Who re-homes Amendment 23's act-2 PRs, and by when (the council's product
+    seat, P2; split out of Q6; for Brett).** The six drafts (#282, #307, #312,
+    #316, #311, #308) were opened on opensoft/openRepoTools before the triad
+    cutover, and nothing names who moves them onto opensoft/openRepoTools-code.
+    Under Q6(c) the write path waits on 1a and 1b, and under P2 act 4 waits on
+    2a, 2b and 3 as well, so all of #165's value waits on the re-homing.
+    Options: (a) lane openRepoShape-2, the drafts' author, whose act 2 it is,
+    by a date Brett names; (b) lane 3, under #165, with openRepoShape-2's
+    release, which costs act 2 a new independent reviewer, since lane 3
+    reviewed it (Q6(d)); (c) another lane Brett names, with openRepoShape-2's
+    release. R3 leaves the owner to Brett, openRepoShape-2 and lane 3, and no
+    seat names one.
+29. **Whether act 4 waits for the register service (the council's product
+    seat, P4; for Brett).** The service is this change's largest unknown
+    (Q2(c)–(h)) and the code leg's first long-lived process. With every write
+    opening its own transaction (Q2(a) and (b) as lane 3 recommends) and the
+    guard's fallback reading the database itself (Q11(a)), the cutover needs
+    neither. Options: (a) `lanes-register` is 007's last slice, and act 4 waits
+    for it only if the guard measured without it (tests 9 and 10, P5) is over a
+    budget Brett names; (b) act 4 waits for the service, as #165's fold, "one
+    holder instead of every session", reads. The product seat recommends (a),
+    which rests on Q2(a) and Q11(a) as recommended. The architecture seat's
+    concern 4 (`clarifications.md`) asks for today's guard measured in parts
+    before Q2(g) is settled, which (a)'s measurement also needs. The service
+    stays in #165 either way, on Brett's word "fold the guard into 165".
 
 ## Speckit handoff
 
@@ -1211,8 +1669,8 @@ favour an option, the question says which; that is evidence, not a decision.
 - `sql-register`: the `mode=primary` register: the configuration and the estate
   switch, one transaction per write and exit 69, the write journal and the
   renderer, readers that fail closed and the reads that may use the mirror, the
-  managed seam, import and rollback, claim order by commit, the roles, and the
-  agreement tests.
+  managed seam, import and rollback, claim order by commit, the roles, the
+  operator tools for acts 3 and 4, and the agreement tests.
 - `register-service`: the `lanes-register` local-socket service, its read API,
   the `UserPromptSubmit` guard and the `SessionStart` block as its clients, and
   the guard's read fallback when the service is unavailable.
@@ -1238,7 +1696,10 @@ change `skip-no-lane-guard`, not yet archived) is kept unchanged, not modified.
     configuration, the register's tables, the journal and the switch (in a
     schema Q3 settles), `import --at` and `rollback` (and a separate `cutover`
     command, if Q4 takes R3's form), and `status` and `reconcile` for the
-    mirror.
+    mirror; the single-write import and the renderer's revert for a divergence
+    (ADV-C2); a read of the journal by write id and by seq (ADV-C3), here or in
+    `lanes-edit.sh` as the design places it; and the bootstrap, the readiness
+    check and the `mode=primary` flip ("Operator tools"; P8).
   - `code/lane-start`, `code/lane-handoff`, `code/lane-end`, `code/lane`,
     `code/lane-rename` and `code/lanes`: their reads under S3, and the default
     arms that let an unknown exit code through (Q9).
@@ -1246,9 +1707,11 @@ change `skip-no-lane-guard`, not yet archived) is kept unchanged, not modified.
     `origin/<branch>` (`:706`, `:997`, `:5556`), which decide `--yes`'s
     deletions by a `LANDED` line (`:974`), move behind a verb under S3.
   - `code/skills/handoff/SKILL.md` and `code/skills/restart/SKILL.md`: their
-    reads under S3 (`sread` and `lread`, both `LANES_NO_FETCH=1`); and the
-    handoff skill's commit block (`:424–457`), whose `pull --rebase` (`:449`)
-    would rebase unpushed render commits.
+    reads under S3 (`sread` and `lread`, both `LANES_NO_FETCH=1`). The handoff
+    skill's commit block (`:424–457`), whose `pull --rebase` (`:449`) would
+    rebase unpushed render commits, is Amendment 23's slice 3 (#311) to replace;
+    this change edits it only if Q6's answer lets #311 land after act 4, and
+    that edit would duplicate #311's (the council's product seat, P2).
   - `code/openRepoTools`'s `wip init` (`:5026–5080`): its seed commit under
     `lanes/` would be a stray commit under `lanes/STORE` (Q14).
   - `lanes-register`, new in a form Q2 decides; `code/openRepoTools`'s
@@ -1273,8 +1736,9 @@ change `skip-no-lane-guard`, not yet archived) is kept unchanged, not modified.
   creates a real database" (`:3981`), which the local cluster ends.
 - **The assembly root,** opensoft/openRepoTools: the pin bump; and `AGENTS.md`'s
   account of the suite (`:341–346`: "The suite creates no real repository and
-  reaches no network"), which a cluster listening only on a Unix socket keeps
-  true and which then names it; and `.github/workflows/composed.yml` only if the
+  reaches no network"), which a cluster listening only on a Unix socket, and
+  the timeout tests' listener on the loopback address (ADV-C4), keep true, and
+  which then names them; and `.github/workflows/composed.yml` only if the
   switch that makes CI refuse the real-engine skip is a workflow variable (R3c),
   landed before the first code PR that needs a database.
 - **Governed files:** `openspec/` text, `.github/workflows/`, and every file that
