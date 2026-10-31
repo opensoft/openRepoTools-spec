@@ -222,16 +222,16 @@ that checks it; the agreement tests are listed together at the end.
   transaction re-runs from its reads, so S6's losing claimant sees the winner
   and exits 2. Exit 69 stays for an unreachable database and any other refusal.
   A write that cannot get its turn in time is "register busy", not an outage:
-  under Q7's (A) a spent retry bound, under (A′) the head row's lock not
-  granted within the writer's limit. It exits with a code of its own that the
-  design names, so a caller such as `lane-start` can tell the two apart (the
-  council's adversary seat, ADV-C7; lane 2's probes of 2026-10-31); the bound
-  is Q15's. That code narrows Amendment 22's S1, which gives 69 to a
-  transaction the database refuses, and Brett may say "(A′) with 69" (Q7) to
-  keep 69 for "busy" too. It tells a lane that nothing was written and a retry
-  in seconds is safe, where 69 tells it to stop and tell Brett (the council's
-  product seat); the manual lists it (below), and every caller's default arm
-  refuses on it (S3, below).
+  under Q7's (A) a spent retry bound, under (A″) a spent deadline, under (A′)
+  the head row's lock not granted within the writer's limit. It exits with a
+  code of its own that the design names, so a caller such as `lane-start` can
+  tell the two apart (the council's adversary seat, ADV-C7; lane 2's probes of
+  2026-10-31); the bound or deadline is Q15's. That code narrows Amendment 22's
+  S1, which gives 69 to a transaction the database refuses, and Brett may say
+  "(A″) with 69" (Q7) to keep 69 for "busy" too. It tells a lane that nothing
+  was written and a retry in seconds is safe, where 69 tells it to stop and tell
+  Brett (the council's product seat); the manual lists it (below), and every
+  caller's default arm refuses on it (S3, below).
   **The statement order is fixed:** the transaction updates the head row before
   it inserts the journal row. The probes found that inserting the journal row at
   head+1 first turns every lost race into a 23505 on the seq key, an instant
@@ -290,9 +290,9 @@ that checks it; the agreement tests are listed together at the end.
   seat, P11); a hand edit through `commit` refused; a queued handoff commit
   still published; a queued `lanes/` commit refused; a SERIALIZABLE conflict
   retried, not reported as 69; a write that cannot get its turn in time (a
-  spent retry bound under Q7's (A), a lock not granted in the writer's limit
-  under (A′)) reported as "register busy" with its own code, not 69; a COMMIT
-  in doubt recovered by its write id (test 12).
+  spent retry bound under Q7's (A), a spent deadline under (A″), a lock not
+  granted in the writer's limit under (A′)) reported as "register busy" with
+  its own code, not 69; a COMMIT in doubt recovered by its write id (test 12).
 
 ### The write journal and the renderer (S2, as Amendment 23 amends it)
 
@@ -332,7 +332,18 @@ that checks it; the agreement tests are listed together at the end.
   - **if the design commits in place instead,** the next render in that checkout
     discards an unpushed render commit before S3's checks, by S2's own discard
     rule, since SQL holds it. Such a commit is never kept on HEAD the way
-    Amendment 23's S4.5 keeps a writer's, and the publish act still refuses it;
+    Amendment 23's S4.5 keeps a writer's, and the publish act still refuses it.
+    The fence treats it as disposable too (the full report of lane 2's check,
+    its SHOULD f): S3's "unpushed commits" row, at `lane-start`'s stamp and
+    `lane-handoff`'s commit, discards a render commit first, SQL holding it, and
+    does not refuse the checkout on it, so a render killed between its commit
+    and its push leaves the next handoff commit unrefused with no manual step.
+    Only a render commit is disposable, never a lane's own commit under
+    `lanes/`, which is a divergence. How a render commit is recognised is the
+    design's; it has the `Register-Seq` trailer, the journal's fixed author and
+    committer, and a diff confined to the rendered paths. Under the preferred
+    form there is no render commit on HEAD, so the fence has nothing to treat as
+    disposable;
   - **either form works under either reading of "takes S3's checks"** (Q27).
     Read as S3's fetch, the private-index form takes the fetch and nothing else.
     Read as every check, it also runs S3's rows and fast-forward on the lane's
@@ -461,19 +472,22 @@ that checks it; the agreement tests are listed together at the end.
   has been running all day". A static outage hides it, because the read at
   `:1555` refuses next; a one-call blip does not. Where `:1154` stands under Q8
   is recorded there. The busy code (S1) is as new to the default arms as 69 is.
-  Four arms of `lane-start` note an unknown code and carry on, checked at
-  `2a057a6d`: `:1154` (`canon-lane`), `:1262` (`swapped`), `:1271` (`lane-dir`)
-  and `:3430` (`lane-transcript`). The busy code is refuse-class at each of
-  them: under Q8(a)(i) and (ii) the launch refuses, naming the code and saying
-  that nothing was written and a retry in seconds is safe; under Q8(a)(iii),
-  where every refused read is a note, they stay notes (lane 2's SHOULD c; Q9).
+  Five arms of `lane-start` note an unknown code and carry on, checked at
+  `2a057a6d`: `:1154` (`canon-lane`), `:1262` (`swapped`), `:1271` (`lane-dir`),
+  `:3079` (`lane-transcript`, for the row's session cell) and `:3430`
+  (`lane-transcript`, for the last `PAUSED` record's resume id). Lane 2 named
+  four; `:3079` is the same class, and was added with its test. The busy code is
+  refuse-class at each of them: under Q8(a)(i) and (ii) the launch refuses,
+  naming the code and saying that nothing was written and a retry in seconds is
+  safe; under Q8(a)(iii), where every refused read is a note, they stay notes
+  (lane 2's SHOULD c; Q9).
 - Tests: each row of the table, for each reader in it, with the rows marked
   "per Q8" written once Q8 is answered; each mirror read prints its line on
   stderr and keeps its exit; a fake `psql` that fails exactly one call, run
-  across each caller's read sequence (ADV-C5); for each of the four `lane-start`
-  arms above (`:1154`, `:1262`, `:1271`, `:3430`), one test in which the verb
-  exits the busy code and the launch refuses, with the register's rows and log
-  unchanged (and, under Q8(a)(iii), a note and the launch going on); the
+  across each caller's read sequence (ADV-C5); for each of the five `lane-start`
+  arms above (`:1154`, `:1262`, `:1271`, `:3079`, `:3430`), one test in which the
+  verb exits the busy code and the launch refuses, with the register's rows and
+  log unchanged (and, under Q8(a)(iii), a note and the launch going on); the
   guard's refusal on an unreachable database naming the store, the cause and
   both ways out, and `lanes-index status` and `rollback` running with no lane
   session and no guard (P3).
@@ -619,9 +633,10 @@ are the design's (the council's product seat, P8):
   claimants one commits, and the other sees it and exits 2, writing nothing.
   Under SERIALIZABLE the loser's first attempt fails with 40001 and re-runs from
   the pre-check (S1, "A serialization failure is not a refusal"); whether S6
-  uses that or a lock on the object, which takes READ COMMITTED (a lock taken
-  first under SERIALIZABLE still gives 40001, since the snapshot comes before
-  the wait), and the retry bound, are Q15's, and for every write Q7's. Whether
+  uses that or a lock on the object (under Q7's (A′), a lock on the head row),
+  and the retry bound or deadline, are Q15's, and for every write Q7's. Either
+  lock takes READ COMMITTED: a lock taken first under SERIALIZABLE still gives
+  40001, since the snapshot comes before the wait. Whether
   the loser's 2 stands against the exit table's 7 is Q12. `CLAIM-LOST` stays in
   the grammar for the history that has it and is no longer produced. Today the
   race is decided by push order: a losing claim's `CLAIMED` commit is rebased, a
@@ -840,7 +855,9 @@ and credentials, the 69 refusal, the SQL's shape) always run.
    concurrent writers on distinct objects, released together with a window of
    200 ms injected between each one's snapshot and its COMMIT (with no window
    the test passes trivially, as the probes found): all ten commit, none exits
-   busy or 69, and the seqs run 1..10 with no gaps (ADV-C7).
+   busy or 69, and the seqs run 1..10 with no gaps (ADV-C7). It must pass under
+   whichever of Q7's options Brett takes; at six attempts, (A) fails it, as the
+   probes found, so (A) needs a bound that the test passes.
 5. Two renderers racing: one commit per sequence, in order; a renderer killed
    between its commit and its push blocking nothing (the architecture seat's
    concern 3, ADV-C6).
@@ -1083,7 +1100,7 @@ is listed here rather than under each: Q4(c) (i), Q4(d) (i), Q12 (a), Q13 (a),
 Q14 (refuse `wip init` under `lanes/STORE`), Q18 (A), Q19 (A), Q21(a) (A), Q23
 (a) and Q24. Lane 2's probes of 2026-10-31, and its point of 21:14Z on Q26, then
 changed three recommendations that the council had judged: Q7 now recommends
-(A′), where R3 and the product seat chose (A); Q4(b) recommends (iii), where R3
+(A″), where R3 and the product seat chose (A); Q4(b) recommends (iii), where R3
 and the product seat chose (ii); and Q26 recommends (a′), the product seat's own
 narrowing of its (a), which lane 3 adopts. Each question says what changed and
 why. Round 2 of Brett Heap's questions takes "all as recommended" for every
@@ -1438,17 +1455,38 @@ under each.
    (above). Which of the lifecycle acts' writes are
    register writes is answered by R2 (S1 above, "Handoffs stay git files").
    - **For Brett (R3's question 2, from R3a 1).** Options:
-     - **(A′), recommended, new after lane 2's probes:** a lock on the head
-       row. A write begins, locks the one head row first (`SELECT … FOR UPDATE`,
-       at READ COMMITTED), runs today's verb code unchanged and commits, so
-       writes wait their turn instead of retrying. Amendment 22's S6 allows it:
-       a claim runs "SERIALIZABLE (or under a lock on the object)".
-     - **(A)** an optimistic head row: a write reads a snapshot at head `n`, runs
-       today's verb code unchanged on a scratch copy, and commits SERIALIZABLE
-       only if the head is still `n`; if the head moved, or on 40001 or 40P01,
-       it re-reads and re-checks, up to six times, then exits "register busy"
-       (Q15; R3 gave it 69, and S1 above now gives it a code of its own,
-       ADV-C7); R3 holds it equivalent to S3's "inside the act's transaction".
+     - **(A″), recommended, reframed after lane 2's probes:** (A)'s optimistic
+       head row, bounded by a deadline instead of six attempts. A write reads a
+       snapshot at head `n`, runs today's verb code unchanged on a scratch copy,
+       and commits SERIALIZABLE only if the head is still `n`; if the head
+       moved, or on 40001 or 40P01, it re-reads and re-checks until the deadline
+       passes, then exits "register busy" (Q15). Each attempt is one `psql`
+       call, so nothing holds a session open across the shell code, as with
+       `lanes-index`'s existing compare-and-swap. No burst writer is lost: with
+       no cap the k-th writer of a burst commits on its k-th attempt, and the
+       probes drained ten writers in 618, 2259 and 10239 ms at windows of 40 ms,
+       200 ms and 1 s. The cost is re-running the verb per retry: in a burst of
+       k writers, about k(k+1)/2 verb runs in all, 55 for ten. The deadline's
+       value is the design's; it has to exceed the drain time of the largest
+       burst, and lane 2's example is 30 s.
+     - **(A′)** a lock on the head row. A write begins, locks the one head row
+       first (`SELECT … FOR UPDATE`, at READ COMMITTED), runs today's verb code
+       unchanged and commits, so writes wait their turn instead of retrying.
+       Amendment 22's S6 allows it: a claim runs "SERIALIZABLE (or under a lock
+       on the object)". Its caveat: the lock is held across the shell code, so
+       it needs one `psql` session kept open across that code, which is (C)'s
+       mechanism, plus a helper to hold the session; bash 3.2, the hygiene
+       suite's floor, has no `coproc`. The probes: 0 aborts in 120 writes, with
+       the verb's window put inside the transaction as a sleep, which models a
+       held session and not the bash code.
+     - **(A)** an optimistic head row, with six attempts: a write reads a
+       snapshot at head `n`, runs today's verb code unchanged on a scratch copy,
+       and commits SERIALIZABLE only if the head is still `n`; if the head
+       moved, or on 40001 or 40P01, it re-reads and re-checks, up to six times,
+       then exits "register busy" (Q15; R3 gave it 69, and S1 above now gives it
+       a code of its own, ADV-C7); R3 holds it equivalent to S3's "inside the
+       act's transaction". The probes: 4 of 10 writers ran out of attempts in
+       every burst, once the verb took 40 ms or more.
      - **(B)** a PL/pgSQL function per verb, a second copy of every rule.
      - **(C)** a long-lived `psql` coprocess holding a SERIALIZABLE transaction
        across the bash logic, the writer's form of the connection the
@@ -1468,19 +1506,21 @@ under each.
      measured it: ten writers on distinct objects, released together, three runs
      per window. Under (A), from a window of 40 ms up, 27 of 30 writers
      conflicted on their first attempt and 4 of the 10 in every burst exhausted
-     six attempts; with no limit on attempts, the k-th writer needed k attempts.
+     six attempts. With no limit on attempts, which is (A″) with its deadline
+     never reached, the k-th writer needed k attempts and all ten committed.
      Under (A′), there were 0 aborts in 120 writes, every one on its first
-     attempt, and a burst drained in about the time (A) takes with no limit:
-     97, 478, 2067 and 10065 ms at windows of 0, 40 ms, 200 ms and 1 s. The
-     load of 10-09, two landings of five writes, was fine under (A): every write
-     committed within two attempts, and none exited 69.
+     attempt, and a burst drained in about the same time: 97, 478, 2067 and
+     10065 ms at windows of 0, 40 ms, 200 ms and 1 s. The load of 10-09, two
+     landings of five writes, was fine under (A): every write committed within
+     two attempts, and none exited 69.
 
-     Under either, a write that cannot get its turn in time reports "register
-     busy" with its own exit code (S1), so that callers can tell a busy register
-     from an outage (the adversary seat, ADV-C7). That narrows Amendment 22's
-     S1, which gives 69 to a transaction the database refuses, so it is put to
-     Brett: he may say "(A′) with 69" to keep 69 for "busy" too. Test 4's burst
-     case, with a window injected as it sets out, checks whichever he takes.
+     Under any of them, a write that cannot get its turn in time reports
+     "register busy" with its own exit code (S1), so that callers can tell a
+     busy register from an outage (the adversary seat, ADV-C7). That narrows
+     Amendment 22's S1, which gives 69 to a transaction the database refuses, so
+     it is put to Brett: he may say "(A″) with 69" to keep 69 for "busy" too.
+     Test 4's burst case, with a window injected as it sets out, must pass under
+     whichever he takes.
 8. **`lane-start`, `lane-handoff` and the handoff skill with the database
    unreachable (R2's B2 and B3, for Brett).** Amendment 22's S3 makes all three
    readers that refuse with 69. Amendment 8(d) and Amendment 23's S3 say a stamp
@@ -1565,8 +1605,8 @@ under each.
    "no record" when the read failed (`canon_lane`, `live-holder`,
    `register-row`, `session-lane`, `binding`), so a 69, or a "register busy",
    from a verb is not safe until those callers and reads change. The busy code
-   is refuse-class at the four `lane-start` arms, one test each (S3, above), and
-   the manual lists it.
+   is refuse-class at the five `lane-start` arms (R2's four and `:3079`), one
+   test each (S3, above), and the manual lists it.
    - **R3's proposal:** 69 wherever a database read or write fails,
      `lanes-index`'s register commands included; local sidecar reads keep 1 and
      10, and `managed-projection` keeps 1 (S4); the guard maps 69 to 2; exit 7 is
@@ -1653,15 +1693,16 @@ under each.
     tries? R2 calls (b) the simplest form for a claim; the QA seat's fix is (a).
     No text sets a bound; the nearest is `lanes-edit.sh`'s six attempts for a
     lost push race (Amendment 23's S4). Q7's options are forms of these. Its (A)
-    is a form of (a): R3's optimistic head row re-reads up to six times on a
-    moved head, 40001 or 40P01, then "register busy". Its (A′), recommended, is
-    (b) at READ COMMITTED, on the head row, so for every write and not only for
-    one object's claim. The probes found six attempts too few for a burst of
-    ten: a bound at least as large as the largest burst, a deadline, or (A′)'s
-    lock each drains it. "Register busy" is a code of its own (S1), so that a
-    caller can tell a busy register from an outage (the council's adversary
-    seat, ADV-C7). It narrows Amendment 22's S1, which gives 69 to a transaction
-    the database refuses, and Brett may keep 69 for it ("(A′) with 69", Q7).
+    and (A″), the recommended one, are forms of (a): R3's optimistic head row
+    re-reads on a moved head, 40001 or 40P01, up to six times under (A) and
+    until a deadline under (A″), then "register busy". Its (A′) is (b) at READ
+    COMMITTED, on the head row, so for every write and not only for one object's
+    claim. The probes found six attempts too few for a burst of ten: a bound at
+    least as large as the largest burst, a deadline ((A″)), or (A′)'s lock each
+    drains it. "Register busy" is a code of its own (S1), so that a caller can
+    tell a busy register from an outage (the council's adversary seat, ADV-C7).
+    It narrows Amendment 22's S1, which gives 69 to a transaction the database
+    refuses, and Brett may keep 69 for it ("(A″) with 69", Q7).
     Which code, is the design's, with Q9's; the product seat suggests 75
     (sysexits' `EX_TEMPFAIL`), which the exit table leaves free
     (`clarifications.md`).

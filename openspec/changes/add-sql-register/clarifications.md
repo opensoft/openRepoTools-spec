@@ -223,15 +223,15 @@ its report `PROBES-REPORT.md`, sha256 `3cab8106…`) ran on PostgreSQL and `psql
 (`initdb -N`, a Unix socket, and 127.0.0.1 where a probe needed TCP). The four
 findings below are VALID and already in `proposal.md` as requirements; these are
 the measurements `design.md` takes its numbers from. "Proposal lines" are lines
-of `proposal.md` at the commit that adds this section. Not measured: GitHub's
-fetch cost, TCP across hosts, the spool check of Q4(b)(ii), a session-level lock
-taken before BEGIN, and macOS._
+of `proposal.md` at the commit that last changes this section. Not measured:
+GitHub's fetch cost, TCP across hosts, the spool check of Q4(b)(ii), a
+session-level lock taken before BEGIN, and macOS._
 
 ### ADV-C3: a COMMIT whose outcome is unknown
 
 **Raised by:** adversary-engineer (ADV-C3)
-**Proposal lines:** 240–267 (S1); 282–296 (S1's tests); 886–892 (test 12);
-1668–1684 (Q16).
+**Proposal lines:** 240–267 (S1); 282–295 (S1's tests); 903–909 (test 12);
+1709–1725 (Q16).
 **Evidence:** Each case was run three times unless stated.
 - `psql` exits 2 for every lost or failed connection, and 3 for every SQL error
   (40001, 23505, 55P03, 57014, 42P01). An exit 2 after a COMMIT that landed is
@@ -269,8 +269,8 @@ old connection held open, no second row.
 
 **Raised by:** adversary-engineer (ADV-C4), with the architecture seat's
 concern 1
-**Proposal lines:** 761–774 (the guard's one budget); 775–792 (the other
-paths); 796–815 (the guard's tests).
+**Proposal lines:** 776–789 (the guard's one budget); 790–807 (the other
+paths); 811–829 (the guard's tests).
 **Evidence:**
 - A silent listener: with no setting, `psql` hangs (124 at a 30 s cap);
   `PGCONNECT_TIMEOUT=5` gives 2 at 5011 ms; `connect_timeout` at 3, 2 and 1
@@ -309,7 +309,7 @@ The assertion: the guard exits 2 in under 4.5 s in each.
 ### ADV-C7: one contended head row
 
 **Raised by:** adversary-engineer (ADV-C7)
-**Proposal lines:** 218–239 (S1); 838–843 (test 4); 1440–1483 (Q7); 1642–1667
+**Proposal lines:** 218–239 (S1); 853–860 (test 4); 1457–1523 (Q7); 1682–1708
 (Q15).
 **Evidence:** Ten writers on distinct objects, released together, three runs per
 window; the head row read first inside the transaction, unless stated.
@@ -320,11 +320,15 @@ window; the head row read first inside the transaction, unless stated.
 - The first-attempt conflict rate is 17% at 0 ms, 88% at 40 ms and 90% at 200 ms
   and at 1 s, the ceiling, since one writer in ten wins each round. The
   literal (A), whose window includes a second `psql` start, is 67% at 0 ms.
-- With no limit on attempts, the k-th writer needs k attempts, up to 10; all ten
-  commit in 618, 2259 and 10239 ms at 40 ms, 200 ms and 1 s.
+- With no limit on attempts (Q7's (A″), its deadline never reached), the k-th
+  writer needs k attempts, up to 10, and none is lost; all ten commit in 618,
+  2259 and 10239 ms at 40 ms, 200 ms and 1 s. The cost is the verb run again per
+  retry: about k(k+1)/2 runs in a burst of k writers, 55 for ten (the mean of
+  5.0 to 5.5 attempts a writer).
 - READ COMMITTED with `FOR UPDATE` on the head row (Q7's (A′)): 0 aborts in 120
   writes, all on the first attempt; all ten commit in 97, 478, 2067 and 10065 ms
-  at 0, 40 ms, 200 ms and 1 s.
+  at 0, 40 ms, 200 ms and 1 s. The window was a sleep inside one transaction, so
+  the run models a session held open across the verb, not the bash code.
 - The conflict is not only the head row's: reading the whole register inside
   SERIALIZABLE with no head row also conflicts 27 of 30; reading only a writer's
   own object conflicts 0 of 30.
@@ -339,13 +343,19 @@ window; the head row read first inside the transaction, unless stated.
   writers, as `pg_advisory_xact_lock` and as `FOR UPDATE`, because the snapshot
   is taken at the lock's statement, before the wait. The advisory form also
   drained slower, 8.4 s against 1.4 s at 200 ms.
-**Design impact:** "register busy" has an exit code of its own, plus one of: an
-attempt bound at least as large as the largest burst; a deadline (for example
-30 s); or the pessimistic lock, Q7's (A′). The head row is updated before the
-journal row is inserted, or a 23505 on the seq key is retried (S1). Test 4 must
-inject a window, or it passes trivially at 0 ms: ten writers on distinct objects,
+**Design impact:** "register busy" has an exit code of its own, plus one of: a
+deadline instead of a fixed count (for example 30 s; Q7's (A″), recommended), an
+attempt bound at least as large as the largest burst, or the pessimistic lock
+(Q7's (A′)). The deadline is above the drain time of the largest burst, and each
+attempt is one `psql` call, so no session is held across the shell code. (A′)
+holds the head-row lock across the shell code, so it needs one `psql` session
+kept open across it, which is the mechanism of Q7's (C), plus a helper to hold
+it; bash 3.2 has no `coproc`. The head row is updated before the journal row is
+inserted, or a 23505 on the seq key is retried (S1). Test 4 must inject a
+window, or it passes trivially at 0 ms: ten writers on distinct objects,
 released together, each with 200 ms between snapshot and COMMIT; all ten commit,
-none exits busy or 69, and the seq runs 1..10 with no gaps. It takes about 2.3 s.
+none exits busy or 69, and the seq runs 1..10 with no gaps. It takes about 2.3 s,
+and it must pass under whichever of Q7's options Brett takes.
 
 **The busy code's number.** The product seat (#165 comment 6549202251) suggests
 sysexits' 75, `EX_TEMPFAIL`, if it is free. It is free at the code pin
@@ -359,14 +369,14 @@ seconds is safe. With one code, a landing's five writes that lose a burst read a
 an outage; a lane reports the database down, or a script retries into a real
 outage, and `add-row`, which passes its code through, refuses a launch with an
 outage text. Its two conditions are in the proposal: every caller's default arm
-refuses on the new code (S3, the four `lane-start` arms), and the manual lists
+refuses on the new code (S3, the five `lane-start` arms), and the manual lists
 it. The number is the design's, and Brett may keep 69 for "busy" (Q7, Q15).
 
 ### ADV-C1: a rollback with the database down
 
 **Raised by:** adversary-engineer (ADV-C1)
-**Proposal lines:** 520–564 (S5); 573–585 (S5's tests); 851–867 (test 8);
-1277–1302 (Q4(b)); 1826–1876 (Q26).
+**Proposal lines:** 534–578 (S5); 587–598 (S5's tests); 868–884 (test 8);
+1294–1319 (Q4(b)); 1867–1917 (Q26).
 **Evidence:** The model: SQL in one labelled container (the image has no `git`),
 git on py-bench with a bare origin and clones ws1 and ws2, and the database
 stopped with `pg_ctl stop -m fast`. The rollback follows Amendment 22's S5: the
