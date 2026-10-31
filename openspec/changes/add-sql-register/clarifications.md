@@ -10,7 +10,10 @@ product advocate is lane openRepoTools-1's product seat (#165 comment
 adversary seat (comment 6548670312). This file holds their NOTED findings, the
 twelve that belong in `design.md` rather than in `proposal.md`.
 `council-review.md` records every finding's verdict; P15, NOTED by its seat, is
-now VALID and in the proposal's Q8(b).
+now VALID and in the proposal's Q8(b). After the fold, a second section below
+("Design numbers from lane 2's probes") adds the probes' numbers for four VALID
+findings, ADV-C1, ADV-C3, ADV-C4 and ADV-C7, which `proposal.md` carries as
+requirements, and the product seat's suggestion for the busy code's number.
 
 "Proposal lines" are lines of `proposal.md` at the commit that adds this file;
 the seat's own lines, at `e2b28f5f`, follow in brackets. Where a finding is a
@@ -204,7 +207,197 @@ Q18(A), `lanes/repos.tsv` stays a git file, and `claim` reads it through
 **Design impact:** Test 13's drill now carries an outage (the product seat's
 P7, VALID), and `design.md` adds the outage to the rehearsal before act 4.
 `design.md` says which tip `claim`'s `resolve_home` reads `repos.tsv` from on
-`mode=primary`, and shows that an alias edit racing a claim cannot let two
-claims of one object pass, because the transaction's pre-check compares the
-object's canonical key. If Brett takes Q18(B) or (D), it says how `repos.tsv`
-moves into SQL.
+`mode=primary`, and a test proves that an alias edit racing a claim cannot let
+two claims of one object pass: two claims of one object, spelled two ways, one
+spelling an alias added between their reads of `repos.tsv`, from clones at
+different tips, end with one `CLAIMED` and one exit 2. The test is the proof,
+because keys read from different tips differ, and the text does not assert that
+the transaction's pre-check compares the object's canonical key. If Brett takes
+Q18(B) or (D), it says how `repos.tsv` moves into SQL.
+
+## Design numbers from lane 2's probes
+
+_Added after the fold. Lane 2's probes of 2026-10-31 (#165 comment 6549116835;
+its report `PROBES-REPORT.md`, sha256 `3cab8106…`) ran on PostgreSQL and `psql`
+16.15, in the local `postgres:16` image with `--network none`, on R1's fixture
+(`initdb -N`, a Unix socket, and 127.0.0.1 where a probe needed TCP). The four
+findings below are VALID and already in `proposal.md` as requirements; these are
+the measurements `design.md` takes its numbers from. "Proposal lines" are lines
+of `proposal.md` at the commit that adds this section. Not measured: GitHub's
+fetch cost, TCP across hosts, the spool check of Q4(b)(ii), a session-level lock
+taken before BEGIN, and macOS._
+
+### ADV-C3: a COMMIT whose outcome is unknown
+
+**Raised by:** adversary-engineer (ADV-C3)
+**Proposal lines:** 240–267 (S1); 282–296 (S1's tests); 886–892 (test 12);
+1668–1684 (Q16).
+**Evidence:** Each case was run three times unless stated.
+- `psql` exits 2 for every lost or failed connection, and 3 for every SQL error
+  (40001, 23505, 55P03, 57014, 42P01). An exit 2 after a COMMIT that landed is
+  identical to one before it: the same code and byte-identical stderr, in the
+  terminate pair (11–19 ms) and in the proxy pair (about 200 ms).
+- An outer `timeout 5` turns an in-doubt write into 124, at 5002 ms; the row had
+  landed in 4 of 4 runs.
+- A look for seq `n+1` picked the rival's row 3 times out of 3, when the writer
+  was lost before COMMIT. A lookup by `write_id` was right both ways: 1 after
+  the COMMIT, 0 before it.
+- On a half-open connection the lookup returns 0, which is wrong.
+  `INSERT … ON CONFLICT (write_id) DO NOTHING` then waits for the old
+  transaction: with `lock_timeout=1000` it got 55P03 at 1010 ms, and with no bound
+  it waited 1583 ms for the old transaction to roll back, then inserted once.
+- A blind retry with no unique index exited 0 twice and left 2 `CLAIMED` rows.
+- With `-v VERBOSITY=sqlstate`, an exit 3's stderr names its SQLSTATE, so a
+  writer driven through `psql` can tell a 40001 from the other exit 3s (Q7,
+  Q15).
+**Design impact:** `design.md` takes a `write_id` that is UNIQUE in the
+journal; a retry made through that constraint, with a `lock_timeout`, and not a
+lookup followed by a blind write; and 124 treated as in doubt, the same as 2. A
+retry of an in-doubt write reuses its `write_id`: a caller's rerun after the
+writer could not reconnect must not mint a new one, or the duplicate `CLAIMED`
+or the false 69 returns (lane 2's SHOULD e). The in-doubt report names the id
+(P16's note, above), and `design.md` says how a rerun receives it. Q16's
+evidence favours (b), the idempotency key; (a)'s look by sequence is not safe
+even as the report. Test 12 puts a shim `psql` before the real one, with
+`SELECT pg_terminate_backend(pg_backend_pid());` placed before or after the
+script's COMMIT, on the Unix-socket fixture: it takes about 15 ms and is
+deterministic. The assertion is one row per `write_id` and exit 0, never a match
+on stderr (the shim prints a FATAL line that a real loss does not), and, with the
+old connection held open, no second row.
+
+### ADV-C4: no timeout on any database path
+
+**Raised by:** adversary-engineer (ADV-C4), with the architecture seat's
+concern 1
+**Proposal lines:** 761–774 (the guard's one budget); 775–792 (the other
+paths); 796–815 (the guard's tests).
+**Evidence:**
+- A silent listener: with no setting, `psql` hangs (124 at a 30 s cap);
+  `PGCONNECT_TIMEOUT=5` gives 2 at 5011 ms; `connect_timeout` at 3, 2 and 1
+  gives 3009, 2007 and 1006 ms. libpq 16.15 keeps 1 as 1 s.
+- `connect_timeout` applies to each address: at 2 s, two silent hosts took 4008
+  ms and three took 6008 ms; a silent host followed by a live one connected at
+  2009 ms.
+- Inside the hook's `timeout 5`, `lanes-index`'s own default,
+  `PGCONNECT_TIMEOUT=5`, failed open 3 times out of 3 (124 at 5003 ms);
+  `connect_timeout=2` exits 2 at 2007 ms; two hosts at 2 s each exit at 4009 ms,
+  just inside.
+- A read behind an `ALTER` holding `AccessExclusiveLock`: `lock_timeout=1000`
+  gives 55P03 at about 1011 ms, through `PGOPTIONS` or through `options=`;
+  `statement_timeout=1500` alone gives 57014 at 1508 ms; with no bounds, as
+  `lanes-index` runs today, 124 at 30001 ms. A `FOR UPDATE` on a row does not
+  block a plain read (17 ms). An `ALTER` that is only waiting for its lock
+  already blocks new plain reads, which get 55P03 at 1009 ms with the bound.
+- A host that goes silent after connecting: no server-side setting helps.
+  `connect_timeout=2`, `lock_timeout`, `statement_timeout`, keepalives and
+  `tcp_user_timeout` all set, it is still 124 at 5002 ms, on loopback. A client
+  timer does: `timeout 4` around `psql`, with any failure exiting 2, exits 2 at
+  about 4006 ms, and a live database answers in 13 ms.
+**Design impact:** `design.md` takes `connect_timeout=2` with one address, since
+each extra address adds 2 s; `lock_timeout=1000` and `statement_timeout=1500`,
+set when connecting through `options=`; a hard client timer of 4 s around
+`psql`, whose expiry means 2 for the guard and "in doubt" for a writer; and a
+worst case of 2 + 1.5 = 3.5 s, inside the 4 s timer and the 5 s hook. Writers get
+longer limits of their own. Migrations set their own `lock_timeout`, because of
+the queue effect. The same bounds name the readers, the renderer, `status` and
+`rollback` (lane 2's SHOULD g; `rollback` and `status` are the way out of an
+outage). The guard's test needs a TCP port, which the Unix-socket fixture does
+not open; add three cases to the silent listener: a host silent after it has
+connected, a read behind a migration's lock, and a conninfo with several hosts.
+The assertion: the guard exits 2 in under 4.5 s in each.
+
+### ADV-C7: one contended head row
+
+**Raised by:** adversary-engineer (ADV-C7)
+**Proposal lines:** 218–239 (S1); 838–843 (test 4); 1440–1483 (Q7); 1642–1667
+(Q15).
+**Evidence:** Ten writers on distinct objects, released together, three runs per
+window; the head row read first inside the transaction, unless stated.
+- Under Q7's (A), with six attempts: at 0 ms, 3 of 30 conflict on their first
+  attempt, none exits 69 and all commit in 137 ms. From 40 ms up, 27 of 30
+  conflict on their first attempt and 12 of 30 exhaust six attempts, 4 of 10 in
+  every burst; all ten commit in 385, 1389 and 6158 ms at 40 ms, 200 ms and 1 s.
+- The first-attempt conflict rate is 17% at 0 ms, 88% at 40 ms and 90% at 200 ms
+  and at 1 s, the ceiling, since one writer in ten wins each round. The
+  literal (A), whose window includes a second `psql` start, is 67% at 0 ms.
+- With no limit on attempts, the k-th writer needs k attempts, up to 10; all ten
+  commit in 618, 2259 and 10239 ms at 40 ms, 200 ms and 1 s.
+- READ COMMITTED with `FOR UPDATE` on the head row (Q7's (A′)): 0 aborts in 120
+  writes, all on the first attempt; all ten commit in 97, 478, 2067 and 10065 ms
+  at 0, 40 ms, 200 ms and 1 s.
+- The conflict is not only the head row's: reading the whole register inside
+  SERIALIZABLE with no head row also conflicts 27 of 30; reading only a writer's
+  own object conflicts 0 of 30.
+- The field load, two landings of five writes with gaps of 4–12 s: 1 of 10
+  conflicts at 200 ms and 2 of 10 at 1 s; every write commits within two
+  attempts and none exits 69.
+- Statement order: inserting the journal row at head+1 before updating the head
+  turns every loss into a 23505 on the seq key, which exits at once under a rule
+  that retries only 40001 and 40P01 (8 of 30 at 0 ms, and 24 to 27 of 30 from 40
+  ms up).
+- Q15(b): a lock taken first under SERIALIZABLE still gave 40001 in 27 of 30
+  writers, as `pg_advisory_xact_lock` and as `FOR UPDATE`, because the snapshot
+  is taken at the lock's statement, before the wait. The advisory form also
+  drained slower, 8.4 s against 1.4 s at 200 ms.
+**Design impact:** "register busy" has an exit code of its own, plus one of: an
+attempt bound at least as large as the largest burst; a deadline (for example
+30 s); or the pessimistic lock, Q7's (A′). The head row is updated before the
+journal row is inserted, or a 23505 on the seq key is retried (S1). Test 4 must
+inject a window, or it passes trivially at 0 ms: ten writers on distinct objects,
+released together, each with 200 ms between snapshot and COMMIT; all ten commit,
+none exits busy or 69, and the seq runs 1..10 with no gaps. It takes about 2.3 s.
+
+**The busy code's number.** The product seat (#165 comment 6549202251) suggests
+sysexits' 75, `EX_TEMPFAIL`, if it is free. It is free at the code pin
+`2a057a6d`: the exit table (`code/lanes-edit.sh:434–545`) carries 0 to 10, 64
+and 66, `lanes-index` uses 0, 1, 2, 3 and 64, and no command in the code leg
+exits 75 (a search of `lanes-edit.sh`, `lanes-index`, `lane-start`, `lane-end`,
+`lane-handoff`, `lane`, `lane-rename`, `lanes`, `lane-worktrees` and
+`openRepoTools` finds none). The product seat's reason for a code of its own: 69
+means stop and tell Brett, and busy means nothing was written and a retry in
+seconds is safe. With one code, a landing's five writes that lose a burst read as
+an outage; a lane reports the database down, or a script retries into a real
+outage, and `add-row`, which passes its code through, refuses a launch with an
+outage text. Its two conditions are in the proposal: every caller's default arm
+refuses on the new code (S3, the four `lane-start` arms), and the manual lists
+it. The number is the design's, and Brett may keep 69 for "busy" (Q7, Q15).
+
+### ADV-C1: a rollback with the database down
+
+**Raised by:** adversary-engineer (ADV-C1)
+**Proposal lines:** 520–564 (S5); 573–585 (S5's tests); 851–867 (test 8);
+1277–1302 (Q4(b)); 1826–1876 (Q26).
+**Evidence:** The model: SQL in one labelled container (the image has no `git`),
+git on py-bench with a bare origin and clones ws1 and ws2, and the database
+stopped with `pg_ctl stop -m fast`. The rollback follows Amendment 22's S5: the
+switch cannot be set (`psql` exit 2); it proceeds from a mirror last shown
+current; ws1 pushes the commit that removes `lanes/STORE`; `mode=primary` is
+cleared on ws1 only.
+- The break: after the database returns, ws2 exits 0 and commits obj-X to SQL,
+  and the switch still reads `primary`. ws1's `lanes/LANES.md` shows nothing of
+  it. ws1's files-mode writer then claims obj-X too and exits 0: two holders of
+  one object, and nothing reports it.
+- The partition: the database stays up and only ws1 cannot reach it. ws2 commits
+  during the rollback, after the push, and afterwards. A rule of "reset when the
+  database returns" cannot catch it, because the database never left.
+- Refuse when the last-fetched tip has no `lanes/STORE`: 69 after a fetch, and
+  0 without one. Record the marker's blob id on the switch row and refuse unless
+  the fetched `origin/main:lanes/STORE` matches: 69 after a fetch, in the
+  partition too, during the rollback and after it, and 0 without a fetch. Either
+  check costs about 1.8 ms (`git cat-file -e` 1.78 ms, `rev-parse --verify` 1.83
+  ms, a bare git process 1.71 ms) and adds no database round trip.
+- The hole both leave is a writer that has not fetched since the rollback, and
+  five verbs make no fetch before they edit. Two ways close it: a fetch or
+  `ls-remote` before every primary write, refusing if it fails, which cost 9–18
+  ms against a local origin (GitHub was not measured); or dropping Amendment
+  22's allowance, so that a rollback needs the database to flip the switch,
+  which is the simplest and closes the partition and the stale fetch together.
+**Design impact:** These two ways are Q4(b)'s (iv) and (iii), and the proposal's
+S5 states the rule for each. Lane 2's SHOULD h ties `LANES_NO_FETCH=1` to it: the
+61 verb calls in the caller scripts that pass it are exactly the writers with a
+stale tip. Test 8 needs a stopped server, a second clone that the rollback
+misses and a local bare origin; a real fetch works, so no fake is needed. It
+asserts a missed `mode=primary` writer exits 69 with the journal's count
+unchanged, after a fetch and without one, through each of the five no-fetch
+verbs, and again where the database is up but unreachable from the rolling-back
+clone. It must fail on the leak as it stands today.

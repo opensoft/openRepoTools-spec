@@ -136,6 +136,14 @@ round-2 block unless it belongs to round 1.
    the service only if the measured direct guard is over a budget Brett names.
    #165's fold, "one holder instead of every session", reads the other way.
    This is a conflict with #165's text, not between seats.
+8. **A rollback with the database down (Q4(b)).** ADV-C1's two remedies, against
+   P1's "deciding reads that need no fetch": the first reads the last-fetched
+   tip, which costs no fetch but can be stale. The council left the choice
+   between the two remedies to the design, which resolved nothing, so it does
+   not belong under "resolved on the evidence". After the fold, lane 2's probes
+   showed both remedies leak, and Q4(b) puts the choice to Brett: (iii), a
+   rollback that needs the database, or (iv), a fresh check of the marker on
+   origin in every write.
 
 ### Conflicts resolved on the evidence
 
@@ -147,15 +155,15 @@ Each is the design's, not Brett's.
   `CLAIMED` or a false 69. P16 does not dispute the key, only its timing. So
   the write id is a requirement (S1), and P16's exit 3 stays the design's
   option for Q16's report code.
-- **The exit code of "register busy".** ADV-C7 wants a code of its own. This
-  is the design's: Amendment 22's S1 gives 69 to "unreachable, or refuses the
-  transaction", and a write that lost six optimistic races was neither, by S1's
-  own "a serialization failure is not a refusal". No text decides it and no
-  seat opposes it. So S1 now requires a code of its own, and Q15 and Q9 leave
-  the number to the design.
-- **ADV-C1's two remedies against P1's "deciding reads that need no fetch".**
-  The first remedy reads the last-fetched tip, which costs no fetch but can be
-  stale. The proposal leaves the choice between the two remedies to the design.
+- **The exit code of "register busy".** ADV-C7 wants a code of its own. The
+  council judged this the design's: Amendment 22's S1 gives 69 to "unreachable,
+  or refuses the transaction", and a write that lost six optimistic races was
+  neither, by the proposal's own sentence in its S1, "A serialization failure is
+  not a refusal" (`proposal.md`, P218 at the commit that adds this file; the
+  sentence is the proposal's, and Amendment 22's S1 does not say it). No text
+  decides it and no seat opposes it. So the proposal's S1 now requires a code of
+  its own, and Q15 and Q9 leave the number to the design. After the fold the
+  narrowing of Amendment 22's S1 is put to Brett too: see "After the fold".
 
 ### Verdict changes
 
@@ -225,8 +233,12 @@ needs Brett, that part is an option or one of Q26–Q29.
   positions now stand under each: P-lines 1002–1012, 1216–1230, 1300–1335 and
   1499–1505.
 - **New questions:** Q26 (P3), Q27 (concern 3), Q28 (P2) and Q29 (P4).
-- **ADV-C7's code for "register busy"** is not put to him: it is the design's,
-  for the reason given above.
+- **ADV-C7's code for "register busy"**: the council did not put it to him, as
+  the number is the design's. The code narrows Amendment 22's S1, which gives 69
+  to a transaction the database refuses, so after the fold Q7 and Q15 put the
+  narrowing to him, with "keep 69" ("(A′) with 69") as his option. The product
+  seat suggests 75 (sysexits' `EX_TEMPFAIL`) for the number, free in the exit
+  table (`clarifications.md`).
 - **Round 2** puts every other question for Brett in one block, its first
   option "all as recommended" (P12). It is lane 3's to send.
 
@@ -245,3 +257,59 @@ question.
 
 This pass stops before `design.md`, `tasks.md` and the delta specs, which wait
 for Brett's answers.
+
+## After the fold
+
+Three checks followed the fold at `cb364b95`: lane 2's probes of 2026-10-31 (#165
+comment 6549116835), lane 2's check of the fold (comment 6549130353), and lane
+1's product seat's check (comment 6549202251), with lane 2's point on Q26
+(6549222590), lane 1's narrowing of its own recommendation (6549261651) and lane
+4's condition on the busy code (6549262903). Lane 3 changed three of the
+recommendations it put to Brett, and one commit applies all of it. This section
+maps each item to the lines changed. It gives no verdicts; the counts above are
+the council's own. In the tables below, "P" is a line of `proposal.md`, "C" of
+`clarifications.md` and "CR" of this file, each at the commit that adds this
+section.
+
+### The three recommendations that changed
+
+| Question | At the fold | Now | Why | Lines |
+|---|---|---|---|---|
+| **Q7**, how a write runs | (A), an optimistic head row; R3 and the product seat chose it | **(A′)**, a lock on the head row at READ COMMITTED; (A), (B), (C) stay as options | Under (A), 4 of 10 writers exhausted six attempts in every burst of a window of 40 ms or more; under (A′), 0 aborts in 120 writes. S6 allows "a lock on the object" | P1421–1483 |
+| **Q4(b)**, a rollback with the database down | (ii), the spool proof; R3 and the product seat chose it | **(iii)**, a rollback needs the database; (iv), (ii) and (i) stay as options; (iii) narrows Amendment 22's S5 | The probes found (i) and (ii) both leak, including with the database up but unreachable from only the rolling-back clone | P1277–1302; P520–564 |
+| **Q26**, the guard while the database is down | (a) from the product seat; lane 3 first recommended (b) from the probes | **(a′)**, the mirror only during an outage Brett declares; otherwise (b); (b) and (a) stay | From one workstation a down database and an unreachable one look the same, so P3's "no binding can change while writes refuse" holds only for an outage known to be estate-wide (lane 2, 6549222590); the product seat narrowed its own recommendation (6549261651) | P1826–1876 |
+
+### Lane 2's check of the fold (6549130353)
+
+| # | Item | What changed | Lines |
+|---|---|---|---|
+| 1 | **MUST, ADV-C1:** the rule at the old P484–492 offered two remedies that both leak | A rule conditional on Q4(b): under (iii) a rollback needs the database and sets the switch to `files` first, a database lost for good being a separate disaster procedure; under (iv) every `mode=primary` write checks `lanes/STORE` on origin by a fresh fetch or `ls-remote` inside the same write, a failed check being 69. Test 8 gains the five no-fetch verbs and the partition, and must fail on the leak as it stands today. The guard's way out is noted under (iii) | P513–519; P520–564; P573–585; P851–867; P411–426 |
+| 2 | **Q4(b)** in the open questions | Options (iii), (iv), (ii), (i); the probes' evidence; R3 and the product seat favoured (ii) before the probes; (iii) marked as narrowing Amendment 22's S5 | P1277–1302 |
+| 3 | **Q26** | Replaced twice: first (b) recommended, then, on the later posts, (a′) recommended (see the table above). The partition evidence, the product seat's reason for (a), and the marks that (a) and (a′) narrow Amendment 22 | P1826–1876 |
+| 4 | **SHOULDs a and b, Q7 and Q15** | (A′) added, with S6's "(or under a lock on the object)" and the probes' numbers; (A), (B), (C) kept; "up to six times" and "rarely contended" moved into (A)'s description and R3's case; Q15(b) taken at READ COMMITTED, with the SERIALIZABLE finding; Q15 cross-referenced to (A′); S6's lock sentence corrected; "register busy" narrows Amendment 22's S1 and Brett may say "(A′) with 69"; test 4 injects a window; the "all as recommended" list drops Q7 (A) | P1440–1483; P1642–1667; P218–239; P282–296; P617–629; P660–665; P838–843; P1078–1100 |
+| 5 | **SHOULD c:** the busy code at `lane-start`'s arms that note and carry on | Refuse-class at `:1154`, `:1262`, `:1271` and `:3430`, each verified at `2a057a6d`, with one test per arm; Q9 names the code; the manual lists it | P456–469; P470–480; P1551–1579; P908–926 |
+| 6 | **SHOULD d:** statement order | The head row before the journal row, or a 23505 on the seq key retried | P235–239 |
+| 7 | **SHOULD e:** a retry reuses its `write_id`; the ADV-C3 numbers | Reuse stated, with the UNIQUE-constraint retry, 124 as in doubt, the `n+1` result and Q16's evidence for (b); test 12 gains the rerun | P240–267; P886–892; P1668–1684; C230–267 |
+| 8 | **SHOULD f:** B′ under Q21(b) | (B′) listed as an option | P1746–1764 |
+| 9 | **SHOULD g:** timeouts for the readers, the renderer, `status` and `rollback` | Named, with the probes' values, the 4 s client timer and the default's failure; the guard-section test extended | P775–792; P796–815; C268–308 |
+| 10 | **The NITs** | CR rows on the busy code now attribute "A serialization failure is not a refusal" to the proposal (CR158–166); the ADV-C1 item that resolved nothing moved to the conflicts left for Brett (CR139–146); the `register-row-local` row says it is the design's, with no option offered (P448); the canonical-key comparison is a test (C198–216) | as listed |
+| 11 | **The records** | The probes' design numbers under ADV-C3, C4, C7 and C1; this section | C218–403 |
+| 12 | **The "all as recommended" list** | Q7 (A) off the list; the three changed recommendations and the eight questions that stand apart named, as the round-2 block has them | P1078–1100 |
+| – | **Q6's split**, lane 2's two additions (6549130353) | `lanes-edit.sh` fails closed when `lanes-index` refuses `mode=primary`; one test covers both states (item 17) | P1363–1377; P896–905 |
+
+### Lane 1's product seat's check (6549202251), and the later posts
+
+| # | Item | What changed | Lines |
+|---|---|---|---|
+| 13 | **P2, partly:** does act 4 wait for 2a, 2b and 3 | The first part of Q28, with the owner and date for 1a and 1b apart from the rest; the S1 line that said Q6 now says Q28; (a′)'s "#311 trails" marked reversed by P2; the landing order carries the wait as Brett's open point; lane 3's view recorded: act 4 waits for 2a, 2b and 3, and the renderer's merge need not wait for 2a and 2b under the private-index form | P1898–1926; P280; P1386–1387; P1406–1420; P1038–1044 |
+| 14 | **P4, partly** | Q2(e) decided after the guard's measurement; "Writes never fall back to the files" | P1169–1171; P754 |
+| 15 | **P10** | "What changes for a lane" and the manual's contents carry the busy code: nothing was written, and a retry in seconds is safe | P908–911; P915–926 |
+| 16 | **The busy code** | The product seat's 75 (`EX_TEMPFAIL`) recorded; it is free in the exit table at `code/lanes-edit.sh:434–545`. Q7 and Q15 put the narrowing of Amendment 22's S1 to Brett, with "keep 69" as his option, as lane 4's agreement requires; CR236–241 no longer says the code "is not put to him" | C350–363; P1440–1483; P1642–1667; CR236–241 |
+| 17 | **Q6's refusal of `mode=primary`** | A named exit code and text (`lanes-index` exits 2; `lanes-edit.sh` exits 69), agreement test 14 for both states, and a readiness-check item that looks for it | P1363–1377; P896–905; P598–605; P609–614 |
+| 18 | **Q26**, the marks | The adversary-based conditions on (a) marked as lane 3's application, which lane 2 never saw when it wrote its findings, and the third as lane 3's inference; S5's listable spools and Q4(b)(ii)'s coverage of every writing workstation's spool stated as conditions of (a); under (b), S3's two ways out still apply | P1826–1876; P411–426 |
+| 19 | **Q4(a)** | The product reply to ADV-C2 (S2's single-write import and the renderer's revert make a stray commit cost a person's word); the product seat's estimate of Brett's time, 45–75 min for (i) against 10–20 for (ii′); the ADV-C2 objection to (ii′) marked as lane 3's application, which lane 2 agrees with | P1251–1276 |
+| 20 | **Q21(b)** | What deferral means; the recommendation of (B) depends on the org's plan, a fact not yet known | P1746–1764 |
+| 21 | **Q22** | (c) given its Raven reason; "against its recovery" marked as lane 3's reading of ADV-C1; the recovery loses every write the mirror had not yet rendered, and the renderer's lag, which `status` shows, bounds that loss | P1769–1792 |
+| 22 | **Q28 and Q29** | Costs for Q28's (a) and (c), as (b) has one; one date to name for 1a and 1b and one for the rest, since no report estimates the work; what Q29's (b) buys: no database connection per prompt | P1898–1926; P1927–1942 |
+
+The round-2 file is lane 3's to edit and was left alone here. Lane 1's P12 asks that Q4(a), Q21(b), Q22, Q26, Q28 and Q29 stand apart from "all as recommended"; the proposal's list (P1078–1100) names the eight questions that do.
