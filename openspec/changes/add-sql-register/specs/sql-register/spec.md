@@ -7,7 +7,7 @@ On a workstation configured `mode=primary` the lane register is a database: each
 ## ADDED Requirements
 
 ### Requirement: `mode=` selects the register's store
-`lanes-index.conf` SHALL accept a `mode=` key whose value is `index` (the default when the key is absent, and today's behaviour) or `primary`, and SHALL accept the REGISTER-WRITER's own credential pair (for example `register_url=` and `register_passfile=`) beside the existing keys. `lanes-index` SHALL stay the one parser of the file: `lanes-edit.sh` SHALL ask `lanes-index`, or the register service, for the mode and SHALL NOT parse the file itself. The indexer's `url=` credential SHALL NOT write the register's tables. A configuration that says `mode=primary` with the SQLite store SHALL be refused, because the register is shared by workstations and SQLite is one disk. A key `lanes-index` does not know SHALL still be refused with exit 2. The file's 0600 mode, its password file, its refusals and the rule that it never lives under `~/.agents/` SHALL stand as Amendment 14(c) wrote them. A `lanes-index` older than this change refuses `mode=` with exit 2, so this change SHALL be installed before `mode=` is written anywhere.
+`lanes-index.conf` SHALL accept a `mode=` key whose value is `index` (the default when the key is absent, and today's behaviour) or `primary`, and SHALL accept the REGISTER-WRITER's own credential pair (for example `register_url=` and `register_passfile=`) beside the existing keys. `lanes-index` SHALL stay the one parser of the file: `lanes-edit.sh` SHALL ask `lanes-index`, or the register service, for the mode and SHALL NOT parse the file itself. Where the mode query fails for any reason other than the refusal of a build without the renderer's git half (a configuration it refuses, a crash, an exit 127 or a timeout), `lanes-edit.sh` SHALL run in files mode with a warning on stderr; files mode's mandatory marker check after Amendment 23's S3 fetch then refuses on a SQL estate, so no failure of the query writes the files there. The indexer's `url=` credential SHALL NOT write the register's tables. A configuration that says `mode=primary` with the SQLite store SHALL be refused, because the register is shared by workstations and SQLite is one disk. A key `lanes-index` does not know SHALL still be refused with exit 2. The file's 0600 mode, its password file, its refusals and the rule that it never lives under `~/.agents/` SHALL stand as Amendment 14(c) wrote them. A `lanes-index` older than this change refuses `mode=` with exit 2, so this change SHALL be installed before `mode=` is written anywhere.
 
 #### Scenario: Mode absent
 - **WHEN** a workstation's configuration has no `mode=` key
@@ -20,6 +20,11 @@ On a workstation configured `mode=primary` the lane register is a database: each
 #### Scenario: Unknown key
 - **WHEN** the configuration carries a key `lanes-index` does not know
 - **THEN** `lanes-index` refuses it with exit 2, as it does today
+
+#### Scenario: The mode query fails
+- **WHEN** `lanes-index mode` fails with a configuration it refuses, a crash, an exit 127 or a timeout
+- **THEN** the write runs in files mode and stderr carries a warning naming the failure
+- **AND** where the fetched tree carries `lanes/STORE`, the files-mode marker check refuses the write with 69 and nothing is written
 
 #### Scenario: The register writes with its own pair
 - **WHEN** `lanes-edit.sh` writes the register on a `mode=primary` workstation
@@ -66,7 +71,7 @@ Each register row SHALL carry the mode that wrote it last, so that a mixed histo
 - **THEN** every row it touched reads back `primary` as the mode that wrote it last
 
 ### Requirement: Readers on a workstation that is not `mode=primary` once `lanes/STORE` exists
-Once `lanes/STORE` exists, the acts and the prompt guard on a workstation that is not `mode=primary` SHALL refuse, while the listings and the `SessionStart` block SHALL read the mirror and say so with the `read: mirror` line.
+Once `lanes/STORE` exists, the acts and the prompt guard on a workstation that is not `mode=primary` SHALL refuse, while the listings and the `SessionStart` block SHALL read the mirror and say so with the `read: mirror` line. A reader or guard there SHALL look for `lanes/STORE` on the ref it reads (`git cat-file -e <ref>:lanes/STORE`), refusing with 69, or 2 in the guard, where it is present; the check is as current as that ref, and the refusal says how old the ref is.
 
 > Pending Brett's Q21(a): written under option (A).
 
@@ -79,11 +84,11 @@ Once `lanes/STORE` exists, the acts and the prompt guard on a workstation that i
 - **THEN** the answer comes from the mirror and stderr carries the `read: mirror` line
 
 ### Requirement: A build without the renderer's git half refuses `mode=primary`
-Until the renderer's git half is installed, `lanes-index` SHALL refuse `mode=primary` with exit 2 and the text `mode=primary is not available in this build: the renderer's git half is not installed, so a write could not be mirrored; nothing was written`. `lanes-edit.sh`, run on a workstation whose configuration says `mode=primary`, SHALL then exit 69, repeat that text and change neither the register nor the files, and SHALL NOT write the files instead. The design MAY reword the text and SHALL NOT weaken the refusal. The readiness check SHALL fail an environment whose installed `lanes-index` still carries this refusal.
+Until the renderer's git half is installed, `lanes-index` SHALL refuse `mode=primary` with the text `mode=primary is not available in this build: the renderer's git half is not installed, so a write could not be mirrored; nothing was written`. Its commands SHALL refuse it with exit 2, the configuration parser's code, except the mode query, `lanes-index mode`, which SHALL report it with an exit code of its own, never 2, so that `lanes-edit.sh` can tell it from every other failure of the query; the design names the code. `lanes-edit.sh`, run on a workstation whose configuration says `mode=primary`, SHALL then exit 69, repeat that text and change neither the register nor the files, and SHALL NOT write the files instead. The design MAY reword the text and SHALL NOT weaken the refusal. The readiness check SHALL fail an environment whose installed `lanes-index` still carries this refusal.
 
 #### Scenario: The refusal in place (agreement test 14)
 - **WHEN** the refusal's constant is set and `lanes-edit.sh` runs a write on a workstation configured `mode=primary`, using the fake `psql`
-- **THEN** `lanes-index` exits 2 with the text above and `lanes-edit.sh` exits 69 repeating it
+- **THEN** `lanes-index mode` exits its own code with the text above, any other `lanes-index` command exits 2 with it, and `lanes-edit.sh` exits 69 repeating it
 - **AND** neither the register nor the files changed
 
 #### Scenario: The refusal lifted
@@ -95,7 +100,7 @@ Until the renderer's git half is installed, `lanes-index` SHALL refuse `mode=pri
 - **THEN** the check fails that state
 
 ### Requirement: A server-side gate protects the rendered paths and `lanes/STORE`
-Where the organisation's plan supports it, a push ruleset whose only bypass is a renderer identity SHALL be in place before the cutover, on the paths the renderer renders (`lanes/LANES.md`, `lanes/log/<lane>.md`, `lanes/aliases.tsv` and `lanes/archive/`) and on `lanes/STORE`. Every push that changes those paths SHALL use that identity: the renderer's, and the cutover's and the rollback's commits of `lanes/STORE`. The ruleset SHALL NOT cover `lanes/repos.tsv`, `lanes/log/README.md` or any other path under `lanes/` outside those, so that they stay git files a person commits and a commit to them stays part of the tip the renderer renders onto. The identity's key SHALL NOT be in any environment a session inherits (Amendment 14(c)). Where the plan does not support such a ruleset, or one that names exactly those paths, whether act 4 waits for an equal server-side gate is Brett Heap's decision.
+Where the organisation's plan supports it, a push ruleset whose only bypass is a renderer identity SHALL be in place before the cutover, on the paths the renderer renders (`lanes/LANES.md`, `lanes/log/<lane>.md`, `lanes/aliases.tsv` and `lanes/archive/`) and on `lanes/STORE`. Every push that changes those paths SHALL use that identity: the renderer's, and the cutover's and the rollback's commits of `lanes/STORE`. The ruleset SHALL NOT cover `lanes/repos.tsv`, `lanes/log/README.md` or any other path under `lanes/` outside those, so that they stay git files a person commits and a commit to them stays part of the tip the renderer renders onto. The identity's key SHALL NOT be in any environment a session inherits (Amendment 14(c)). Because the ruleset refuses every files-mode register write, it SHALL be switched on only inside act 4's freeze, after the lanes are drained and the last `PAUSED` write is on origin and before the import, and the rollback SHALL remove it after its render proves the mirror current and before the commit that removes `lanes/STORE` is pushed. Switching the ruleset on and off is Brett Heap's act. Where the plan does not support such a ruleset, or one that names exactly those paths, whether act 4 waits for an equal server-side gate is Brett Heap's decision.
 
 > Pending Brett's Q21(b): written under option (B).
 > Pending Brett's Q18: written under option (A).
@@ -103,6 +108,10 @@ Where the organisation's plan supports it, a push ruleset whose only bypass is a
 #### Scenario: A stale writer's push is refused
 - **WHEN** any identity other than the renderer's pushes a commit that changes a rendered path or `lanes/STORE`
 - **THEN** the ruleset rejects the push
+
+#### Scenario: The ruleset's window
+- **WHEN** the ruleset is switched on and off as the runbook orders it
+- **THEN** no files-mode register write is refused by it before the freeze, and a files-mode write after the rollback succeeds
 
 #### Scenario: A person's `repos.tsv` edit is not gated
 - **WHEN** a person pushes a commit that changes only `lanes/repos.tsv`
@@ -196,7 +205,7 @@ The transaction SHALL update the head row before it inserts the journal row, or 
 - **THEN** none of them exits because of a unique-key violation on the sequence key
 
 ### Requirement: A write that cannot get its turn reports "register busy" with a code of its own
-A write that cannot get its turn in time SHALL exit "register busy" with an exit code of its own: not 0, not 69 and not a code the exit table already carries. The report SHALL say that nothing was written and that a retry in seconds is safe. The code's number is the design's, and the exit table SHALL list it. This narrows Amendment 22's S1, which gives 69 to a transaction the database refuses: 69 stays for an unreachable database and any other refusal. The deadline SHALL exceed the drain time of the largest burst the agreement tests inject.
+A write that cannot get its turn in time SHALL exit "register busy" with an exit code of its own: not 0, not 69 and not a code the exit table already carries. The report SHALL say that nothing was written and that a retry in seconds is safe. The code's number is the design's, and the exit table SHALL list it. This narrows Amendment 22's S1, which gives 69 to a transaction the database refuses: 69 stays for an unreachable database and any other refusal. The deadline SHALL exceed the drain time of the largest burst the agreement tests inject. A write any of whose commit calls was in doubt SHALL never exit "register busy" (the next requirement).
 
 > Pending Brett's Q7: written under option (A″).
 
@@ -209,7 +218,16 @@ A write that cannot get its turn in time SHALL exit "register busy" with an exit
 - **THEN** the code differs from 69 and from every other code in the exit table
 
 ### Requirement: A COMMIT whose outcome the writer cannot learn is recovered by its write id
-Each write SHALL carry a write id that is UNIQUE in the journal. After an outcome it cannot learn (the connection lost after COMMIT was sent, `psql` exit 2, or an exit 124 from an outer timer), the writer SHALL reconnect and look up its id, SHALL exit 0 if the write is there, and SHALL retry cleanly if it is not. The retry SHALL go through the UNIQUE write id with a `lock_timeout`, and not through a lookup followed by a blind write. A verb SHALL read the journal by write id and by sequence number. A retry of an in-doubt write SHALL reuse its write id, and the in-doubt report SHALL name the id; the report's exit code where the writer cannot reconnect is the design's.
+Each write SHALL carry a write id that is UNIQUE in the journal. After an outcome it cannot learn (the connection lost after COMMIT was sent, `psql` exit 2, or an exit 124 from an outer timer), the writer SHALL reconnect and look up its id, SHALL exit 0 if the write is there, and SHALL retry cleanly if it is not. The retry SHALL go through the UNIQUE write id with a `lock_timeout`, and not through a lookup followed by a blind write. A verb SHALL read the journal by write id and by sequence number. A retry of an in-doubt write SHALL reuse its write id, and the in-doubt report SHALL name the id; the report's exit code where the writer cannot reconnect is the design's. A write any of whose commit calls was in doubt SHALL never exit "register busy": at the deadline it SHALL make one lookup once the head row is free, within its reconnect window, and SHALL exit 0 if the write is there, "register busy" if it is absent with the head row free, and otherwise the in-doubt code with the id, keeping the record of the pending write. A reused write id whose journal entry names a different lane, verb or arguments from this run's SHALL be refused with 2.
+
+#### Scenario: In doubt at the deadline (agreement test 12)
+- **WHEN** a write's commit call is in doubt and its own orphaned transaction still holds the head row when the deadline passes
+- **THEN** the writer does not exit "register busy"; it makes one lookup once the head row is free and exits 0 if the write is there, "register busy" if it is absent, or the in-doubt code naming the id if the head row is not free within the reconnect window
+- **AND** a rerun after the in-doubt code reuses the id and the journal holds at most one entry for it
+
+#### Scenario: A reused id for a different write
+- **WHEN** a run reuses a write id whose journal entry names a different lane, verb or arguments
+- **THEN** it is refused with 2 and nothing is written
 
 #### Scenario: COMMIT landed, then exit 2 (agreement test 12)
 - **WHEN** a `psql` wrapper commits and then exits 2
@@ -273,7 +291,11 @@ The claim comment SHALL cite "register seq `<n>`", where `<n>` matches the `Regi
 - **THEN** the mirror commit with `Register-Seq: n` in `git log` is that write's commit
 
 ### Requirement: The journal records each write
-Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`) and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically.
+Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`) and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically. An entry whose edits touch only `lanes/STORE` SHALL be an operator entry, flagged as such in the journal. Exactly two kinds of operator entry SHALL pass the switch check, each written in its command's own transaction: the cutover's (seq 1), in the transaction that sets the switch to `primary`; and the rollback's last seq, in the transaction that sets the switch to `files`. No other entry SHALL be journalled while the switch is not `primary`.
+
+#### Scenario: The operator entries
+- **WHEN** a cutover and then a rollback run to their end
+- **THEN** the journal holds exactly two operator entries, seq 1 and the rollback's last seq, each flagged, and nothing journalled after the switch went to `files`
 
 #### Scenario: Sequence follows commit order
 - **WHEN** two writers commit in a known order
@@ -295,9 +317,13 @@ The database's clock SHALL stamp each row's UTC, written in whole seconds as `ut
 - **THEN** that UTC is stored as written
 
 ### Requirement: The renderer commits one mirror commit per sequence
-After a transaction commits, the writer SHALL fork the renderer. The renderer SHALL commit every sequence the mirror lacks, in sequence order, one commit per write, with that write's message and a `Register-Seq: <n>` trailer, so that `git log` of the workspace repository stays the audit trail in commit order. It SHALL render `lanes/LANES.md`, `lanes/log/<lane>.md`, `lanes/aliases.tsv` and `lanes/archive/`, and SHALL touch nothing else. Two renderers racing SHALL produce one commit per sequence, in order.
+After a transaction commits, the writer SHALL fork the renderer. The renderer SHALL commit every sequence the mirror lacks, in sequence order, one commit per write, with that write's message and a `Register-Seq: <n>` trailer, so that `git log` of the workspace repository stays the audit trail in commit order. It SHALL render `lanes/LANES.md`, `lanes/log/<lane>.md`, `lanes/aliases.tsv` and `lanes/archive/`, and SHALL touch nothing else. Two renderers racing SHALL produce one commit per sequence, in order. The renderer SHALL NOT render an operator entry: the command that wrote it pushes its commit, with the renderer identity, and confirms it by Amendment 23's S4 read-back, and the renderer counts that seq as rendered once it is on origin.
 
 > Pending Brett's Q18: written under option (A).
+
+#### Scenario: An operator seq not yet on origin
+- **WHEN** the next sequence the mirror lacks is an operator entry whose commit is not yet on origin
+- **THEN** the renderer renders nothing for it and pushes nothing past it
 
 #### Scenario: The mirror equals a full render (agreement test 1)
 - **WHEN** any listed write has committed and its render has run
@@ -355,7 +381,7 @@ A renderer killed between its commit and its push, or stopped at its retry limit
 - **THEN** it is treated as a divergence and is not discarded as a render commit
 
 ### Requirement: One render at a time per checkout, and no fork waits
-A fork that finds a render running in the same checkout SHALL leave a rerun mark and exit at once. The running render SHALL read the journal head again before it lets go and SHALL render again while the mirror lacks a sequence. A render's lock SHALL NOT be the lane's write lock, so `lane-start`'s stamp and `lane-handoff`'s commit never queue behind a render.
+A fork that finds a render running in the same checkout SHALL leave a rerun mark and exit at once. The running render SHALL read the journal head again before it lets go and SHALL render again while the mirror lacks a sequence; a pass that pushes nothing SHALL end the renderer, so that a pass that cannot progress (a failed fetch or push, a divergence, an operator seq not yet on origin) never loops. A render's lock SHALL NOT be the lane's write lock, so `lane-start`'s stamp and `lane-handoff`'s commit never queue behind a render.
 
 > Pending Brett's Q27: written under option (a).
 
@@ -375,7 +401,7 @@ A render forked from a verb run with `LANES_NO_FETCH=1` SHALL render, and SHALL 
 - **THEN** the render fetches and renders
 
 ### Requirement: A pending hand edit has a way out on `mode=primary`
-Where Amendment 23's S3 would refuse a writer because a hand edit is pending, the refusal on `mode=primary` SHALL name the file and print a recovery that works: restore the file, and make the write through its verb. It SHALL NOT print `lanes-edit.sh commit` as the recovery.
+On `mode=primary` a writer SHALL look for a pending hand edit of a rendered file in the writing lane's checkout, `<W>-lanes/<lane>/`, before its snapshot, since the verb itself runs on a scratch tree. Where Amendment 23's S3 would refuse a writer because a hand edit is pending, the refusal on `mode=primary` SHALL name the file and print a recovery that works: restore the file, and make the write through its verb. It SHALL NOT print `lanes-edit.sh commit` as the recovery.
 
 #### Scenario: A pending hand edit
 - **WHEN** a hand edit of a rendered file is pending and a writer runs
@@ -424,9 +450,13 @@ On `mode=primary` the post-write index nudge SHALL NOT re-index the mirror into 
 - **THEN** no re-index of the mirror runs against the register's database
 
 ### Requirement: Readers read the database and fail closed
-On `mode=primary` every act and every guard SHALL read the database: `who`, `binding`, `live-holder`, `next-free`, `managed-projection`, the guard, `lane`, `lane-start`, `lane-end`, `lane-handoff` and `lane-rename`. Where the act writes, the reads it decides by SHALL hold at its COMMIT: they run inside the transaction that commits the write, or on a snapshot at head `n` whose SERIALIZABLE commit succeeds only while the head is still `n`. A read that fails SHALL refuse with 69, or with 2 in the guard, except where the next requirement says otherwise.
+On `mode=primary` every act and every guard SHALL read the database: `who`, `binding`, `live-holder`, `next-free`, `managed-projection`, the guard, `lane`, `lane-start`, `lane-end`, `lane-handoff` and `lane-rename`. Where the act writes, the reads it decides by SHALL hold at its COMMIT: they run inside the transaction that commits the write, or on a snapshot at head `n` whose SERIALIZABLE commit succeeds only while the head is still `n`. Where an act's deciding reads come before the write verb they decide (one transaction per verb), each such verb SHALL carry them as expectations (for example `--expect-row <lane> <digest>`), which its commit SHALL check in its own transaction, refusing with 2, and writing nothing, where one no longer holds. An act that cannot carry its reads that way is a narrowing of Amendment 22's S3, and is Brett Heap's to decide. A read that fails SHALL refuse with 69, or with 2 in the guard, except where the next requirement says otherwise.
 
 > Pending Brett's Q7: written under option (A″); the wording holds under (A′) and (A) as well.
+
+#### Scenario: A rival commit between an act's read and its write
+- **WHEN** an act reads a lane's row, a rival commit changes that row, and the act's write verb then commits with the row's earlier digest as its expectation
+- **THEN** the commit refuses with 2 and writes nothing
 
 #### Scenario: The reader table (agreement tests 2 and 11)
 - **WHEN** the database is unreachable and `who`, `binding`, `live-holder`, `next-free`, `lane`, `lane-end` or `lane-rename` runs
@@ -452,7 +482,7 @@ On `mode=primary` every act and every guard SHALL read the database: `who`, `bin
 - **THEN** it reads the line through a register verb and not by `git grep` of `origin/<branch>`
 
 ### Requirement: Reads that decide nothing may read the mirror
-Only reads that decide nothing SHALL read the mirror: the `SessionStart` block and the launcher's bare window reads (offline, always exit 0), and the listings `lanes` and `history` when the database is unreachable. The one other mirror read is the naming read of `lane-handoff` and the handoff skill, which the requirement for them sets out. A mirror read SHALL print on stderr `read: mirror at <sha12>, <k> sequences behind or unknown (sql unreachable: <why>)`, SHALL keep its exit, and SHALL NOT change stdout. Where a caller acts on a listing's answer, as `lane` and `lane-end --retire-dormant` act on `lanes`' answer, that read decides and SHALL refuse with 69.
+Only reads that decide nothing SHALL read the mirror: the `SessionStart` block and the launcher's bare window reads (offline, always exit 0), and the listings `lanes` and `history` when the database is unreachable. The two other mirror reads are the naming read of `lane-handoff` and the handoff skill, which the requirement for them sets out, and the guard's answer during an outage Brett Heap has declared, which the register service's requirement for a declared outage sets out. A mirror read SHALL print on stderr `read: mirror at <sha12>, <k> sequences behind or unknown (sql unreachable: <why>)`, SHALL keep its exit, and SHALL NOT change stdout. Where a caller acts on a listing's answer, as `lane` and `lane-end --retire-dormant` act on `lanes`' answer, that read decides and SHALL refuse with 69.
 
 #### Scenario: A listing with the database down
 - **WHEN** the database is unreachable and `lanes` or `history` runs
@@ -559,7 +589,7 @@ The import SHALL take origin's records only; lanes publish or archive their own 
 - **THEN** they are imported byte-for-byte, flagged, and the warning stays
 
 ### Requirement: The cutover is one guarded sequence
-The cutover SHALL set the database switch to `primary`, SHALL push one commit adding `lanes/STORE` as a fast-forward of the imported commit, and SHALL then flip `mode=primary` on the workstations act 3 configured. It SHALL abort if `main` moved under `lanes/` since the import, in which case the import is re-run at the new tip, and the abort path SHALL set the switch back. `lanes/STORE` SHALL carry `Register-Seq` 1, and the first write after the cutover SHALL be mirrored as `Register-Seq: 2`.
+The cutover SHALL run with `LANES_LANE` naming the operator lane, through that lane's checkout. In one short transaction it SHALL set the database switch to `primary` and write seq 1, the operator entry adding `lanes/STORE`. It SHALL then push that commit, with the renderer identity, as a fast-forward of origin's tip, which descends from the imported commit and whose `lanes` tree has the imported commit's id; SHALL confirm it by Amendment 23's S4 read-back; and SHALL then flip `mode=primary` on the workstations act 3 configured. It SHALL abort if `main` moved under `lanes/` since the import, in which case the import is re-run at the new tip. A push it cannot confirm SHALL take neither the success nor the abort branch until a read-back settles it. The abort SHALL set the switch back, delete seq 1 and set the head back to 0, in one transaction, and only after a read-back proves the marker absent from origin. `lanes/STORE` SHALL carry `Register-Seq` 1, and the first write after the cutover SHALL be mirrored as `Register-Seq: 2`. No operator command SHALL hold a database transaction across a git act.
 
 > Pending Brett's Q18: written under option (A).
 
@@ -573,18 +603,26 @@ The cutover SHALL set the database switch to `primary`, SHALL push one commit ad
 
 #### Scenario: `main` moved under `lanes/`
 - **WHEN** `main` has moved under `lanes/` since the import
-- **THEN** the cutover aborts, pushes no marker, and leaves the switch not `primary`
+- **THEN** the cutover aborts, pushes no marker, leaves the switch not `primary`, and leaves no seq 1 in the journal and the head at 0
+
+#### Scenario: A push the cutover cannot confirm
+- **WHEN** the cutover's push of `lanes/STORE` cannot be confirmed by its read-back
+- **THEN** the cutover neither aborts nor flips any workstation until a read-back shows whether the marker is on origin
 
 ### Requirement: Rollback returns the estate to the files
-`lanes-index rollback` SHALL switch to `files`, so that every SQL write refuses from that transaction on; SHALL render until `status` shows the mirror current and byte-identical to a full render; SHALL push one commit removing `lanes/STORE`; and SHALL clear `mode=primary` on every workstation. It SHALL run from a shell or from a `CLAUDE_NO_LANE=1` session, with no lane session and no guard. A mirror that a divergence has stopped SHALL NOT count as current.
+`lanes-index rollback` SHALL run with `LANES_LANE` naming the operator lane, through that lane's checkout, from a shell or from a `CLAUDE_NO_LANE=1` session, with no lane session and no guard. It SHALL refuse to start while `status` shows `diverged at`: S2's two ways out resolve the divergence first, and they run only while the switch is `primary`. In one transaction it SHALL switch to `files`, so that every SQL write refuses from that transaction on, and write its last seq, the operator entry removing `lanes/STORE`; nothing SHALL be journalled after it. It SHALL render until `status` shows the mirror holding every seq before that one and byte-identical to a full render. The rollback SHALL remove the ruleset, where one is in place, as Brett Heap's act, after that render and before the next step. It SHALL push the commit removing `lanes/STORE`, with the renderer identity, and confirm it by Amendment 23's S4 read-back; and SHALL clear `mode=primary` on every workstation. A mirror that a divergence has stopped SHALL NOT count as current.
 
-#### Scenario: A stopped renderer
-- **WHEN** the mirror is diverged and a rollback runs
-- **THEN** it does not push the commit that removes `lanes/STORE` until the divergence is cleared
+#### Scenario: A diverged mirror
+- **WHEN** `status` shows `diverged at` and a rollback is tried
+- **THEN** it refuses to start, changes neither the switch nor the marker, and names S2's two ways out
+
+#### Scenario: The rollback journals its own last seq
+- **WHEN** the rollback sets the switch to `files`
+- **THEN** its last seq, removing `lanes/STORE`, is written in that same transaction, and nothing is journalled after it
 
 #### Scenario: A rollback (agreement test 8)
 - **WHEN** a rollback runs to its end
-- **THEN** the files are byte-identical to a full render, the marker is gone and SQL writes are refused
+- **THEN** the files are byte-identical to a full render, the marker is gone, the ruleset is removed and SQL writes are refused
 
 #### Scenario: A files-mode write after the rollback (agreement test 13)
 - **WHEN** a files-mode writer writes after the rollback has run to its end
@@ -604,21 +642,21 @@ A rollback SHALL set the switch to `files` in the database first. With the datab
 - **THEN** the rollback is refused and removes no marker
 
 ### Requirement: A writer the rollback missed cannot write
-Once a rollback has run to its end and the database is back, a `mode=primary` writer that was not cleared SHALL exit 69 and write nothing, and the journal's count SHALL be unchanged. That SHALL hold after a fetch and with none since the rollback's push, with `LANES_NO_FETCH=1` set, and through each of `set-row-state`, `replace-in-row`, `append-session-id`, `append-line` and `commit` (the five that make no fetch before they edit) and through one verb that does. The test SHALL fail on the leak as it stands today, a primary writer that refuses only on its last-fetched tip or on a switch reset when the database returns.
+Once a rollback has run to its end and the database is back, a `mode=primary` writer that was not cleared SHALL write nothing, and the journal's count SHALL be unchanged. That SHALL hold after a fetch and with none since the rollback's push, with `LANES_NO_FETCH=1` set, and through each of `set-row-state`, `replace-in-row`, `append-session-id`, `append-line` and `commit` (the five that make no fetch before they edit) and through one verb that does. The four SQL verbs and the verb that fetches SHALL exit 69; `commit` SHALL exit 2, because on `mode=primary` its hand-edit half refuses as a direct write and its publish half is not a SQL write. The test SHALL fail on the leak as it stands today, a primary writer that refuses only on its last-fetched tip or on a switch reset when the database returns.
 
 > Pending Brett's Q4(b): written under option (iii).
 
 #### Scenario: A missed writer after a fetch (agreement test 8)
 - **WHEN** a second clone the rollback missed fetches and then runs any of the five verbs
-- **THEN** it exits 69 and the journal's count is unchanged
+- **THEN** it exits 69 (2 for `commit`) and the journal's count is unchanged
 
 #### Scenario: A missed writer with no fetch (agreement test 8)
 - **WHEN** the second clone has not fetched since the rollback's push and runs any of the five verbs
-- **THEN** it exits 69 and the journal's count is unchanged
+- **THEN** it exits 69 (2 for `commit`) and the journal's count is unchanged
 
 #### Scenario: `LANES_NO_FETCH=1` (agreement test 8)
 - **WHEN** the missed writer runs with `LANES_NO_FETCH=1` set
-- **THEN** it exits 69 and writes nothing
+- **THEN** it exits 69 (2 for `commit`) and writes nothing
 
 #### Scenario: The test must catch the leak
 - **WHEN** the test runs against a writer that refuses only on its last-fetched tip
@@ -768,9 +806,10 @@ The drill (agreement test 13) SHALL run import, cutover, writes, an outage of th
 - **THEN** its first part is "What changes for a lane" and covers each item above
 
 ### Requirement: The runbook for acts 3 and 4 and the rollback
-The manual SHALL carry a runbook for acts 3 and 4 and the rollback: every act, word, command and owner, in order. It SHALL include the readiness check in each environment, R3b's smoke test, the rollback's triggers, the estate-wide freeze (an estate-wide hold announced on each project's coordination issue and by Brett's prompt to each pane, drained to `PAUSED`, then quiet for 2 minutes, with a cutover and a rollback rehearsed first on a scratch schema), and the posting of "What changes for a lane" on each project's coordination issue before the window. It SHALL propose one bench image rebuild that carries both the re-vendor and the configuration mount, SHALL list the environments that write (the Codex lane's included) and ask Brett to confirm the list, and SHALL make act 4 wait for Amendment 23's slices 2a, 2b and 3.
+The manual SHALL carry a runbook for acts 3 and 4 and the rollback: every act, word, command and owner, in order. It SHALL include the readiness check in each environment, R3b's smoke test, the rollback's triggers, the estate-wide freeze (an estate-wide hold announced on each project's coordination issue and by Brett's prompt to each pane, drained to `PAUSED`, then quiet for 2 minutes, with a cutover and a rollback rehearsed first on a scratch schema), and the posting of "What changes for a lane" on each project's coordination issue before the window. It SHALL propose one bench image rebuild that carries both the re-vendor and the configuration mount, SHALL list the environments that write (the Codex lane's included) and ask Brett to confirm the list, and SHALL make act 4 wait for Amendment 23's slices 2a, 2b and 3. Act 4's steps SHALL run in this order: the drain, the last `PAUSED` write on origin, the ruleset switched on where the plan supports it, the import, the cutover, and the flips. The rollback's SHALL put the ruleset's removal after its render proves the mirror current and before the commit removing `lanes/STORE` is pushed. Switching the ruleset is Brett Heap's act.
 
 > Pending Brett's Q4(a): written under option (i).
+> Pending Brett's Q21(b): written under option (B).
 > Pending Brett's Q22: written under option (a).
 > Pending Brett's Q23: written under option (a).
 > Pending Brett's Q24: written under option (a).

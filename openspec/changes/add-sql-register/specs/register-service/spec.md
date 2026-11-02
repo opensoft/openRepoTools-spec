@@ -38,9 +38,13 @@ The service SHALL hold its connection as a long-lived `psql` child on pipes. It 
 ### Requirement: The service starts on demand with no supervisor of its own
 The service SHALL start on demand ("socket activation or first call") and SHALL need no supervisor of its own: no systemd and no launchd. How it starts on Linux and macOS, and in containers that do not share `/tmp`, is the design's.
 
-#### Scenario: The first call
-- **WHEN** a client calls a service that is not running
-- **THEN** the service starts on that call, or the client falls back to the direct read, and the call is answered
+#### Scenario: The first call starts the service
+- **WHEN** a client calls a service that is not running, where the service can start
+- **THEN** the service starts on that call and answers it, with no supervisor running
+
+#### Scenario: A service that cannot start
+- **WHEN** a client calls a service that is not running and cannot be started
+- **THEN** the client falls back to the direct read and the call is answered
 
 ### Requirement: New code keeps to the toolchain floor
 New bash SHALL keep to the hygiene suite's bash-3.2 rules. New Python SHALL be standard-library only and SHALL run on Python 3.9 or later.
@@ -87,7 +91,7 @@ The `SessionStart` block SHALL become a client of the service. It SHALL stay rea
 - **THEN** it answers from the mirror and exits 0
 
 ### Requirement: The guard falls back to the database, never the mirror
-With the service unavailable, the hook SHALL fall back to the direct read of `lanes-edit.sh guard` and SHALL print `guard: direct (service unavailable)` on stderr, with the same exit code. On `mode=primary` that direct read SHALL be of the database and never the mirror, and where it cannot read the database it SHALL refuse with 2. The direct read SHALL hold the READER credential itself, from the 0600 `lanes-index.conf` and its password file, so that no database URL or password enters the hook's environment. Writes SHALL never fall back to the files.
+With the service unavailable, the hook SHALL fall back to the direct read of `lanes-edit.sh guard` and SHALL print `guard: direct (service unavailable)` on stderr, with the same exit code. On `mode=primary` that direct read SHALL be of the database and never the mirror, except during a declared outage (below), and where it cannot read the database it SHALL refuse with 2. The direct read SHALL hold the READER credential itself, from the 0600 `lanes-index.conf` and its password file, so that no database URL or password enters the hook's environment. Writes SHALL never fall back to the files.
 
 > Pending Brett's Q11: written under option (a).
 
@@ -96,7 +100,7 @@ With the service unavailable, the hook SHALL fall back to the direct read of `la
 - **THEN** the guard answers from the database, prints the fallback line, and exits with the code the service would have given
 
 #### Scenario: The service is down and the database is not
-- **WHEN** the service is down and the database cannot be read
+- **WHEN** the service is down, the database cannot be read, and no outage is declared
 - **THEN** the guard refuses with 2 and never reads the mirror
 
 ### Requirement: A service that accepts and never answers counts as unavailable
@@ -143,10 +147,18 @@ On `mode=primary`, before an outage is declared and outside one, the guard SHALL
 - **THEN** it runs with no lane session and no guard
 
 ### Requirement: A declared outage lets the guard answer from the mirror
-During an outage Brett Heap declares on his word, when he knows that no workstation can still write, and until the expiry he names when he declares it, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. Before a declaration, after its expiry, and outside one, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
+During an outage Brett Heap declares on his word, when he knows that no workstation can still write, and until the expiry he names when he declares it, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. Before a declaration, after its expiry, and outside one, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. It SHALL record the mirror's `Register-Seq` when it is declared, and the guard SHALL answer from the mirror only where the tip it reads carries a `Register-Seq` at least that high. `lanes-index status` SHALL report a declaration still in place while the database answers.
 
 > Pending Brett's Q26: written under option (a′).
 > Pending Brett's Q4(b): written under option (iii). Under (i), (ii) or (iv), a rollback's start may also declare it.
+
+#### Scenario: A mirror older than the declaration
+- **WHEN** an outage is declared and the tip the guard reads carries a `Register-Seq` below the one the declaration records
+- **THEN** the guard refuses with 2
+
+#### Scenario: Service and database both down in a declared outage
+- **WHEN** the service is down, the database cannot be read, and an unexpired outage is declared
+- **THEN** the guard answers from the mirror, labelled `read: mirror`, and exits as that answer gives
 
 #### Scenario: An expired declaration
 - **WHEN** the database is unreachable and the declaration's expiry has passed
