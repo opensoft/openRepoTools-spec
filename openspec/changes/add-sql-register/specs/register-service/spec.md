@@ -2,31 +2,31 @@
 
 ## Purpose
 
-`lanes-register` is a local-socket service that holds one database connection per workstation for the register's reads and answers the prompt guard's question in milliseconds. The `UserPromptSubmit` guard and the `SessionStart` block are its clients, and the guard reads the database directly when the service is unavailable. Writes never depend on the service.
+`lanes-register` is a local-socket service that holds one database connection per environment (a bench container or a host shell) for the register's reads, and answers the register's text at the journal's head in milliseconds; the reader decides. The `UserPromptSubmit` guard and the other readers are its clients, the `SessionStart` block only starts it, and the guard reads the database directly when the service is unavailable. Writes never depend on the service.
 
 ## ADDED Requirements
 
 ### Requirement: The service serves the reads and the guard, and writes do not depend on it
-`lanes-register` SHALL serve this change's storage layer over a local socket. One process SHALL hold the database connection and the credential for the reads, and SHALL answer the reads every act and guard makes (`who`, `binding`, `live-holder`, `next-free`, `managed-projection` and the guard's triple check) in milliseconds. A `lanes-edit.sh` write SHALL open its own transaction with its own REGISTER-WRITER credential, and SHALL go on when the service is down.
+`lanes-register` SHALL serve this change's storage layer over a local socket. One process SHALL hold the database connection and the credential for the reads. For the reads every act and guard makes (`who`, `binding`, `live-holder`, `next-free`, `managed-projection` and the guard's triple check), the service SHALL answer the register's text at the journal's head `n` in milliseconds, and the reader SHALL decide, running today's parser on that text in its own process. A `lanes-edit.sh` write SHALL open its own transaction with its own REGISTER-WRITER credential, and SHALL go on when the service is down.
 
 #### Scenario: A read through the service
-- **WHEN** a client asks the service `who` on a `mode=primary` workstation
-- **THEN** the service answers from the database, equal to the direct read
+- **WHEN** a reader runs `who` through the service on a `mode=primary` workstation
+- **THEN** the service answers the register's text at `n` from the database, and the reader's answer equals the direct read
 
 #### Scenario: A write with the service down
 - **WHEN** the service is not running and a write is made
 - **THEN** the write succeeds through its own transaction and is not refused for want of the service
 
 ### Requirement: Every answer that decides state is read fresh
-Every answer that decides state SHALL be read from the database for that request, or proven current against the journal's head sequence in that request. A parse the service keeps SHALL never answer alone. With the database unreachable, the service SHALL refuse as the direct read would (69, or 2 for the guard) and SHALL never answer from what it read before.
+Every answer that decides state SHALL be read from the database for that request, or proven current against the journal's head sequence in that request. A parse or an image the service keeps SHALL never answer alone. With the database unreachable, the service SHALL refuse, or answer `unavailable` so that the direct read decides, and either way the reader SHALL exit as the direct read would (69, or 2 for the guard); the service SHALL never answer from what it read before.
 
 #### Scenario: A write between two requests
 - **WHEN** another process writes between two requests to the service
 - **THEN** the second answer includes that write and equals the direct read
 
 #### Scenario: The database is unreachable while the service is up
-- **WHEN** the service is up and the database becomes unreachable
-- **THEN** the guard's answer is 2 and never a cached `ok`, and the other reads refuse with 69
+- **WHEN** the service is up, the database becomes unreachable, and no outage is declared
+- **THEN** the guard's answer is 2 and never one from text read before, and the other reads refuse with 69
 
 ### Requirement: The service reaches the database only through `psql`
 The service SHALL hold its connection as a long-lived `psql` child on pipes. It SHALL import no database driver and SHALL keep `dependencies = []` in the package metadata, unless the design names a driver as a new dependency for Brett Heap's word.
@@ -54,18 +54,22 @@ New bash SHALL keep to the hygiene suite's bash-3.2 rules. New Python SHALL be s
 - **THEN** it passes under its bash-3.2 rules and finds only standard-library imports
 
 ### Requirement: The `UserPromptSubmit` guard is the service's client
-The guard SHALL send the service what it reads today and a service cannot read for itself: the hook's `session_id`, `cwd`, `agent_id` and `prompt`; the window reference and the window name; and the live record's `name`, `nameSource` and liveness facts, which the client SHALL read from this container's session records and tmux. The service SHALL answer `ok`, `refuse <reason>` or `offer <the three Amendment 12 Addendum 1 choices>`, and the guard SHALL exit 0 or 2. The offer file, the `/rename` typing, and answer 2's `lane-start --no-launch --bind` and `set-row-state` SHALL stay client-side acts, and those two writes SHALL be transactions through the storage layer. The hook SHALL stay, because the harness's exit code is the only thing that refuses a prompt. The socket call SHALL be a standard-library Python client. The client's form (a block at the top of `lanes-edit.sh guard` that keeps the hook string, or a separate program with a new hook string) is the design's.
+The guard SHALL send the service only the names of the files it reads. What it reads today and a service cannot read for itself (the hook's `session_id`, `cwd`, `agent_id` and `prompt`; the window reference and the window name; and the live record's `name`, `nameSource` and liveness facts) SHALL stay in the guard, which SHALL read them from this container's session records and tmux. The service SHALL answer the register's text at `n`, and the reader SHALL decide: the guard SHALL run today's parser on that text and SHALL exit 0 or 2 as it decides, passing the prompt, refusing it, or making the offer of the three Amendment 12 Addendum 1 choices. The offer file, the `/rename` typing, and answer 2's `lane-start --no-launch --bind` and `set-row-state` SHALL stay client-side acts, and those two writes SHALL be transactions through the storage layer. The hook SHALL stay, because the harness's exit code is the only thing that refuses a prompt. The socket call SHALL be a standard-library Python client. The client's form (a block at the top of `lanes-edit.sh guard` that keeps the hook string, or a separate program with a new hook string) is the design's.
+
+#### Scenario: The request carries only file names
+- **WHEN** the guard asks the service for its read
+- **THEN** the request names only the files it reads, and no session, window, record or liveness fact leaves the guard
 
 #### Scenario: A prompt that passes
-- **WHEN** the service answers `ok`
+- **WHEN** the service answers the text at `n` and today's parser passes the prompt on it
 - **THEN** the guard exits 0
 
 #### Scenario: A prompt that is refused
-- **WHEN** the service answers `refuse <reason>`
+- **WHEN** the service answers the text at `n` and today's parser refuses the prompt on it
 - **THEN** the guard prints the reason and exits 2
 
 #### Scenario: An offer
-- **WHEN** the service answers `offer`
+- **WHEN** the service answers the text at `n` and today's parser makes the offer on it
 - **THEN** the client writes the offer file and handles the answer to a pending offer client-side
 - **AND** answer 2's two writes are register transactions
 
@@ -83,15 +87,19 @@ The guard's answer through the service SHALL be byte-identical to the direct rea
 - **WHEN** the same prompt is put through the service and through the direct read
 - **THEN** stdout, stderr (less the fallback line) and the exit code are equal for each of `ok`, `refuse` and `offer`
 
-### Requirement: The `SessionStart` block is a client the same way
-The `SessionStart` block SHALL become a client of the service. It SHALL stay read-only, SHALL still exit 0 always, and SHALL still read offline through the mirror.
+### Requirement: The `SessionStart` block reads the mirror and only starts the service
+The `SessionStart` block SHALL stay read-only, SHALL read the mirror offline and SHALL exit 0 always; on a `mode=primary` workstation it SHALL start the service after its answer, without waiting for it.
 
 #### Scenario: A session starts with the service down
 - **WHEN** the `SessionStart` block runs and the service is unavailable
 - **THEN** it answers from the mirror and exits 0
 
+#### Scenario: A session start warms the service
+- **WHEN** the `SessionStart` block runs on a `mode=primary` workstation with no service running
+- **THEN** it answers from the mirror, exits 0, and starts the service without waiting for it
+
 ### Requirement: The guard falls back to the database, never the mirror
-With the service unavailable, the hook SHALL fall back to the direct read of `lanes-edit.sh guard` and SHALL print `guard: direct (service unavailable)` on stderr, with the same exit code. On `mode=primary` that direct read SHALL be of the database and never the mirror, except during a declared outage (below), and where it cannot read the database it SHALL refuse with 2. The direct read SHALL hold the READER credential itself, from the 0600 `lanes-index.conf` and its password file, so that no database URL or password enters the hook's environment. Writes SHALL never fall back to the files.
+With the service unavailable, the hook SHALL fall back to the direct read of `lanes-edit.sh guard` and SHALL print `guard: direct (service unavailable)` on stderr, with the same exit code. On `mode=primary` that direct read SHALL be of the database and never the mirror, except during a declared outage, under the declared-outage requirement, and where it cannot read the database it SHALL refuse with 2. The direct read SHALL hold the READER credential itself, from the 0600 `lanes-index.conf` and its password file, so that no database URL or password enters the hook's environment. Writes SHALL never fall back to the files.
 
 > Pending Brett's Q11: written under option (a).
 
@@ -104,14 +112,14 @@ With the service unavailable, the hook SHALL fall back to the direct read of `la
 - **THEN** the guard refuses with 2 and never reads the mirror
 
 ### Requirement: A service that accepts and never answers counts as unavailable
-A service that accepts a connection and never answers SHALL be treated as unavailable. The client SHALL bound its connect-and-answer wait well under the hook's 5 s timeout, so that the direct read has room to finish inside it, and the service SHALL answer `refuse` before the client's own limit runs out. The wait's value is the design's.
+A service that accepts a connection and never answers SHALL be treated as unavailable. The client SHALL bound its connect-and-answer wait well under the hook's 5 s timeout, so that the direct read has room to finish inside it, and the service SHALL refuse, or answer `unavailable` so that the direct read decides, before the client's own limit runs out. The wait's value is the design's.
 
 #### Scenario: A silent service
 - **WHEN** a service accepts a connection and never answers
 - **THEN** the hook prints the fallback line, exits as the direct read does, and finishes inside its 5 s
 
 ### Requirement: The 5 s is one budget, spent once
-The client's wait for the service, the fallback's own reads and every database access on the guard's path SHALL each get a share, and the shares SHALL add up to less than `GUARD_TIMEOUT`, with room to print the refusal. Every connection on that path, the service's and the fallback's, SHALL set its own connect timeout, `statement_timeout` and `lock_timeout` within its share, and none SHALL use `lanes-index`'s default `PGCONNECT_TIMEOUT=5` or the 300 s it allows a `psql` run. A database that does not answer SHALL be a 2 inside the hook and never a kill.
+The client's wait for the service, the fallback's own reads and every database access on the guard's path SHALL each get a share, and the shares SHALL add up to less than `GUARD_TIMEOUT`, with room to print the refusal. Every connection on that path, the service's and the fallback's, SHALL set its own connect timeout, `statement_timeout` and `lock_timeout`, each within its share, except the service's connect, which SHALL run only in the background, outside any share, so that no request waits for it; none SHALL use `lanes-index`'s default `PGCONNECT_TIMEOUT=5` or the 300 s it allows a `psql` run. Answer 2's two writes SHALL cut their deadline and each call's timer to what the hook has left, and a busy, 69 or in-doubt outcome SHALL exit 2, naming the write id. A database that does not answer SHALL be a 2 inside the hook and never a kill.
 
 #### Scenario: A database address whose connect never completes (agreement test 10)
 - **WHEN** the database address is one whose connect never completes, with the service up and with it down
@@ -124,6 +132,10 @@ The client's wait for the service, the fallback's own reads and every database a
 #### Scenario: A read held behind a lock (agreement test 10)
 - **WHEN** the guard's read is held behind a lock, with the service up and with it down
 - **THEN** the hook exits 2 inside its 5 s
+
+#### Scenario: Answer 2 with a slow database
+- **WHEN** a person answers `2` to an offer and the bind's write is busy or in doubt when the hook's time runs short
+- **THEN** the hook exits 2 inside its 5 s, naming the write id
 
 ### Requirement: The hook's environment carries no credential
 The hook's environment, and every environment a session inherits, SHALL carry no database URL and no password (Amendment 14(c)).
@@ -147,7 +159,7 @@ On `mode=primary`, before an outage is declared and outside one, the guard SHALL
 - **THEN** it runs with no lane session and no guard
 
 ### Requirement: A declared outage lets the guard answer from the mirror
-During an outage Brett Heap declares on his word, when he knows that no workstation can still write, and until the expiry he names when he declares it, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. Before a declaration, after its expiry, and outside one, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. It SHALL record the mirror's `Register-Seq` when it is declared, and the guard SHALL answer from the mirror only where the tip it reads carries a `Register-Seq` at least that high. `lanes-index status` SHALL report a declaration still in place while the database answers.
+During an outage Brett Heap declares on his word, when he knows that no workstation can still write, and until the expiry he names when he declares it, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. The declaration SHALL record the mirror's `Register-Seq` when it is declared. The guard's client, and never the service, SHALL check three conditions in this order, offline, and the guard SHALL answer from the mirror only when all three hold: its database read failed; a declaration is present, unexpired, and names this workstation's database; and the mirror it reads carries a `Register-Seq` at least as high as the declaration records. Where its database read failed and either other condition fails, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
 
 > Pending Brett's Q26: written under option (a′).
 > Pending Brett's Q4(b): written under option (iii). Under (i), (ii) or (iv), a rollback's start may also declare it.
@@ -159,6 +171,14 @@ During an outage Brett Heap declares on his word, when he knows that no workstat
 #### Scenario: Service and database both down in a declared outage
 - **WHEN** the service is down, the database cannot be read, and an unexpired outage is declared
 - **THEN** the guard answers from the mirror, labelled `read: mirror`, and exits as that answer gives
+
+#### Scenario: A declaration that names another database
+- **WHEN** the database is unreachable and the declaration names a database other than this workstation's
+- **THEN** the guard refuses with 2
+
+#### Scenario: A database that answers during a declaration
+- **WHEN** an unexpired outage is declared and the guard's database read succeeds
+- **THEN** the guard answers from the database and does not read the mirror
 
 #### Scenario: An expired declaration
 - **WHEN** the database is unreachable and the declaration's expiry has passed
@@ -176,15 +196,15 @@ During an outage Brett Heap declares on his word, when he knows that no workstat
 - **WHEN** an outage is declared while the database is down
 - **THEN** each guard can read the declaration without the database
 
-### Requirement: The service-backed guard is fast, and the cost is recorded
-The service-backed guard SHALL answer in under 50 ms on the suite's fixture register, measured as Q10 settles. The PR body SHALL record that figure with today's direct guard recorded beside it. Before the client's form is settled, the design SHALL measure today's guard in four parts: reaching the guard arm, tmux, the scan of the session records, and the register read, and SHALL say which parts the service removes.
+### Requirement: The service answers the guard's read fast, and the cost is recorded
+The service SHALL answer the guard's read in under 50 ms on the suite's fixture register, measured as Q10 settles, from the client's connect to the last byte of a digest-checked answer. The PR body SHALL record that figure with the whole guard's wall time, through the service and through the direct read, and today's direct guard recorded beside it; the whole guard's figure is Q29's. Before the client's form is settled, the design SHALL measure today's guard in four parts: reaching the guard arm, tmux, the scan of the session records, and the register read, and SHALL say which parts the service removes.
 
 #### Scenario: The recorded guard time (agreement test 10)
 - **WHEN** the PR is opened
-- **THEN** its body records the service-backed guard's time and today's direct guard's time beside it
+- **THEN** its body records the service's answer time for the guard's read, with the whole guard's time through the service and through the direct read, and today's direct guard's time, beside it
 
 ### Requirement: The socket API is documented
-The socket API SHALL be documented in `docs/README-lanes.md`. It SHALL be the surface that the 001 feature's lanes service (T055) adopts or wraps, so that Codex and the managed path ask the same question of the same process.
+The socket API SHALL be documented in `docs/README-lanes.md`: the service answers the register's text at `n`, and the reader decides. The 001 feature's lanes service (T055) SHALL adopt it through `lanes-edit.sh`'s read verbs, which ask the service and run today's parser, so that Codex and the managed path read the same text from the same process and decide by the same parser.
 
 #### Scenario: The manual
 - **WHEN** `docs/README-lanes.md` is read

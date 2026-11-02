@@ -295,11 +295,13 @@ the section that carries it.
   below.
 - **D2. One database client: `lanes-index register …` subcommands.** The write
   path calls `lanes-index register snapshot` and `lanes-index register commit`;
-  readers call `lanes-index register read`; the renderer, import, rollback and
-  status are `lanes-index` too. The alternative, `psql` driven from bash, would
-  put the connection string in bash, parse SQLSTATEs in bash, and keep a second
-  copy of the timeouts; the service as the client is excluded for writes by
-  4A. Cost: a Python start per call, which test 9 measures (S1).
+  readers call `lanes-index register read`, the guard once a prompt with
+  `--for guard --prefetch` (SVC-8); the service is `lanes-index serve`
+  (SVC-3); the renderer, import, rollback and status are `lanes-index` too.
+  The alternative, `psql` driven from bash, would put the connection string in
+  bash, parse SQLSTATEs in bash, and keep a second copy of the timeouts; the
+  service as the client is excluded for writes by 4A. Cost: a Python start per
+  call, which test 9 measures (S1).
 - **D3. The mode is asked, not parsed.** `lanes-edit.sh` asks `lanes-index mode`
   only where a configuration file exists at `lanes-index`'s path, or where
   `LANES_INDEX_CONFIG` is set; otherwise the workstation is not primary and no
@@ -434,11 +436,12 @@ the section that carries it.
 - **D20. A declared outage is a file beside `lanes-index.conf`,** written by
   `lanes-index outage declare` on Brett's word, with an expiry he names and the
   mirror's `Register-Seq` at the moment he declares it, `mirror-seq=<m>`; the
-  guard answers from the mirror only where the tip it reads carries a
-  `Register-Seq` of at least `m` (Q26's (a′); S3).
+  guard answers from the mirror only where SVC-12's three conditions hold: its
+  database read failed, an unexpired declaration names this database, and the
+  tip it reads carries a `Register-Seq` of at least `m` (Q26's (a′); S3).
 - **D21. `lanes/STORE`'s fields:** `store=primary`, `database=<label>`,
   `import=<sha>`, `lanes-tree=<tree id>` and `utc=<UTC>`, in a commit carrying
-  `Register-Seq: 1` (S5).
+  `Register-Seq: 1`, or `m+1` after a loss (D24) (S5).
 - **D22. The disaster path re-imports at the mirror's tip by default,** continuing
   the sequence, and restores a backup only where it is newer than the mirror.
   A generation id, in the switch row and in every pending record, changes with
@@ -456,15 +459,19 @@ the section that carries it.
 - **D24. Two operator entries, and the operator lane** (the frame review's F1,
   F2, F12). An entry whose edits touch only `lanes/STORE` is an operator entry,
   flagged in the journal (lane 1 adds the column). Exactly two kinds pass the
-  switch check, each in its command's own transaction: the cutover's seq 1, in
-  the transaction that sets the switch to `primary`; and the rollback's last
-  seq, in the transaction that sets it to `files`. Nothing else is journalled
-  while the switch is not `primary`. The renderer never renders an operator
-  entry; its command pushes it with the renderer identity and confirms it by
-  Amendment 23's S4 read-back. The operator commands (import, cutover,
-  rollback, the disaster path) run with `LANES_LANE=<operator lane>` through
-  that lane's checkout, as Amendment 23's S2 item 3 asks of every write, and
-  none holds a database transaction across a git act (S2, S5).
+  switch check, each in its command's own transaction: the cutover's entry, in
+  the transaction that sets the switch to `primary`, which is seq 1, or `m+1`
+  after a loss, where `lanes-index cutover --import <M> --after-loss` writes
+  the marker's rewrite as the cutover's entry, so the next write is `m+2`
+  (lane 1's section; the frame review's F18, as lane 3 ruled it); and the
+  rollback's last seq, in the transaction that sets it to `files`. Nothing
+  else is journalled while the switch is not `primary`. The renderer never
+  renders an operator entry; its command pushes it with the renderer identity
+  and confirms it by Amendment 23's S4 read-back. The operator commands
+  (import, cutover, rollback, the disaster path) run with
+  `LANES_LANE=<operator lane>` through that lane's checkout, as Amendment 23's
+  S2 item 3 asks of every write, and none holds a database transaction across
+  a git act (S2, S5).
 - **D25. `lanes-index cutover` is a command of its own** (R3's split of Q4), not a
   step of `import`. The name is the design's, not one Amendment 22 ratified: its
   S5 has the import refuse the cutover and the cutover follow, with no command
@@ -482,7 +489,7 @@ to him.
 | D5: one transaction per verb, where lane 4's R2 recommends one per act; and its S3 consequence, that an act's earlier deciding reads sit outside its writes' transactions, kept by expectations, with any act that cannot carry one narrowing S3 | Amendment 22's S1 and S3; R2, R2C | not yet routed |
 | D7: "register busy" exits 75, not 69 | Amendment 22's S1 | routed: Q7, "(A″) with 69" |
 | Q4(b)(iii) and D22: a rollback needs the database; a database lost for good is the disaster path | Amendment 22's S5 | routed: Q4(b) |
-| Q26(a′) and D20: the guard answers from the mirror in a declared outage | Amendment 22's S3 | routed: Q26 |
+| Q26(a′) and D20: the guard answers from the mirror in a declared outage, under SVC-12's three conditions | Amendment 22's S3 | routed: Q26 |
 | Q27(a): "takes S3's checks" read as S3's fetch for the private-index renderer | Amendment 23, "Relation to Amendment 22" | routed: Q27 |
 | D18: the later `HOLD` or `LANDING` writer writes nothing | a reading of Amendment 22's S6 | not yet routed; goes beside Q17 |
 | D1: the register in a schema of its own, not #160's | Amendment 22, "Everything Amendment 14 built is reused" | not yet routed |
@@ -495,11 +502,11 @@ to him.
 
 | Component | Role on `mode=primary` | Credential |
 |---|---|---|
-| `lanes-index` | The one configuration parser and the one database client: `mode`, `register snapshot`, `register commit`, `register read`, `journal`, `render`, `import`, `cutover`, `rollback`, `status`, `reconcile`, `outage`, and the operator tools (bootstrap, readiness check, flip) | per subcommand: REGISTER-WRITER, READER, or the bootstrap's one-time admin connection |
+| `lanes-index` | The one configuration parser and the one database client: `mode`, `register snapshot`, `register commit`, `register read`, `journal`, `render`, `import`, `cutover`, `rollback`, `status`, `reconcile`, `outage`, `serve` (the service, SVC-3), and the operator tools (bootstrap, readiness check, flip) | per subcommand: REGISTER-WRITER, READER, or the bootstrap's one-time admin connection |
 | `lanes-edit.sh` | Every verb, unchanged in its logic. Its three write seams: the resolver, which the write path no longer needs and the renderer does; `handle_preexisting`, where the captures refuse; and the commit seam, which hands a change set to the attempt loop (D4). Its readers enter at `register_text_checked` | none of its own: it calls `lanes-index` |
 | The renderer | `lanes-index render`, forked by a writer after its COMMIT, in that lane's checkout; builds one commit per sequence on `origin/main` with a private index and pushes it | REGISTER-WRITER; the renderer identity's key under Q21(b)(B) |
-| `lanes-register` | The local-socket service: one READER connection per process, the guard's and the other reads (4A). Last slice (Q29(a)); its internals are lane 5's | READER |
-| The guard | `lanes-edit.sh guard`, the hook: the service's client, falling back to a direct read (Q11(a)) | READER, through `lanes-index` |
+| `lanes-register`, the `lanes-index serve` subcommand (SVC-3) | The local-socket service, one per environment (SVC-1): one READER connection per process, answering the register's text at `n` for the guard and the other readers, which decide (4A; D17; SVC-7). Last slice (Q29(a)); its internals are lane 5's section | READER |
+| The guard | `lanes-edit.sh guard`, the hook: the service's client through one `lanes-index register read --for guard --prefetch` a prompt (SVC-8), falling back to a direct read (Q11(a)), and deciding by today's parser | READER, through `lanes-index` |
 | The readers | Read verbs and the lifecycle scripts (`lane-start`, `lane-handoff`, `lane-end`, `lane`, `lane-rename`, the skills, `lane-worktrees`) | READER, through the service or `lanes-index` |
 | PostgreSQL | Schema `lanes_register` (D1) beside `lanes_index` | — |
 | git | `origin/main` of the workspace repository: the mirror and the handoffs. Lane checkouts `<W>-lanes/<lane>/`: render targets and handoff writers. `W`: read and fast-forwarded only | — |
@@ -780,12 +787,13 @@ schema").
 
 **Operator entries** (D24). An entry whose edits touch only `lanes/STORE` is an
 operator entry, flagged in the journal; lane 1 adds the column in its section.
-There are exactly two kinds, the cutover's seq 1 and the rollback's last seq,
-each written in its command's own transaction, the one that changes the
-switch, so each passes the switch check by construction and nothing else is
-journalled while the switch is not `primary` (S5). The renderer never renders
-one: the command that wrote it pushes it with the renderer identity (D23) and
-confirms it by Amendment 23's S4 read-back.
+There are exactly two kinds, the cutover's entry (seq 1, or `m+1` after a
+loss, D24) and the rollback's last seq, each written in its command's own
+transaction, the one that changes the switch, so each passes the switch check
+by construction and nothing else is journalled while the switch is not
+`primary` (S5). The renderer never renders one: the command that wrote it
+pushes it with the renderer identity (D23) and confirms it by Amendment 23's
+S4 read-back.
 
 ### The renderer, in the private-index form
 
@@ -968,14 +976,20 @@ their own fetch.
   the host, once per host, as the flip does. It is not a row in the database
   that is down, and it needs no fetch: each guard reads it offline in the time
   it takes to open a file.
-- **The guard** consults it only when its database read fails. Where the file
-  is present, unexpired and names this workstation's database, and the tip the
-  guard reads carries a `Register-Seq` of at least `m`, the guard answers from
-  the mirror, as above, with `(declared outage <utc>: <why>)` in place of the
-  cause, and exits 0 or 2 as that answer gives. A tip older than `m` is a
-  refusal, 2: Brett's word covers writes during the outage, not how current a
-  guard's last fetch is. Every write and every other deciding read still
-  refuses with 69.
+- **The guard** answers from the mirror only when SVC-12's three conditions
+  hold, checked in this order and offline by its client, never by the
+  service: its database read failed (the service answered `refuse db <cause>`,
+  or it was unavailable and the direct read then failed); the file is
+  present, unexpired and names this workstation's database label; and the tip
+  the guard reads, `origin/main` as last fetched, carries a `Register-Seq` of
+  at least `m` (`mirror-seq` is the declaration's field, and its check is the
+  client's: lane 5's question 18). It then answers from the mirror, as above,
+  with `(declared outage <utc>: <why>)` in place of the cause, and exits 0 or
+  2 as that answer gives. A tip older than `m` is a refusal, 2: Brett's word
+  covers writes during the outage, not how current a guard's last fetch is.
+  Where the first condition holds and either other fails, the guard refuses
+  with 2 and S3's outage text (SVC-12). Every write and every other deciding
+  read still refuses with 69.
 - **Why an expiry:** a declaration left in place could later let a guard read
   the mirror in an outage that is not estate-wide, the case (a′) exists to
   exclude. `lanes-index status` reports a declaration still in place while the
@@ -1115,24 +1129,28 @@ workstation's lanes paused first, as for the freeze, and the outage declared
    objects, and a database backup does not hold them (F18).
 3. If `b > m`, restore that backup into a new database; its journal already
    holds `m+1 … b`, and the renderer catches up. Otherwise re-import at
-   origin's tip into a new database, with the head set to `m`, so the next
-   write is `m+1` and `Register-Seq` stays monotonic in `git log` (D22).
+   origin's tip into a new database, with the head set to `m`, so
+   `Register-Seq` stays monotonic in `git log` (D22).
 4. Give the new database a new generation id, in its switch row. A pending
    record of the old generation is refused, since the write ids up to `m` went
    with the old journal, and a rerun under one could apply a write the mirror
    already holds (D8, D22).
 5. Re-point every host's `register_url` and `reader_url` at the new database,
    from the host as the flip is (Q23(a)).
-6. Set the switch to `primary` in the new database. `status` shows a lag of 0.
+6. Run the cutover in its after-loss form, `lanes-index cutover --import <M>
+   --after-loss`: in one transaction it sets the switch to `primary` and
+   writes the marker's rewrite as the cutover's entry, the seq after the
+   head (`m+1` after a re-import, so the next write is `m+2`), which it
+   pushes and reads back (D24). `status` shows a lag of 0.
 7. Clear the declaration; the lanes resume; the notice names the seqs lost
    after `m` (or `b`), so each lane checks its last writes against the mirror.
 
 Lane 1 details these steps, including the marker's `database=` where the new
-database's label differs. The loss is bounded by the renderer's lag at the
-moment of loss, which `status` shows (P14; the product seat, 6549261651). The
-database's host, its backups and its downtime limit are Brett's (Q22); when the
-limit is reached, Brett chooses between waiting and this path, and the operator
-lane runs it.
+database's label differs, which the after-loss cutover's entry rewrites. The
+loss is bounded by the renderer's lag at the moment of loss, which `status`
+shows (P14; the product seat, 6549261651). The database's host, its backups
+and its downtime limit are Brett's (Q22); when the limit is reached, Brett
+chooses between waiting and this path, and the operator lane runs it.
 
 ## S6: claims, and the order of `HOLD` and `LANDING`
 
@@ -1238,8 +1256,12 @@ push rights. Under Q11(a) the READER secret is in the same position. Neither is
 ever in an environment a session inherits: `lanes-index` hands the password
 file to its own `psql` child through `PGPASSFILE` and drops any inherited one
 (`code/lanes-index:1299–1307`), and the renderer identity's key is used only in
-the push's own environment (D23). **The render key's reach is the same, and
-matters more:** under Q21(b)(B) it is the ruleset's only bypass, and it sits in
+the push's own environment (D23). No `lanes-index` path puts a connection
+string in an argument list, where `/proc` shows it for the process's life:
+each passes it to `psql` through the child's environment, as SVC-2 maps it
+(lane 3's ruling on lane 5's question 11; lane 4 changes the `-d <url>` at
+`code/lanes-index:1315`). **The render key's reach is the same, and matters
+more:** under Q21(b)(B) it is the ruleset's only bypass, and it sits in
 a 0600 file that every lane process on its host can read, so any of them could
 push to the rendered paths past the gate. The gate stops a stale or careless
 writer, which uses the lane's own push rights; it does not stop a process that
@@ -1255,8 +1277,9 @@ No register path uses `lanes-index`'s `PGCONNECT_TIMEOUT=5` (`:1306`) or its
 
 | Path | `connect_timeout` | `lock_timeout` | `statement_timeout` | Client timer | On expiry |
 |---|---|---|---|---|---|
-| the guard's direct read | 2 s | 1000 ms | 1500 ms | 4 s, cut to what the hook has left | 2 |
-| the service's connection, per request | 2 s at each connect | 1000 ms | 1500 ms | lane 5's, under the client's wait | `refuse`, so 2 |
+| the guard's direct read | 2 s | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s (SVC-8) | 2 |
+| the service's connection, per request | 2 s, in the background only, outside any share (SVC-6) | 150 ms | 180 ms | 200 ms, inside the client's 300 ms wait | `unavailable`, and the client reads directly (SVC-8); `refuse db <cause>` only where the refusal is definitive (SVC-7) |
+| the guard's answer-2 writes | as a writer's | as a writer's | as a writer's | the deadline and each call's timer cut to what the hook has left, `T0 + 4.25 s`; no call starts with less than its minimum left (SVC-8) | busy, 69 or in doubt exits 2, naming the write id |
 | a writer's snapshot | 2 s | 2000 ms | 5000 ms | 8 s | a failed read: 69, or in doubt where an earlier commit of the same write was |
 | a writer's commit | 2 s | 2000 ms | 5000 ms | 8 s | in doubt |
 | a whole write | — | — | — | 30 s before a new attempt; 10 s to reconnect in doubt | 75, or 3 |
@@ -1283,67 +1306,882 @@ plain reads.
 The service's internals are lane 5's section, below. This frame fixes only what
 the rest of the design relies on.
 
-- **The guard's request** carries what it reads today and a service cannot read
-  for itself: the hook's `session_id`, `cwd`, `agent_id` and `prompt`; the
-  window reference and name; and the live record's `name`, `nameSource` and
-  liveness facts, read in the guard's own container. **The answer** is `ok`,
-  `refuse <reason>` or `offer <the three choices>`, and the guard exits 0 or 2.
-  The offer file, the `/rename` typing and answer 2's two writes stay
-  client-side; those writes are S1's transactions.
-- **The fallback.** A service that is absent, refuses the connection or does
-  not answer within its share is unavailable, and the guard reads directly with
-  the READER credential (Q11(a)), printing `guard: direct (service unavailable)`
-  on stderr. It never reads the mirror, except during a declared outage (S3).
+- **The guard's request** carries only the names of the files it reads (lane
+  5's question 3; SVC-8, SVC-11): `lanes/LANES.md`, `lanes/aliases.tsv` and
+  `lanes/log/<lane>.md`. What it reads today and a service cannot read for
+  itself stays in the guard, read in its own container: the hook's
+  `session_id`, `cwd`, `agent_id` and `prompt`; the window reference and name;
+  and the live record's `name`, `nameSource` and liveness facts. **The service
+  answers the register's text at `n`, and the reader decides** (lane 5's
+  question 1; D17; SVC-7, SVC-8): the guard runs today's parser on that text,
+  passes the prompt, refuses it or makes the offer, and exits 0 or 2. The
+  offer file, the `/rename` typing and answer 2's two writes stay client-side;
+  those writes are S1's transactions.
+- **The fallback.** A service that is absent, refuses the connection, answers
+  `unavailable` or does not answer within its share is unavailable, and the
+  guard reads directly with the READER credential (Q11(a)), printing
+  `guard: direct (service unavailable)` on stderr. It never reads the mirror,
+  except during a declared outage, under SVC-12's three conditions (S3).
 - **One budget.** The hook's fixed costs (bash's start and parse to the arm at
   `code/lanes-edit.sh:16856`, the tmux read, the scan of the session records),
-  the wait for the service, the direct read and printing the refusal fit inside
-  `GUARD_TIMEOUT`, 5 s, together. The direct read's 4 s timer is therefore cut
-  to what the hook has left, and the test's assertion is the probes': exit 2 in
+  the wait for the service, the direct read, the parse and printing the
+  refusal fit inside `GUARD_TIMEOUT`, 5 s, together (SVC-8's table). The
+  direct read is therefore cut to the parse's start line, `T0 + 3.75 s`,
+  leaving a 0.5 s reserve for the parse until lane 2 measures the real one
+  (lane 5's question 7), and the test's assertion is the probes': exit 2 in
   under 4.5 s in every case. `CLAUDE_NO_LANE=1` still exits 0 before any input
   is read. **Answer 2's two writes are on the guard's path too**
-  (`lane-start --no-launch --bind` and `set-row-state`), and S1's 8 s call
-  timers and 30 s deadline would outlast the hook, which a kill at 5 s turns
-  into a passed prompt mid-act. How they fit the budget is lane 5's to decide,
-  below.
-- **The read API** answers `who`, `binding`, `live-holder`, `next-free`,
-  `managed-projection` and the guard's triple check, each proven at the
-  journal's head in that request (D17), and refuses with 69, or 2 for the guard,
-  where the database cannot be read.
-- **What the service never does:** write, render, or re-index. Writes keep their
-  own connections (4A), the renderer is the writer's fork (D14), and the nudge
-  does not re-index the register on primary (S2).
+  (`lane-start --no-launch --bind` and `set-row-state`). They run inside the
+  hook (lane 5's question 16; SVC-8): the deadline and each call's timer are
+  cut to what the hook has left, `T0 + 4.25 s`, and busy, 69 or in doubt exits
+  2, naming the write id (the timeouts table). The detached form, exit 2 with
+  "binding in progress", is the fallback if lane 2's timing of the bind says
+  so.
+- **The read API: the service answers the register's text at `n`, and the
+  reader decides** (lane 5's question 1; D17; SVC-7). `who`, `binding`,
+  `live-holder`, `next-free`, `managed-projection` and the guard's triple
+  check reach the service as the files their parser reads, proven at the
+  journal's head in that request, and each reader runs today's parser on them
+  in its own process. Where the database refuses definitively the service
+  answers `refuse db <cause>`, and on a timeout `unavailable`, so that the
+  direct read decides; either way the reader exits 69, or 2 for the guard.
+  **The cost is T055's:** Codex and the managed path run today's parser
+  through `lanes-edit.sh`, whose read verbs ask the service, rather than ask
+  the service a question.
+- **What the service never does:** write, render, re-index, or read the mirror
+  or the outage declaration. Writes keep their own connections (4A), the
+  renderer is the writer's fork (D14), the nudge does not re-index the
+  register on primary (S2), and the client reads the declaration (SVC-6,
+  SVC-12).
 - **Without the service.** Under Q29(a) the service is the last slice, so every
   interface above has a direct path that works before it exists; the cutover
   waits for it only if the measured direct guard is over Brett's budget.
 
-### The register service's internals — **PLACEHOLDER: lane 5's section**
+### The register service's internals
 
-> **PLACEHOLDER: lane 5's section.** Lane openRepoTools-5 has taken it (#165
-> comment 6576934803). Its scope, copied from lane 3's fan-out post (#165
-> comment 6576888068): "Lane 5, if it has room: the register service, Q2(c)
-> to (h), under 4A. Where the socket lives and who its clients are; one per
-> workstation or one per container; and how it starts on demand with no
-> systemd. The guard's client inside `lanes-edit.sh guard`, with its deadline
-> under 5 s, and the host-local facts."
->
-> **Inputs it must account for:** the architecture seat's concern 4
-> (`clarifications.md`): today's guard measured in four parts (reaching
-> `:16856`, tmux, `transcript_holders`, the register read) before the client's
-> form is settled, and test 10's 50 ms stated against that form; the budget
-> above; and the interfaces above.
->
-> **Also lane 5's to decide, from the frame review (REVIEW-frame-20261102):**
->
-> - **Answer 2's writes inside the 5 s (F6).** Lane 3 leans to a row of the
->   timeouts table for them: each deadline and call timer is cut to what the
->   hook has left, and a busy, 69 or in-doubt outcome exits 2, naming the
->   write id. The alternative is to detach them and exit 2 with "binding in
->   progress".
-> - **The `SessionStart` block's request (F24):** the block is to be the
->   service's client while it still reads offline through the mirror
->   (Amendment 22's S3), so its request is lane 5's to define.
-> - Whether the service or the client reads the outage declaration, with its
->   expiry and `mirror-seq` (D20; F7, F11).
+Lane openRepoTools-5's section (#165 comments 6576888068 and 6577521499),
+folded in place of the placeholder with lane 3's rulings on its eighteen
+questions applied (#165 comment 6578521506). Lane 5's draft is
+`/workspace/projects/.openrepotools-private-prep/work-20261021/lane5/d165/register-service.md`
+(sha256 `529b3c7b0bfcf38284f27782388bcbf9f03c3717ba271d1fdb1da7fe6c7bd509`),
+written against `design.md` at `b936ccd3` and `specs/register-service/spec.md`
+at `c725310`; the fold reconciles it with the frame review's fold at
+`6a5fcdc6`. It covers Q2(c) to (h) under 4A, built under "The guard and the
+service: the interfaces" above and under D2, D17 and D20. Its own decisions
+are SVC-1 to SVC-12, kept apart from D1 to D25 and S1 to S6. `code/…` is the
+code leg at `2a057a6d`, every line re-read there. "This host" is Eagle's
+py-bench container, 2026-11-02; every figure is from a probe in lane 5's
+sandbox, recorded in
+`/workspace/projects/.openrepotools-private-prep/work-20261021/lane5/d165/NOTES.md`
+(sha256 `3cd78dd2639059d4728c3510d721979cd6d73ab555a4fabf56f28fba943324fc`),
+on synthetic data where it touches records or the register. Where lane 5's
+draft differed from the frame or the spec, lane 3's ruling settled it and the
+frame or the spec now says the same; the questions and their rulings close the
+section.
+
+#### What today's guard costs, in four parts (the architecture seat's concern 4)
+
+Measured on this host with copies of `code/lanes-edit.sh` in a sandbox, under
+`env -i`, a sandbox `HOME`, a synthetic workspace and no tmux server, never with
+hook input and never against live state. Process wall time, 30 runs each.
+
+| Part | What runs | Median (min–max) | What the service removes |
+|---|---|---|---|
+| 1. Reaching the arm (`code/lanes-edit.sh:16856`) | bash's start, the parse of the whole dispatch `case` (`:15143`–`:18977`, one compound command, so the arm runs only after all of it is parsed), and the top level before it: the workspace resolver's `git` reads (`:1054`), the binding probe's `hostname`, `uname` and `/proc` reads (`:1098`), two `rev-parse --show-prefix` (`:1115`, `:2777`) and a `mktemp` (`:3449`) | 69.5 ms (60.5–147.8); of it, bash's start 2.7 ms and the parse alone (`bash -n`) 21.5 ms | nothing |
+| 2. tmux | `here_context`'s two reads (`:4831–4832`, made once a process: `:4827`), `#W` (`:10433`), one per record in a window (`record_window_state`, `:9514`) and one per binding checked (`binding_window_state`, `:10054`, called at `:10731`) | 4.3 ms for one `display-message -p` against this container's server; by a static count, at least four calls a prompt, and five or more when a binding names another session (`binding_window_state` runs only where `gb_mine` is 0, `:10729–10731`): about 20–30 ms | nothing |
+| 3. `transcript_holders` (`:9664`) | `session_files`' `find` over every profile (`:4569`), then `grep -l` over the records (`:9704`) and a parse of each match | about 48 ms over 522 synthetic records in a small tree. Over this container's real `~/.claude-profiles/profiles` (96,885 entries, 515 session records, plus 7 in `~/.claude/sessions`): the first walk, a counting `find` of every entry, took 410 ms, and the same `find` as `session_files` then took 58–96 ms in three runs. That the 410 ms is the cold cost is inferred from that drop, not measured as such | nothing |
+| 4. The register read | `register_text` (`:3628`, through `register_text_checked`, `:3597`, `git show` at `:3612`) and the parses the guard runs on it: `rows_named_ci_alias` twice (`:10546`, `:10585`), `row_of_lane` (`:10603`) and `lane_binding_scan` (`:10707`) | the text alone about 58 ms; text and parses about 202 ms, so the parses about 145 ms, on a synthetic 6,410-line, 1.35 MB register and a 300-line log | the transport and the database connection; not the parses (SVC-9) |
+
+So today's direct guard costs about 0.45 s here with a warm record walk, and
+about 0.8 s with a cold one: about 70 ms to reach the arm, 20–30 ms of tmux,
+110–150 ms of record scan warm (about 460 ms cold, inferred), and about 200 ms
+of register read and parse. The first walk's 410 ms matches concern 4's
+"about 0.4 s" for `transcript_holders` and the source's own "~0.4 s" for the
+`grep -l` over every profile's records (`:9437`); the warm figure is what a
+later prompt pays. Every "cold" figure below rests on that inference. The
+source's "~2 s wall" for the register read (`:9437`, measured 2026-09-14) is
+not reproduced on synthetic data; whether the real register's shape makes
+the difference is lane 2's to measure (question 14, routed to lane 2).
+Parts 1 to 3 are bash and the client's own container, and no form of the
+service removes them. That decides test 10's 50 ms (SVC-10).
+
+#### SVC-1. One service per environment, not one per workstation (Q2(c))
+
+An environment is a bench container or a host shell, as the readiness check
+already counts them (item 6 of "Migration and rollout"). On Eagle that is the
+host shell, py-bench and cloud-bench: three services, three READER
+connections.
+
+Why not one per workstation:
+
+- **The installs differ.** Each bench re-installs its vendored tools at start
+  (item 6 of "Migration and rollout"), so py-bench and cloud-bench can carry
+  different `lanes-index` builds. A shared service answers every container
+  with one container's build.
+- **Its life would be one container's.** A service started in py-bench dies
+  when py-bench stops, and cloud-bench's lanes lose it with no say.
+- **The state is already per environment.** `lanes-index`'s state directory
+  (`code/lanes-index:173–174`) is under `~/.local/state`, which is per
+  container here (the container's own overlay; only
+  `~/.local/state/workbenches` and one log directory are bind mounts), and
+  the image cache D17 shares with the writers lives there.
+- **Sharing would buy nothing for the host-local facts.** Each container has
+  its own pid namespace (py-bench's pid 1 is `docker-init`), and a pid is
+  pronounced only inside its own namespace (Amendment 18(b)). Under SVC-11 the
+  service reads no pid either way, so this is not a reason against sharing on
+  its own; it is why a shared service could never take those reads over.
+
+The cost is one READER connection per environment instead of one per
+workstation, a handful in all. The spec's Purpose line, which said "one
+database connection per workstation", now says one per environment (question
+2); its requirements say "one process", which SVC-1 keeps per environment.
+
+**Under one per workstation instead:** the socket and its lock would live under
+`/workspace` (a Unix socket binds and connects there: probe A), the lock would
+be a `flock` on the same shared disk, and the readiness check would have to pin
+every environment of a workstation to one build. Whether a socket on the
+shared mount accepts a client from another container is not shown: lane 5
+cannot test across containers. A probe that binds in py-bench and connects
+from cloud-bench would show it.
+
+#### SVC-2. Where the socket lives, and who may connect
+
+- **One path, no choice.** `run/` under `lanes-index`'s state directory,
+  `${XDG_STATE_HOME:-~/.local/state}/openRepoTools/run/`: here
+  `/home/brett/.local/state/openRepoTools/run/`. `XDG_RUNTIME_DIR` is not
+  consulted, which removes one way two processes in one environment could
+  disagree on the path. `XDG_STATE_HOME` can still differ per process, as it
+  can for all of `lanes-index`'s state today; a process with another value
+  finds no service, starts its own at its own path, and is answered correctly
+  by it, at the cost of a second connection.
+- **The directory is checked on every use,** by the service before it binds
+  and by the client before it connects or starts one: it must be a directory,
+  not a symlink (`lstat`), owned by this uid, with mode 0700. `lanes-index`
+  creates it so when it is absent. One that fails the check is never used and
+  never repaired: the client reads directly, the service exits 2 naming it,
+  and `lanes-index status` reports it.
+- **The files:** `register.sock`, `register.lock` (SVC-4), `register.owner`,
+  `register.failed` (SVC-4) and `register.log`. The service binds under `umask
+  077`; the probe's socket came out mode 0700, and the directory's check is
+  what stops another user.
+- **Why not `/tmp`:** it is per container here, which would do, but it is
+  world-writable, so a name there can be taken first by another user, and
+  `tmp` reapers delete sockets in it.
+- **The length.** A Unix socket path may be 107 bytes on Linux (the probe
+  bound 107 and refused 108; the check's re-run agrees) and 103 on macOS (R1,
+  not shown here). Here the path is 56 bytes;
+  `/Users/<name>/.local/state/openRepoTools/run/register.sock` is about 60. The
+  client checks the length before it connects or starts anything; over 103
+  bytes, it reads directly and starts nothing, and `lanes-index serve` refuses
+  the same path with exit 2 and a stamp (SVC-4). Nothing shortens a path
+  silently.
+- **The owner file** holds the service's pid, its start UTC, its install's
+  identity (SVC-4), and on Linux its pid namespace (`readlink
+  /proc/self/ns/pid`) and the boot id (`/proc/sys/kernel/random/boot_id`). A
+  client whose own namespace or boot id differs treats the service as
+  unavailable. So if a bench ever bind-mounts `~/.local/state` across
+  containers, SVC-1 still holds: each container's client refuses the other's
+  service and starts none.
+- **Both ends check the other's uid on Linux.** The service reads
+  `SO_PEERCRED` on each connection and closes any whose uid is not its own;
+  the probe's service makes that check, and a second uid was not available to
+  show a refusal. The client reads `SO_PEERCRED` on its connected socket and
+  treats a server of another uid as unavailable, so a socket planted in a
+  directory that somehow passed the check still answers nothing. Where
+  `SO_PEERCRED` is not available (macOS offers `LOCAL_PEERCRED` instead,
+  untested here), the directory's owner and mode are the whole protection.
+- **Nothing secret reaches a log or a refusal.** `register.log` and every
+  `refuse db <cause>` carry fixed phrases and the SQLSTATE only, never
+  `psql`'s message text and never a URL. The service passes its connection to
+  its `psql` child through that child's environment, not as `-d <url>` in the
+  argument list as `lanes-index` runs `psql` today (`code/lanes-index:1315`),
+  because a long-lived argument list is readable in `/proc` for the process's
+  whole life; lane 3's ruling on question 11 makes that so on every
+  `lanes-index` path (Roles and credentials), and lane 4 changes `:1315`. The
+  mapping is fixed: the URL's host to `PGHOST`, port to
+  `PGPORT`, database to `PGDATABASE`, user to `PGUSER`, and the query
+  parameters `sslmode`, `sslrootcert`, `sslcert`, `sslkey` and
+  `target_session_attrs` to `PGSSLMODE`, `PGSSLROOTCERT`, `PGSSLCERT`,
+  `PGSSLKEY` and `PGTARGETSESSIONATTRS`; `PGPASSFILE`, `PGCONNECT_TIMEOUT=2`
+  and `PGOPTIONS` are the service's own. A password in the URL, or any other
+  query parameter, is refused: `serve` exits with the stamp `config-refused`
+  (SVC-4), and clients read directly. So the service never connects with a
+  parameter the direct read's `-d <url>` would apply and it would not. The
+  label it may name is `where` (`:1296`) with any userinfo removed, since
+  `where` strips the scheme and the query but not a user name.
+
+**The clients**, each through one implementation, `lanes-index`'s reader path
+(SVC-3): the guard, at its register reads (SVC-8), and every reader D17
+names. The `SessionStart` block only starts the service and asks it nothing
+(SVC-12). No writer is a client (4A): a write's snapshot and
+commit open their own connections with the REGISTER-WRITER credential, and
+never wait for or start the service.
+
+#### SVC-3. The client is `lanes-index`'s reader path, and the service is `lanes-index serve` (Q2(f))
+
+- **The service** is a subcommand, `lanes-index serve`, not an eighteenth
+  installable (`code/openRepoTools:1292` counts seventeen). `lanes-index`
+  already holds the configuration parser, the READER credential, the `psql`
+  path, the timeouts and the image cache (D2, D17), so the service reuses them
+  rather than copying them. It adds nothing to `code/openRepoTools`'s
+  `INSTALLABLES`, `code/pyproject.toml`'s `force-include`, the receipt counts
+  in `tests.yml` and `release.yml`, or #237's gate. The documentation and the
+  log still call it `lanes-register`.
+- **The client** is `lanes-index register read`, which D17 already makes every
+  reader's path: it asks the socket first and reads directly when the service
+  is unavailable. The guard calls it once a prompt, as a prefetch, with
+  `--for guard` (SVC-8), which also sets the guard's budget and its fallback
+  line, `guard: direct (service unavailable)`. One socket client, one
+  fallback, one set of timeouts.
+- **Its cost:** a `lanes-index` process start is 72 ms here (`--help`, 15
+  runs), against 32–44 ms for a minimal standard-library client doing a whole
+  round trip (probe B3): about 30–40 ms a prompt, the price of not adding an
+  installable. If test 10 shows it matters, a small client module can be split
+  out later, which is Q2(f)'s other answer.
+- **The toolchain floor** (the spec's fifth requirement). The service and the
+  client are standard-library Python that runs on 3.9 (`code/pyproject.toml:45`)
+  with `dependencies = []` (`:51`): `socket`, `fcntl`, `subprocess`, `select`,
+  `hashlib`, `os` and `time`, and nothing newer than 3.9 offers. The new bash
+  in `lanes-edit.sh` (SVC-8's prefetch call, its flag file and the three read
+  sites) keeps the hygiene suite's bash-3.2 rules: no `coproc`, no
+  `EPOCHREALTIME`, no `${var,,}`, no `mapfile`, no associative arrays.
+- **D2 and the overview follow it** (question 9). D2's list of `lanes-index`
+  verbs gains `serve`, `register read` gains `--for guard` and `--prefetch`,
+  and the overview's `lanes-register` row is a `lanes-index` subcommand.
+
+**Under a new installable instead:** `lanes-register` joins `INSTALLABLES`, the
+two `force-include` lists in one commit, the receipt rows and "16 of 17"
+counts, and the macOS install leg (the proposal's "Impact"), and saves about
+35 ms a prompt.
+
+#### SVC-4. How it starts, with no supervisor (Q2(d))
+
+Nothing in the code leg starts a long-lived process today. No supervisor runs
+in py-bench (pid 1 is `docker-init`; the host shell and cloud-bench are not
+shown), and the spec rules out systemd and launchd as the service's
+supervisor wherever they run, macOS's launchd included. The service starts on
+first call and needs nothing else, on Linux and macOS alike:
+
+1. **Who starts it.** The `SessionStart` block, at every session start on a
+   primary workstation, after its own answer, without waiting (SVC-12: it reads
+   the mirror and asks the service nothing, so the start only warms the service
+   before the first prompt); and any client that finds no socket (`ENOENT`), a
+   dead one (`ECONNREFUSED`), or an owner file from another namespace or
+   another install, unless a failure stamp is fresh (item 7).
+2. **How.** The client runs `lanes-index serve` detached, from Python:
+   `subprocess.Popen(..., start_new_session=True)`, which is `setsid`; standard
+   input and output on `/dev/null`, standard error to `register.log`; working
+   directory `/`; and an environment reduced to `PATH`, `HOME`, `LANG`, the
+   `XDG_*` variables and `LANES_INDEX_CONFIG`. No password and no URL is in it
+   (Amendment 14(c)); the credential is read from the 0600 configuration, as
+   `lanes-index` reads it today (the READER pair at `code/lanes-index:1292`,
+   the password file set by `_env` at `:1299–1307`). `_env` also defaults
+   `PGCONNECT_TIMEOUT` to 5, which the service overrides with 2. No bash code
+   detaches anything. A new session also puts the service outside the hook's
+   process group, so a group kill of the hook does not reach it; whether
+   Claude Code ends a hook's descendants some other way is not shown (the
+   facts table).
+3. **One instance.** `lanes-index serve` takes `flock` on `register.lock`
+   without waiting, and holds it for its whole life. A starter that finds it
+   held exits 0 at once. Holding it, the starter tries the socket: one that
+   answers means a live service, and it exits 0; `ECONNREFUSED` means a stale
+   socket, which it unlinks; then it binds and listens. Probe B1, run in the
+   probe client's wait form (the guard never waits): ten clients racing with
+   no service started ten starters; one bound, nine exited on the held lock,
+   and all ten clients were answered, in 16–62 ms from the client's own start.
+4. **A stale socket.** A service killed by `SIGKILL` leaves its socket file.
+   The next client gets `ECONNREFUSED` (3.9 ms in probe B4) and starts one,
+   which unlinks the file under the lock and binds; that client was answered
+   at 34.7 ms. A container restart leaves the same stale file on the
+   container's overlay, and the same path recovers it.
+5. **When it stops.** After 15 minutes with no request, it unlinks its socket
+   under its lock and exits (probe B5 at 3 s idle, and the clean re-run at 2 s:
+   the socket gone, the process gone by `kill -0`, in `NOTES.md`). It also
+   exits when its install changes: it records the size, mtime and inode of its
+   own `lanes-index` file at start and checks them on each request (one
+   `stat`), answering `unavailable restarting` and exiting when they differ,
+   so an upgrade never leaves an old service answering. It re-reads
+   `lanes-index.conf` and its password file when their mtime changes, and
+   exits if the mode is no longer `primary` (SVC-5).
+6. **The guard never waits for a start.** A guard that finds no service starts
+   one and takes the direct read for that prompt (probe B7: the decision in
+   3.7 ms, 37 ms of process wall). Waiting for a new service's `psql` to
+   connect could take its 2 s `connect_timeout`, which the budget cannot give.
+   Readers do the same.
+7. **A start that fails is not retried on every prompt.** Only the causes
+   that make `serve` exit before it listens are stamped: `path-too-long`,
+   `dir-check`, `config-refused` (a refused configuration, a mode other than
+   `primary`, or a URL parameter SVC-2 does not map) and `no-psql`. `serve`
+   writes `register.failed` with the UTC and that fixed cause, and no other
+   text, then exits. A database that refuses or does not answer (`auth`,
+   `unreachable`, a refused schema version) does not make `serve` exit: it
+   listens, answers `refuse db <cause>` or `unavailable` (SVC-7), and
+   reconnects in the background (SVC-6), so it writes no stamp. A client reads
+   the stamp only after `ENOENT` or `ECONNREFUSED`; one younger than 60 s means
+   it starts nothing and reads directly, and one stat is its whole cost. The
+   service removes any stamp once it listens, and again at its first
+   successful connect, so a stamp never sits beside a healthy service.
+   `lanes-index status` reports a stamp and its cause. Without this, a service
+   that cannot start would cost a Python start on every prompt, forever.
+
+**Under socket activation instead** (#165's body offers it): socket activation
+needs systemd or launchd as the activator, which the spec excludes as a
+supervisor and which py-bench does not run, so "first call" is the form.
+
+#### SVC-5. Only on `mode=primary` (Q2(e))
+
+`lanes-index serve` refuses with exit 2 unless the configuration says
+`primary`, and clients ask the socket only on a primary workstation (D3: no
+configuration, no question). On files mode and `mode=index` the guard and the
+readers stay exactly as today. In the frame's order, item 3 of "Migration and
+rollout" lifts Q6(c)'s refusal of `mode=primary` before item 4 builds the
+service, so the service is built against a `lanes-index` that accepts
+`primary`; until a host's flip, it runs only against the fixture's
+configuration, which is where test 10 runs it.
+
+Reason: P4's "no second outage mode" applies to reads too. In files mode the
+service would add a process that can be down, for a read (`git show`) that is
+already local, and the measured part it would remove there, the text, is
+about 58 ms of about 0.45 s. The product seat has this decided after the
+measurement (Q29); the measurement above is the reason.
+
+**Under "every mode":** the service would answer files-mode reads from
+`origin/<branch>` as today's direct read does, and its start, stale socket and
+version check would become a precondition of every estate's prompts, not only
+primary ones.
+
+#### SVC-6. The connection: one `psql` child on pipes
+
+- One long-lived `psql` child with the READER credential, started in the
+  background at the service's first request and restarted lazily after any
+  failure: `psql -X -q -A -t -v ON_ERROR_STOP=0 -v VERBOSITY=sqlstate`, its
+  connection in its environment (SVC-2), `PGCONNECT_TIMEOUT=2`, one address,
+  and the server bounds in `PGOPTIONS`. No driver, and `dependencies = []`
+  stays (the spec's third requirement).
+- **One request at a time on it.** The service handles connections
+  concurrently but sends one query at a time; each query ends with an `\echo`
+  of a per-request marker, and the service reads `psql`'s output until it.
+- **The per-request timer** is 200 ms. On expiry the service sends `SIGINT`
+  to `psql`, which cancels the query, answers `unavailable slow`, and, if
+  `psql` has not printed the marker within 100 ms more, kills it; the next
+  request starts a new one in the background and is answered `unavailable`
+  until it connects. A reconnect never runs on a request's time.
+- **The timeouts row** for "the service's connection, per request", which
+  the timeouts table (D9) now carries: `connect_timeout` 2 s, in the
+  background only; `lock_timeout` 150 ms and `statement_timeout` 180 ms, so
+  that the server cancels its own query just inside the 200 ms timer; on
+  expiry, `unavailable`, and the client reads directly (SVC-8). It replaces
+  the frame's 1000 ms and 1500 ms and "on expiry `refuse`, so 2", since a
+  share of 300 ms cannot hold a 1.5 s statement (question 4). The spec's
+  twelfth requirement now puts the service's 2 s connect outside any share:
+  it is never on a request's path, so no share waits for it (question 5).
+- None of this is shown: py-bench has no PostgreSQL binaries until 1A lands,
+  so the `psql`-on-pipes framing, the `SIGINT` cancel and the 150, 180, 200
+  and 100 ms values are the design's, for lane 2's fixture to prove (the
+  facts table).
+- **What the service never does,** as the frame fixes it: write, render or
+  re-index. It never reads the mirror, and it never reads the outage
+  declaration (SVC-12).
+
+#### SVC-7. Every answer is read fresh: the text at head `n` (D17)
+
+The request names the files it wants (`lanes/LANES.md`, `lanes/aliases.tsv`,
+`lanes/log/<lane>.md`, and the rest of the render set) and nothing else. For
+each request the service runs **one transaction at REPEATABLE READ READ
+ONLY**, as the frame's snapshot is one such call (S1): the journal's head
+`n`, the requested files' digests at `n`, and, in the same transaction, any
+journal entries or whole files it needs. Then:
+
+- if the images it holds in memory have the digests at `n`, it answers them;
+- otherwise it brings them to `n` with the journal entries read in that
+  transaction, by the same function the writers' snapshot uses, checks them
+  against the digests, and takes a file whole from that transaction on any
+  mismatch;
+- it writes what it fetched to the per-environment image cache that S1's
+  snapshot reads, so the cache is one cache, as D17 asks: a file is replaced by
+  write and rename, and the cache's seq only moves forward, under a short
+  `flock` of its own; whether the cache's form ([L4-c]) allows this second
+  writer is lane 4's (question 13).
+
+It answers `text <n>` only for that transaction's `n`, so the files of one
+answer are never from two seqs. The answer is `text <n>`, then for each file
+its path, its byte count, its digest and its bytes. A 1.35 MB answer, digest
+checked, took 2.35 ms median from connect to the last byte (5.75 ms cold;
+probe X).
+
+**What the digest proves, and what it does not.** The service checks its
+images against the database's digests at `n`, so it never sends an image the
+database did not hold at `n`. The client checks each file against the digest
+in the same answer, which proves only that the bytes arrived as sent: it
+catches a cut or corrupted transfer, not a wrong service. Trust in the service
+rests on SVC-2: the checked directory, the owner file and the uid check at
+both ends. **A mismatch or a malformed answer** (a bad header, a byte count
+that does not match, a digest that does not match, a file it did not ask for,
+an answer over 16 MB, or one not complete within the 300 ms share) is
+`unavailable`: the client discards all of it and reads directly. The client
+reads at most 16 MB and stops at its share, whichever comes first.
+
+**With the database unreachable,** the service answers `refuse db <cause>`
+only where the failure is definitive in this request (the connection refused,
+an authentication error, the switch not `primary`, the schema version
+refused), with a fixed cause and the SQLSTATE (SVC-2); the client then
+refuses exactly as the direct read would, 69, or 2 for the guard. Any timeout
+is `unavailable`, and the client reads directly within what its budget has
+left (SVC-8). It never answers from images it read before. The spec's second
+requirement says so: the service refuses, or answers `unavailable` so that
+the direct read decides; the outcome is the same 69 or 2, reached on a
+timeout by the direct read rather than by the service (question 4).
+
+**The read API's other answers: text, not by key** (question 1). Under D17
+the service answers no question by key. `who`, `binding`, `live-holder`,
+`next-free` and `managed-projection` reach it as the files their parser reads,
+and today's parser runs on them in the reader's own process. Lane 3's ruling
+takes this form, so "the service answers the register's text at `n`, and the
+reader decides" is now the wording of the interfaces section's read-API
+bullet, of the spec's first requirement (whose scenario is a reader's `who`
+through the service), and of its sixth and seventeenth requirements. **The
+cost is T055's:** today's parser lives in `lanes-edit.sh`'s bash and awk, so
+Codex and the managed path run today's parser through `lanes-edit.sh`; T055
+calls `lanes-edit.sh`'s read verbs, which ask the service, rather than ask the
+service a question.
+
+The reason is D17's: one parser, today's, and no second copy to drift. **Under
+answers by key instead** (not taken): the service would answer those five
+reads from the structured layer (R3a: one row per lane, the log lines, the
+live claims) in the same REPEATABLE READ transaction, those answers would need
+an agreement test of their own against today's parser (the import's "the same
+S3 answers from the files and from SQL for every lane" is its model), T055
+would adopt the keyed API directly, and the guard would still read tmux for
+`binding_window_state` itself, so its answer could be keyed data with the
+decision left client-side (SVC-8).
+
+#### SVC-8. The guard's client, its share, and the one budget (Q2(g))
+
+**The form: no new hook string, and no block at the top of the arm.** The hook
+stays `~/projects/xFactory/lanes-edit.sh guard` (`code/openRepoTools:2343`), so
+the installer's idempotence, the workBenches launcher's copies and #237's
+probe are untouched. `guard_run` (`code/lanes-edit.sh:10391`) changes only
+around its register reads. The window reads, the record scan, the parses, the
+decision, the offer file, the `/rename` typing and answer 2's two writes stay
+where they are.
+
+**One prefetch, before the first read.** The guard's reads run in `$( )`
+substitutions and pipelines (`:10518`, `:10546`, `:10585`, `:10603`,
+`:10707`), so a shell variable set inside one is lost to the rest; that is why
+today's per-invocation caches are files beside `$SE_CACHE_FILE`
+(`:3444–3449`, and `:3460–3463` on a variable a subshell sets only in
+itself). So on a configured workstation, `guard_run` makes **one** call,
+`lanes-index register read --for guard --prefetch`, before `:10518`. It:
+
+- answers the mode first, which folds D3's `lanes-index mode` into it, so a
+  prompt pays one `lanes-index` start, not two. It follows lane 3's F8 ruling:
+  `index` and the guard goes on as today; Q6(c)'s refusal with its own code,
+  which lane 4 picks, and the guard refuses 2; and any other failure of the
+  call (a refused configuration, a crash, exit 127, its timer) is files mode
+  with a warning on stderr, after which a workstation under `lanes/STORE`
+  refuses by Q21(a)(A), as the marker check does for a writer;
+- on primary, asks the service (or reads directly) for `lanes/LANES.md`,
+  `lanes/aliases.tsv` and `lanes/log/<window name>.md`, the lane a window is
+  normally bound to, and writes them to the three cache files the three read
+  sites use, in the forms those sites already expect:
+
+| Read site | Cache file | Form |
+|---|---|---|
+| `register_text_checked` (`:3597`) | `$SE_CACHE_FILE.register`, which it already reads (`:3603`) | the text, as `register_text_checked` writes it |
+| `lane_alias_text` (`:5367`) | `$SE_CACHE_FILE.aliases`, which it already reads (`:5369`) | the table; for an empty or absent table, the one line `# no lane aliases`, which is how the function caches one (`:5434`), because it tests the file with `-s` (`:5375`) and an empty file would send it to the mirror's `git cat-file` and `git show` (`:5395`) |
+| `lane_log_events` (`:3521`) | `$SE_CACHE_FILE.log.<lane>`, new: it has no cache today | the log's text, keyed by the lane exactly as `lane_log_events` receives it in `$1`; the function consults it **before** `log_path_ci` (`:2991`, called at `:3522`), whose `git ls-tree` of `origin/<branch>` is a mirror read |
+
+- **The service-down flag is a file,** `$SE_CACHE_FILE.direct`, written by the
+  first fallback in the invocation. Every later read in that invocation,
+  inside any subshell, finds it and goes straight to the direct path, so a
+  silent service costs a prompt one 300 ms wait, never one per read.
+- A read whose cache file is missing (a binding that names another lane than
+  the window's, or the same lane spelled in another case, since `G_LANE` is
+  the register's spelling) makes one more `register read`, direct if the flag
+  file exists, which resolves the log's path case-insensitively in the images
+  at `n`, never in the mirror. That is a second `lanes-index` start, about
+  72 ms, on that path only.
+- The new bash is a dozen lines at those sites, under the bash-3.2 rules
+  (SVC-3).
+
+**Why the decision stays in `guard_run`:** after the register is read, the
+guard checks the bound window's liveness in tmux (`binding_window_state`,
+`:10054`, called at `:10731`), and which window it checks comes from the
+register's answer. A service that decided would need that tmux read sent to
+it ahead of time (`tmux list-windows -a`, one more call), and a second copy of
+the decision and of every refusal's text, which test 10 compares byte for
+byte. Under D17 the reader runs today's parser, so there is one copy, and
+the interfaces section now says the same (question 1).
+
+**The budget,** all against the hook's own start, `T0`, aiming to exit by
+`T0 + 4.4 s`, 0.1 s inside the test's "under 4.5 s":
+
+| Share | Bound | How |
+|---|---|---|
+| Fixed parts, before the prefetch | measured about 0.25 s warm, about 0.6 s with a cold record walk (parts 1–3) | not bounded; spent first |
+| The prefetch's `lanes-index` start | about 72 ms | spent once; it is also D3's mode question |
+| The wait for the service | 300 ms, connect and answer together | the client's socket timer; a service that accepts and never answers costs 300 ms (probe B6: 348 ms of process wall for a 300 ms deadline) |
+| The service's own work | 200 ms | its per-request timer, inside the client's 300 ms, so it answers `unavailable` before the client gives up |
+| The direct read | `T0 + 3.75 s − now`, with `connect_timeout` 2 s, `lock_timeout` 1000 ms, `statement_timeout` 1500 ms | the timeouts table's guard row, which the frame had at "4 s, cut to what the hook has left"; this section cuts earlier, to the parse's start line, to leave the parse and the print their time, and the row now says so (question 7). The timer is never above 3.75 s |
+| **The parse's start line** | `T0 + 3.75 s` | a read, through the service or direct, that completes after it is a refusal: the client exits as "too late to verify", and the guard refuses 2 without parsing |
+| The parses and the decision | a reserve of 0.5 s | about 145 ms measured on synthetic data, so about three times that; lane 2's real-size measurement sets it (question 14) |
+| Printing the refusal and exiting | 0.15 s | reserved |
+
+So the last moment a read may finish is `T0 + 3.75 s`, the parses then have
+until `T0 + 4.25 s`, and the guard exits by `T0 + 4.4 s`. **The worst case where
+nothing answers:** about 0.6 s of fixed parts with a cold walk, 0.07 s of
+`lanes-index` start and 0.3 s waiting for the service bring `now` to about
+`T0 + 1.0 s`; the direct read's timer is then about 2.75 s. A database whose
+connect never completes gives 2 at its 2 s `connect_timeout`, about
+`T0 + 3.0 s`; one that goes silent after connecting gives 2 when the timer
+expires, about `T0 + 3.75 s`; either refusal is printed by about
+`T0 + 3.9 s`. A connect that completes at 2 s and a statement that runs to
+its 1.5 s bound would end at about `T0 + 4.5 s`, which the timer cuts: in this
+case that database answers 2, not 0, by design. **The late success** that the
+reserve covers: a read that finishes just before `T0 + 3.75 s` leaves 0.5 s for
+the parses and 0.15 s to print. The reserve is a measured share, not a bound
+bash 3.2 can enforce (it has no clock finer than `SECONDS`); if lane 2 finds
+the real parse above about 0.5 s, the reserve grows and the start line moves
+earlier by the same amount, or the parse must leave the guard (the keyed form
+SVC-7 records, not taken). Lane 3's ruling keeps the 0.5 s reserve until lane
+2 measures the real parse (question 7).
+
+**How the client knows `T0`.** The guard passes its own pid (`$$`, the hook
+process). On Linux the client reads that process's start from
+`/proc/<pid>/stat` against `/proc/uptime`. On macOS it reads `ps -o etime= -p
+<pid>` and rounds up to the next whole second, which can only shorten the
+direct read's timer, never lengthen it. **A clamp:** an elapsed time below 0
+or above 4 s is treated as unknown, as where neither answers, and the client
+then assumes 1 s has passed. That catches a `/proc/uptime` that a container
+virtualises (lxcfs) differently from the process's start time, which would
+otherwise give a plausible wrong figure.
+
+**`CLAUDE_NO_LANE=1`** exits at `code/lanes-edit.sh:648–654`, before anything
+above runs: 3.3 ms of process wall here, with no input read, no service
+contacted and nothing started.
+
+**Answer 2's writes (F6): inside the hook, cut to what it has left.** When
+the person answers `2` to an offer, `guard_answer` runs `lane-start --no-launch
+--bind` and then `set-row-state` (`:11171`, `:11199`), two S1 writes, and the
+guard exits 2 whatever they do: it refuses that prompt either way, and the
+person resends. **Decision: they run inside the hook, with every deadline and
+timer cut to the hook's remaining time; they are not detached.** The guard
+passes its own pid and an end line of `T0 + 4.25 s` to both commands in their
+environment (two variables, which carry no credential). Every `lanes-index`
+call they make (their reads, `register snapshot` and `register commit`) cuts
+its client timer to what is left before that line, and starts nothing with
+less than its minimum left (2 s, one `connect_timeout`, for a call that must
+connect); the attempt loop's 30 s deadline (D7) becomes that line. Under lane
+3's F3 ruling:
+
+| The write's outcome | The writer exits | The guard |
+|---|---|---|
+| committed | 0 | 2, as today after a bind |
+| busy: every attempt lost its turn, and none was in doubt | 75 | 2, naming the write id: "answer `2` again" |
+| unreachable or refused | 69 | 2, naming the store and the cause |
+| in doubt: at the line, one lookup does not find the id, and the head is not free (F3) | 3 | 2, naming the write id; D8's pending record stays, so answering `2` again reruns the same command line under the same id |
+| not started: less than the minimum left | — | 2: "too little of the hook's 5 s was left to bind; answer `2` again" |
+
+The offer is kept on every row but the first, as today's refusal keeps it
+("The offer is KEPT, so answer `2` again", `:11173`). The timeouts table (D9)
+carries its row: **"the guard's answer-2 writes: the deadline and each call's
+timer cut to `T0 + 4.25 s`; busy, 69 or in doubt exits 2, naming the write
+id."** Reason: the outcome is known before the hook exits, so the person
+reads it at once; D8's pending record makes "answer `2` again" the same write;
+and the detached form needs a state file for the next prompt to report, and
+rests on a detached child outliving the hook, which is not shown (the facts
+table). Its cost is that a slow database turns answer 2 into "answer `2`
+again" more often. Lane 2 should time `lane-start --no-launch --bind` on
+primary: if it does not fit in about 3 s on a healthy fixture, the detached
+form, exit 2 with "binding in progress", is the fallback (question 16, routed
+to lane 2).
+
+**The exit mapping.** `register read` and `register read --for guard` are the
+two client forms; `unavailable` never leaves the client.
+
+| What happened | A reader's `register read` | `--for guard` | The guard |
+|---|---|---|---|
+| text at `n` through the service | 0 | 0, files cached | parses; decides 0 or 2 |
+| the service unavailable, the direct read succeeded | 0 | 0, files cached, `guard: direct (service unavailable)` on stderr | parses; decides 0 or 2 |
+| `refuse db <cause>`, or the direct read failed | 69, as S3's table | 69 | SVC-12's declared-outage check; otherwise 2, naming the store, the cause and the two ways out |
+| a read completed after the parse's start line | — | 2 | 2: "too late in the hook's 5 s to verify the triple" |
+| mode `index` | — (D3 asks first) | 0, `mode index` | today's files-mode guard |
+| Q6(c)'s refusal of `mode=primary` | lane 4's code (F8) | the same code | 2 |
+| any other failure of the mode question or the prefetch | — | any other code, or none | files mode with a warning (F8); under `lanes/STORE`, 2 by Q21(a)(A) |
+
+#### SVC-9. What the service removes from the guard, and what it cannot
+
+With the service up, part 4 shrinks to the prefetch's start (about 72 ms as
+`lanes-index`, and it answers the mode too), the round trip (about 3 ms) and
+today's parses on the text (about 145 ms). Without it, on primary, part 4 is
+the same start, a `psql` start and connect, the head and digest query, the
+image cache, and the same parses. The service removes the `psql` start, the
+connect and the query: R1 measured one write at 14.7 ms through a new `psql`
+process against 0.97 ms in a session; a read is not measured, and a connect
+over TCP adds more. It does not remove parts 1 to 3, or the parses. That is
+the honest size of Q29's question: on this host the direct guard on primary
+should land near half a second warm, an order of magnitude inside its 5 s,
+and the service saves tens of milliseconds of it. The figure that decides is
+test 10's, on the fixture.
+
+**Under the interfaces section's form, where the service decides,** or under
+keyed answers (SVC-7's last paragraph): the parses would leave the guard, and
+part 4 would be about 75 ms, the whole hook about 0.3 s warm here. The cost is
+a second copy of the decision, or an agreement test of the keyed answers, plus
+the tmux table in the request where the service decides.
+
+#### SVC-10. Test 10's 50 ms, stated against this form
+
+Concern 4 gives two ways to state it. Under SVC-8 the client runs after parts
+1 to 3, so the first way (a client before the parse) is not this design, and
+the 50 ms is **the service's answer time**:
+
+- **What is timed:** inside the client, from the `connect()` call to the last
+  byte of a digest-checked answer, for one `register read --for guard
+  --prefetch` of the three files, against a warm service on the suite's
+  fixture register.
+- **Not included,** and recorded beside it: the client's process start, the
+  hook's fixed parts, today's parses, and a cold start of the service, which
+  the guard never waits for (SVC-4).
+- **The statistic,** as Q10 settles: the median and p95 over at least 20 warm
+  requests, with the cold first request beside them (the QA seat), recorded in
+  the PR body, not asserted on shared runners (#165's body: "recorded in the
+  PR body").
+- **Beside it,** the whole hook's wall time through the service and through
+  the direct read, and today's files-mode guard, each in the four parts above
+  (P5's baseline and Q29's figure), with the record walk cold and warm.
+
+The probes' toy service answered a warm request in about 3 to 5 ms (3.8 ms
+median in `run/b2.out`; 4.5 ms in the check's re-run, `run/check-b2-rerun.out`)
+and a 1.35 MB answer in 2.35 ms; the real service adds one transaction on a
+held connection, about a millisecond by R1's session figure. The 50 ms should
+hold with room. The spec's sixteenth requirement, which read "the
+service-backed guard SHALL answer in under 50 ms", now reads "the service
+SHALL answer the guard's read in under 50 ms", with the whole hook recorded
+beside it; the whole guard's figure is Q29's (question 6).
+
+#### SVC-11. Host-local facts (Q2(h))
+
+- **For writes,** 4A answers it: a write never goes through the service, so
+  liveness for `claim --force`, `rename-lane` and `retire-rows`, and tmux for
+  `request-handoff`, are read by the writer in its own container, as today and
+  as the frame's risk "the scratch tree reads host-local facts at the
+  snapshot" says.
+- **For the guard,** the client reads them, as the interfaces section has it,
+  in its own container: the window reference and name, the live records, and
+  the bound window's state after the register answer. Under SVC-8 it never
+  sends them: the service needs only the file names, and the interfaces
+  section and the spec's sixth requirement now say the request carries only
+  those (question 3).
+- **The service** reads no pid, no `/proc` entry of a lane, no session record
+  and no tmux. It has nothing to refuse for want of them.
+
+#### SVC-12. The declared outage, and the `SessionStart` block
+
+**What the guard's mirror read requires (F7, F11).** The client reads the
+declaration, never the service, and the guard answers from the mirror only
+when all three of these hold, checked in this order, offline:
+
+1. its database read has failed: the service answered `refuse db …`, or it
+   was unavailable and the direct read then failed (`register read` exit 69);
+2. `register-outage` (D20) is present beside `lanes-index.conf`, unexpired,
+   and names this workstation's database label;
+3. the mirror it reads, `origin/main` as last fetched (the guard never
+   fetches), carries a `Register-Seq` of at least the declaration's
+   `mirror-seq=<m>`, the field lane 3's F11 ruling adds and `outage declare`
+   records (lane 1's section): the client reads the last `Register-Seq`
+   trailer on that ref's first-parent history with one `git log -1
+   --first-parent --grep='^Register-Seq: '` and compares.
+
+Then the guard runs today's parser on the mirror's text and exits 0 or 2 as it
+gives, with S3's `read: mirror at <sha12>, …` line and `(declared outage <utc>:
+<why>)` in place of the cause. Since condition 1 holds, the mirror path is
+entered only after a database read failed, so the label never stands for "the
+service was down". A mirror below `m` refuses 2: "the mirror here is at seq
+`<k>`, behind the declared outage's seq `<m>`; fetch it, or wait for the
+database". Any other failed condition refuses 2 with S3's outage text. Every
+write and every other deciding read still refuse with 69, and the service never
+reads the mirror or the declaration, so a service left running through an
+outage cannot carry a declaration past its expiry.
+
+**Both specs carry it (F7).** `specs/register-service/spec.md`'s "The guard
+falls back to the database, never the mirror" says "except during a declared
+outage, under the declared-outage requirement", and its scenario "The service
+is down and the database is not" says "and no outage is declared"; the
+declared-outage requirement states the three conditions above.
+`specs/sql-register/spec.md`'s requirement on mirror reads names the guard's
+declared-outage read beside the naming read.
+
+**Its reach per environment.** The declaration sits beside
+`lanes-index.conf`, so each environment sees it through that environment's
+configuration: under Q23(a) a read-only mount, which py-bench does not have
+yet (`~/.config/openRepoTools` is the container's own overlay here).
+
+**The `SessionStart` block (F24): not a client for its answer.** It reads the
+mirror offline, as Amendment 22's S3 has it and as it does today, labelled
+`read: mirror`, and exits 0. It decides nothing, so S3 lets it read the
+mirror, and a service in its path would add a failure mode to a hook that
+must never fail. Its one contact with the service is the start (SVC-4 item 1):
+on a primary workstation, after its answer, it runs the start a client runs on
+`ENOENT`, without waiting, so the first prompt finds the service warm. **The
+spec's requirement, which made the block "a client the same way", now reads**
+(question 17): "The `SessionStart` block SHALL stay
+read-only, SHALL read the mirror offline and SHALL exit 0 always; on a
+`mode=primary` workstation it SHALL start the service after its answer,
+without waiting for it." Its scenario, the service down, an answer from the
+mirror and exit 0, holds unchanged.
+
+#### The review's list for lane 5, and where each is answered
+
+The frame review (`REVIEW-frame-20261102.md`, sha256 `0689dde8…`, section
+(c)):
+
+| Item | Answered in |
+|---|---|
+| Whether the service or the client reads the declaration (F7, F11) | SVC-12: the client, with `mirror-seq` |
+| Answer 2's writes inside the 5 s, or detached (F6) | SVC-8, "Answer 2's writes": inside, cut |
+| One service per workstation or per container, and the socket's place when `/tmp` is not shared (Q2(c)) | SVC-1 and SVC-2 |
+| Starting with no supervisor | SVC-4 |
+| The `psql` child's timeouts and reconnect | SVC-6: 150, 180 and 200 ms per request, a 2 s connect in the background only, `SIGINT` then kill, a lazy restart |
+| A cheap freshness proof for each request | SVC-7: one REPEATABLE READ READ ONLY transaction on the held connection returns the head `n` and the files' digests; images in memory are reused when the digests match, so a request at an unchanged head costs that one query, about a millisecond by R1's session figure |
+| The `SessionStart` block's request (F24) | SVC-12: none; it reads the mirror and only starts the service |
+| The host-local facts (Q2(h)) | SVC-11 |
+| The client's form and hook string (Q2(g)) | SVC-8 |
+| Whether it runs on `mode=index` (Q2(e)) | SVC-5: no |
+| The exit mapping | SVC-8, "The exit mapping" |
+| The four-part measurement | the first table |
+
+#### The facts this section rests on, and how each was shown
+
+| Fact | Shown by |
+|---|---|
+| Lanes run in containers on one WSL2 host, Eagle; this one is py-bench, with `LANES_WORKSTATION=Eagle` and `LANES_CONTAINER=py-bench` exported | probe F (`uname -r` names WSL2; the two variables tested by name, never printed with the environment); cloud-bench and the host shell are the coordinator's word, not shown |
+| No supervisor runs in py-bench: pid 1 is `docker-init` | probe F, **for py-bench only**; the host shell, cloud-bench and macOS are not shown |
+| `/workspace/projects`, `~/.claude`, `~/.claude-profiles` and `~/.agents` are bind mounts of one disk; `/home/brett`, `~/.local/state` (apart from two bind-mounted subdirectories), `~/.config/openRepoTools` and `/tmp` are the container's own overlay | probe F, from `/proc/self/mountinfo` |
+| `/tmp` differs between py-bench and cloud-bench, and `/workspace` is shared | the coordinator's brief; not shown from one container |
+| This container's tmux server's socket is under `/tmp` | probe F (the path's prefix only) |
+| A Unix socket binds and connects on the shared disk; 107 bytes binds and 108 is refused | probe A, and the check's re-run (`run/check-probeA-rerun.out`) |
+| macOS allows 103 bytes | R1 (the proposal's Q1); not shown here |
+| `flock` gives one instance among racing starters; a `SIGKILL`ed service leaves a stale socket that `ECONNREFUSED` finds; idle exit unlinks | probes B1, B4, B5 |
+| A silent service costs the client its deadline and no more | probe B6 |
+| The record walk: 410 ms cold, 58–96 ms warm | probe F, by count only |
+| The four parts' figures | probes C, C2 and C3, on synthetic records and a synthetic register |
+| R1's 14.7 ms and 0.97 ms (one write); ADV-C4's timeouts | the proposal and `clarifications.md`, not re-measured |
+| **Not shown:** the whole of SVC-6: `psql` on pipes, the `\echo` framing, the `SIGINT` cancel, and the 150, 180, 200 and 100 ms values | no PostgreSQL on py-bench until 1A; lane 2's fixture |
+| **Not shown:** that a detached child started from a hook outlives the hook under Claude Code | a hook that starts `lanes-index serve` and a check of the child after the hook returns, in a real session |
+| **Not shown:** a socket on the shared disk reached from another container; `flock` on it from two containers | a bind in one container and a connect from the other |
+| **Not shown:** `SO_PEERCRED` with a second uid or across pid namespaces; macOS's `LOCAL_PEERCRED` | one uid and one namespace here; SVC-2's owner file does not rely on them |
+
+#### What each other round-2 option would change here
+
+- **Q29 (b), act 4 waits for the service:** the service stays 007's last
+  slice, and act 4 waits for it; the readiness check also proves that
+  `lanes-index serve` starts, binds within 103 bytes and answers in every
+  environment. SVC-1 to SVC-12 are unchanged; the direct read stays the
+  fallback (Q11(a)).
+- **Q11 (b), the fallback refuses whenever the service is down:** the service
+  becomes a precondition of every prompt, and the guard holds no credential;
+  SVC-6's connection is the only READER holder in each environment. With no
+  direct read to leave room for, the service's share becomes what the hook
+  has left before the parse's start line, about 3 s, and the guard waits for
+  a cold start inside it (a Python start, a `psql` start and its connect), so
+  SVC-4's "the guard never waits for a start" goes. The 15-minute idle exit and
+  the exit on an upgrade then cost the next prompt that cold start, and a
+  service that cannot start refuses every prompt in its environment until
+  someone fixes it; SVC-4's failure stamp would then refuse rather than read
+  directly.
+- **Q26 (b), no declared outage:** SVC-12's first two items go, and the client
+  refuses 2 on any database failure. **Q26 (a), the mirror at any outage:**
+  the client would read the mirror wherever both the service and the direct
+  read fail, with no file to check; nothing changes in the service.
+- **Q21(a) (B), everything reads the mirror on an unconfigured workstation
+  under the marker:** nothing changes here, because an unconfigured
+  workstation runs no service (SVC-5: no configuration, no question) under
+  either answer. Under (A), as recommended, its guard refuses on the direct
+  path and its `SessionStart` reads the mirror; under (B) its guard reads the
+  mirror too. Neither asks a socket.
+- **Q22 (b) or (c), Raven not configured:** Raven runs no service, because it
+  is not `mode=primary` (SVC-5). Under (c) the database is on Eagle, so the
+  connection is local and the 2 s `connect_timeout` is rarely spent.
+- **Q23 (b) or (c), the configuration's place:** only the path the service
+  re-reads, and the declaration's place, change. Under (c) a container started
+  before a flip carries no `mode=primary`, so it starts no service until it is
+  relaunched, and a container started before a declaration does not see the
+  declaration either.
+- **Q24, how #165 reaches the hosts:** under (a), the re-vendor and one image
+  rebuild, each bench's `lanes-index` changes at its rebuild or re-install, and
+  SVC-4's exit on an install change ends an old service at its next request;
+  the readiness check's digest of `lanes-index` covers the service too, since
+  it is the same file (SVC-3). Under (b) or (c), only the route changes; a
+  host installed by `pipx` and a bench by re-vendor can carry different
+  builds, which SVC-1's per-environment service already allows.
+- **Q4(a) and Q4(b), Q7, Q21(b), Q28:** they shape the writers, the cutover and
+  rollback, none of which touches the service, since writes never use it.
+  Under Q4(b)'s (iv), each primary write adds an `ls-remote`; the service does
+  not, since it serves reads.
+
+#### Lane 5's eighteen questions, and lane 3's rulings
+
+Lane 5 put these to lane 3, nine of them as differences from the frame or the
+spec. Lane 3 accepted all nine and lane 5's other choices (#165 comment
+6578521506). Each ruling, and where it landed:
+
+1. **The service's answers: text, not by key (a difference).** Ruled: text at
+   `n` (D17). The interfaces section's guard-request and read-API bullets, and
+   the spec's first, sixth and seventeenth requirements, say "the service
+   answers the register's text at `n`, and the reader decides". T055's cost,
+   that Codex and the managed path run today's parser through
+   `lanes-edit.sh`, is recorded in SVC-7 and in the read-API bullet.
+2. **One per environment (a difference).** Ruled: one service per environment
+   (SVC-1). The spec's Purpose says so.
+3. **The request (a difference).** Ruled: the request carries only file names
+   (SVC-8, SVC-11). The interfaces section and the spec's sixth requirement
+   say so.
+4. **`unavailable` on a timeout, and the service's timeouts row (a
+   difference).** Ruled: SVC-6's 150, 180 and 200 ms row replaces the frame's
+   1000 and 1500 ms service row in the timeouts table, with `unavailable` and
+   a direct read on expiry. The spec's second and eleventh requirements say
+   "refuse, or answer `unavailable` so that the direct read decides".
+5. **The service's 2 s connect (a difference).** Ruled: it runs in the
+   background, outside any share. The spec's twelfth requirement says so.
+6. **Test 10's 50 ms (a difference).** Ruled: the 50 ms is the service's
+   answer time (SVC-10), and the whole guard's figure is Q29's. The spec's
+   sixteenth requirement says so.
+7. **The parse reserve (a difference).** Ruled: the 0.5 s reserve, with the
+   direct read cut to `T0 + 3.75 s`, stands until lane 2 measures the real
+   parse (question 14). The timeouts table's guard row and the interfaces
+   section's budget say so.
+8. **The client's start.** Ruled: `lanes-index` stays the client (SVC-3).
+9. **`serve` and the prefetch (a difference).** Ruled: D2's verb list gains
+   `serve`, `register read` gains `--for guard` and `--prefetch`, and the
+   overview's `lanes-register` row is a `lanes-index` subcommand.
+10. **The new cache file.** Routed to lane 4: `$SE_CACHE_FILE.log.<lane>` for
+    `lane_log_events` (`:3521`), placed in the phase plan.
+11. **The `psql` connection in the environment, not the argument list.**
+    Ruled: no connection string in any argument list, on any `lanes-index`
+    path (Roles and credentials). Routed to lane 4, which changes
+    `code/lanes-index:1315`.
+12. **A failed start's cooldown.** Ruled: 60 s (SVC-4, item 7).
+13. **The image cache's writers.** Routed to lane 4: whether the cache's form
+    ([L4-c]) allows the service as a second writer, or the service keeps its
+    images in memory only.
+14. **The register read's and the parse's real cost.** Routed to lane 2: a
+    measurement on a real-sized copy decides Q29's figure and SVC-8's reserve.
+15. **Across containers.** Not needed by SVC-1 as ruled; the facts table keeps
+    it as not shown.
+16. **Answer 2's writes (F6).** Ruled: inside the hook, cut to `T0 + 4.25 s`
+    (SVC-8). The timeouts table carries the frame's row, "the guard's answer-2
+    writes: the deadline and each call's timer cut to what the hook has left;
+    busy, 69 or in doubt exits 2, naming the write id". The detached form is
+    the fallback if lane 2's timing of the bind says so; the timing is routed
+    to lane 2.
+17. **The `SessionStart` block (F24, a difference).** Ruled: it stays a mirror
+    reader that only starts the service (SVC-12). The spec's requirement reads
+    as SVC-12 gives it.
+18. **The declared-outage exception (F7) and `mirror-seq` (F11).** Ruled:
+    `mirror-seq` is a field of the declaration, which `outage declare` records
+    in lane 1's runbook, and the guard's check of it is the client's (SVC-12).
+    D20, S3's declared outage and both specs state SVC-12's three conditions.
 
 ## The phase plan — **PLACEHOLDER: lane openRepoTools-4's section**
 
@@ -1430,7 +2268,8 @@ the rest of the design relies on.
   "carry on" → each arm refuses and names the code (S3); one test per
   `lane-start` arm.
 - **[The guard exceeds its 5 s]** A killed hook passes the prompt → one budget,
-  the direct read's timer cut to what is left, and the probes' 4.5 s assertion.
+  the direct read cut to the parse's start line (SVC-8), answer 2's writes cut
+  to what the hook has left, and the probes' 4.5 s assertion.
 - **[The scratch tree reads host-local facts at the snapshot]** Liveness for
   `claim --force`, `rename-lane` and `retire-rows`, and tmux for
   `request-handoff`, are read outside the transaction → the head check covers
@@ -1543,8 +2382,9 @@ values other than the guard's, which the test plan confirms.
 
 Lane 3's independent review of this frame (`REVIEW-frame-20261102.md`, sha256
 `0689dde8…`, against `c7253108`) left these points for the sections that fold
-in later. The placeholders above are left as they were; lane 5's carries its
-own points.
+in later. The placeholders above are left as they were. Lane 5's section,
+folded above, settles its own points and routes the ones below marked with
+its question numbers.
 
 - **Lane 1, the schema and the operations:** the operator-entry flag, seq 1
   and the rollback's last seq (F1, F2); the switch state the rollback leaves;
@@ -1569,7 +2409,12 @@ own points.
   it stops at an operator seq (F15, F2); where a hand edit is found (F16); the
   marker check for readers (F17); [L4-1] to [L4-5]; `commit-tree`'s
   determinism (F29); and the push URL the deploy key needs against origin's
-  HTTPS remote.
+  HTTPS remote. From lane 5's section: the new cache file
+  `$SE_CACHE_FILE.log.<lane>` (its question 10); whether the image cache's
+  form allows the service as a second writer, or the service keeps its images
+  in memory only (question 13, [L4-c]); and `code/lanes-index:1315`, whose
+  connection string moves from the argument list into `psql`'s environment
+  (question 11).
 - **Lane 2, the test plan:** a test for each MUST as folded (a write in doubt at
   the deadline; a diverged rollback, and a failed seq-1 push; the ruleset, then
   a files-mode write after the rollback; a declared outage with the service and
@@ -1579,4 +2424,8 @@ own points.
   than `mirror-seq` (F11); the disaster path with an old record (F18); a failed
   mode query on `mode=index` and on primary (F8); output printed once in a burst
   (F14); which cases need TCP rather than the Unix socket; and no test that
-  expects F33's backstop to fire.
+  expects F33's backstop to fire. From lane 5's section: the real register's
+  and the parse's cost on a real-sized copy, which set Q29's figure and
+  SVC-8's parse reserve (its question 14); and the time of
+  `lane-start --no-launch --bind` on primary, which keeps answer 2 inside the
+  hook or moves it to the detached form (question 16).

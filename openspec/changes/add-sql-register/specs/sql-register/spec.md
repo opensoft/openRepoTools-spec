@@ -291,11 +291,11 @@ The claim comment SHALL cite "register seq `<n>`", where `<n>` matches the `Regi
 - **THEN** the mirror commit with `Register-Seq: n` in `git log` is that write's commit
 
 ### Requirement: The journal records each write
-Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`) and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically. An entry whose edits touch only `lanes/STORE` SHALL be an operator entry, flagged as such in the journal. Exactly two kinds of operator entry SHALL pass the switch check, each written in its command's own transaction: the cutover's (seq 1), in the transaction that sets the switch to `primary`; and the rollback's last seq, in the transaction that sets the switch to `files`. No other entry SHALL be journalled while the switch is not `primary`.
+Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`) and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically. An entry whose edits touch only `lanes/STORE` SHALL be an operator entry, flagged as such in the journal. Exactly two kinds of operator entry SHALL pass the switch check, each written in its command's own transaction: the cutover's entry (seq 1, or `m+1` after a loss, where the cutover's after-loss form writes the marker's rewrite with the head re-imported at `m`, so that the next write is `m+2`), in the transaction that sets the switch to `primary`; and the rollback's last seq, in the transaction that sets the switch to `files`. No other entry SHALL be journalled while the switch is not `primary`.
 
 #### Scenario: The operator entries
 - **WHEN** a cutover and then a rollback run to their end
-- **THEN** the journal holds exactly two operator entries, seq 1 and the rollback's last seq, each flagged, and nothing journalled after the switch went to `files`
+- **THEN** the journal holds exactly two operator entries, the cutover's entry (seq 1, or `m+1` after a loss) and the rollback's last seq, each flagged, and nothing journalled after the switch went to `files`
 
 #### Scenario: Sequence follows commit order
 - **WHEN** two writers commit in a known order
