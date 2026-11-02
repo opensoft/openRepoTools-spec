@@ -1111,9 +1111,12 @@ alternative), Q26 (the product seat's narrowed (a′)), Q28 (no report's; (a) is
 lane 3's writer's suggestion) and Q29 (the product seat's). Q14's (a) for the
 link is also lane 3's writer's suggestion, not a report's, and Q15 is the
 design's and follows Q7. Round 1 of Brett Heap's questions, put to him on
-2026-10-31 (asked at 20:07Z, corrected at 20:26Z) and not answered when this was
-written, is Q2(a) and (b), Q6, Q8 and Q20; the council's positions are recorded
-under each.
+2026-10-31 (asked at 20:07Z, corrected at 20:26Z), is Q2(a) and (b), Q6, Q8 and
+Q20, and none of the four is open: each is answered as recommended, by Brett
+Heap, 2026-11-02T12:04:49Z, '1A 2A 3A 4A' — an accepted prompt suggestion, held
+as provisional until he confirms it by typing (#165 comment 6576888068). 1A is
+Q6, 2A is Q8, 3A is Q20, and 4A is Q2(a) and (b). Each question records its
+answer and the council's positions.
 
 1. **The test strategy: answered.** Brett Heap, in lane 3's session at
    2026-10-31T19:32:08Z, verbatim: "1A and 2A" (#165 comment 6548141614), on
@@ -1176,6 +1179,14 @@ under each.
      the writers' included, sets its own timeouts (the service, above). The
      adversary seat takes no position. Whether act 4 waits for the service at
      all is Q29.
+   - **(a) and (b): answered, as recommended (4A).** Brett Heap,
+     2026-11-02T12:04:49Z, '1A 2A 3A 4A' — an accepted prompt suggestion, held
+     as provisional until he confirms it by typing (#165 comment 6576888068).
+     Each `lanes-edit.sh` write opens its own transaction with its own
+     REGISTER-WRITER credential, as Amendment 22's clause (b) words it; the
+     service holds one connection, for the guard's reads and the other reads;
+     and with the service down, writes go on, never falling back to the files.
+     (c) to (h) stay the design's.
    - (c) Is it one process per workstation or per bench container? Containers on
      one host share the projects mount (Amendment 23's S1), but on 2026-10-23
      lanes found that py-bench and cloud-bench do not share `/tmp`, and
@@ -1435,6 +1446,15 @@ under each.
      3, and the renderer's merge need not wait for 2a and 2b under the
      private-index form, since a render commit built with a private index is
      never on the HEAD that the handoff blocks rebase (Q27, below).
+   - **Answered, as recommended (1A): (c), split by seam.** Brett Heap,
+     2026-11-02T12:04:49Z, '1A 2A 3A 4A' — an accepted prompt suggestion, held
+     as provisional until he confirms it by typing (#165 comment 6576888068).
+     The split is the three parts above: what does not run through
+     `lanes-edit.sh`'s write seams now, on `2a057a6d`; the write path after
+     slices 1a and 1b land in the code leg; then the renderer's git half, with
+     `lanes-index` refusing `mode=primary` until it is installed. Whether act 4
+     also waits for 2a, 2b and 3, and who re-homes act 2 and by when, stay
+     open as Q28.
 7. **How a writer runs one transaction (R2).** Through `psql` with one
    `BEGIN … COMMIT` session and `ON_ERROR_STOP`, through a `lanes-index`
    subcommand, or through the service? R1 measured 14.7 ms per write through a
@@ -1460,8 +1480,9 @@ under each.
        snapshot at head `n`, runs today's verb code unchanged on a scratch copy,
        and commits SERIALIZABLE only if the head is still `n`; if the head
        moved, or on 40001 or 40P01, it re-reads and re-checks until the deadline
-       passes, then exits "register busy" (Q15). Each attempt is one `psql`
-       call, so nothing holds a session open across the shell code, as with
+       passes, then exits "register busy" (Q15). Each attempt is two short
+       `psql` calls, one to read and one to commit, with the verb running
+       between them, so no session stays open across the shell code, as with
        `lanes-index`'s existing compare-and-swap. No burst writer is lost: with
        no cap the k-th writer of a burst commits on its k-th attempt, and the
        probes drained ten writers in 618, 2259 and 10239 ms at windows of 40 ms,
@@ -1562,6 +1583,13 @@ under each.
      branch on join S3's table. Under (iii), `:1154` would stay a note, and that
      hazard with it. The product seat agrees with option A. Agreement test 11
      asserts Q8's outcomes with the cluster stopped (P6).
+   - **(a): answered, as recommended (2A).** Brett Heap, 2026-11-02T12:04:49Z,
+     '1A 2A 3A 4A' — an accepted prompt suggestion, held as provisional until
+     he confirms it by typing (#165 comment 6576888068). R3's option A, with
+     ADV-C5's refinement: `lane-start`'s reads that decide refuse with 69
+     before anything is renamed or written, `:1154` among them; so do the
+     writes that must exist, `request-handoff` and a new lane's `add-row`; the
+     later stamps print a note, and the launch goes on.
    - (b) **`lane-handoff` and the skill (B3).** The reads that name the lane come
      before the handoff file is published (`code/lane-handoff:1448–1463`, reads
      at `:1649–1815`, `publish-handoff` at `:2639`;
@@ -1588,6 +1616,12 @@ under each.
      skill print names how the `SWAPPING` lane's `PAUSED` record is completed
      later: the late `PAUSED` path, who runs it, and when. The architecture and
      adversary seats take no further position.
+   - **(b): answered, as recommended (2A).** Brett Heap, 2026-11-02T12:04:49Z,
+     '1A 2A 3A 4A' — an accepted prompt suggestion, held as provisional until
+     he confirms it by typing (#165 comment 6576888068). R3's option A, with
+     P15: the handoff file is still written, from a mirror read that says so;
+     the `PAUSED` record refuses with 69, and its note names how the late
+     `PAUSED` path completes it; the lane stays `SWAPPING` until then.
 9. **Exit codes.** 69 joins `lanes-edit.sh`'s table, and so does a code of its
    own for "register busy" (S1; Q7; Q15). Which code does each reader
    return on `mode=primary` where a read fails with 1 or 10 today? S4 keeps
@@ -1778,6 +1812,11 @@ under each.
       cutover whose push aborts leaves the switch harmless, and that the abort
       path should still set the switch back. The architecture seat takes no
       position.
+    - **Answered, as recommended (3A): (B).** Brett Heap,
+      2026-11-02T12:04:49Z, '1A 2A 3A 4A' — an accepted prompt suggestion,
+      held as provisional until he confirms it by typing (#165 comment
+      6576888068). `mode=primary` is written at the cutover, act 4, and act 3
+      leaves the workstations on `mode=index`.
 21. **Workstations that are not `mode=primary` once `lanes/STORE` exists (R3a's
     question 5, R3b's question 4; R2's design question 8; for Brett).**
     - (a) What an unconfigured workstation's readers do: (A) acts and the guard
