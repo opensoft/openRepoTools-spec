@@ -94,14 +94,19 @@ Until the renderer's git half is installed, `lanes-index` SHALL refuse `mode=pri
 - **WHEN** the readiness check runs against a build with the refusal in place
 - **THEN** the check fails that state
 
-### Requirement: A server-side gate protects `lanes/**`
-Where the organisation's plan supports it, a push ruleset on `lanes/**` whose only bypass is a renderer identity SHALL be in place before the cutover, and the renderer SHALL push with that identity. The identity's key SHALL NOT be in any environment a session inherits (Amendment 14(c)). Where the plan does not support such a ruleset, whether act 4 waits for an equal server-side gate is Brett Heap's decision.
+### Requirement: A server-side gate protects the rendered paths and `lanes/STORE`
+Where the organisation's plan supports it, a push ruleset whose only bypass is a renderer identity SHALL be in place before the cutover, on the paths the renderer renders (`lanes/LANES.md`, `lanes/log/<lane>.md`, `lanes/aliases.tsv` and `lanes/archive/`) and on `lanes/STORE`. Every push that changes those paths SHALL use that identity: the renderer's, and the cutover's and the rollback's commits of `lanes/STORE`. The ruleset SHALL NOT cover `lanes/repos.tsv`, `lanes/log/README.md` or any other path under `lanes/` outside those, so that they stay git files a person commits and a commit to them stays part of the tip the renderer renders onto. The identity's key SHALL NOT be in any environment a session inherits (Amendment 14(c)). Where the plan does not support such a ruleset, or one that names exactly those paths, whether act 4 waits for an equal server-side gate is Brett Heap's decision.
 
 > Pending Brett's Q21(b): written under option (B).
+> Pending Brett's Q18: written under option (A).
 
 #### Scenario: A stale writer's push is refused
-- **WHEN** any identity other than the renderer's pushes a commit that changes a path under `lanes/**`
+- **WHEN** any identity other than the renderer's pushes a commit that changes a rendered path or `lanes/STORE`
 - **THEN** the ruleset rejects the push
+
+#### Scenario: A person's `repos.tsv` edit is not gated
+- **WHEN** a person pushes a commit that changes only `lanes/repos.tsv`
+- **THEN** the ruleset does not reject it, and the renderer renders onto it
 
 #### Scenario: The renderer pushes under its identity
 - **WHEN** the renderer pushes a render commit
@@ -230,7 +235,15 @@ Handoffs, `lane-start`'s stamp, `lane-handoff`'s `PAUSED` commit and the handoff
 - **THEN** its register writes are `lanes-edit.sh` verbs landing in SQL and its handoff file is committed by the lane as a git file
 
 ### Requirement: Every database path is bounded
-The readers, the renderer, `lanes-index status` and `lanes-index rollback` SHALL each set their own connect, lock and statement timeouts and run under a client timer, so that a hung database gives them an answer and not a hang. Writers SHALL have limits of their own, so that a hung database gives 69 and not a hang. A client-timer expiry SHALL be a failed read for a reader and an in-doubt outcome for a writer, as an exit 124 from an outer timer is.
+The readers, the renderer, `lanes-index status` and `lanes-index rollback` SHALL each set their own connect, lock and statement timeouts and run under a client timer, so that a hung database gives them an answer and not a hang. Writers SHALL have limits of their own, so that a hung database gives 69 and not a hang. A client-timer expiry SHALL be a failed read for a reader. For a writer, an expiry of a call that sends or may send COMMIT (its commit call) SHALL be an in-doubt outcome, as an exit 124 from an outer timer is; an expiry of its read-only snapshot SHALL be a failed read, exit 69 with nothing written, unless an earlier commit call of the same write is in doubt, in which case the write stays in doubt.
+
+#### Scenario: A writer's snapshot times out
+- **WHEN** a writer's read-only snapshot call reaches its client timer and no earlier commit call of that write was sent
+- **THEN** the writer exits 69 and nothing is written
+
+#### Scenario: A writer's commit times out
+- **WHEN** a writer's commit call reaches its client timer
+- **THEN** the write is in doubt and is recovered by its write id
 
 #### Scenario: A silent listener (agreement test 2)
 - **WHEN** the database address is a listener on the loopback address that accepts and never speaks
@@ -411,7 +424,9 @@ On `mode=primary` the post-write index nudge SHALL NOT re-index the mirror into 
 - **THEN** no re-index of the mirror runs against the register's database
 
 ### Requirement: Readers read the database and fail closed
-On `mode=primary` every act and every guard SHALL read the database, inside the act's transaction where the act writes: `who`, `binding`, `live-holder`, `next-free`, `managed-projection`, the guard, `lane`, `lane-start`, `lane-end`, `lane-handoff` and `lane-rename`. A read that fails SHALL refuse with 69, or with 2 in the guard, except where the next requirement says otherwise.
+On `mode=primary` every act and every guard SHALL read the database: `who`, `binding`, `live-holder`, `next-free`, `managed-projection`, the guard, `lane`, `lane-start`, `lane-end`, `lane-handoff` and `lane-rename`. Where the act writes, the reads it decides by SHALL hold at its COMMIT: they run inside the transaction that commits the write, or on a snapshot at head `n` whose SERIALIZABLE commit succeeds only while the head is still `n`. A read that fails SHALL refuse with 69, or with 2 in the guard, except where the next requirement says otherwise.
+
+> Pending Brett's Q7: written under option (A″); the wording holds under (A′) and (A) as well.
 
 #### Scenario: The reader table (agreement tests 2 and 11)
 - **WHEN** the database is unreachable and `who`, `binding`, `live-holder`, `next-free`, `lane`, `lane-end` or `lane-rename` runs
@@ -653,9 +668,10 @@ This change SHALL build the `mode=primary` flip as a command, run once per host 
 - **THEN** the flip is run from the host and not from the bench
 
 ### Requirement: Claim order is commit order
-Rule 1's race SHALL be decided in one transaction: the pre-check of the object's holders and the `CLAIMED` insert SHALL run SERIALIZABLE, or under a lock on the object, taken at READ COMMITTED. Of two claimants one SHALL commit, and the other SHALL see it and exit 2, writing nothing. `CLAIM-LOST` SHALL stay in the grammar for the history that has it and SHALL no longer be produced.
+Rule 1's race SHALL be decided by the register's commit order: of two claimants one SHALL commit, and the other SHALL see it and exit 2, writing nothing. The pre-check of the object's holders SHALL hold at the claim's COMMIT, in one of two forms: it runs inside the transaction that inserts the `CLAIMED`, SERIALIZABLE or under a lock taken at READ COMMITTED on the object or on the head row; or it runs on a snapshot at head `n`, and the SERIALIZABLE transaction that inserts the `CLAIMED` commits only while the head is still `n`. In either form that transaction SHALL also refuse, with 2, a claim whose spellings (the spelling as typed, its canonical key and the aliases its writer's `repos.tsv` maps to that key) meet those of another lane's live claim, so that no claim rests on one writer's alias table alone. `CLAIM-LOST` SHALL stay in the grammar for the history that has it and SHALL no longer be produced.
 
 > Pending Brett's Q12: written under option (a).
+> Pending Brett's Q7: written under option (A″); the wording holds under (A′) and (A) as well.
 
 #### Scenario: Two concurrent claimants (agreement test 4)
 - **WHEN** two lanes claim one object at once

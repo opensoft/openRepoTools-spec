@@ -347,7 +347,8 @@ window; the head row read first inside the transaction, unless stated.
 deadline instead of a fixed count (for example 30 s; Q7's (A″), recommended), an
 attempt bound at least as large as the largest burst, or the pessimistic lock
 (Q7's (A′)). The deadline is above the drain time of the largest burst, and each
-attempt is one `psql` call, so no session is held across the shell code. (A′)
+attempt is two short `psql` calls, one to read and one to commit, so no session
+is held across the shell code. (A′)
 holds the head-row lock across the shell code, so it needs one `psql` session
 kept open across it, which is the mechanism of Q7's (C), plus a helper to hold
 it; bash 3.2 has no `coproc`. The head row is updated before the journal row is

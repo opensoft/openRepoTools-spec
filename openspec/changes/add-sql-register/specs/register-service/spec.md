@@ -143,9 +143,14 @@ On `mode=primary`, before an outage is declared and outside one, the guard SHALL
 - **THEN** it runs with no lane session and no guard
 
 ### Requirement: A declared outage lets the guard answer from the mirror
-During an outage Brett Heap declares, on his word or from a rollback's start, when he knows that no workstation can still write, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. Before a declaration, and outside one, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's.
+During an outage Brett Heap declares on his word, when he knows that no workstation can still write, and until the expiry he names when he declares it, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. Before a declaration, after its expiry, and outside one, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
 
 > Pending Brett's Q26: written under option (a′).
+> Pending Brett's Q4(b): written under option (iii). Under (i), (ii) or (iv), a rollback's start may also declare it.
+
+#### Scenario: An expired declaration
+- **WHEN** the database is unreachable and the declaration's expiry has passed
+- **THEN** the guard refuses with 2
 
 #### Scenario: Before a declaration
 - **WHEN** the database is unreachable and no outage has been declared
