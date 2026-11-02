@@ -912,13 +912,15 @@ and credentials, the 69 refusal, the SQL's shape) always run.
     that succeeds, while a workstation not yet cleared refuses.
 14. The build before the renderer's git half (Q6(c); the product seat; lane 2),
     with the fake `psql`, so it always runs. One test covers both states, since
-    a single constant is the flip. With the refusal in place, `lanes-index`
-    exits 2 with the text `mode=primary is not available in this build: the
-    renderer's git half is not installed, so a write could not be mirrored;
-    nothing was written`, and `lanes-edit.sh`, run on a workstation whose
-    configuration says `mode=primary`, exits 69, repeats that text and changes
-    neither the register nor the files. With the constant flipped, the same
-    write goes to SQL. The readiness check fails the first state.
+    a single constant is the flip. With the refusal in place, the mode query,
+    `lanes-index mode`, exits a code of its own, which lane 4 picks and which
+    is never 2 (design D3), with the text `mode=primary is not available in
+    this build: the renderer's git half is not installed, so a write could not
+    be mirrored; nothing was written`; any other `lanes-index` command exits 2
+    with it; and `lanes-edit.sh`, run on a workstation whose configuration says
+    `mode=primary`, exits 69, repeats that text and changes neither the
+    register nor the files. With the constant flipped, the same write goes to
+    SQL. The readiness check fails the first state.
 
 ### The manual
 
