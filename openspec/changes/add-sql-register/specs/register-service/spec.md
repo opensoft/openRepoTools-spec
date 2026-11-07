@@ -101,7 +101,7 @@ The `SessionStart` block SHALL stay read-only, SHALL read the mirror offline and
 ### Requirement: The guard falls back to the database, never the mirror
 With the service unavailable, the hook SHALL fall back to the direct read of `lanes-edit.sh guard` and SHALL print `guard: direct (service unavailable)` on stderr, with the same exit code. On `mode=primary` that direct read SHALL be of the database and never the mirror, except during a declared outage, under the declared-outage requirement, and where it cannot read the database it SHALL refuse with 2. The direct read SHALL hold the READER credential itself, from the 0600 `lanes-index.conf` and its password file, so that no database URL or password enters the hook's environment. Writes SHALL never fall back to the files.
 
-> Pending Brett's Q11: written under option (a).
+> Brett's answer to Q11: option (a), #165 6710653292.
 
 #### Scenario: The service is down and the database is up (agreement test 10)
 - **WHEN** the service is down and the database is reachable
@@ -163,8 +163,8 @@ The hook's environment, and every environment a session inherits, SHALL carry no
 ### Requirement: The guard fails closed during a database outage
 On `mode=primary`, before an outage is declared and outside one, the guard SHALL refuse with 2 while the database is unreachable. Its refusal SHALL name the store, the cause and the two ways out: wait for the database, or run `lanes-index status` and `lanes-index rollback` from a shell or from a `CLAUDE_NO_LANE=1` session. Because a rollback needs the database, with the database lost for good the second way out SHALL be the disaster procedure and not a rollback, and the manual SHALL say the same. `lanes-index status` and `lanes-index rollback` SHALL run with no lane session and no guard.
 
-> Pending Brett's Q4(b): written under option (iii).
-> Pending Brett's Q26: written under option (a′).
+> Brett's answer to Q4(b): option (iii), #165 6710653292.
+> Brett's answer to Q26: option (a′), #165 6710653292.
 
 #### Scenario: A prompt during an outage (agreement test 10)
 - **WHEN** the database is unreachable and a prompt is submitted
@@ -177,8 +177,8 @@ On `mode=primary`, before an outage is declared and outside one, the guard SHALL
 ### Requirement: A declared outage lets the guard answer from the mirror
 During an outage Brett Heap declares on his word, when he knows that no workstation can still write, or that a rollback's start declares on his act, and until the expiry he names or the rollback's end, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. The declaration SHALL record the mirror's `Register-Seq` when it is declared. A rollback's start SHALL write the declaration, marked as from a rollback, wherever its configuration directory is writable. The guard's client, and never the service, SHALL check three conditions in this order, offline, and the guard SHALL answer from the mirror only when all three hold: its database read failed, or found the switch at `files`, as at a rollback's start; a declaration is present, unexpired, and names this workstation's database; and the mirror it reads carries a `Register-Seq` at least as high as the declaration records. The client SHALL read the mirror's `Register-Seq` by a lookup bounded to the 200 most recent first-parent commits of the ref it reads, and SHALL refuse with 2 where none of them carries one. Where its database read failed and either other condition fails, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
 
-> Pending Brett's Q26: written under option (a′).
-> Pending Brett's Q4(b): written under option (iii); a rollback's start declares the outage (design D20).
+> Brett's answer to Q26: option (a′), #165 6710653292.
+> Brett's answer to Q4(b): option (iii), #165 6710653292; a rollback's start declares the outage (design D20).
 
 #### Scenario: A mirror older than the declaration
 - **WHEN** an outage is declared and the tip the guard reads carries a `Register-Seq` below the one the declaration records
@@ -237,7 +237,7 @@ The socket API SHALL be documented in `docs/README-lanes.md`: the service answer
 ### Requirement: The cutover waits for the service only if the guard needs it
 `lanes-register` SHALL be the feature's last slice. Act 4 SHALL wait for it only if the guard, measured without it, is over a budget that Brett Heap names once the measurement is in. The service SHALL stay in #165 either way.
 
-> Pending Brett's Q29: written under option (a).
+> Brett's answer to Q29: option (a), #165 6710653292.
 
 #### Scenario: The guard is within the budget
 - **WHEN** the measured direct guard is within the budget Brett names

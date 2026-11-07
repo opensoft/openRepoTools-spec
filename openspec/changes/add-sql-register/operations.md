@@ -30,7 +30,9 @@ where lane 3's rulings (#165 6710653292 and 6710770304) or its fold change it:
 act 4's cutover, step 3, now six push attempts in all (lane 4's row 4, from
 its prototype), and act 3's step 9, which points at the phase plan's push URL;
 2.3's sentence on the re-import form's abort; 2.6's line on a `LANDING
-EXPIRED`'s spelling; and round 1, now RULED. Lane
+EXPIRED`'s spelling; and round 1, now RULED. Lane 1's v2.4 (#165 6711221999)
+changes only part 1, in `design.md`; lane 3's ruling on its fourth point
+(6711233420) adds 2.3's bullet on the lost tail's window after a restore. Lane
 1's numbering is kept: a cross-reference to part 1 names
 `design.md`, as in "`design.md` §1.3".
 
@@ -249,6 +251,7 @@ Under (iii) this is not a rollback. It is a restore or a re-import, run with eve
      - **The abort of this form,** the re-import's, keeps the label and generation its cutover set. The new generation is what keeps every pending record and printed rerun made against the lost database refusing with LR007, and the next cutover sets both again (lane 3's ruling, #165 6710770304, lane 1's point 2).
      - **After a restore,** the same entry follows the backup's head instead, as `lanes-index cutover --after-loss` with no import, at `b+1`. It first renders every seq the mirror lacks, up to `b`, as the rollback renders.
      - **Its abort,** once a read-back proves the rewrite absent from origin, removes the entry at `b+1` and puts the head back to `b`. It restores what the entry changed: the switch's fields, with the marker `present`, and `lanes/STORE`'s lines (`design.md` §1.3). It does not set `files`. It leaves no seq after `b` and changes nothing else, so the estate stays stopped, with the lanes paused (step 3), until the cutover is run again (lane 3's ruling, 6579459518, point 1).
+     - **The lost tail's window:** between the restore and this cutover, and again after its abort, the database carries the lost database's generation, so neither a write id nor an act's base from the lost tail, above `b`, is refused for its generation; an act's base is refused with LR004 only while it is past the head (`design.md` §1.3). The window stays as v2.3 left it for write ids, and the pause (step 3) covers it until the cutover's new generation closes it (lane 3's ruling on lane 1's v2.4, #165 6711233420, point 4).
    - **The generation (F10, F18):** every pending record and every printed rerun made against the lost database carries the old generation, and now refuses with 2 rather than re-apply a write the mirror may already hold. Each lane checks the mirror instead (step 7).
 7. **The resumption.** `ready --expect primary` in each environment, the smoke test, and `lanes-index outage clear` (D20) on Eagle and on Raven. N8 names `m`, `h` and the loss. Each lane then checks its last records against the mirror, and writes any owed record again, with the database's UTC and the original time in its free text (`r3b/REPORT.md:318`).
 
