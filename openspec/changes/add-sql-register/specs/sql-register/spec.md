@@ -57,7 +57,7 @@ Every act-2 writer, in every mode, SHALL read `lanes/STORE`; a files-mode writer
 - **THEN** every write that workstation tries after its fetch exits 69 and writes nothing
 
 ### Requirement: Nothing changes where the marker is absent
-While `lanes/STORE` is absent, the output and exit codes of every `mode=index` and every unconfigured workstation SHALL be unchanged; each writer gains the configuration read and the marker check and nothing else. The one exception SHALL be the prompt guard's answer 2, which in every mode runs its bind detached and answers from the bind's record, as the register service's requirement on the guard's 5 s budget sets out, because today's answer 2 is cut down by the hook's timeout partway through its bind. The ledger half, the handoffs, Rules 1 to 10 as rules and Amendment 7's grammar SHALL be unchanged in every mode.
+While `lanes/STORE` is absent, the output and exit codes of every `mode=index` and every unconfigured workstation SHALL be unchanged; each writer gains the configuration read and the marker check and nothing else. There SHALL be two exceptions. The first SHALL be the prompt guard's answer 2, which in every mode runs its bind detached and answers from the bind's record, as the register service's requirement on the guard's 5 s budget sets out, because today's answer 2 is cut down by the hook's timeout partway through its bind. The second SHALL be `lane-start`'s bind, whose three register writes become one write verb, `start-record`, in every mode, as the requirement "`lane-start`'s bind is one write" sets out, so that in files mode they are one register commit and one push. The ledger half, the handoffs, Rules 1 to 10 as rules and Amendment 7's grammar SHALL be unchanged in every mode.
 
 #### Scenario: An unconfigured workstation writes as today
 - **WHEN** a workstation with no `lanes-index.conf` makes a register write and `lanes/STORE` is absent
@@ -261,7 +261,7 @@ Handoffs, `lane-start`'s stamp, `lane-handoff`'s `PAUSED` commit and the handoff
 - **THEN** its register writes are `lanes-edit.sh` verbs landing in SQL and its handoff file is committed by the lane as a git file
 
 ### Requirement: `lane-start`'s bind is one write
-On `mode=primary`, `lane-start`'s register writes for a bind (the row's session cell, its state, and the `STARTED` or `RESUMED` line) SHALL be one write verb, `start-record`, run as one transaction that carries the union of the expectations those writes' deciding reads need, with one journal entry and one mirror commit. A session-cell append whose anchor no longer holds SHALL be left out and said, as today, and the state and the line SHALL still be written. The Rule 3 handoff stamp SHALL stay a git commit by the lane, made after the transaction, and a failed stamp SHALL never undo the bind. A `start-record` refused by an expectation, which is a second binding, SHALL stop the launch with 2. A `start-record` whose outcome is in doubt SHALL stop the launch with the in-doubt code, naming the write id, and SHALL write no stamp, which would record a resume not known to have happened.
+In every mode, `lane-start`'s register writes for a bind (a new lane's row, or the row's session cell and its state, and the `STARTED` or `RESUMED` line) SHALL be one write verb, `start-record`. On `mode=primary` it SHALL run as one transaction that carries the union of the expectations those writes' deciding reads need, with one journal entry and one mirror commit; in files mode its writes SHALL be one register commit and one push. A session-cell append whose anchor no longer holds SHALL be left out and said, as today, and the state and the line SHALL still be written. The Rule 3 handoff stamp SHALL stay a git commit by the lane, made after the write, and a failed stamp SHALL never undo the bind. A `start-record` refused by an expectation, which is a second binding, SHALL stop the launch with 2. For a new lane, a `start-record` that exits 69, the busy code or the in-doubt code SHALL stop the launch with that code, since the row is a write that must exist. For a resume, a `start-record` that exits 69, the busy code or the in-doubt code SHALL print a note carrying the writer's printed rerun, its generation included; the Rule 3 stamp SHALL then be written and the launch SHALL go on, as round 1's answer on `lane-start` (2A) has it. In the prompt guard's detached bind (`lane-start --no-launch --bind`), any code but 0 SHALL end the bind's record as failed with that code, with no stamp and nothing bound, and on the in-doubt code the record SHALL keep the write id, the generation and the commit call's time bound for the next answer's lookup.
 
 #### Scenario: Two sessions bind one lane
 - **WHEN** two sessions bind the same lane at once on a `mode=primary` workstation
@@ -271,9 +271,21 @@ On `mode=primary`, `lane-start`'s register writes for a bind (the row's session 
 - **WHEN** `lane-start` resumes a lane on a `mode=primary` workstation
 - **THEN** its session cell, state and `RESUMED` line are one journal entry, and its stamp is one handoff commit
 
-#### Scenario: A bind in doubt
-- **WHEN** `start-record`'s commit call is in doubt and cannot be settled
-- **THEN** `lane-start` stops with the in-doubt code, names the write id, and writes no stamp
+#### Scenario: A bind in files mode
+- **WHEN** `lane-start` resumes a lane on a workstation that is not `mode=primary`, with `lanes/STORE` absent
+- **THEN** its session cell, state and `RESUMED` line are one register commit and one push, and its stamp is one handoff commit
+
+#### Scenario: A resume whose bind is refused or in doubt
+- **WHEN** `lane-start` resumes a lane and `start-record` exits 69, the busy code, or the in-doubt code
+- **THEN** `lane-start` prints a note with the writer's printed rerun, naming the write id and its generation, writes the stamp, and the launch goes on
+
+#### Scenario: A new lane whose bind is refused or in doubt
+- **WHEN** `lane-start` starts a new lane and `start-record` exits 69, the busy code, or the in-doubt code
+- **THEN** `lane-start` stops with that code and launches nothing
+
+#### Scenario: The guard's detached bind fails
+- **WHEN** the guard's detached bind runs `lane-start --no-launch --bind` and `start-record` exits any code but 0
+- **THEN** the bind's record ends failed with that code, no stamp is written, and nothing is bound
 
 ### Requirement: Every database path is bounded
 The readers, the renderer, `lanes-index status` and `lanes-index rollback` SHALL each set their own connect, lock and statement timeouts and run under a client timer, so that a hung database gives them an answer and not a hang. Writers SHALL have limits of their own, so that a hung database gives 69 and not a hang. A client-timer expiry SHALL be a failed read for a reader. For a writer, an expiry of a call that sends or may send COMMIT (its commit call) SHALL be an in-doubt outcome, as an exit 124 from an outer timer is; an expiry of its read-only snapshot SHALL be a failed read, exit 69 with nothing written, unless an earlier commit call of the same write is in doubt, in which case the write stays in doubt.
@@ -314,7 +326,11 @@ The claim comment SHALL cite "register seq `<n>`", where `<n>` matches the `Regi
 - **THEN** the mirror commit with `Register-Seq: n` in `git log` is that write's commit
 
 ### Requirement: The journal records each write
-Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`) and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically. An entry whose edits touch only `lanes/STORE` SHALL be an operator entry, flagged as such in the journal. Exactly two kinds of operator entry SHALL pass the switch check, each written in its command's own transaction: the cutover's entry, at the seq after the head (seq 1 at a first cutover; `m+1` after a re-import, where the cutover's after-loss form writes the marker's rewrite so that the next write is `m+2`; or `b+1` after a restore), in the transaction that sets the switch to `primary`; and the rollback's last seq, in the transaction that sets the switch to `files`. Besides the import's baseline (seq 0, or `m` after a loss), which is journalled while the switch is `files`, no other entry SHALL be journalled while the switch is not `primary`.
+Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`) and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically. An entry whose edits touch only `lanes/STORE` SHALL be an operator entry, flagged as such in the journal. Exactly two kinds of operator entry SHALL pass the switch check, each written in its command's own transaction: the cutover's entry, at the seq after the head (seq 1 at a first cutover; `m+1` after a re-import, where the cutover's after-loss form writes the marker's rewrite so that the next write is `m+2`; or `b+1` after a restore), in the transaction that sets the switch to `primary`; and the rollback's last seq, in the transaction that sets the switch to `files`. Besides the import's baseline (seq 0, or `m` after a loss), which is journalled while the switch is `files`, no other entry SHALL be journalled while the switch is not `primary`. An operator entry SHALL write no row outside `lanes/STORE`: a cutover's or rollback's entry that also writes any other row, another file's row or any structured row, SHALL be refused when it is committed, and nothing SHALL be written, so that no such row is left in the journal to make a later abort of that entry fail.
+
+#### Scenario: An operator entry that writes outside `lanes/STORE`
+- **WHEN** a cutover's or a rollback's entry also writes a row outside `lanes/STORE`
+- **THEN** its commit is refused, and the journal, the head, the rows and the switch are unchanged
 
 #### Scenario: The operator entries
 - **WHEN** a cutover and then a rollback run to their end
@@ -559,7 +575,7 @@ A reader SHALL say which store answered whenever it is not that workstation's de
 - **THEN** the diff is empty
 
 ### Requirement: `lane-start` with the database unreachable
-On `mode=primary`, `lane-start` SHALL refuse with 69 before anything is renamed or written at the reads that decide state: `managed-projection` (`lane-start:1555`), the row count (`:1609`), `lane-last` (`:2335`) and `canon-lane` (`:1154`). It SHALL refuse with 69 where the write must exist: `request-handoff` (`:2497`) and `add-row` for a new lane (`:3819`). It SHALL print a note and go on where `append-session-id` (`:3848`, `:3869`, `:3906`, `:4019`), `set-row-state LIVE` (`:3985`) and `log STARTED` or `RESUMED` (`:4178`) are refused. The Rule 3 handoff stamp and the sidecars SHALL work as they do today, and the stamp SHALL stay a git commit that never blocks the launch. Line numbers are those of the code pin `2a057a6d`.
+On `mode=primary`, `lane-start` SHALL refuse with 69 before anything is renamed or written at the reads that decide state: `managed-projection` (`lane-start:1555`), the row count (`:1609`), `lane-last` (`:2335`) and `canon-lane` (`:1154`). It SHALL refuse with 69 where the write must exist: `request-handoff` (`:2497`) and `add-row` for a new lane (`:3819`). It SHALL print a note and go on where `append-session-id` (`:3848`, `:3869`, `:3906`, `:4019`), `set-row-state LIVE` (`:3985`) and `log STARTED` or `RESUMED` (`:4178`) are refused. The Rule 3 handoff stamp and the sidecars SHALL work as they do today, and the stamp SHALL stay a git commit that never blocks the launch. Once a new lane's row or the session cell, the state and the line are one `start-record` write, its refusals SHALL follow the requirement "`lane-start`'s bind is one write", which keeps these outcomes. Line numbers are those of the code pin `2a057a6d`.
 
 #### Scenario: A deciding read fails (agreement test 11)
 - **WHEN** the cluster is stopped and `lane-start` reaches any of the reads above

@@ -143,7 +143,9 @@ where the marker is present and the workstation is not `mode=primary` (Amendment
 22's S1: "Every act-2 writer reads it"). Where the marker is absent, `mode=index`
 and unconfigured workstations write and read as today, except the guard's
 answer 2, whose bind runs detached in every mode, the fix for two defects in
-today's guard (design, "Known defects in today's code"). Each item names the
+today's guard (design, "Known defects in today's code"; opensoft/openRepoTools#347),
+and `lane-start`'s bind, whose three register writes become one write,
+`start-record`, in every mode (lane 3 confirmed both, #165 6710770304). Each item names the
 test that checks it; the agreement tests are listed together at the end.
 
 ### The configuration and the estate switch (S1)
@@ -804,7 +806,7 @@ also open a database connection per prompt.
   budget, or the 300 s it allows a `psql` run (`:1317`); at the pin,
   `statement_timeout` and `lock_timeout` appear nowhere in `code/lanes-index`,
   `code/lanes-edit.sh` or `code/openRepoTools`. The service answers `refuse`
-  before the client's own limit runs out. A database that does not answer is a
+  or `unavailable` before the client's own limit runs out. A database that does not answer is a
   2 inside the hook, never a kill. Writers get limits of their own, so a hung
   database gives 69, not a hang.
 - **No other database path is left unbounded** (lane 2's SHOULD g; lane 2's
@@ -1142,9 +1144,40 @@ design's and follows Q7. Round 1 of Brett Heap's questions, put to him on
 2026-10-31 (asked at 20:07Z, corrected at 20:26Z), is Q2(a) and (b), Q6, Q8 and
 Q20, and none of the four is open: each is answered as recommended, by Brett
 Heap, 2026-11-02T12:04:49Z, '1A 2A 3A 4A' — an accepted prompt suggestion, held
-as provisional until he confirms it by typing (#165 comment 6576888068). 1A is
+as provisional until he confirmed it (#165 comment 6576888068). 1A is
 Q6, 2A is Q8, 3A is Q20, and 4A is Q2(a) and (b). Each question records its
-answer and the council's positions.
+answer and the council's positions. **Round 1 is RULED:** Brett confirmed all
+four on 2026-11-07, "Confirm all four (Recommended)", his own selection in a
+dialog in lane openRepoTools-3's session, not a suggestion (#165 comment
+6710653292).
+
+**Round 2: answered, all as recommended.** Brett Heap's words, verbatim: "Take
+all recommended (Recommended)", his selection in a dialog that lane
+openRepoTools-3 put to him in its session
+`83619980-06bb-4469-ae73-2a8c5e61981a`, with lane 3's recommendation first
+(Question UTC 2026-11-07T15:22:12Z, Answer UTC 2026-11-07T15:26:24Z; #165
+comment 6710653292). So option 0 applies, and every question goes as
+recommended. The eight that stand apart go as lane 3 recommended: Q4(a) (i),
+an estate-wide hold, drained to `PAUSED` and quiet for 2 minutes, with a
+cutover and a rollback rehearsed first on a scratch schema; Q4(b) (iii), a
+rollback needs the database, and a database lost for good is a separate
+disaster procedure, which narrows Amendment 22; Q7 (A″), an optimistic head
+row bounded by a deadline, with "register busy" on its own exit code, 75;
+Q21(b) (B), a push ruleset on `lanes/**` whose only bypass is the renderer's
+identity, in place before the cutover where the org's plan supports it (as
+the question names it; the design's D23 has the ruleset name the render set
+and `lanes/STORE`); Q22
+(a), Raven configured along with Eagle; Q26 (a′), the guard answers from the
+mirror, labelled, only during an outage he declares, and a rollback's start
+declares one too, which narrows Amendment 22; Q28 (i) and (a), the cutover
+waits for Amendment 23's six act-2 PRs, which lane openRepoShape-2 re-homes;
+and Q29 (a), the service is built last, and the cutover waits for it only if
+the guard, measured without it, is slower than a limit he names. **Still his
+to name later:** Q29's time limit; Q22's database host, its backups and how
+long it may be down; and Q28's two dates, one for 1a and 1b and one for the
+other four. Q21(b) also rests on whether the org's GitHub plan supports such a
+ruleset, which nobody has checked yet. Lane 3 puts these to him with the spec
+PR.
 
 1. **The test strategy: answered.** Brett Heap, in lane 3's session at
    2026-10-31T19:32:08Z, verbatim: "1A and 2A" (#165 comment 6548141614), on
@@ -1209,7 +1242,8 @@ answer and the council's positions.
      all is Q29.
    - **(a) and (b): answered, as recommended (4A).** Brett Heap,
      2026-11-02T12:04:49Z, '1A 2A 3A 4A' — an accepted prompt suggestion, held
-     as provisional until he confirms it by typing (#165 comment 6576888068).
+     as provisional until he confirmed it (#165 comment 6576888068).
+     **RULED:** Brett confirmed it on 2026-11-07 (#165 comment 6710653292).
      Each `lanes-edit.sh` write opens its own transaction with its own
      REGISTER-WRITER credential, as Amendment 22's clause (b) words it; the
      service holds one connection, for the guard's reads and the other reads;
@@ -1476,7 +1510,8 @@ answer and the council's positions.
      never on the HEAD that the handoff blocks rebase (Q27, below).
    - **Answered, as recommended (1A): (c), split by seam.** Brett Heap,
      2026-11-02T12:04:49Z, '1A 2A 3A 4A' — an accepted prompt suggestion, held
-     as provisional until he confirms it by typing (#165 comment 6576888068).
+     as provisional until he confirmed it (#165 comment 6576888068).
+     **RULED:** Brett confirmed it on 2026-11-07 (#165 comment 6710653292).
      The split is the three parts above: what does not run through
      `lanes-edit.sh`'s write seams now, on `2a057a6d`; the write path after
      slices 1a and 1b land in the code leg; then the renderer's git half, with
@@ -1613,7 +1648,7 @@ answer and the council's positions.
      asserts Q8's outcomes with the cluster stopped (P6).
    - **(a): answered, as recommended (2A).** Brett Heap, 2026-11-02T12:04:49Z,
      '1A 2A 3A 4A' — an accepted prompt suggestion, held as provisional until
-     he confirms it by typing (#165 comment 6576888068). R3's option A, with
+     he confirmed it (#165 comment 6576888068). **RULED:** Brett confirmed it on 2026-11-07 (#165 comment 6710653292). R3's option A, with
      ADV-C5's refinement: `lane-start`'s reads that decide refuse with 69
      before anything is renamed or written, `:1154` among them; so do the
      writes that must exist, `request-handoff` and a new lane's `add-row`; the
@@ -1646,7 +1681,7 @@ answer and the council's positions.
      adversary seats take no further position.
    - **(b): answered, as recommended (2A).** Brett Heap, 2026-11-02T12:04:49Z,
      '1A 2A 3A 4A' — an accepted prompt suggestion, held as provisional until
-     he confirms it by typing (#165 comment 6576888068). R3's option A, with
+     he confirmed it (#165 comment 6576888068). **RULED:** Brett confirmed it on 2026-11-07 (#165 comment 6710653292). R3's option A, with
      P15: the handoff file is still written, from a mirror read that says so;
      the `PAUSED` record refuses with 69, and its note names how the late
      `PAUSED` path completes it; the lane stays `SWAPPING` until then.
@@ -1842,8 +1877,8 @@ answer and the council's positions.
       position.
     - **Answered, as recommended (3A): (B).** Brett Heap,
       2026-11-02T12:04:49Z, '1A 2A 3A 4A' — an accepted prompt suggestion,
-      held as provisional until he confirms it by typing (#165 comment
-      6576888068). `mode=primary` is written at the cutover, act 4, and act 3
+      held as provisional until he confirmed it (#165 comment
+      6576888068). **RULED:** Brett confirmed it on 2026-11-07 (#165 comment 6710653292). `mode=primary` is written at the cutover, act 4, and act 3
       leaves the workstations on `mode=index`.
 21. **Workstations that are not `mode=primary` once `lanes/STORE` exists (R3a's
     question 5, R3b's question 4; R2's design question 8; for Brett).**

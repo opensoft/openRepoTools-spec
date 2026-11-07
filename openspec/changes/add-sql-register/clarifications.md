@@ -34,6 +34,9 @@ apart.
 **Design impact:** None on `design.md`'s content. Lane 3's round-2 block for
 Brett follows it. `design.md` starts from his answers and records which ones he
 took as recommended.
+**Answered:** Brett took the block's option 0, every question as recommended,
+on 2026-11-07; "Brett's answers to rounds 1 and 2", at the end of this file,
+records it.
 
 ### The freeze: (ii′) where every environment is ready
 
@@ -412,3 +415,69 @@ asserts a missed `mode=primary` writer exits 69 with the journal's count
 unchanged, after a fetch and without one, through each of the five no-fetch
 verbs, and again where the database is up but unreachable from the rolling-back
 clone. It must fail on the leak as it stands today.
+
+## Brett's answers to rounds 1 and 2
+
+Lane openRepoTools-3's post of 2026-11-07T17:27Z (#165 comment 6710653292)
+records them. At 15:21:43Z Brett Heap typed in lane 3's session "ask open for
+me interactively with multi choice and recomendations", and lane 3 then asked
+him in dialogs there, each with its recommended option first. The transcript
+records each answer as his selection in the dialog, not as a suggestion.
+
+- **Asking lane:** openRepoTools-3, session
+  `83619980-06bb-4469-ae73-2a8c5e61981a`.
+- **Rounds 1 and 2:** Question UTC 2026-11-07T15:22:12Z, Answer UTC
+  2026-11-07T15:26:24Z.
+
+### Round 1: RULED
+
+His words, verbatim: "Confirm all four (Recommended)". The four, as lane 3's
+post 6576706132 gives them: Q6 (c), the split by seam; Q8, R3's option A with
+ADV-C5 and P15; Q20 (B), `mode=primary` at the cutover; and Q2, each write in
+its own transaction, with no fallback to the files when the service is down.
+The earlier entry, '1A 2A 3A 4A' (2026-11-02T12:04:49Z, #165 comment
+6576888068), was an accepted prompt suggestion, so this answer is the one that
+counts, and round 1 is no longer provisional.
+
+### Round 2: option 0, every question as recommended
+
+His words, verbatim: "Take all recommended (Recommended)". The questions are
+lane 3's round-2 block, `brett-165-round2.md` in lane 3's briefs (458 lines,
+sha256 `79730d13123b94791c3bfcb7c2fd89212c40ada18e69c554c50cd2a0211ffe21`).
+Option 0 applies, so every question goes as recommended, and the eight the
+block set apart go as lane 3 recommended:
+
+- **Q4(a) (i):** an estate-wide hold for the cutover, drained to `PAUSED` and
+  then quiet for 2 minutes, with a cutover and a rollback rehearsed first on a
+  scratch schema.
+- **Q4(b) (iii):** a rollback needs the database, and its first act there sets
+  the switch to files. If the database is lost for good, a separate disaster
+  procedure takes over. This narrows Amendment 22.
+- **Q7 (A″):** an optimistic head row, bounded by a deadline rather than a
+  number of tries, with "register busy" on its own exit code, 75.
+- **Q21(b) (B):** a push ruleset on `lanes/**`, as the question names it, whose
+  only bypass is the renderer's identity, in place before the cutover where
+  the org's plan supports it. The design's D23 has the ruleset name the render
+  set and `lanes/STORE`.
+- **Q22 (a):** Raven is configured along with Eagle, as act 3 says.
+- **Q26 (a′):** the guard answers from the mirror, labelled as such, but only
+  during an outage he declares, and the declaration is also made at a
+  rollback's start. Outside one, (b) holds. This narrows Amendment 22.
+- **Q28 (i) and (a):** the cutover waits for Amendment 23's six act-2 PRs, and
+  lane openRepoShape-2, their author, re-homes them.
+- **Q29 (a):** the service is built last. The cutover waits for it only if
+  the guard, measured without it, is slower than a limit he names. Lane 2
+  measured about 0.42 to 0.47 s.
+
+The question also named the three refinements made since the block was
+written: the declaration at a rollback's start, the 75, and the measurement.
+
+### Still Brett's to name later
+
+- Q29's time limit;
+- Q22's database host, its backups and how long it may be down;
+- Q28's two dates, one for slices 1a and 1b and one for the other four.
+
+Q21(b) also rests on whether the org's GitHub plan supports such a ruleset,
+which nobody has checked yet. Lane 3 puts these to him with the spec PR, and
+tells lane openRepoShape-2 about Q28 once the dates are named.

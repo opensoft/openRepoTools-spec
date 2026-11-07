@@ -16,18 +16,31 @@ under lane 3's rulings on v1 (#165 comment 6578020193) and on v2
 (`fix-v2.2.diff`, sha256
 `57b5a5a091358c819d318e09d024000d592928d06a25eabfbcca0ff8f2c6f10d`) are
 applied on top (#165 6579719525 and 6708446448; lane 5 confirmed v2.1 in
-6579761607), so lane 1's text here is v2.2's (`section-lane1-v2.2.md`, sha256
-`d9908578c48f05772adc59b20f4a5c3ddbe58dc4877920325a5b5c5bcf060b25`). Lane
+6579761607). Lane 1's v2.3 (#165 6708990159; `fix-v2.3.diff`, sha256
+`24aea7d90ea22e4cfb03267bf28226e1e79f99e20b886bfb19a642bca62a45a3`, from
+v2.2, `section-lane1-v2.2.md`, sha256
+`d9908578c48f05772adc59b20f4a5c3ddbe58dc4877920325a5b5c5bcf060b25`) is
+applied on top too: its six part-2 hunks give 78 (`EX_CONFIG`) for Q6(c) in
+`ready`'s check 5, `set-mode`'s refusal, 2.7's group A and 2.9's row; lane 2's
+13 ms median and 16 ms p95 for the `Register-Seq` lookup in 2.5; and the
+restore form's abort in 2.3, which replaces the note the fold had put there.
+So lane 1's text here is v2.3's (`section-lane1-v2.3.md`, sha256
+`fc2609e80fa8b3d6968fda822a1872f2f7765eaa3b0cf1524cfd99a78b826a28`), except
+where lane 3's rulings (#165 6710653292 and 6710770304) or its fold change it:
+act 4's cutover, step 3, now six push attempts in all (lane 4's row 4, from
+its prototype), and act 3's step 9, which points at the phase plan's push URL;
+2.3's sentence on the re-import form's abort; 2.6's line on a `LANDING
+EXPIRED`'s spelling; and round 1, now RULED. Lane
 1's numbering is kept: a cross-reference to part 1 names
 `design.md`, as in "`design.md` §1.3".
 
 - **Basis:** the proposal at `0607526d`. A citation of `proposal.md`, `clarifications.md` or `council-review.md` is to the frozen copy, sha256 `b284a0eb2078fd24a48e833685b0073e881fdbe1625a1019d81a55a4aadaa340`, `636fb45369f825dd7f3d763bdb8d8bcb475ef4d76a3f7cf23203b907713ac2ff` and `9fa18c5ed76d88d4f25b3f8eaa37626ad0511985061f9e0649ff49d13c0fce62`.
-- **Round 1, held as provisional:** Q6 = 1A (the split by seam), Q8 = 2A, Q20 = 3A (`mode=primary` written at act 4), and Q2(a) and (b) = 4A.
+- **Round 1, held as provisional when lane 1 wrote this, and RULED since** (Brett's confirmation of 2026-11-07, #165 6710653292): Q6 = 1A (the split by seam), Q8 = 2A, Q20 = 3A (`mode=primary` written at act 4), and Q2(a) and (b) = 4A.
 - **Round 2, the recommended options:** Q4(a) (i), Q4(b) (iii), Q7 (A″), Q21(b) (B), Q22 (a), Q26 (a′), Q28 (i) and Q29 (a). Where a part turns on one of them, it says what changes under each other option.
 
 ## 2. The operations
 
-This part covers acts 3 and 4 as a runbook, the rollback and the disaster path, P8's three operator tools, the declared outage of Q26 (a′), P10's notice to the lanes, and R3c's landing path. It works under round 1 as answered, which lane 3 holds as provisional (1A, 2A, 3A and 4A; `reviews/lane3-165-design-starts-6576888068.md:3-7`), and under round 2's recommended options: Q4(a) (i), Q4(b) (iii), Q7 (A″), Q21(b) (B), Q22 (a), Q26 (a′), Q28 (i) and Q29 (a) (`proposal.md:1101-1112`). Where a section turns on a round-2 question, it ends with what changes under each other option, and 2.8 indexes them.
+This part covers acts 3 and 4 as a runbook, the rollback and the disaster path, P8's three operator tools, the declared outage of Q26 (a′), P10's notice to the lanes, and R3c's landing path. It works under round 1 as answered, which lane 3 held as provisional (1A, 2A, 3A and 4A; `reviews/lane3-165-design-starts-6576888068.md:3-7`) and which is RULED since (#165 6710653292), and under round 2's recommended options, which Brett took (6710653292): Q4(a) (i), Q4(b) (iii), Q7 (A″), Q21(b) (B), Q22 (a), Q26 (a′), Q28 (i) and Q29 (a) (`proposal.md:1101-1112`). Where a section turns on a round-2 question, it ends with what changes under each other option, and 2.8 indexes them.
 
 Sources: `proposal.md`, `clarifications.md` and `council-review.md` are the frozen copies at `0607526d`. `r3a/`, `r3b/`, `r3c/`, `council-product/` and `product-fold-check/` are lane 1's reports, and `reviews/` holds the saved #165 posts. `code/…` is the code leg at `2a057a6d`. Schema objects carry the proposal's names, or R3a's where the proposal has none, marked "R3a's". Names this part adds are marked **(new)**, and 2.9 lists them all.
 
@@ -94,7 +107,7 @@ Each step gives who acts and where, the command, its check, its refusal and its 
 9. **The renderer identity, under Q21(b) (B), where the org's plan supports it.** Brett acts.
    - **Command:** Brett creates the identity and prepares a push ruleset with it as the only bypass (`proposal.md:1787-1794`), not enforced yet. Enforced now, the ruleset would refuse every files-mode writer's push, and under Amendment 23's S4.5 each such writer keeps its commit on HEAD (exit 6) and its checkout refuses every later write. Act 4's step 5 enforces it, inside the freeze (F4).
    - **Its path set:** the rendered paths and `lanes/STORE`, not `lanes/**`. Under Q18 (A) a person still commits `lanes/repos.tsv` (`proposal.md:1744-1762`).
-   - **The key:** a deploy key in a 0600 file that `render_key=` names (D23), used only in the push's own environment. Where that file lives, and how a render pushes with it, are the renderer section's (`clarifications.md:118-120`).
+   - **The key:** a deploy key in a 0600 file that `render_key=` names (D23), used only in the push's own environment. Where that file lives is the renderer section's (`clarifications.md:118-120`). How a render pushes with it is answered in `design.md`'s phase plan, "The push URL for the deploy key against origin's HTTPS remote": an explicit SSH URL to the repository `origin` names, in the push's own environment, never `git push origin` (D23; S2's push).
 
 #### Act 4, under Q4(a) (i)
 
@@ -127,7 +140,7 @@ Each step gives who acts and where, the command, its check, its refusal and its 
    - **Command:** `lanes-index cutover --import <C>` (`proposal.md:1254-1257`; `r3b/REPORT.md:239`). In order, it (`r3b/REPORT.md:252-256`):
      1. sets the switch to `primary` and writes seq 1, the operator entry that adds `lanes/STORE`, in one transaction that commits before step 2 (F2, F23);
      2. builds the `lanes/STORE` commit on the tip `T`, only where `T` descends from `C` and `T:lanes` has `C`'s tree id;
-     3. rebuilds up to six times when handoff commits land meanwhile;
+     3. rebuilds when handoff commits land meanwhile, six push attempts in all;
      4. pushes fast-forward only, with the renderer's identity, confirms the push by Amendment 23's S4 read-back (2.1; F2, F12), and records it with `record_marker`, which sets the marker `present` (`design.md` §1.3).
    - **The marker:** `lanes/STORE` holds `store=primary`, `database=` the label, `import=` the imported commit, `lanes-tree=` the tree id of `C:lanes` and `utc=` (D21; `proposal.md:588-590`; `r3b/REPORT.md:261`), and no credential. Its commit carries `Register-Seq: 1` (`r3b/REPORT.md:213-219`) at this first cutover; a later cutover's entry takes the seq after its import's, `m+1` after a re-import or `b+1` after a restore (`design.md` D24), and this step's checks read that seq. Seq 1 is an operator entry: the renderer never renders it, and only `cutover` pushes it (F2).
    - **Check:** the read-back, and `lanes-index status` showing seq 1.
@@ -233,8 +246,9 @@ Under (iii) this is not a rollback. It is a restore or a re-import, run with eve
      - **Lost:** every seq after `m`.
    - **The re-pointing (F18),** on either route, before any `lanes-index` command reaches the replacement: on Eagle and on Raven (Q22 (a)), from each host, Brett sets `register_url=`, `reader_url=` and their password files to the replacement's, with the password lines the bootstrap printed. The lanes stay paused (step 3).
    - **The marker, as the cutover's own entry (F18; D24):** the operator lane runs `lanes-index cutover --import <M> --after-loss` **(new)**. The marker's rewrite is not a third operator entry: it is the cutover's entry in its after-loss form, in the cutover's own transaction, at seq `m+1`, so the next write is `m+2`. That transaction sets the switch to `primary` with the replacement's label, a new generation id (F10, F18) and `set_seq` `m+1`, its own seq (lane 3's open point 23), and rewrites `lanes/STORE`'s fields for the replacement. The command then pushes the rewrite as 2.1 says. D22 as first written left the marker as it was, so its next write would have been `m+1`; this part rewrites it, as lane 3 ruled (#165 6578020193), because `ready` and `set-mode` check that `lanes/STORE` names this database, and the replacement's label differs.
+     - **The abort of this form,** the re-import's, keeps the label and generation its cutover set. The new generation is what keeps every pending record and printed rerun made against the lost database refusing with LR007, and the next cutover sets both again (lane 3's ruling, #165 6710770304, lane 1's point 2).
      - **After a restore,** the same entry follows the backup's head instead, as `lanes-index cutover --after-loss` with no import, at `b+1`. It first renders every seq the mirror lacks, up to `b`, as the rollback renders.
-     - **An abort of this form** leaves no seq after `b` and changes nothing else, so the estate stays stopped, its lanes paused, until the cutover is run again (lane 3's ruling, #165 6579459518). v2's `switch_to_files` would instead set the switch to `files` and drop `lanes/STORE`'s rows, so lane 1 changes it to match (`design.md` D24).
+     - **Its abort,** once a read-back proves the rewrite absent from origin, removes the entry at `b+1` and puts the head back to `b`. It restores what the entry changed: the switch's fields, with the marker `present`, and `lanes/STORE`'s lines (`design.md` §1.3). It does not set `files`. It leaves no seq after `b` and changes nothing else, so the estate stays stopped, with the lanes paused (step 3), until the cutover is run again (lane 3's ruling, 6579459518, point 1).
    - **The generation (F10, F18):** every pending record and every printed rerun made against the lost database carries the old generation, and now refuses with 2 rather than re-apply a write the mirror may already hold. Each lane checks the mirror instead (step 7).
 7. **The resumption.** `ready --expect primary` in each environment, the smoke test, and `lanes-index outage clear` (D20) on Eagle and on Raven. N8 names `m`, `h` and the loss. Each lane then checks its last records against the mirror, and writes any owed record again, with the database's UTC and the original time in its free text (`r3b/REPORT.md:318`).
 
@@ -298,7 +312,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
   2. `psql` 16 is present;
   3. the configuration is readable, 0600, outside every git work tree and `~/.agents/` (`code/lanes-index:66-68`), and says the expected mode;
   4. each role connects within `connect_timeout=2` and is refused outside its scope. A write tried in a transaction that always rolls back, opened with `BEGIN READ WRITE`, must fail with SQLSTATE 42501, which is this part's concrete form of "refused outside its scope". The `READ WRITE` matters for the READER, whose role default is read-only (`design.md` §1.4): a plain write there fails with 25006 before any privilege is checked;
-  5. the installed `lanes-index` no longer carries Q6(c)'s refusal of `mode=primary`: `lanes-index mode` on a `mode=primary` configuration does not exit lane 4's code for Q6(c) (F8; agreement test 14, `proposal.md:913-921`);
+  5. the installed `lanes-index` no longer carries Q6(c)'s refusal of `mode=primary`: `lanes-index mode` on a `mode=primary` configuration does not exit 78 (`EX_CONFIG`), Q6(c)'s code (F8; agreement test 14, `proposal.md:913-921`);
   6. the workstation's name is set, so a write is never stamped with a container's hostname (`r3b/REPORT.md:192-194`);
   7. no outage declaration is recorded (2.5);
   8. with `--expect primary`: the switch is at `primary` with the marker `present`, and the fetched `origin/main` carries a `lanes/STORE` that names this database.
@@ -315,7 +329,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 - **Output:** the path, the old mode and the new one.
 - **Refusals, setting `primary`:**
   - 2: the switch is not `primary` with the marker `present`, or the fetched `origin/main` has no `lanes/STORE` naming this database. A flip before the cutover makes every write refuse (Q20 (A), `proposal.md:1772-1773`);
-  - 2: the installed `lanes-index` still carries Q6(c)'s refusal, which `lanes-index mode` reports with lane 4's code (F8). `set-mode` refuses with 2, as every other `lanes-index` command refuses `mode=primary` then, and prints test 14's text (`proposal.md:916-918`);
+  - 2: the installed `lanes-index` still carries Q6(c)'s refusal, which `lanes-index mode` reports with 78 (`EX_CONFIG`) (F8). `set-mode` refuses with 2, as every other `lanes-index` command refuses `mode=primary` then, and prints test 14's text (`proposal.md:916-918`);
   - 2: the file is on a read-only mount, so it must be flipped from the host (`proposal.md:621-622`);
   - 2: `store=sqlite`;
   - 69: the database is unreachable.
@@ -365,7 +379,7 @@ Every write and every other deciding read still refuses (`proposal.md:1870-1871`
 - it starts the mirror path by `T0 + 3.75 s`, so the mirror's reads and parse use SVC-8's 0.5 s reserve;
 - its `Register-Seq` lookup is bounded, and refuses 2 where it finds no trailer (condition 3).
 
-The 0.1 s is lane 5's estimate for the `Register-Seq` lookup, not a measurement.
+The 0.1 s, from the cap at `T0 + 3.65 s` to the mirror path's start by `T0 + 3.75 s`, is the `Register-Seq` lookup's share. Lane 2 measured the bounded lookup at 13 ms median and 16 ms p95 (lane 3, 6708646285), so it fits in that share, and the cap and the start stay where they are.
 
 **How it ends.**
 
@@ -402,7 +416,8 @@ The 0.1 s is lane 5's estimate for the `Register-Seq` lookup, not a measurement.
 - the files as a mirror that lags, and the verbs that give the truth: `who`, `history`, `lanes` and `lanes-index status`;
 - the claim comment's seq (Q19);
 - the claim loser's 2 instead of 7 (Q12);
-- the later `HOLD` or `LANDING` writer's code (S6).
+- the later `HOLD` or `LANDING` writer's code (S6);
+- where Brett takes F13's `LANDING EXPIRED`, that the line spells the repository as the `LANDING` it closes did: the stale `LANDING` is found by `repo_key` alone, so one spelled another way names none and fails closed with LR005, exit 2, writing nothing (lane 3's ruling, #165 6710770304, lane 1's point 5; `design.md` S6).
 
 **The channels.**
 
@@ -445,7 +460,7 @@ Every PR lands on Brett's typed word, by merge commit (Q25(a) (i), `proposal.md:
 
    Under Q29 (a) the service is 007's last slice and may trail (`proposal.md:1973-1976`).
 
-   **The refusal of `mode=primary`:** from group A's first PR, `lanes-index mode` refuses `mode=primary` with lane 4's code for Q6(c), never 2 (F8), and test 14's text; the other `lanes-index` commands refuse it with 2, as the configuration parser does; and `lanes-edit.sh` fails closed on it with 69 (`proposal.md:1380-1388`). That is agreement test 14's first state, and `ready` fails any environment in it (`proposal.md:913-921`).
+   **The refusal of `mode=primary`:** from group A's first PR, `lanes-index mode` refuses `mode=primary` with 78 (`EX_CONFIG`), Q6(c)'s code, never 2 (F8), and test 14's text; the other `lanes-index` commands refuse it with 2, as the configuration parser does; and `lanes-edit.sh` fails closed on it with 69 (`proposal.md:1380-1388`). That is agreement test 14's first state, and `ready` fails any environment in it (`proposal.md:913-921`).
 6. **Group B, the write path,** after Amendment 23's #282 (1a) and #307 (1b) are re-homed and land in the code leg: S1's transaction at the commit seam, M4's refusals, S6's pre-check and hold order, and the marker check after S3's fetch (`proposal.md:1374-1376`).
 
    Who re-homes #282 and #307, and by when, is Q28's second part, which is still open (`proposal.md:1955-1967`). Group B cannot start before it is answered.
@@ -495,7 +510,7 @@ Four more bear on this part:
 - **Q23 (a)** (`proposal.md:1836-1839`): one configuration per host, so one flip and one declaration per host, on Eagle and on Raven under Q22 (a).
   - **Under (b),** `LANES_INDEX_CONFIG` under an existing mount: the flip and the declaration go to that file's directory, still from the host.
   - **Under (c),** provisioning at launch: a container keeps the copy it launched with, so a later flip or declaration does not reach it until it restarts. (c) needs the declaration on a shared mount of its own.
-- **Round 1, held as provisional** (`reviews/lane3-165-design-starts-6576888068.md:3-7`):
+- **Round 1, held as provisional** (`reviews/lane3-165-design-starts-6576888068.md:3-7`), **and RULED since** (#165 6710653292), so the option below was not taken:
   - **Under Q20 (A):** act 3 writes `mode=primary`, and every write refuses with 69 from act 3 to act 4 (`proposal.md:1772-1773`).
   - **What that changes here:** act 4's step 8 disappears, and `set-mode` must drop its refusal to set `primary` before the cutover.
 
@@ -553,7 +568,7 @@ Four more bear on this part:
 | 3, a write in doubt | exit code | the frame's D8; from `cutover` and `rollback`, an operator entry's push not confirmed (F12) |
 | `store=`, `database=`, `import=`, `lanes-tree=`, `utc=` | `lanes/STORE` fields | the frame's D21 |
 | `lanes-index`'s 0, 2 and 64 | exit code | `code/lanes-index:72-76` |
-| lane 4's code for Q6(c)'s refusal, from `lanes-index mode` | exit code | F8: never 2; lane 4 picks it within D10's map |
+| 78 (`EX_CONFIG`), Q6(c)'s refusal, from `lanes-index mode` | exit code | F8: never 2; sysexits' `EX_CONFIG`, as D3 and test 14 have it (lane 3, 6708646285) |
 | `CLAUDE_NO_LANE=1` | environment value | `proposal.md:431-432`; `code/lanes-edit.sh:648` |
 | `LANES_LANE=` the operator lane | environment value | Amendment 23's S2 ("no lane, no write"); F12 |
 | `GUARD_TIMEOUT=5` | constant | `proposal.md:772-773`; `code/openRepoTools:2344` |
