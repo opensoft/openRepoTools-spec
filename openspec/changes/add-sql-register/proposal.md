@@ -747,11 +747,15 @@ also open a database connection per prompt.
   It gets back `ok`, `refuse <reason>` or `offer <the three A12 Addendum 1
   choices>`, and exits 0 or 2. The offer file, the `/rename` typing, and answer
   2's `lane-start --no-launch --bind` and `set-row-state` (`:11171`, `:11199`)
-  stay client-side acts. At the code pin they are five writer calls, since
-  the bind makes four, and each is a transaction through the storage layer;
-  answer 2 exits 2 with "binding in progress" and runs them detached (design
-  SVC-8). The hook stays, because the harness's exit code is the only
-  thing that refuses a prompt. Q2 decides whether the client is a block at the
+  stay client-side acts. They are three writer calls: `start-record`, which
+  makes the bind's three register writes in one transaction; the guard's
+  `set-row-state` on the lane the window left; and the Rule 3 stamp, a git
+  commit to the handoff outside the register. The two register writes are
+  transactions through the storage layer; answer 2 exits 2 with "BINDING" and
+  runs them detached, in a `setsid` child recorded in the session's offer file
+  (design SVC-8 and "The phase plan"). The hook stays, because the harness's
+  exit code is the only thing that refuses a prompt. Q2 decides whether the
+  client is a block at the
   top of `lanes-edit.sh guard`, keeping the hook string and #237's probe, or a
   separate program with a new hook string. Either way the socket call is a
   standard-library Python client, because bash has no AF_UNIX and the code leg

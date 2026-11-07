@@ -14,13 +14,13 @@ and every line cited here was re-read there for this file; a bare `#N` is
 opensoft/openRepoTools' issue or pull request `#N`; "the proposal" is
 `proposal.md` beside this file.
 
-Status: a frame with the core written, and three sections folded in: "The
+Status: a frame with the core written, and four sections folded in: "The
 register service's internals" (lane openRepoTools-5), "The schema" (lane
-openRepoTools-1's part 1), and lane 1's part 2, the operations, as
-`operations.md` beside this file. Two parts are still placeholders, each
-marked **PLACEHOLDER** and owned by a lane under lane 3's fan-out (#165
-comment 6576888068): "The phase plan" (lane openRepoTools-4) and "The test
-plan" (lane openRepoTools-2). Lane 3 folds each in as it arrives. Round 1 of Brett
+openRepoTools-1's part 1), lane 1's part 2, the operations, as
+`operations.md` beside this file, and "The phase plan" (lane
+openRepoTools-4). One part is still a placeholder, marked **PLACEHOLDER** and
+owned by a lane under lane 3's fan-out (#165 comment 6576888068): "The test
+plan" (lane openRepoTools-2). Lane 3 folds it in when it arrives. Round 1 of Brett
 Heap's questions is answered and held as provisional; round 2 is unanswered,
 and its recommended options are this design's working assumptions.
 
@@ -63,6 +63,30 @@ and its recommended options are this design's working assumptions.
 - **Not landed:** Amendment 23's act 2, six draft PRs on opensoft/openRepoTools
   (the proposal, "Dependencies"). The write path waits for its slices 1a and 1b
   (Q6(c), below).
+
+### Known defects in today's code
+
+Two findings in the guard at `2a057a6d`, lane 4's rows 34 and 35 in the phase
+plan's "Differences from the frame". They are lane 3's, since lane 3 owns the
+lane tools, and lane 3 files both together on Brett's word (#165 6708889286).
+Phase 1's first guard PR, the detached bind (the phase plan's "Answer 2's
+detached bind"), fixes both, in every mode.
+
+- **Today's answer 2 is killed partway.** It runs `lane-start --no-launch
+  --bind`, about 10.47 s in files mode (lane 2, #165 6579356984), inside the
+  hook's 5 s. At the timeout Claude Code sends SIGTERM to the hook's whole
+  process group (lane 4's hook probe on Claude Code 2.1.319, R1 and R1b), so
+  the bind and any `( … & )` child it forked, such as `index_nudge`'s, die
+  partway through, which is more than the prompt passing. The probe turns lane
+  2's inference into evidence; whether today's transcripts show
+  `hook_cancelled` stays lane 3's check.
+- **A failed bind cannot be answered again.** After a failed bind the window
+  keeps `<to>`'s name, because `code/lanes-edit.sh:11155` renames it before
+  `:11171` runs the bind; at the next prompt `guard_answer`'s identity test
+  (`:11108`) drops the offer that said "answer `2` again" (`:11173`), and the
+  table then refuses with `lane-start --no-launch <to>`, which vetoes: the #70
+  loop again. The detached form renames the window back on a failure and keeps
+  the offer, for at most three attempts.
 
 ### What constrains the approach
 
@@ -107,14 +131,17 @@ the fourth beside files mode (P5).
   `lanes-index` refusing `mode=primary` until the renderer's git half is
   installed.
 - Where `lanes/STORE` is absent and no configuration says `mode=primary`,
-  nothing changes but the configuration read and the marker check.
+  nothing changes but the configuration read, the marker check, and the
+  guard's answer 2, whose bind runs detached in every mode to fix two defects
+  ("Known defects in today's code").
 
 **Non-Goals:**
 
 - Several verbs in one transaction (the design's own decision D5).
 - A database driver, or the register's rules as PL/pgSQL (Q7's (B)).
 - The register service as a write path or as the renderer's home.
-- Building Amendment 23's act 2, or changing files mode beyond the marker check.
+- Building Amendment 23's act 2, or changing files mode beyond the marker check
+  and the guard's detached answer 2 ("Known defects in today's code").
 - Moving handoffs into SQL, or replacing `git log` as the audit trail.
 - A cache that answers a deciding read on its own.
 - `tasks.md` and the Speckit handoff, which follow this file.
@@ -327,28 +354,44 @@ the section that carries it.
   `commit_push` (`commit_publish` after 1b) the primary branch keeps every
   content check the seam makes, then hands the staged change set and the
   message to the attempt loop, with no commit, pull or push (S1).
-- **D5. One transaction per verb, not per act.** S1's "ONE transaction" per
-  write and S2's one mirror commit per write, with that write's own message,
-  both read per verb; a transaction carrying an act's several verbs would merge
-  their commits and needs Brett's reading of S1 (R2C). The partial states an act
-  leaves are the ones Q8's answers already handle, such as a lane left
-  `SWAPPING` until the late `PAUSED` path. The journal keeps one entry per
-  verb, so a later change could group them without a new schema. This differs
-  from R2, where lane 4 recommends one transaction per act. **It also leaves an
-  act's earlier deciding reads outside its writes' transactions**:
-  `lane-start`'s reads at `code/lane-start:1555`, `:1609`, `:2335` and
-  `:1154`, and those of `lane-end`, `lane-handoff` and `lane-rename`, are read
-  calls of their own, and the writes they decide are later verbs, each with
-  its own snapshot, so the head check covers a verb's own checks and not the
-  act's earlier reads; a rival commit in between (a second binding) would go
-  unseen. That is S3's "inside the act's transaction". **The design keeps S3
-  by expectations:** each write verb that an act's earlier reads decide carries
-  them as an expectation, for example `--expect-row <lane> <digest>`, which the
-  commit checks in its own transaction (S1's step 3.5), refusing with 2 and
-  writing nothing when it no longer holds. Lane 4's phase plan lists the acts
-  and their expectations. Where an act cannot carry one, that act's narrowing
-  of S3 goes to Brett beside this difference from R2 (below). D5 waits for
-  lane 4's phase plan (lane 3's ruling, #165 6578020193).
+- **D5. One transaction per verb, not per act, with one composite verb.** S1's
+  "ONE transaction" per write and S2's one mirror commit per write, with that
+  write's own message, both read per verb; a transaction carrying an act's
+  several verbs would merge their commits and needs Brett's reading of S1
+  (R2C). The partial states an act leaves are the ones Q8's answers already
+  handle, such as a lane left `SWAPPING` until the late `PAUSED` path. The
+  journal keeps one entry per verb, so a later change could group them without
+  a new schema. **The one composite verb is `start-record`** (lane 3's
+  direction, #165 6579459518; the phase plan's "The bind as one verb"):
+  `lane-start`'s three register writes for a bind, the session cell, the
+  row's state and the `STARTED` or `RESUMED` line, become one write verb, one
+  transaction carrying the union of their expectations; the Rule 3 stamp stays
+  a git commit outside it. R2 recommended one transaction per act; lane 4's
+  phase plan withdraws that and accepts D5 with this one verb (lane 3's
+  acceptance, #165 6708889286). **It also leaves an act's earlier deciding
+  reads outside its writes' transactions**: `lane-start`'s reads at
+  `code/lane-start:1555`, `:1609`, `:2335` and `:1154`, and those of
+  `lane-end`, `lane-handoff` and `lane-rename`, are read calls of their own,
+  and the writes they decide are later verbs, each with its own snapshot, so
+  the head check covers a verb's own checks and not the act's earlier reads; a
+  rival commit in between (a second binding) would go unseen. That is S3's
+  "inside the act's transaction". **The design keeps S3 by expectations** (F5;
+  the phase plan's "The acts and their expectations"): an act takes a base
+  with `lanes-edit.sh act-begin` before its first deciding read,
+  `<act-id>@<head seq>`, and exports it as `LANES_ACT`; each write it decides
+  names, in `LANES_EXPECT` on that call, the scopes its earlier reads cover
+  (`row:`, `bind:`, `objects:`, `alias:`, `archive:` and `sid:`); and the
+  commit checks them in its own transaction (S1's step 3.5), refusing with 2
+  and writing nothing where a journal entry after the base, with another
+  `act_id`, touched a listed scope. A digest of the row, the form first
+  written here, would fail, since an act's own earlier writes change it. Every
+  listed act can carry its expectations under three conditions: `lane-start`
+  re-reads the row at `code/lane-start:2614` after a handoff wait, the handoff
+  skill's step 4 re-derives the lane's identity, and `lane-end`'s gate
+  inherits `LANES_ACT`. Each condition refused narrows S3, and the three go to
+  Brett beside this difference from R2 (below). The journal needs an `act_id`
+  column and each entry's touched keys, which lane 1's v2 lacks: an ask of
+  lane 1, routed below.
 - **D6. The head row is updated before the journal row is inserted.** The probes
   found the reverse order turns every lost race into a 23505 on the seq key.
   Retrying that 23505 as a 40001 would also work, but would read every
@@ -373,8 +416,8 @@ the section that carries it.
   live is waited for, not reused; and an id the journal holds for another
   lane, verb or arguments, or one minted against another generation, is
   refused with 2 (LR007, which the commit raises under the head row's lock,
-  §1.3). Lane 4 owns the record's format, and the printed rerun carries the
-  generation. A write any of whose commit calls was in doubt never exits 75:
+  §1.3). Lane 4 owns the record's format (the phase plan's "The pending
+  record"), and the printed rerun carries the generation. A write any of whose commit calls was in doubt never exits 75:
   at the deadline it makes one lookup, `find_write` (§1.3.1), within the 10 s
   reconnect window, and exits 0 if the write is there, 75 if it is absent with
   the head row's lock granted, and otherwise 3 with the id, the record kept
@@ -413,23 +456,33 @@ the section that carries it.
   output in SQL, a second copy of the line grammar (S6).
 - **D14. The renderer is the writer's fork, in `lanes-index`, in the
   private-index form** (Q5): R3's recommendation, and the service is last under
-  Q29(a). The in-place form, with its fence, is the fallback if lane 4's
-  prototype fails the private-index form. One render runs at a time per
-  checkout, under an `fcntl.flock` in `SyncLock`'s form, not a `mkdir` mutex:
-  a renderer killed by SIGKILL leaves a `mkdir` mutex behind, and the checkout
-  then renders nothing. Lane 4's prototype passes [L4-1], [L4-2], [L4-4] and
-  [L4-5] with the `flock` and fails [L4-4] with the mutex; its section carries
-  the proof (#165 6579524611) (S2).
+  Q29(a). The in-place form, with its fence, was the fallback had lane 4's
+  prototype failed the private-index form; the prototype passed, so it is not
+  taken. One render runs at a time per checkout, under an `fcntl.flock` in
+  `SyncLock`'s form, with both halves of its handshake, not a `mkdir` mutex: a
+  renderer killed by SIGKILL leaves a `mkdir` mutex behind, and the checkout
+  then renders nothing. Lane 4's prototype passes [L4-1] to [L4-5] with the
+  `flock` ([L4-3] qualified: at most two renders holds for a burst that
+  arrives within one pass) and fails [L4-4] with the mutex; the phase plan's
+  "The renderer prototype" carries the proof (#165 6579524611, 6708867768)
+  (S2).
 - **D15. A render commit's author and committer are the identity the journal
   recorded** (the writing environment's `user.name` and `user.email` at write
   time), both dated by the journal entry's commit UTC, so that two renderers
   build the same commit and the history keeps today's attribution. For that to
-  hold, `commit-tree` runs with `--no-gpg-sign` (it honours `commit.gpgSign`),
-  the encoding is pinned to UTF-8, and `Register-Seq: <n>` is written in the
-  message's final trailer block, its last paragraph, as `git interpret-trailers`
-  places it, rather than starting a second one. That is where git's
-  `%(trailers)` reads it, which SVC-12's bounded lookup needs (#165
-  6579666731); lane 4's phase plan gives the mechanics (S2).
+  hold, `commit-tree` runs with `--no-gpg-sign` (git 2.43's `commit-tree`
+  ignores `commit.gpgSign` and signs only with `-S`, which the flag overrides;
+  the phase plan's "F29"), the encoding is pinned to UTF-8, and `lanes-index`
+  composes the message itself: the journal entry's message byte for byte, with
+  `Register-Seq: <n>` in its final trailer block, its last paragraph, appended
+  as that paragraph's last line where the paragraph is already a trailer block,
+  and otherwise after one blank line as a new last paragraph, rather than
+  starting a second block. It never runs `git interpret-trailers`, whose
+  parsing and `trailer.*` configuration would make a host's git version an
+  input to the sha. That last paragraph is where git's `%(trailers)` reads it,
+  which SVC-12's bounded lookup and the renderer's own lookup of `m` need (#165
+  6579666731); the phase plan gives the mechanics, and the operator entries'
+  commits follow the same rule (S2).
 - **D16. A divergence is recorded in the database,** as the register's mirror
   state, by the first renderer that finds it, and cleared by the single-write
   import or the renderer's revert. Each renderer still re-detects it from git,
@@ -529,7 +582,12 @@ to him.
 
 | Item | Against | Status |
 |---|---|---|
-| D5: one transaction per verb, where lane 4's R2 recommends one per act; and its S3 consequence, that an act's earlier deciding reads sit outside its writes' transactions, kept by expectations, with any act that cannot carry one narrowing S3 | Amendment 22's S1 and S3; R2, R2C | not yet routed |
+| D5: one transaction per verb, with one composite verb, `start-record`, for `lane-start`'s bind; R2 recommended one per act, and lane 4's phase plan withdraws that (its row 21); and its S3 consequence, that an act's earlier deciding reads sit outside its writes' transactions, kept by expectations (`act-begin` and six scopes), which every listed act can carry under the three conditions in the next row | Amendment 22's S1 and S3; R2, R2C | not yet routed |
+| D5's three conditions (the phase plan's row 22): every act carries its expectations only under three conditions: `lane-start` re-reads at `code/lane-start:2614`; the skill's step 4 re-derives the identity; `lane-end`'s gate inherits `LANES_ACT`. Each refused condition narrows S3: without the first, the reads before a handoff wait are unchecked across it; without the second, step 1's reads are | Amendment 22's S3 | not yet routed; goes beside D5's row |
+| `rename-lane` on primary (the phase plan's row 18): its handoff move and stamp become its after-COMMIT tail, its stamp checks before the seam, since the scratch tree has no handoff file; so Amendment 16's "one commit, refused or whole" becomes a transaction plus a git commit | Amendment 16 | not yet routed; goes beside Q13 |
+| macOS without `setsid` (the phase plan's row 40): the detached bind falls back to python3's `os.setsid`, else `nohup` alone, which does not survive a group kill; `setsid` is not on macOS, and python3 always exists on primary, so the gap is a macOS host without python3 | Amendment 12 Addendum 1's choice 2, on macOS | not yet routed |
+| Facts for Q21(b)(B)'s deploy key (the phase plan's row 2): the push goes to an explicit SSH URL in an isolated environment, not `git push origin`, since a deploy key is SSH-only and `insteadOf` and agent keys could defeat it; `GIT_CONFIG_GLOBAL` needs git 2.32 or later in every environment; whether `ready` can prove the key's write right (`git push --dry-run` over SSH) is open | Amendment 22's S2, under D23 | routed: Q21(b); facts for Brett |
+| A fact for Q7's (A″) (the phase plan's row 27): whether a `psql` connection may be kept between an attempt's two calls under (A″), which saves about 13.7 ms an attempt and which (A″) excludes, since no session stays open across the shell code | Q7(A″); the Goals | routed: Q7; Brett's or lane 3's |
 | D7: "register busy" exits 75, not 69 | Amendment 22's S1 | routed: Q7, "(A″) with 69" |
 | Q4(b)(iii) and D22: a rollback needs the database; a database lost for good is the disaster path | Amendment 22's S5 | routed: Q4(b) |
 | Q26(a′) and D20: the guard answers from the mirror in a declared outage, under SVC-12's three conditions; and a rollback's start declares one, marked as from a rollback, the rollback being Brett's act (`operations.md` §2.5) | Amendment 22's S3 | routed: Q26 |
@@ -547,7 +605,7 @@ to him.
 | Component | Role on `mode=primary` | Credential |
 |---|---|---|
 | `lanes-index` | The one configuration parser and the one database client: `mode`, `register snapshot`, `register commit`, `register read`, `journal`, `render`, `import`, `cutover`, `rollback`, `status`, `reconcile`, `outage`, `serve` (the service, SVC-3), and the operator tools (bootstrap, readiness check, flip) | per subcommand: REGISTER-WRITER, READER, or the bootstrap's one-time admin connection |
-| `lanes-edit.sh` | Every verb, unchanged in its logic. Its three write seams: the resolver, which the write path no longer needs and the renderer does; `handle_preexisting`, where the captures refuse; and the commit seam, which hands a change set to the attempt loop (D4). Its readers enter at `register_text_checked` | none of its own: it calls `lanes-index` |
+| `lanes-edit.sh` | Every verb, unchanged in its logic, and three new ones from the phase plan: `act-begin`, a read verb that takes an act's base (D5); `start-record`, `lane-start`'s bind as one write (D5); and the internal `guard-bind`, the guard's detached bind (SVC-8). Its three write seams: the resolver, which the write path no longer needs and the renderer does; `handle_preexisting`, where the captures refuse; and the commit seam, which hands a change set to the attempt loop (D4). Its readers enter at `register_text_checked` | none of its own: it calls `lanes-index` |
 | The renderer | `lanes-index render`, forked by a writer after its COMMIT, in that lane's checkout; builds one commit per sequence on `origin/main` with a private index and pushes it | REGISTER-WRITER; the renderer identity's key under Q21(b)(B) |
 | `lanes-register`, the `lanes-index serve` subcommand (SVC-3) | The local-socket service, one per environment (SVC-1): one READER connection per process, answering the register's text at `n` for the guard and the other readers, which decide (4A; D17; SVC-7). Last slice (Q29(a)); its internals are lane 5's section | READER |
 | The guard | `lanes-edit.sh guard`, the hook: the service's client through one `lanes-index register read --for guard --prefetch` a prompt (SVC-8), falling back to a direct read (Q11(a)), and deciding by today's parser | READER, through `lanes-index` |
@@ -1709,8 +1767,8 @@ stays open across the shell code.
    tree's. After slices 1a and 1b, an explicit `LANES_REPO` keeps S3–S5
    applying in it (Amendment 23's S2 item 1), and a scratch tree has no origin
    to fetch, so the primary branch runs the verb under an internal flag that
-   bypasses the resolver and S3 for the scratch tree; lane 4 confirms the flag
-   and names it. `repos.tsv`, outside the render set, is read from the lane
+   bypasses the resolver and S3 for the scratch tree; lane 4's phase plan names
+   it `LANES_REGISTER_SCRATCH`. `repos.tsv`, outside the render set, is read from the lane
    checkout's `origin/main` (D19). At the commit seam the primary branch reads
    the staged change set (paths, renames, removals and the new images) and the
    message, writes them to the attempt's directory, and returns. A verb that
@@ -1721,8 +1779,8 @@ stays open across the shell code.
    only the deciding attempt's are replayed: the committed one's, or the one
    whose refusal ends the write. A refusal at the commit (D18, D19) therefore
    never follows a success text. Any side effect outside the register, such as
-   tmux in `request-handoff`, runs once, after COMMIT. Lane 4 lists the arms
-   that have any.
+   tmux in `request-handoff`, runs once, after COMMIT. The phase plan lists
+   the arms that have any (F14).
 3. **The commit.** `lanes-index register commit`, one `psql` call, runs
    `commit_write(n, write_id, REGISTER_SCHEMA_VERSION, generation, entry)` at
    SERIALIZABLE (§1.3, §1.3.1), in this order:
@@ -1740,7 +1798,10 @@ stays open across the shell code.
    5. refill the structured layer for the rows and lines touched, and check its
       constraints: one live claim per object, spelled any way (D19), the hold
       order (D18), each LR005, and the expectations the verb carries for the
-      act's earlier reads (D5), each refusal a 2;
+      act's earlier reads (D5): a scope named in `LANES_EXPECT` that a journal
+      entry after the act's `LANES_ACT` base, with another `act_id`, touched
+      refuses with `expectation: <scope> changed at seq <k> by
+      <lane>/<verb>`; each refusal a 2;
    6. prove the per-file digests (LR004), and `COMMIT`.
 
    It runs with `VERBOSITY=sqlstate`, so a 40001 is told from the other errors
@@ -1822,23 +1883,42 @@ this case.
 
 ### What lane 4's phase plan must confirm for S1
 
+**Answered** by the phase plan below (lane 3's acceptance, #165 6708889286);
+each answer follows its item, and the phase plan's "The routed items,
+answered" cites each.
+
 - **[L4-a]** that each verb runs unchanged on a scratch tree, and which verbs
   reach the commit seam more than once in one run. One journal entry carries
   one message, "exactly as today", so such a verb needs a rule: one entry with
-  a message the design names, or the verb split in two. Lane 4 picks the rule;
+  a message the design names, or the verb split in two. Lane 4 picks the rule.
+  **Answered:** every write verb runs unchanged on a scratch tree but
+  `rename-lane`, whose handoff half becomes its after-COMMIT tail, and
+  `commit`, which is refused; none can reach the seam twice on primary, and the
+  rule is one run, one journal entry, with a second reach exiting 2 (the phase
+  plan's "Each write verb on a scratch tree");
 - **[L4-a′]** the internal flag that bypasses the resolver and S3 for the
   scratch tree; the arms with side effects outside the register, which run once
   after COMMIT; the expectations each act's write verbs carry (D5); every
   failure of the mode query and Q6(c)'s code, now 78 (D3); the
   pending record's format (D8); and the callers that read exit 3 as "written"
-  (D8);
+  (D8). **Answered:** `LANES_REGISTER_SCRATCH` ("The internal flag"); the arms
+  ("Output, and the side effects that run once"); `act-begin` and six scopes
+  ("The acts and their expectations"); every failure of the query, each
+  running files mode with a warning but 78 ("The mode query's failures"); the
+  record ("The pending record"); and five places that read 3 as written ("The
+  callers that read exit 3 as "written"");
 - **[L4-b]** that the staged change set gives the journal's edits for the five
   acts that change several files (`LANDING` and `LANDED`, `rename-lane`,
-  `retire-rows`, `archive-rows`, `migrate-state-cells`);
+  `retire-rows`, `archive-rows`, `migrate-state-cells`). **Answered:** all five
+  are given by `--raw` plus the images ("The change set for the five acts");
 - **[L4-c]** the cost of one attempt: two Python starts, two `psql` starts, the
   scratch tree and the verb. Test 9 records it; if it is too high, one
   `lanes-index` process can serve both calls of an attempt over a pair of
-  named pipes, which bash 3.2 has.
+  named pipes, which bash 3.2 has. **Answered:** about 0.55 s an attempt with
+  the smallest verb arm, about 0.61 s with lane 2's 52.5 ms per SERIALIZABLE
+  write; no frame figure is exceeded, and D7's 30 s holds about 50 attempts;
+  lane 4 recommends deciding the pipe pair at phase 2, from tests 9 and 4 ("The
+  cost of one attempt, [L4-c]").
 
 ## S2: the journal and the renderer
 
@@ -1878,14 +1958,28 @@ lane's checkout, `<W>-lanes/<lane>/`, from Amendment 23's resolver (phase 3).
   its own lock, an `fcntl.flock` on `lanes-render.lock` in the checkout's git
   directory, in `SyncLock`'s form, never the lane's write lock. The kernel
   releases it when the renderer dies, even by SIGKILL, where a `mkdir` mutex
-  would stay behind and stop the checkout's renders (D14). A fork that finds
-  it held leaves a rerun mark (`lanes-render.rerun`) and exits at once, as
-  `SyncLock` does (`code/lanes-index:1539–1543`). [L4-3]
+  would stay behind and stop the checkout's renders (D14); Python opens the
+  lock file close-on-exec, so a `git push` that outlives a killed renderer does
+  not hold it. **Both halves of `SyncLock`'s handshake**
+  (`code/lanes-index:2225–2251`): a fork that finds the lock held leaves a
+  rerun mark (`lanes-render.rerun`), tries the lock once more, and exits; the
+  holder, after it releases, looks for a mark once more and takes the lock back
+  for it. Without the second half, a write that commits between the holder's
+  last look and its release is never rendered, as the prototype showed (the
+  phase plan's "The render lock"). [L4-3], [L4-4]
 - **A pass.** Clear the rerun mark; fetch `origin main`, bounded by
   `LANES_GIT_TIMEOUT`; find `m`, the last `Register-Seq` on `origin/main`'s
   first-parent history, and its commit `R` (an operator seq counts as rendered
-  once its own command's read-back has put it there); check for a divergence
-  (below); read the journal entries after `m`; and for each seq `k` in order,
+  once its own command's read-back has put it there), by form C in pages:
+  `git log --first-parent -n 200 --skip <s> --format='%H%x00%(trailers:key=Register-Seq,valueonly)'`,
+  taking the first non-empty value, never `--grep`, the whole walk bounded by
+  `LANES_GIT_TIMEOUT`. Where the time runs out, or the whole line carries no
+  `Register-Seq`, the pass renders and pushes nothing, records why with the
+  mirror state (D16), and the renderer ends; `status` shows it. Check for a
+  divergence (below); read the journal entries after `m`; take the target
+  `t = min(h, m + 64, o − 1)`, where `h` is the journal's head and `o` the
+  first operator entry after `m`, known by `journal.operator`, so a pass
+  renders at most 64 seqs; and for each seq `k` from `m + 1` to `t` in order,
   build the images at `k`, then the commit: a private index (`GIT_INDEX_FILE` in
   the checkout's git directory), `read-tree` of the parent, the changed blobs
   written with `hash-object -w` and staged with `update-index`, `write-tree`,
@@ -1893,26 +1987,52 @@ lane's checkout, `<W>-lanes/<lane>/`, from Amendment 23's resolver (phase 3).
   `Register-Seq: <k>` in its final trailer block (D15), its author and committer
   and both dates set to the entry's commit UTC, in UTF-8. The first parent is
   `origin/main`'s tip; each later commit's parent is the one before it. Where
-  the next seq the mirror lacks is an operator entry, the pass stops there and
-  renders nothing past it: its command owns it.
+  the next seq the mirror lacks is an operator entry, `t ≤ m`: the pass renders
+  nothing past it, since its command owns it (F2).
 - **A fetch that fails** ends the pass with nothing pushed: SQL stays true, the
   failure is recorded with the mirror state (D16) where the database can be
   written, `status` shows the lag, and the next render catches up.
-- **The push.** `git push origin <tip>:refs/heads/main`, never forced. Under
-  Q21(b)(B) it pushes with the renderer identity (D23).
+- **The push.** `<tip>:refs/heads/main`, never forced. Under Q21(b)(B) it
+  pushes with the renderer identity (D23), to an explicit
+  `ssh://git@github.com/<owner>/<repo>.git`, where `<owner>/<repo>` is
+  `_norm_repo` of the checkout's own `origin` URL (`code/lanes-index:367–375`),
+  so the push names the repository that was fetched, in the push's own
+  environment: `GIT_SSH_COMMAND` naming the render key with
+  `IdentitiesOnly=yes` and `BatchMode=yes`, `SSH_AUTH_SOCK` removed,
+  `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1`, and `--no-verify`.
+  A deploy key authenticates only over SSH, and `git push origin` would use the
+  checkout's HTTPS remote and the lane's own credentials, which the ruleset
+  refuses; nothing is written to the checkout's configuration. A push to a URL
+  moves no `refs/remotes/origin/main`, so the read-back fetches `origin` and
+  checks ancestry. A non-GitHub origin with `render_key=` set is refused with
+  2. Without `render_key=` (Q21(b)(A), and the bare-origin fixtures) the push
+  goes to `origin` as it stands; one push function serves the renderer,
+  `cutover` and `rollback` (the phase plan's "The push URL").
 - **A lost race leaves nothing to discard.** A rejected push moved no ref and
-  touched no HEAD; the renderer fetches and starts the pass again, up to six
-  times, as R3 proposes and as Amendment 23 bounds a writer, and then ends with
-  the lag shown by `status`; the next fork resumes. Two renderers that start
-  from the same tip build the same commits, byte for byte, so a second push of
-  the same sha is a no-op. [L4-1], [L4-2]
-- **Before it lets go,** the renderer reads the journal head again; while the
-  mirror lacks a seq, or a rerun mark is set, it makes another pass. So a burst
-  gives at most two renders, and the last write of a burst is rendered even if
-  no write follows anywhere. [L4-3] **A pass that pushed nothing ends the
-  renderer,** so that a pass that cannot progress (an authentication failure, a
-  divergence, an operator seq its command has not yet put on origin) never
-  loops; the next fork tries again.
+  touched no HEAD; the renderer re-fetches, and where origin then carries `t`
+  or more, because another renderer built the same commits, that counts as
+  pushed; otherwise the pass rebuilds, six push attempts in all, as Amendment
+  23 bounds a writer, and then the renderer ends with the lag shown by
+  `status`; the next fork resumes. Two renderers that start from the same tip
+  build the same commits, byte for byte: a second push of the same sha, one
+  after the other, is a no-op, and two at the same moment end with one
+  rejected, which refetches and finds nothing to push. [L4-1], [L4-2]
+- **Bounded progress (F15).** Each fetch and push is bounded by
+  `LANES_GIT_TIMEOUT`, and each database read by the renderer's row of the
+  timeouts table. A renderer makes another pass only after a pass that moved
+  origin's last `Register-Seq` past where that pass found it (its own push, or
+  another renderer's push of the same commits), or once for each rerun mark it
+  finds after it releases; so a pass that cannot progress (an authentication
+  failure, a divergence, an operator seq its command has not yet put on origin)
+  ends the renderer and never loops, and the next fork tries again. After 16
+  passes it releases the lock and re-forks itself once, detached, only if its
+  last pass made progress, so the last write of a burst is rendered even if no
+  write follows anywhere, without a process living unbounded under a steady
+  stream. A burst that arrives within one pass gives at most two renders; a
+  slower stream gives one render per pass, never one per write. The 64 and the
+  16 are the design's values, unmeasured. A known gap: six races lost to
+  handoff pushes leave the last write unrendered until the next write
+  anywhere, or `reconcile`. [L4-3]
 - **Killed between `commit-tree` and the push,** it leaves only unreferenced
   objects: no ref moved, nothing on the lane's HEAD, nothing for the next
   handoff commit or the next render to refuse (ADV-C6; the architecture seat's
@@ -1957,6 +2077,10 @@ tree byte-identical to a full render. [L4-5]
 
 ### The in-place form, if the prototype fails the private-index form
 
+Not taken: the prototype passed [L4-1] to [L4-5] with the private-index form
+("What lane 4's prototype must confirm", below). The fallback is kept here as
+it was written.
+
 The renderer then commits on the lane checkout's HEAD. The next render in that
 checkout discards an unpushed render commit before S3's checks, and S3's
 "unpushed commits" row, at `lane-start`'s stamp and `lane-handoff`'s commit,
@@ -1980,6 +2104,14 @@ coalesces a burst into at most two renders, the last write included;
 **[L4-4]** a renderer killed between its commit and its push blocks nothing;
 **[L4-5]** each way out of a divergence leaves a full render. If [L4-1],
 [L4-2] or [L4-4] fails, the in-place form above is the design.
+
+**Answered** by the phase plan's "The renderer prototype" (lane 3's
+acceptance, #165 6708889286): all five pass with the `flock`. [L4-3] passes
+qualified: at most two renders holds for a burst that arrives within one pass,
+and a slower stream gives one render per pass, never one per write. [L4-4]
+fails with a `mkdir` mutex, which is why the lock is a `flock` (D14). None of
+[L4-1], [L4-2] or [L4-4] failed, so the private-index form is the design and
+the in-place form is not taken.
 
 ## S3: the readers
 
@@ -2384,7 +2516,7 @@ only the import keeps its 300 s bound (`:1317`), as its statement timeout.
 |---|---|---|---|---|---|
 | the guard's direct read | 2 s | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s, or to `T0 + 3.65 s` where an unexpired declaration names this database (SVC-8, SVC-12) | 2 |
 | the service's connection, per request | 2 s, in the background only, outside any share (SVC-6) | 150 ms | 180 ms | 200 ms, inside the client's 300 ms wait | `unavailable`, and the client reads directly (SVC-8); `refuse db <cause>` only where the refusal is definitive (SVC-7) |
-| the guard's answer 2 | — | — | — | nothing on the hook's time: the guard exits 2 with "binding in progress", and the bind runs detached with a writer's bounds and D7's deadline (SVC-8) | as a writer's; lane 4 says how the guard reports it |
+| the guard's answer 2 | — | — | — | nothing on the hook's time: the guard records the bind in the session's offer file, starts it as a `setsid` child, `guard-bind`, and exits 2 with "BINDING"; the bind runs with a writer's bounds and D7's deadline, the whole bind bounded at 180 s (SVC-8; the phase plan's "Answer 2's detached bind") | as a writer's; the guard reports the outcome from the offer file's record, by the phase plan's eleven-case table |
 | a writer's snapshot | 2 s | 2000 ms | 5000 ms | 8 s | a failed read: 69, or in doubt where an earlier commit of the same write was |
 | a writer's commit | 2 s | 2000 ms | 5000 ms | 8 s | in doubt |
 | a whole write | — | — | — | 30 s before a new attempt; 10 s to reconnect in doubt | 75, or 3 |
@@ -2423,7 +2555,8 @@ the rest of the design relies on.
   question 1; D17; SVC-7, SVC-8): the guard runs today's parser on that text,
   passes the prompt, refuses it or makes the offer, and exits 0 or 2. The
   offer file, the `/rename` typing and answer 2's writes stay client-side;
-  those writes are S1's transactions, run detached (SVC-8).
+  its register writes are S1's transactions, run detached in `guard-bind` and
+  recorded in the offer file (SVC-8).
 - **The fallback.** A service that is absent, refuses the connection, answers
   `unavailable` or does not answer within its share is unavailable, and the
   guard reads directly with the READER credential (Q11(a)), printing
@@ -2438,11 +2571,15 @@ the rest of the design relies on.
   (lane 5's questions 7 and 14: 92.9 ms median, 156.6 ms p95 on the real
   register), and the test's assertion is the probes': exit 2 in
   under 4.5 s in every case. `CLAUDE_NO_LANE=1` still exits 0 before any input
-  is read. **Answer 2 runs detached** (lane 5's question 16; SVC-8): its
-  writes, five writer calls at the code pin (`lane-start --no-launch --bind`'s
-  four and the guard's `set-row-state`), take 9.64 s median on primary by lane
-  2's estimate, so the guard exits 2 with "binding in progress" and the bind
-  runs detached, off the hook's time.
+  is read. **Answer 2 runs detached** (lane 5's question 16; SVC-8; the phase
+  plan's "Answer 2's detached bind"): its writes are three writer calls:
+  `start-record`, which makes `lane-start`'s three register writes in one
+  transaction; the guard's `set-row-state` on the lane the window left; and
+  the Rule 3 stamp, a git commit to the handoff, outside the register. Lane 2
+  estimates the bind at the code pin, where `lane-start`'s three register
+  writes are still separate calls, at 9.64 s median on primary, so the guard
+  exits 2 with "BINDING" and the bind runs detached, off the hook's time, in a
+  `setsid` child recorded in the session's offer file.
 - **The read API: the service answers the register's text at `n`, and the
   reader decides** (lane 5's question 1; D17; SVC-7). `who`, `binding`,
   `live-holder`, `next-free`, `managed-projection` and the guard's triple
@@ -2690,9 +2827,11 @@ first call and needs nothing else, on Linux and macOS alike:
    the password file set by `_env` at `:1299–1307`). `_env` also defaults
    `PGCONNECT_TIMEOUT` to 5, which the service overrides with 2. No bash code
    detaches anything. A new session also puts the service outside the hook's
-   process group, so a group kill of the hook does not reach it; whether
-   Claude Code ends a hook's descendants some other way is not shown (the
-   facts table).
+   process group, so a group kill of the hook does not reach it. Claude Code
+   2.1.319 ends a timed-out hook by SIGTERM to that process group and kills
+   nothing on a normal exit, so a new session outlives both; only an
+   escalation to SIGKILL is not shown, and it cannot reach a new session
+   either (the facts table, by lane 4's hook probe).
 3. **One instance.** `lanes-index serve` takes `flock` on `register.lock`
    without waiting, and holds it for its whole life. A starter that finds it
    held exits 0 at once. Holding it, the starter tries the socket: one that
@@ -2813,7 +2952,11 @@ journal entries or whole files it needs. Then:
   snapshot reads, so the cache is one cache, as D17 asks: a file is replaced by
   write and rename, and the cache's seq only moves forward, under a short
   `flock` of its own; whether the cache's form ([L4-c]) allows this second
-  writer is lane 4's (question 13).
+  writer is lane 4's (question 13), and the phase plan answers that it does:
+  content-addressed objects written by temp file and rename, per-seq
+  manifests, and a `head` that moves only forward under a short `flock` make
+  any writer safe, so the service may write through and may keep its images in
+  memory too (the phase plan's "Question 13").
 
 It answers `text <n>` only for that transaction's `n`, so the files of one
 answer are never from two seqs. The answer is `text <n>`, then for each file
@@ -2875,7 +3018,8 @@ the installer's idempotence, the workBenches launcher's copies and #237's
 probe are untouched. `guard_run` (`code/lanes-edit.sh:10391`) changes only
 around its register reads. The window reads, the record scan, the parses, the
 decision, the offer file, the `/rename` typing and answer 2's writes stay
-where they are, though answer 2 now runs them detached (below).
+where they are, though answer 2 now runs them detached, in `guard-bind`
+(below).
 
 **One prefetch, before the first read.** The guard's reads run in `$( )`
 substitutions and pipelines (`:10518`, `:10546`, `:10585`, `:10603`,
@@ -2990,7 +3134,8 @@ contacted and nothing started.
 answers `2` to an offer, `guard_answer` runs `lane-start --no-launch --bind`
 and then `set-row-state` (`:11171`, `:11199`), and the guard exits 2 whatever
 they do: it refuses that prompt either way, and the person resends. At
-`2a057a6d` they are five writer calls, not two: `lane-start`'s bind makes four
+`2a057a6d`, before `start-record` (below), they are five writer calls, not
+two: `lane-start`'s bind makes four
 (`append-session-id`, `set-row-state` LIVE, `log RESUMED` and the Rule 3
 stamp), and the guard's `set-row-state` on the lane it left is the fifth
 (lane 2's `MEASURE.md`, sha256
@@ -2998,14 +3143,25 @@ stamp), and the guard's `set-row-state` on the lane it left is the fifth
 Lane 2 estimates the bind on primary at 9.64 s median (11.51 s p95, 7.72 s at
 the best of 20 runs) against about 3 s of room, so the condition of lane 3's
 ruling on question 16 is met (#165 6579459518). **Decision: answer 2 exits 2
-with "binding in progress", and the bind runs detached,** with a writer's
-bounds and D7's 30 s deadline, none of it on the hook's time. Lane 4's phase
-plan says how the detached bind is run and what the guard answers while it is
-in progress; the form rests on a detached child outliving the hook, which the
-facts table below lists as not shown, and lane 2's AT-F6 follows it. **The
-design's direction:** `lane-start`'s bind makes its four writes as one verb,
-so they are one transaction carrying F5's expectations together; lane 4
-confirms that in its phase plan, or says why it cannot be.
+with "BINDING", and the bind runs detached,** with a writer's bounds and D7's
+30 s deadline, none of it on the hook's time. **The form is the phase plan's**
+("Answer 2's detached bind"; lane 3's acceptance, #165 6708889286): the guard
+rewrites the session's offer file to `mode=binding`, starts `lanes-edit.sh
+guard-bind` as a `setsid` child with the hook's descriptors closed, bounded at
+180 s, prints "BINDING" and exits 2. The offer file is the bind's record, and
+the bind counts as live only while its pid is live with the start time the
+record holds (`pid_start_of`). While it runs, and once when it ends, the guard
+answers each prompt of that session from the record by an eleven-case table:
+"BINDING IN PROGRESS" while it runs, "MOVED" once after it succeeds, and the
+failure's why after it fails, with the window renamed back and the offer kept
+for at most three attempts. That a `setsid` child outlives the hook is now
+shown on Claude Code 2.1.319 (the facts table below), and lane 2's AT-F6 takes
+the phase plan's fourteen cases. **The bind as one verb:** `lane-start`'s
+three register writes become `start-record`, one transaction carrying the
+union of their expectations (D5). The Rule 3 stamp cannot join it, since it is
+no register file (Q18(A)) and Amendment 23 keeps it a git commit everywhere, so
+answer 2 is three writer calls, not five: `start-record`, the guard's
+`set-row-state` on the lane the window left, and the stamp.
 
 The form first chosen here ran the writes inside the hook, with every deadline
 and timer cut to `T0 + 4.25 s`, and kept the detached form as the fallback if
@@ -3013,8 +3169,8 @@ the bind did not fit in about 3 s on a healthy fixture. By lane 2's estimate
 the bind would end near `T0 + 10.2 s`, and the 2 s connect minimum would turn
 every answer 2 into "too little left", so that form is not taken. The
 timeouts table (D9) carries the row: **"the guard's answer 2: nothing on the
-hook's time; it exits 2 with "binding in progress", and the bind runs detached
-with a writer's bounds."**
+hook's time; it exits 2 with "BINDING", and the bind runs detached in a
+`setsid` child, with a writer's bounds."**
 
 **The exit mapping.** `register read` and `register read --for guard` are the
 two client forms; `unavailable` never leaves the client.
@@ -3172,7 +3328,7 @@ The frame review (`REVIEW-frame-20261102.md`, sha256 `0689dde8…`, section
 | Item | Answered in |
 |---|---|
 | Whether the service or the client reads the declaration (F7, F11) | SVC-12: the client, with `mirror-seq` |
-| Answer 2's writes inside the 5 s, or detached (F6) | SVC-8, "Answer 2's writes": detached, after lane 2's timing |
+| Answer 2's writes inside the 5 s, or detached (F6) | SVC-8, "Answer 2's writes": detached, after lane 2's timing, in the phase plan's form |
 | One service per workstation or per container, and the socket's place when `/tmp` is not shared (Q2(c)) | SVC-1 and SVC-2 |
 | Starting with no supervisor | SVC-4 |
 | The `psql` child's timeouts and reconnect | SVC-6: 150, 180 and 200 ms per request, a 2 s connect in the background only, `SIGINT` then kill, a lazy restart |
@@ -3201,7 +3357,7 @@ The frame review (`REVIEW-frame-20261102.md`, sha256 `0689dde8…`, section
 | The four parts' figures | probes C, C2 and C3, on synthetic records and a synthetic register |
 | R1's 14.7 ms and 0.97 ms (one write); ADV-C4's timeouts | the proposal and `clarifications.md`, not re-measured |
 | **Not shown:** the whole of SVC-6: `psql` on pipes, the `\echo` framing, the `SIGINT` cancel, and the 150, 180, 200 and 100 ms values | no PostgreSQL on py-bench until 1A; lane 2's fixture |
-| **Not shown:** that a detached child started from a hook outlives the hook under Claude Code: the service's start, and, since lane 2's timing, answer 2's detached bind | a hook that starts `lanes-index serve` and a check of the child after the hook returns, in a real session |
+| **Shown, since lane 4's hook probe:** that a detached child started from a hook in a session of its own (`setsid`) outlives the hook under Claude Code 2.1.319, which covers the service's start (SVC-4, `start_new_session=True`) and answer 2's detached bind. At the hook's timeout Claude Code sends SIGTERM to the hook's whole process group, which a `setsid` child is outside, and a `( … & )` child in that group dies; on a normal exit it kills nothing; and it does not wait on pipes a child inherits. **Not shown:** an escalation to SIGKILL after the SIGTERM, which cannot reach a `setsid` child either | lane 4's hook probe: `claude -p` with a project-only `UserPromptSubmit` hook, five runs (`runs-165/HOOKPROBE-report.md`, sha256 `373992bb…`, R1, R1b, R2 and R3; the phase plan's "It survives the hook"), and PP-D's P1 to P4 for group and pid kills |
 | **Not shown:** a socket on the shared disk reached from another container; `flock` on it from two containers | a bind in one container and a connect from the other |
 | **Not shown:** `SO_PEERCRED` with a second uid or across pid namespaces; macOS's `LOCAL_PEERCRED` | one uid and one namespace here; SVC-2's owner file does not rely on them |
 
@@ -3289,15 +3445,20 @@ spec. Lane 3 accepted all nine and lane 5's other choices (#165 comment
    `serve`, `register read` gains `--for guard` and `--prefetch`, and the
    overview's `lanes-register` row is a `lanes-index` subcommand.
 10. **The new cache file.** Routed to lane 4: `$SE_CACHE_FILE.log.<lane>` for
-    `lane_log_events` (`:3521`), placed in the phase plan.
+    `lane_log_events` (`:3521`), placed in the phase plan. Answered there
+    ("Question 10"): phase 1, written only on primary, with a
+    `.logpath.<lane>` sidecar and one flush helper.
 11. **The `psql` connection in the environment, not the argument list.**
     Ruled: no connection string in any argument list, on any `lanes-index`
     path (Roles and credentials). Routed to lane 4, which changes
-    `code/lanes-index:1315`.
+    `code/lanes-index:1315`. Answered in the phase plan ("Question 11"):
+    phase 1's first PR moves the URL into `PG*` variables in `_env`, for every
+    connection, the admin's included.
 12. **A failed start's cooldown.** Ruled: 60 s (SVC-4, item 7).
 13. **The image cache's writers.** Routed to lane 4: whether the cache's form
     ([L4-c]) allows the service as a second writer, or the service keeps its
-    images in memory only.
+    images in memory only. Answered in the phase plan ("Question 13"): the
+    form makes any writer safe, so the service may write through (SVC-7).
 14. **The register read's and the parse's real cost.** Measured by lane 2
     (`MEASURE.md`): the parse is 92.9 ms median, 156.6 ms p95 and 99.2 ms cold
     on 2,590,927 bytes, and Q29's figure is about 0.42 to 0.47 s warm on
@@ -3309,7 +3470,11 @@ spec. Lane 3 accepted all nine and lane 5's other choices (#165 comment
     so. Lane 2's estimate, 9.64 s median against about 3 s of room, met that
     condition, so the detached form applies (#165 6579459518): answer 2 exits
     2 with "binding in progress", the bind runs detached, and the timeouts
-    table's row says so (SVC-8).
+    table's row says so (SVC-8). The phase plan gives the form, which lane 3
+    accepted (#165 6708889286): a `setsid` child, `guard-bind`; exit 2 with
+    "BINDING", which replaces "binding in progress" for answer 2 itself; the
+    offer file as the record, with pid plus start time as its liveness test;
+    and the guard's eleven-case table.
 17. **The `SessionStart` block (F24, a difference).** Ruled: it stays a mirror
     reader that only starts the service (SVC-12). The spec's requirement reads
     as SVC-12 gives it.
@@ -3318,22 +3483,930 @@ spec. Lane 3 accepted all nine and lane 5's other choices (#165 comment
     in `operations.md` §2.5, and the guard's check of it is the client's (SVC-12).
     D20, S3's declared outage and both specs state SVC-12's three conditions.
 
-## The phase plan — **PLACEHOLDER: lane openRepoTools-4's section**
+## The phase plan
 
-> **PLACEHOLDER.** Lane openRepoTools-4 writes this section under lane 3's
-> fan-out (#165 comment 6576888068). Its scope, copied from that post: "For
-> each of the seam split's three phases, list the functions, files and call
-> sites that change, at `2a057a6d`. Cover `lanes-edit.sh`, `lanes-index`,
-> `lane-start`, `lane-handoff`, the handoff skill and the guard, and give the
-> interface each phase leaves for the next. Prove the private-index renderer of
-> your concern 3 in a sandbox, against a local bare origin: two renderers make
-> identical commits, a lost push leaves nothing to discard, and a rerun mark
-> coalesces a burst."
->
-> **What the frame fixes for it:** the interfaces `lanes-index mode`,
-> `register snapshot`, `register commit`, `register read`, `journal` and
-> `render` (S1, S2, S3); the commit seam's primary branch (D4); and the claims
-> marked [L4-a] to [L4-c] in S1 and [L4-1] to [L4-5] in S2.
+Lane openRepoTools-4's section, "the phase plan and the renderer", folded in
+place of the placeholder by lane 3's writer. The source is
+`/workspace/projects/.lane-worktrees/openRepoTools-4/.tmp-coordinator/runs-165/section-lane4-5f26bf0a.md`
+(sha256 `5f26bf0ae1ed1ded51dcf685902a5ad2d643695a9de09f7e5d55b529ee74c4ff`,
+839 lines), posted as #165 comment 6708867768 and accepted by lane 3 in
+6708889286. From the next paragraph to the end of "Not established" the text is
+lane 4's lines 3 to 839, byte for byte; its line 1 is this heading. Lane 4 wrote
+it against this file at `21f0191c` and the code at `2a057a6d`, so every
+`design.md` and `proposal.md` line it cites is at `21f0191c`, before this fold
+moved them; the sections it names (D5, S1, S2, SVC-8, the facts table) are
+where to look now. Its evidence is in the same folder, read-only:
+`DESIGN-PP-A-report.md` (sha256 `eec2754eebaf017ae2cbc743024fa346b8ffc4fef7c416822faf814f36de2efa`),
+`DESIGN-PP-B-report.md` (`f4b98ffaa928c5943924ac9c8ee13270fd1d7cbd525c7debdbfae4a3339df566`),
+`DESIGN-PP-C-report.md` (`22ee181af8172cc41874eb980c7cfb381467615ce8c3bda1b7dc738935b78e09`),
+`DESIGN-PP-D-report.md` (`0174f555987b76ae9e4a2babdadf08a283d1a7b64300f0a6d6dc0cc437d4c193`),
+`DESIGN-RENDER-report.md` (`da354e04040af2ca2e4c50052603d2db2476f734421240731cebe4b9444b54e1`),
+`DESIGN-COST-report.md` (`4940f12d7a24a141ccc0eefcfc20434c7191936dee8058fe82854d718ac18afa`),
+`DESIGN-CHECK-report.md` (`1bd8e8357631a6873a58702749787cf22b217d70e276715c5c21e4c4a342ee85`),
+`HOOKPROBE-report.md` (`373992bbf5e8091c0bf2040f73573c8b2e65a75a1cf8b6fab0bf7f63ee62b521`)
+and `DESIGN-ASSEMBLE-report.md` (`45a1de380c22925eb096f718e83aa2316894c0b779afc33e37c143c5abea1e73`),
+with the probes' raw output in `sandbox-RENDER`, `sandbox-PP-D` and
+`sandbox-HOOK`.
+
+**What lane 3 settled, and where it landed** (#165 6708889286):
+
+- **The bind as one verb.** `start-record` makes `lane-start`'s three register
+  writes in one transaction; the Rule 3 stamp stays a git commit to the
+  handoff, outside the register; so answer 2 is three writer calls, not five.
+  In D5, the interfaces section, SVC-8's "Answer 2's writes", both deltas
+  (`specs/register-service/spec.md`'s guard-client requirement and
+  `specs/sql-register/spec.md`'s requirement on `lane-start`'s bind) and the
+  proposal's guard bullet.
+- **D5 stands,** one transaction per verb, with `start-record` as its one
+  composite verb, and F5's expectations are `act-begin` plus six scopes, in
+  place of `--expect-row <lane> <digest>`. In D5, S1's step 3.5 and
+  `specs/sql-register/spec.md`'s readers' requirement, with a scenario for an
+  act's own earlier write. D5's three conditions (lane 4's row 22) join the
+  table for Brett beside D5.
+- **The detached bind:** a `setsid` child, `guard-bind`; exit 2 with
+  "BINDING"; the session's offer file as the record, with pid plus start time
+  as its liveness test; and the guard's eleven-case table. In SVC-8's "Answer
+  2's writes", the interfaces section, the timeouts table's answer-2 row, lane
+  5's ruling 16, SVC-4's item 2, the facts table, whose row for a child
+  outliving the hook is now shown, and `specs/register-service/spec.md`'s
+  requirement on the 5 s budget, with scenarios.
+- **The renderer:** the `flock`'s handshake, both halves; `m` found by form C,
+  paged with `--skip` and bounded by `LANES_GIT_TIMEOUT`, with nothing pushed
+  and the reason recorded where no trailer is found; 64 seqs a pass, six push
+  attempts, and a lifetime cap with one handover; and the deploy key's push to
+  an explicit SSH URL in an isolated environment. In S2's renderer, D14, D15,
+  and `specs/sql-register/spec.md`'s renderer and gate requirements.
+- **[L4-c]** at about 0.55 to 0.61 s an attempt, and **[L4-1] to [L4-5]**
+  passing with the `flock`. In S1's and S2's lists of what lane 4 must
+  confirm, now answered, and in D14; the in-place form is not taken.
+- **For Brett:** lane 4's rows 18, 22 and 40, with the facts of rows 2 and
+  27, in "Differences from Amendments 22 and 23, for Brett".
+- **Rows 34 and 35** are lane 3's, as lane-tools findings: "Known defects in
+  today's code", under Context. Phase 1's first guard PR fixes both.
+
+**The rest of lane 4's rows.** Each other row of its "Differences from the
+frame" table names the decision it waits on. Where that decision is lane 3's
+or Brett's and has not been stated, the frame's text above stands and lane 4's
+row says what would change: among them the verb as a child process rather than
+a subshell (row 12), the flag's wider reach (row 13), the renderer fork and
+`<c>` in phase 2 (row 10), test 3's unit form in phase 2 (row 8), `not_after`
+(row 15) and the pending record's age and digest (row 16). Two points this fold
+found are routed below, under "Routed to the section writers by the frame
+review": `start-record`'s exit table, under which `lane-start` dies on 69 and
+75, against round 1's 2A, under which a refused bind write prints a note and the
+launch goes on (S3's table, and `specs/sql-register/spec.md`'s requirement on
+`lane-start`); and `start-record` in files mode, which lane 4 plans and which
+changes files mode beyond the marker check (the Non-Goals).
+
+**New and unproven:** the names this section adds that the proposal does not:
+`act-begin`, `LANES_ACT`, `LANES_EXPECT` and the six scopes; `start-record`;
+`guard-bind`, `pid_start_of` and the offer file's modes `binding`, `bound`,
+`bind-failed` and `name-drift`; `LANES_REGISTER_SCRATCH`;
+`LANES_WRITE_GENERATION` and `LANES_REGISTER_PENDING_MAX_AGE_S`;
+`RENDER_GIT_HALF`; `not_after`; `LANES_READ_MIRROR`; the `.logpath.<lane>`
+sidecar; the image cache's `register-images/` layout; and the renderer's 64-seq
+batch and 16-pass cap. As lane 3's ruling on v1 has it for every new object
+(#165 6578020193), each is accepted as new and unproven, and needs a test in
+lane 2's plan (AT-F6 for the bind; tests 3, 4, 5, 6 and 9 for the rest) before
+it counts as proven.
+
+Lane openRepoTools-4's section (#165 comment 6576888068). It settles, for each of the seam split's three phases, the functions, files and call sites that change, and the interface each phase leaves for the next. It answers the claims marked [L4-a] to [L4-c] in S1 and [L4-1] to [L4-5] in S2, and the items the frame review routed to lane 4.
+
+**Its basis.** The frame at lane 3's `21f0191c` (`design.md` 3,588 lines, sha256 `df00e47f…`; `proposal.md` `e6475a46…`), which folds lane 1's v2 with its v2.1 and v2.2, lane 2's measurements and the 11-02 follow-ups (6708646285); round 1 ("1A 2A 3A 4A") held as provisional; round 2's recommended options as working assumptions; lane 3's rulings to 6579562840 (2026-11-02T14:23Z), its resume status of 2026-11-07 (6708470380) and its fold post (6708646285); lane 1's v2 section (`section-lane1-v2.md`, `dd061272…`) for the schema's names; and the code at `2a057a6d`, which stays the pin. Every `code/` line is at `2a057a6d`, and every `design.md` and `proposal.md` line at `21f0191c`. The renderer's claims rest on a prototype and the detached bind's on probes, all run in sandboxes; everything else is a static reading of the code.
+
+### The three phases, and the interfaces between them
+
+The frame's wording governs (Q6, 1A, `design.md:131–135`; the rollout, `:3429–3445`):
+
+1. **Phase 1, now, on `2a057a6d`.** Everything that does not run through `lanes-edit.sh`'s three write seams: the resolver (`code/lanes-edit.sh:1053–1056`), `handle_preexisting` (`:2701`) and `commit_push` (`:2292`).
+2. **Phase 2, after slices 1a (#282) and 1b (#307) land in the code leg.** The write path: S1's attempt loop at the commit seam, the refusals of direct writes, S6's checks, and the marker check after S3's fetch and in the publish act.
+3. **Phase 3, then.** The renderer's git half, rollback's push, and agreement tests 3, 5 and 6. Its last PR lifts Q6(c)'s refusal.
+4. **The service** (`lanes-index serve`, SVC-3) follows phase 3, as 007's last slice (Q29(a); SVC-5).
+
+| Interface | Phase 1 ships, final | Phase 2 uses | Phase 3 uses |
+|---|---|---|---|
+| `lanes-index mode` | 0 with `index` or `primary`; 78 for Q6(c); 2 for a refused configuration | entry (D3) | lifts 78 |
+| `register snapshot` | the switch with its marker state and `generation` (lane 1's v2); `n`; the database clock (D13); the write-id lookup, checked against lane, verb and `args_sha256` (D8; LR007); the images of `--files` or `--all` at `n`; and `--tree <dir>`, which builds the scratch tree (phase 2, below) | the attempt loop | — |
+| `register commit` | the attempt directory's format (paths, renames, removals, images, base digests, message, author, the act's expectations, the `repos.tsv` blob id and alias sets, D19); `not_after` (F3); the call `commit_write(n, write_id, REGISTER_SCHEMA_VERSION, generation, entry)` (lane 1's v2); exits 0 `committed <seq>`, 75, 69, 2, 3; no `--end-line` or `--hook-pid`, since answer 2 runs detached | the commit seam (D4) | `render --revert`, `import --single` |
+| `register read` | `--prefetch --cache <file>`, `--files` or `--all`, `--for guard`; text at `n` with digests; 0, 69, 78 or 2 | — | — |
+| `journal` | `--write-id <id>`, which calls `find_write` (lane 1's v2); `--since <m>` (message, author, commit UTC, edits, digests, `journal.operator`); `--last --path --grep` | the in-doubt lookup (S1) | the renderer |
+| `render` | `--images --at <k> --out <dir>`, the pure function; the image cache | the snapshot's images | `--checkout`, `--until`, `--revert` |
+| `lanes-edit.sh act-begin` | `<act-id>@<head seq>`, or `<act-id>@files` off primary (the acts, below) | the scripts' `LANES_ACT` | — |
+| `lanes-edit.sh guard-bind`, the offer file's bind record | the record's form, `pid_start_of`, the guard's case table ("Answer 2's detached bind") | adds `act`, `write_id`, `generation` and `not_after` to the record, and the child's `find_write` lookup | — |
+| `lanes-edit.sh start-record` | — (phase 2's own verb) | `lane-start`'s bind, one transaction with the union of its expectations | — |
+| schema | every column phase 3 reads: author, commit UTC, `journal.operator`, the mirror state (lane 1); and lane 4's two asks, `act_id` and the touched keys (the acts, below) | — | no migration |
+
+- **Phase 1 to phase 2:** phase 2 changes nothing in `lanes-index` if phase 1 ships the four `register` and `journal` contracts complete, with `--tree`, `not_after` and the expectations, and the dispatcher's mode arm with its "primary: exit 69" placeholder for phase 2 to replace.
+- **Phase 2 to phase 3:** phase 3 changes nothing in `lanes-edit.sh` if phase 2 ships the renderer fork, `<c>`, the author identity, the suppressed register nudge and test 3's unit form (phase 2, "What phase 2 ships for phase 3").
+
+### Phase 1, now, on `2a057a6d`
+
+| File | Function or site | Line | What changes |
+|---|---|---|---|
+| `lanes-index` | `SCHEMA_VERSION` | :101 | Stays #160's; the register's version is lane 1's (D1). A constant `RENDER_GIT_HALF = False` sits beside it: D3's refusal lives here. |
+| `lanes-index` | `load_config`, `known` | :248, :280, :289, :296 | Known keys gain `mode`, `register_url`, `register_passfile` and `render_key` (`design.md:2351`). `mode` is `index` or `primary`; absent is `index`. While `RENDER_GIT_HALF` is False, `mode=primary` is a `Refusal` (2) for every subcommand except `mode` and `register read`, which exit 78. The password check at :296 also covers `register_url`; `render_key` is checked with `_check_private_file` (:234). |
+| `lanes-index` | `PostgresStore._env`, `_run` | :1299–1308, :1310–1317 | Question 11, below. |
+| `lanes-index` | `PostgresStore.__init__` | :1280 | A third role, `register-writer`, beside `reader` and the indexer. |
+| `lanes-index` | `main`, the dispatch, `USAGE` | :2618, :2666–2690, :2563 | New verbs: `mode`; `register snapshot`, `commit`, `read`; `journal`; `render --images`; `import --at`; `outage declare` and `clear`; and lane 1's operator tools, `bootstrap`, `ready` and `set-mode` (lane 1's v2, 2.4). `status` and `reconcile` are extended. `cutover` and `rollback` ship as their transactions only, runnable only against a scratch schema while `RENDER_GIT_HALF` is False; their pushes are phase 3. |
+| `lanes-index` | `cmd_status` | :2338 | Adds the switch, head `n`, generation, the mirror's last `Register-Seq` and the lag, `diverged at` (D16), pending records (D8), and a declaration left in place (D20). |
+| `lanes-index` | `cmd_reconcile`, `cmd_sync` | :2279, :2204 | On primary, `sync --source register` does nothing and says so (S2's nudge). `reconcile`'s mirror-equals-SQL check ships here, read-only; its re-render is phase 3. |
+| `lanes-index` | `read_snapshot`, `cat_blobs`, `git` | :448, :496, :404 | Reused by `import --at <C>`. `build_records` (:765) is not the import's parser, because it drops lines (R2D I-6); the full-fidelity loader is lane 1's. |
+| `lanes-index` | `REGISTER_KIND_RE` | :680 | Grows to Q17(B)'s kinds for the commit's classifier (S6). |
+| `lanes-index` | `state_dir()` | :173 | Holds the image cache (question 13) and `register-pending/` (F10). |
+| `lanes-edit.sh` | the dispatcher, after the workspace check | :15131–15141, before :15143 | The read door, `reg_open` (below), once, in the main shell, before the arm. The fourteen writing verbs of the write guard (:15103) ask the mode there instead, once. |
+| `lanes-edit.sh` | beside `index_open` | :2585 | `reg_open`: one `lanes-index register read --prefetch` call, which also answers the mode (D3). |
+| `lanes-edit.sh` | the new verb `act-begin` | — | The base of an act's expectations (the acts, below); with it, the commit's expectation check against the fixture, and the read arms of "The callers' default arms". |
+| `lanes-edit.sh` | `log_sync` | :6202 | On primary with the door open: no fetch and no flush (D12). Elsewhere, after its fetch, the marker check (F17). |
+| `lanes-edit.sh` | `guard_run` | :10391 | SVC-8's prefetch before :10518, its three read sites, the marker check and SVC-12's declared outage. |
+| `lanes-edit.sh` | `register-row-local`, `verify-row` | :17937, :15144 | Read SQL on primary (D11). `verify-row` has no caller. |
+| `lanes-edit.sh` | `guard_answer`'s choice 2; the offer site | :11128–11207; :10648–10659 | Answer 2's detached bind (ruling 16): the offer file's `mode=binding` record, the fork, the case table and the rename back on failure. |
+| `lanes-edit.sh` | the new internal verb `guard-bind`; the new helper `pid_start_of` | — | `guard-bind` runs the bind in the detached child and writes nothing itself; `pid_start_of` is the liveness test shared with F10's pending record. |
+| `openRepoTools` | `GUARD_COMMAND`, `GUARD_TIMEOUT`, `guard_block_text`, the conflict arm | :2343, :2344, :2346–2353, :3317–3331 | Unchanged in every phase (the guard, below). |
+
+**The service: stop at its interface.** Phase 1's `register read` is SVC-3's client with only its direct path (`design.md:2632–2667`). The socket, the `.direct` flag (SVC-8) and the service's write-through to the image cache (SVC-7) come with `serve`, which a workstation asks only on primary (SVC-5), and none can be primary before phase 3. Phase 1 fixes what `serve` must also return: the files at `n` with per-file digests, written by the client into the cache files below.
+
+#### D3's refusal: where it lives, and its code (F8)
+
+- **One constant, `RENDER_GIT_HALF`, beside `SCHEMA_VERSION` (`code/lanes-index:101`).** `load_config` (:248) refuses with 2 for any subcommand but `mode` and `register read`. `lanes-index mode` and `register read [--for guard]` exit **78** with "this build refuses `mode=primary` until the renderer's git half is installed". `cutover`, `rollback` and `set-mode primary`, against a schema that is not a scratch schema, exit 2.
+- **Q6(c)'s code is 78, `EX_CONFIG`: lane 4's pick (D3; F8), never 2, accepted by lane 3 in 6579562840** for D3, F8's text, the proposal's test 14 and AT-F8, and folded at `21f0191c` (D3, `design.md:317–319`). It is free: `lanes-index` exits only 0, 1, 2, 3 and 64, and `/usr/bin/grep -c -w -E 'exit 78|return 78|die .* 78|78\)'` gives 0 in `lanes-edit.sh`, `lane-start`, `lane-end`, `lane-handoff`, `lane`, `lane-rename`, `lane-worktrees`, `lanes`, `lanes-index` and the three skills, `handoff`, `lane-swap` and `restart` (the only 78 in `lanes-edit.sh` is a byte count in a comment, `:1611`). Only the mode-query site sees it. Lane 1's v2 already refers to "lane 4's code" (renames line 79), and `ready`'s check 5 looks for it.
+- **Not in `lanes-edit.sh`,** because the mode is asked, not parsed (D3). **Not an environment variable,** which any lane could set.
+- **Lifted in phase 3's last PR,** with a test that the constant is True exactly when `render --checkout` exists.
+- **Tests of the SQL path in phases 1 and 2:** bash tests use a stub `lanes-index` that answers `primary`, as `tests/test_lanes_index.py:570–576` stubs the nudge; real-engine tests run a copy of `lanes-index` with the constant flipped, made in the test's temp dir.
+
+What `lanes-edit.sh` does with the answer in phase 1 (the full failure table is F8's, under "The acts and their expectations"):
+
+| Answer | Writers (phase 1) | Readers |
+|---|---|---|
+| no configuration, and `LANES_INDEX_CONFIG` unset or empty | today; no process started | today, plus the marker check |
+| `index` | today | today, plus the marker check |
+| 78 | exit 69, repeating the text (agreement test 14, phase 1) | deciding reads 69; listings and `SessionStart` read the mirror with a note; the guard 2; `managed-projection` 1 |
+| `primary` (only from a `lanes-index` whose constant is lifted: version skew) | exit 69, "this `lanes-edit.sh` has no SQL write path", never files; phase 2 replaces this arm | SQL, as below |
+| any other failure | files mode with a warning (D3) | files mode with a warning; under `lanes/STORE` the marker check refuses |
+
+#### The readers' SQL path, entered at `register_text_checked`
+
+The form generalises SVC-8's prefetch from the guard to every reader (D17). Reads run inside `$( )` and pipelines, where a variable set is lost; that is why today's per-invocation caches are files beside `$SE_CACHE_FILE` (`code/lanes-edit.sh:3449`), written by temp file and `mv -f` (`:3485–3488`, `:3622–3623`). So `reg_open` runs in the dispatcher, in the main shell, before the arm: one call, `lanes-index register read --prefetch --cache "$SE_CACHE_FILE" --files <set>` or `--all`. On a configured workstation that one Python start also answers the mode; on an unconfigured one nothing starts. On primary it writes the cache family at one head `n`, so one verb reads one snapshot (R2B S-13). A failed read exits in the main shell with the arm's class, which no command substitution can swallow (R2B S-1 to S-5).
+
+| Class | Arms | On a failed read |
+|---|---|---|
+| decide (default) | every D and H arm of R2B §2 not listed below | 69, nothing on stdout |
+| mirror | `lanes`, `history`, `session-start`; `window-lane` and `swapped` only where the caller sets `LANES_READ_MIRROR=1` (`code/lane-handoff:1655`, `:1666`; `code/skills/handoff/SKILL.md:210`, `:218`); the variable is ignored on every other arm | `read: mirror at …` on stderr, then the mirror read |
+| guard | `guard` | SVC-8's exit mapping (`design.md:3019–3030`) |
+| projection | `managed-projection` | 1, UNKNOWN (S4) |
+| none | the L and F arms (`workstation`, `fetch-age`, `window-session`, `transcript-holders`, …) | no door, no call |
+
+A hygiene test asserts that every dispatcher arm is classified. On primary, a primitive reached with no prefetched file makes one more `register read`, never a git read (SVC-8's rule); it returns the paths changed in `(n, n′]`, and where any of them is already cached, the whole family is refetched at `n′`.
+
+On primary each read site reads its cache file and never `origin/<branch>`; in files and `index` mode each is unchanged:
+
+| Function | Line (`code/lanes-edit.sh`) | Cache file | Change |
+|---|---|---|---|
+| `register_text_checked` | :3597 (cache :3603; git :3612) | `.register` | a missing file never falls to `register_published` or git (:3608–3614) |
+| `register_published` | :3639 | `.paths` (new: the render set's paths at `n`) | answers 0 or 8 from `.paths` |
+| `archive_text` | :3671 | `.archive` (new) | uncached today; prefetched on primary |
+| `lane_alias_text` | :5367 (cache :5369, `-s` test :5375, empty form :5434, git :5395) | `.aliases` | an absent table is written as `# no lane aliases` (SVC-8) |
+| `lane_log_events` | :3521, before `log_path_ci` at :3522 | `.log.<lane>` (question 10) | read before `log_path_ci` |
+| `log_path_ci` | :2991 (ls-tree :2999) | `.paths` | resolved case-insensitively in `.paths` |
+| `lane_log_exists`, `known_lanes` | :3545, :4202 | `.paths` | |
+| `remote_log_events` | :3408 (ls-tree :3431, show :3439) | `.paths`, `.log.*` | runs `parse_log_stream` (:3373) unchanged on the prefetched logs |
+| `swapped_lanes` | :9074 (rank :9087–9091) | none | rank = head − `lanes-index journal --last --path <log> --grep <key>` (R2B S-14) |
+| `retired_identity_hits` | :3761 | through `archive_text` | |
+| local-file unions | `row_of_lane_local` :5269 via `session_ids_local_of_lane` :5689 (at :16930–16931, :7428–7429); `lanes_register_index --local` :8095 (at :8258, :8471); `managed_local_hint` :13379 (at :13365, :18478); `lane_position_rows` :8870; `row_stamp_is_unknown` :9198 (at :9326) | none | the local half is skipped: no local row can be ahead of SQL (D11) |
+| `log_sync` | :6202 (drop :6207) | none | no fetch and no flush with the door open |
+| writer-side reads | `first_landed_of` :11458 (:11480); :11827, :12629, :12733–12736, :12983, :13027, :15796, :15840, :15887 | none | phase 2: they run on the scratch tree |
+
+The lifecycle scripts:
+
+| Site | Line | Change | Phase |
+|---|---|---|---|
+| `lane-start`'s `rows_for_lane` and `row_names_for_lane`, awk over `$LANES_FILE` | `:1576`, `:1588` (read `:1591`, refusal `:1609`) | through a register verb | 1 |
+| `lane-end`'s awk over `$LANES_FILE` | `:1729`, `:1741` (read `:1744`, refusal `:1749`) | through a register verb | 1 |
+| `lane-worktrees`' `git grep` of `origin/<branch>` | `:706`, `:997`, `:5556` | through a register verb; 69; nothing deleted | 1 |
+| the default arms | "The callers' default arms", below | the read arms | 1 |
+| `lane-handoff`'s and the skill's naming reads | `lane-handoff:1655`, `:1666`; `SKILL.md:210`, `:218` | `LANES_READ_MIRROR=1` | 1 |
+| `lane-start --bind`'s idempotent-bind read rule | `:2437`, `:2448`, `:2132–2133` | no register line again where the binding and the cell already name this uuid (answer 2's reruns) | 1 |
+| `lane-start`'s three register writes | `:3848`, `:3985`, `:4178` | one `start-record` call, with its arms | 2 |
+| `lane-handoff`'s `PAUSED` writes | `:2803`, `:2874`, `:2890`, `:2913` | expectations, 69 and 3 handling | 2 |
+| the skill's commit block | `SKILL.md:446–450` (`pull --rebase` `:449`) | slice 3, #311, not this change, under Q28(i) | — |
+
+**Seam drift.** Slices 2a and 2b also edit `lane-start` and `lane-handoff`. Phase 1's reader edits there are small separate PRs, re-cited at each landing.
+
+#### The guard
+
+- **The arm** (`code/lanes-edit.sh:16856–16882`) is unchanged: it already maps every code but 0 and 2 to 2 (`:16875–16881`). `CLAUDE_NO_LANE=1` still exits at `:648–654`.
+- **`guard_run` (`:10391`), phase 1, as SVC-8 has it** (`design.md:2870–3030`): one `register read --for guard --prefetch` before `:10518`, passing `$$` for `T0`; its cache sites, `.register` for `:10518`, `:10546`, `:10585` and `:10603`, `.aliases`, and `.log.<lane>` for `lane_binding_scan` at `:10707`; the budget lines `T0 + 3.75 / 4.25 / 4.4 s`; on a failed read, SVC-12's three conditions, checked by the client; on files and `index` mode, the marker check (F17) on the ref it reads.
+- **The post-bind flush at `:11064`** drops the whole read family, `.log.*` included; on primary the refill is a second `register read`, never git.
+- **Answer 2 runs detached** (lane 3's ruling 16, 6579459518), replacing the in-hook cut of its writes (`:11171`, `:11199`) to `T0 + 4.25 s`, which the frame dropped at `21f0191c`. It is phase 1's first guard PR (differences row 34). Lane 2 counts four writer calls in `lane-start`'s bind at `2a057a6d` (`append-session-id`, `set-row-state` to LIVE, `log RESUMED`, the handoff's Rule 3 stamp), so five with the guard's `set-row-state` (6579356984). Phase 1 ships the guard's half: the `mode=binding` branch at the offer site (`:10648–10659`), `guard-bind`, the fork and `pid_start_of`; phase 2 ships `start-record`. Both are in "Answer 2's detached bind, and the bind as one verb".
+- **The hook string is not touched in any phase,** and the detached form keeps it so. `--install`'s only idempotence is the exact command string, so a changed string is a `conflict` that dies with nothing installed (`code/openRepoTools:3317–3331`); the workBenches launcher ensures the same strings in each profile; and every profile carries `"timeout": 5` (`:2350`). So the whole budget fits `GUARD_TIMEOUT=5` (`:2344`), and a phase-1 test reads both files and asserts the guard's last line, `T0 + 4.4 s`, is below `GUARD_TIMEOUT`.
+
+#### F17: the marker check for readers
+
+- **What it is.** One function in `lanes-edit.sh`, run only when the mode is not `primary`: `git cat-file -e "origin/$LANES_BRANCH:lanes/STORE"` in `$LANES_REPO` where `have_remote_ref` (`:3399`) holds; under `LANES_NO_GIT=1`, or with no origin ref, a test of `$LANES_DIR/STORE` in the tree that read uses (`design.md:2028–2040`).
+- **Where.** On the ref the read reads, after any fetch, in the main shell: in `reg_open`, before the arm; at the end of `log_sync` (`:6202`), once its fetch has moved the ref (all 40 `log_sync` calls are bare statements, none inside `$( )`); in `guard_run`, before `:10518`; and in `session_start_block` (`:9224`), which only labels its read.
+- **Outcome by class.** decide: 69 with Amendment 22's text; guard: 2; mirror: reads on with the `read: mirror` line; projection: 1.
+- The writers' check, after S3's fetch and in the publish act, is phase 2.
+
+#### Question 10: `$SE_CACHE_FILE.log.<lane>`
+
+- **Phase 1,** with the guard's direct prefetch; the service later changes only where its bytes come from.
+- **Written** by `lanes-index register read --prefetch`, only on primary. In files and `index` mode nothing writes it, so `lane_log_events` is byte-identical there: its consult is one `-f` test.
+- **Read** by `lane_log_events` (`:3521`) before `log_path_ci` (`:3522`); its ten callers read through it unchanged (`:4185`, `:4458`, `:7123`, `:7291`, `:8200`, `:9830`, `:10206`, `:12741`, `:17548`, `:17617`). `remote_log_events` (`:3408`) reads the same files on primary.
+- **The key** is `$1` as received (SVC-8), used only where `$1` is in `check_lane_name`'s class (`[A-Za-z0-9._-]`, not opening with `.` or `-`, `:2916–2920`), tested without dying; any other name takes the second-read path.
+- **The form.** The log's text, plus a sidecar `.logpath.<lane>` holding the resolved `lanes/log/<File>.md` at `n` (empty: no log at `n`), so `parse_log_stream "<path>"` names the file in its `unreadable:` warnings as the mirror read does. The sidecar is lane 4's addition to SVC-8.
+- **The family.** `.log.<lane>` is the first per-lane sibling of `.register` (`:3603`), `.aliases` (`:5369`), `.aliaserr` (`:5344`), `.warn` (`:3466`), `.records` (`:4666`), `.forks` (`:7342`) and `.live` (`:7926`). Cleanup's glob `"$SE_CACHE_FILE".*` (`:1254`) removes it with no change. It is flushed wherever `.register` is dropped today (`log_sync` `:6207`, `index_open` `:2650`, the guard's post-bind `:11064`), by one helper that drops `.register`, `.aliases`, `.archive`, `.paths`, `.log.*` and `.logpath.*` and empties `LANES_REGISTER_CACHE` (`:3596`).
+
+#### Question 13: the image cache, and the service as a second writer
+
+- **Judged from the code's caches.** Both existing caches already have many writers and no lock, made safe by atomic rename: the per-invocation family (`mv -f`, `:3485–3488`, `:3622–3623`) and `lanes-index`'s state files (`os.replace`, `code/lanes-index:1534`). The per-environment image cache has many writers by design anyway (every snapshot and `register read` there), so the service is one more, not a second in kind.
+- **The form, safe for any writer:** content-addressed, immutable objects `register-images/objects/<digest>`, written by temp file and rename (two writers of one digest write the same bytes); per-seq manifests `register-images/seq/<n>` (path to digest); a `head` file that moves only forward, under a short `fcntl.flock` as `SyncLock` takes one (`:1539–1606`). A reader uses an object only when its name equals the digest the database gave at `n` (D17); a missing object is fetched whole. Garbage collection, by any writer under the flock, removes objects in none of the last few manifests and older than 10 minutes; readers copy into their own per-invocation files.
+- **Answer: the service may write through** (SVC-7, `design.md:2812–2816`), and may keep its images in memory too. Cost does not decide it: a hit is 3 ms and a miss about 10 ms of client work ([L4-c]).
+- **Phases:** the cache lands in phase 1 with the snapshot, the readers and the import; the service's write-through with `serve`.
+
+#### Question 11: `code/lanes-index:1315`
+
+- **Phase 1's first PR,** because every new register subcommand reuses `_run`. `_run` (`:1310–1317`) is the only `psql` spawn: `_query_many` (`:1345`), `open_write` (`:1386`) and `apply` (`:1484`) all go through it.
+- **The change:** drop `"-d", self.url`; `_env` (`:1299–1308`) maps the URL as SVC-2 fixes it (`design.md:2603–2615`), host, port, database, user and the five SSL and target parameters to `PG*` variables; `load_config` refuses any other query parameter, so the direct read and the service connect identically. Every connection goes through the environment, the admin connection too, as `PGSERVICE=<service>` (lane 1's `bootstrap --admin-service`); `_env` drops the inherited `PGPASSWORD` and `PGPASSFILE`, as today (`:1304`), and also `PGSERVICEFILE` and `PGSYSCONFDIR`, so no inherited variable points libpq at another file (lane 5's 6579523948, accepted by lane 3 in 6579562840). On register paths `PGCONNECT_TIMEOUT` is set, not `setdefault` (`:1306`), so an inherited value cannot lengthen the bound, and the 300 s cap (`:1317`) becomes each path's client timer; the index paths keep 5 s and 300 s. It is cost-neutral ([L4-c]).
+- **Tests that read the argument list:** `FAKE_PSQL` takes the URL from `-d` (`tests/test_lanes_index.py:1061`) and must rebuild it from `PGHOST`, `PGPORT`, `PGDATABASE` and `PGUSER`; the role assertions on `c["url"]` at `:1163`, `:1178` (in the test at `:1140`) and `:1247` (in the test at `:1214`) keep working through it; the lexer test at `:1132` passes `-d` itself; `tests/test_lane_worktrees.py:1846`'s `-d` is `update-ref -d`. New assertion: no argument contains the URL, and no `-d` appears.
+
+#### Phase 1 under the other options
+
+Under Q26(b), the guard's outage branch and `outage declare` are not built. Under Q26(a), the guard reads the mirror on any failed read. Under Q29(b), phases 1 to 3 do not change; only the service's turn moves before act 4.
+
+### Phase 2: the write path
+
+Phase 2 starts once slices 1a and 1b have landed (`design.md:131–135`). Neither is in the code at `2a057a6d`. Besides the attempt loop below, phase 2 ships `start-record`, `lane-start`'s bind as one verb ("Answer 2's detached bind", below). After 1b, `commit_push` (`code/lanes-edit.sh:2292`) becomes `commit_publish`, its `pull --rebase` loop (`:2391–2500`) becomes Amendment 23's S4, and `handle_preexisting`'s capture (`:2701`) becomes S3's step 4. Each call site below maps to the same call in 1b's code; that mapping is an assumption until 1b's code is read.
+
+#### How an attempt runs the verb: a child that stops at the seam
+
+The primary branch sits at the dispatcher's write guard (`:15103`), which names all fourteen writing verbs and runs before any verb arm. For each attempt:
+
+1. **The snapshot and the scratch tree.** `lanes-index register snapshot --tree <dir>` returns the snapshot (`design.md:1691`) and builds the scratch tree at `n` ("The scratch tree", below).
+2. **The verb runs as a child process:** `"$SELF"` with the original command line, saved before the option parse at `:638–646`, with the internal flag, its stdout and stderr redirected into the attempt's directory, and the real ones kept open on fds 3 and 4.
+3. **The child stops at the seam.** The commit seam's primary branch writes the change set and the message, writes `ready`, and blocks on `read -t <bound> -u 5`. Fd 5 is a FIFO in the attempt's directory, opened read-write so the open cannot block. The child holds no database session while it waits; `register commit` is the parent's own `psql` child.
+4. **The parent decides:**
+   - **committed:** it forks the renderer, replays the attempt's buffered stdout, then stderr, and sends `committed <seq>`. The child points fds 1 and 2 back at 3 and 4, sets `REGISTER_SEQ`, drops its whole read family (question 10's helper) so its tail reads take D17's path, and returns 0 from the seam. The verb's code after the seam runs exactly once, after COMMIT. The parent exits with the child's code;
+   - **a lost turn, or in doubt:** it sends `abandon`; the child exits without its tail, and its output is discarded;
+   - **refused at the commit (2 or 69):** it sends `abandon`, replays the buffered output, prints the refusal, and exits 2 or 69;
+   - **the child exits before `ready`:** the verb's own refusal, or a no-op with an empty change set. The parent replays the output and exits the child's code; no commit call is made.
+
+It is a child process, not the frame's subshell (`design.md:568`, `:1705`), because at file scope the script computes `LANES_REPO`, `LANES_DIR`, `LANES_FILE`, `LOCK` and `LANES_PATH` (`:1052–1064`, `:1100`, `:1115`) and the dispatcher is a top-level `case`: a re-exec recomputes them all for the scratch tree. It also gives each attempt a fresh read family, since `SE_CACHE_FILE` is a file-scope `mktemp` (`:3449`) that is not exported, so attempt 2 never reads attempt 1's snapshot.
+
+#### The internal flag (F22, [L4-a′])
+
+**`LANES_REGISTER_SCRATCH=<attempt dir>`**, honoured only where the directory is under `<state>/register-writes/`, owned by this uid with mode 0700, and its `parent.pid` holds the child's `$PPID`. The child copies the value into a shell variable and unsets the export at once, so no `git`, `gh` or `tmux` it forks inherits it, and a stray export finds no live directory. It covers more than the frame's "the resolver and S3" (`design.md:1710–1712`):
+
+| Concern | Under the flag |
+|---|---|
+| D3's mode query | Not asked; asking would recurse into the primary branch. The run is files-mode code inside the scratch tree. |
+| The resolver | `LANES_REPO`, `LANES_DIR` and `LANES_FILE` are the scratch tree's. At the pin the parent sets all three, since with only `LANES_REPO` set `:1053–1061` still derive `LANES_DIR` from `W`; after 1a, `LANES_REPO` alone does it, and 1a's refusal of `W` and its per-lane path are skipped. |
+| S3 (1b) | Skipped whole. At the pin, `log_sync` (`:6202`) returns with `LOG_SYNC_FETCH=yes` and makes no `ls-remote` or fetch (`:6217–6227`); without that, `retire-rows` and `archive-rows` refuse 1 (`:12609–12611`, `:12979–12981`), and with them every verb that fetches (`:11825`, `:15417`, `:15617`, `:16390`, `:16507`, `:16726`, `:17113`). The files-mode marker check after S3's fetch is skipped too; the snapshot's switch check replaces it. |
+| Reads | `register_text_checked` (`:3597`, origin branch `:3612`), `remote_log_events` (`:3408`) and every other reader take the files branch on the scratch tree's `origin/main`, never D17's SQL branch, so the verb's checks and its edit see one snapshot, `n`. |
+| S4 (1b) and the push loop | Never reached. `LANES_INDEX_NUDGE` stays 0, since only a push sets it (`:2387`, `:2411`, `:2433`). |
+| `gh_reads` (`:11402`) | Cached in the write's directory across attempts. It decides nothing (R2A §2c), and three GitHub calls per attempt, 55 attempts in a burst of ten, would spend the shared REST quota. |
+
+#### The scratch tree, and the files the snapshot returns ([L4-b])
+
+- **From SQL, the render set at `n`:** `lanes/LANES.md`, every `lanes/log/<lane>.md`, `lanes/aliases.tsv` and `lanes/archive/*`.
+- **From the lane checkout's `origin/main` as last fetched,** each blob id recorded in the journal entry (`repos_blob`, lane 1's v2): `lanes/repos.tsv` (read by `canon_object` `:3130` and `resolve_home` `:3232`; D19), and `lanes/log/README.md`, so the tree lists as origin's does; its readers skip it (`:3438`).
+- **Not in the scratch tree:** `lanes/STORE` and the handoffs. The seam refuses any path outside the render set.
+- **How it is built.** `--tree` writes these files, `git init`, adds and makes one commit, and points `refs/remotes/origin/main` at it, which `add-row`'s reads need (`rows_named_ci` `:15455` through `:3612`; `retired_identity_hits` `:15440`) and which makes the "behind" checks count 0. Built from images, it costs 162 ms ([L4-c]).
+- **The scratch tree must never hardlink a work-tree file.** `register_rewrite` writes the register in place, `cat -- "$2" > "$LANES_FILE"` (`code/lanes-edit.sh:1662`, again at `:1666`), and an append in a `cp -al` copy changed the source's file ([L4-c]'s probe). A hardlinked scratch tree would therefore write into the register it was copied from. Only git objects may be shared, as `clone --local` shares them. `git worktree add` in the lane checkout is not used either: it is cheapest (42 ms) but needs the mirror at exactly `n` and writes into the lane checkout's `.git/worktrees`.
+
+#### The commit seam's primary branch (D4)
+
+**What stays,** the content checks: `:2293–2315`, the path list, the case-only rename's `update-index --force-remove` (`:2306–2309`), the bytecode fence (`:2310–2314`) and the `git add` (`:2315`).
+
+**What replaces `:2335–2500`:**
+1. An empty `diff --cached` is no change: the seam returns 0 with no handshake, as `:2339–2340` does today.
+2. Every staged path must be in this write's pathspecs plus `LOG_RENAMED_FROM` (`:2370–2371`'s check, extended to every write) and in Q18(A)'s render set; otherwise exit 2 naming the path, nothing sent.
+3. The seam writes `changes.tsv` (status, path, the base blob at `n`, the new blob, from `git diff --cached --no-renames --raw HEAD`), the new images from the index, and `msg`, holding `$msg` verbatim.
+4. The handshake.
+
+| Site | Caller | What changes at the site |
+|---|---|---|
+| `:6161` | `write_event`, for `log` `:16465`, `claim` `:16649`/`:16651` (CLAIM-LOST `:16676`/`:16679`/`:16682`), `release` `:16742`, `request-handoff` `:17203`/`:17232` | None. The tail at `:6162–6180` runs once, after COMMIT. |
+| `:12155` | `migrate_state_cells` | None |
+| `:12941` | `retire_rows` | None; the follow loop (`:12947–12952`) runs after COMMIT |
+| `:13151` | `archive_rows` | None |
+| `:15233` | `set-row-state` | None; a no-op stamp (`REPLACE_LINE_NOOP`, `:15223`) stages nothing, so no commit call |
+| `:15267`, `:15323`, `:15381` | `replace-in-row`, `append-session-id`, `append-line` | None; D18 classifies `append-line`'s line in the commit |
+| `:15479` | `add-row` | None; its `CP_AFTER_REBASE` (`:15478`) never fires |
+| `:15514` | `commit` | Never reached: refused 2 before the loop (D10) |
+| `:16266` | `rename-lane` | The handoff paths (`:16084–16087`) leave the change set (below) |
+
+Two lines that read HEAD's sha after the write print `register seq <n>` instead (Q19(A)): `claim` at `:16690` and `rename-lane` at `:16277`.
+
+**`handle_preexisting`'s eleven sites** (`:2744` inside `capture_register_edit`, which `:6134` calls; `:6135`, `:12108`, `:12914`, `:13129`, `:15206`, `:15246`, `:15311`, `:15377`, `:15472`, `:16110`) do not change. In a scratch tree just checked out, `:2705` returns at once, since the dirty tests read tracked files only (`:1934`, `:1945–1946`). Under the flag the function, or 1b's S3 step-4 check, gains one assertion: a dirty pathspec in a scratch tree is an internal error, exit 2, "nothing was sent", never a capture commit (`:2713–2714`). On primary a pending hand edit can exist only in the lane's checkout, which the parent checks before the first snapshot (`design.md:1655–1660`).
+
+**`CP_AFTER_REBASE`** (`:1123`, called at `:2429–2430`) is never invoked on primary. Its three hooks are replaced by the verb's own pre-checks, re-run on each attempt's snapshot, plus the commit's head check: `claim_rescan_hook` (`:11485`; `return 9` `:11548`, `return 7` `:11567`) by `claim`'s checks at `:16520` and `:16537`; `add_row_retirement_rescan` (`:3804`) by the retired check at `:15440`; `cp_publish_refence` (`:2235`) is not needed, because `commit` is refused. The parent's resolver lines (`:1052–1064`) do not change: it still resolves the lane's checkout through 1a, to look for a pending hand edit and read `repos.tsv`.
+
+#### Each write verb on a scratch tree ([L4-a]), and a second seam (F21)
+
+| Verb | Runs unchanged? | What it needs |
+|---|---|---|
+| `set-row-state`, `replace-in-row`, `append-session-id`, `append-line` | Yes | Nothing; they read the local file unfetched today (`:15207`, `:15247`, `:15312`), the file at `n` on primary |
+| `add-row` | Yes | The scratch tree's `origin/main` ref |
+| `log` (all twelve verbs), `release` | Yes | The flag's fresh fetch; their tails run after COMMIT |
+| `claim` | Yes, to the seam | `:16690` changes; CLAIM-LOST (`:16667–16686`) is unreachable; `gh_reads` is cached |
+| `request-handoff` | Its write, yes | Its tail polls with `log_sync` (`:17269`) and `lane_binding_scan` through `lane_log_events` (`:9830`); after `committed` those read D17's path (question 10) |
+| `retire-rows`, `archive-rows`, `migrate-state-cells` | Yes, with the flag | Their "behind" checks (`:12628–12634`, `:12982–12988`, `:11826–11832`) count 0 |
+| `rename-lane` | **No** | Its handoff half (move `:16167`, stamp `:16182–16222`, paths `:16084–16087`, checks `:16065–16067`) acts on a file the scratch tree lacks. On primary (Q13(a)) the handoff paths leave the change set; the row's handoff cell is still rewritten to the new path in the transaction (`:16227–16229`, as if `rl_hdone=1`); the move and the stamp run as the tail, an Amendment 23 S3–S4 commit in the lane's checkout. The stamp checks (`:16190–16195`) read the lane checkout's file before the seam, so a handoff that cannot be stamped refuses before anything is sent. |
+| `commit` | Not run | Refused 2 before the loop (D10) |
+
+**Which verbs reach the seam twice in one run today:** `claim` through CLAIM-LOST (`:16676–16682`) after its hook returns 7 or 9; `add-row`'s compensating commit (`:3908–3912`); the captures (`:2713–2714`, `:2396`). None can fire on primary: their triggers are the rebase hooks and dirty checkouts, the loser writes nothing (Q12(a), D18), and `commit` is refused.
+
+**The rule: one run, one journal entry.** A second reach in one run exits 2: "a second register write in one run; the first committed at seq `<s>`; nothing more was sent." No verb is split and the design names no merged message, because D5 and S2 give one entry and one mirror commit per write with its own message "exactly as today", a merged message would invent text, a split would create a partial state between two entries, and `rename-lane`'s second act is a git commit, not an entry.
+
+#### Output, and the side effects that run once (F14)
+
+Each attempt's stdout and stderr go to two files; only the deciding attempt's are replayed, each whole to its own descriptor, stdout first. The order between the two streams is lost, which shows only on a terminal. Output after the seam streams live, so `request-handoff`'s poll still shows progress. Every arm's side effects outside the register sit after the seam, so they run once, after COMMIT, by construction:
+
+| Arm | Side effects |
+|---|---|
+| `write_event` | `lane_state_follow` (`:6179`): sidecars under the control root, outside `LANES_REPO` (`:13487–13510`) |
+| `retire_rows` | the follow loop (`:12947–12952`) |
+| `claim`, `release` | `gh_comment` (`:16695`, `:16744`) |
+| `request-handoff` | tmux `guard_type` (`:17242`) and the poll (`:17254–17286`) |
+| `rename-lane` | `lane_state_rename` (`:16273`), the `gh_comment` loop (`:16284–16303`), the handoff commit |
+
+Before the seam, attempts make no side effect outside the register but `gh_reads`' cached network reads. Host-local reads repeat per attempt, as the frame's risk accepts (`design.md:3408`): tmux (`:17132`, `:17214–17215`), liveness (`:16537`, `:15768`, `:12653`) and sidecar preimages (`:6131`).
+
+#### The change set for the five acts that change several files ([L4-b])
+
+The change set is whole new images plus each path's base blob at `n`; `lanes-index` derives the line edits, so equal lines moved within a file are never ambiguous.
+1. **`LANDING` and `LANDED`** (`:6092–6094`, `:6154–6156`): the log is M with one line appended, or A with its header (`:3095`), and a case-only rename is D plus A (`:6147`); `LANES.md` is M, one line appended.
+2. **`rename-lane`** (`:16072–16083`): `LANES.md` M, one row replaced (`:16248`); the old log D and the new A, a move plus a `RENAMED` line (`:16141`, `:16149`), or A only where the old lane has no log (`:16145`); `aliases.tsv` M, appended (`:16244`), or A with its header (`:16234–16243`).
+3. **`retire-rows`** (`:12914–12941`): `LANES.md` M, N rows replaced; N logs M, appended, or A (`:12918–12919`).
+4. **`archive-rows`** (`:13129–13151`): `LANES.md` M, rows deleted mid-file (`:13147`); `archive/LANES-retired.md` M, appended, or A with its header (`:13132–13145`).
+5. **`migrate-state-cells`** (`:12119–12155`): the archive copy A, whole (`:12123`); the logs M or A (`:12131–12137`); `LANES.md` M (`:12147`).
+
+All five are given by `--raw` plus the images.
+
+#### The pending record (F10)
+
+- **Where:** `<state>/register-pending/<d>`, where `<state>` is `lanes-index`'s state directory and `<d>` is the sha256 of `lanes-pending/1 NUL <LANES_LANE> NUL <LANES_SESSION> NUL <verb> NUL <arg1> NUL … <argN>`, as given on the original command line. `<d>` is the entry's `journal.args_sha256` (lane 1's v2). `LANES_SESSION` is in it because it is written into the event lines' session field (`code/lanes-edit.sh:615`, `:5763`): two runs that differ in it write different lines. The UTC and the host facts are left out.
+- **Format:** mode 0600, in a 0700 directory, written by temp file and `mv`, one `key=value` per line: `format=1`, `write_id`, `generation`, `database`, `lane`, `session`, `verb`, `args_sha256`, `cmdline` (shell-quoted), `created_utc`, `updated_utc`, `pid`, `pid_start` (so a reused pid is not taken for a live writer; read by `pid_start_of`, shared with answer 2's bind record), `host`, `container`, `attempts` and `in_doubt=0|1`.
+- **Written** after the first snapshot, which supplies the `generation`, and before the first commit call; removed on every known outcome (0, 2, 69, or 75 with no doubt); kept on 3.
+- **The printed rerun carries the generation** (lane 1's ask; `commit_write` takes `p_generation`): `LANES_WRITE_ID=<id> LANES_WRITE_GENERATION=<generation> LANES_LANE=<lane> LANES_SESSION=<uuid> lanes-edit.sh <the same arguments>`. A rerun under an id of another generation, or whose lane, verb or arguments differ from the entry's, is refused by `commit_write` with LR007: exit 2, nothing written (lane 1's v2, renames line 72).
+- **A plain rerun** with the same digest and no `LANES_WRITE_ID` reuses the id, says so on stderr and takes the record over, except: past the maximum age of **15 minutes** from `updated_utc` (`LANES_REGISTER_PENDING_MAX_AGE_S` for tests), it warns and prints the lookup; of another generation, it does not reuse; with a live pid, it waits until the deadline, then exits 75, "an identical write (pid) is still running". The age is short because a record exists only after a kill or a 3, its rerun comes in seconds to minutes, and a human gets the printed rerun, which needs no record; past it, a reused id would turn a new identical intent into a silent "already written".
+- **Caveat:** a caller that puts its own UTC in an argument (`append-line` text, `log … --utc`) never matches its rerun and must pass the printed variables.
+
+#### The in-doubt rule at the deadline (F3, D8)
+
+- **The lookup is lane 1's `find_write(p_write_id uuid)`,** in a transaction the caller rolls back. It takes the head row's lock under the caller's `lock_timeout` and returns the write's seq, or NULL. Found is 0; absent with the lock granted is 75, the record removed; 55P03 or no answer is 3, naming the id, the record kept (lane 1's v2, renames lines 22 and 78; S1's "A write in doubt", `design.md:1812–1821`, as lane 3 folded it at `21f0191c`).
+- **What the lock proves, and what it does not.** A granted lock proves that no transaction of this write holds the head row or waits for it, which is what a `pg_stat_activity` listing would show, so lane 4 drops that half of its earlier proposal. It does not prove that none will start: an orphaned commit call that has not yet reached `commit_write`'s step 1 holds no lock, for example its query still queued at a loaded server after the client's 8 s timer killed `psql`. Such a call can commit after the lookup exited 75 and removed the record, which is ADV-C3's second id.
+- **The addition that closes it.** Each commit call carries `not_after`, the snapshot's database clock plus its call timer plus 2 s, and `commit_write` raises unless `clock_timestamp() < not_after` just before it returns. At the deadline, a write with a commit call in doubt waits until the database clock passes its largest `not_after`, then calls `find_write`, all within the 10 s window. An orphan has then either committed, so the lookup finds it; holds the lock, so 3; or can only roll back. The check sits in lane 1's function, so it is an ask of lane 1.
+- **Answer 2's writes** run in the detached bind (ruling 16) and take the ordinary writers' deadline, window and pid wait; the in-hook cut to `T0 + 4.25 s` is gone from the frame at `21f0191c` (`design.md:2387`, `:3010–3017`). The bind child makes this same lookup before a rerun ("Answer 2's detached bind", below).
+
+#### What phase 2 ships for phase 3
+
+- **The renderer fork.** In the parent, after COMMIT, `( lanes-index render --checkout <c> & )`, detached with stdin and fds 3–9 closed as `index_nudge` forks today (`:2561`), with `LANES_NO_FETCH` removed (D12). It replaces the register nudge (`:2561`; the inventory nudge at `:2564` is unchanged), and it must not sit behind `index_nudge`'s `LANES_INDEX=off` return (`:2557`), since `lane-worktrees` sets that variable on every `lanes-edit.sh` call it makes (`Helper.call`, `code/lane-worktrees:498`) and the variable must never skip the mode query or the fork. Phase 2's `lanes-index` answers "git half not installed", which a detached fork's caller never reads; a stub test asserts the argv.
+- **`<c>`** from 1a's resolver (S1's `<W>-lanes/<lane>/`), computed without S3; the frame names it phase 3 (`design.md:1875`).
+- **The author identity** (`user.name`, `user.email` of `<c>`), passed to `register commit` and stored in the entry (D15).
+- **The register nudge suppressed on primary** (S2's nudge, `design.md:1968–1973`).
+- **Agreement test 3's unit form,** with the writers' marker check (phase 3, below).
+
+#### Phase 2 under the other options
+
+Under Q7(A′) the verb runs once inside a held session, so buffering and the handshake go and F3 is the lock wait. Under (A), the loop also stops at six attempts with 75. Under (B), there is no scratch tree. Under "(A″) with 69", the 75 rows exit 69. Under Q13(b), `rename-lane`'s handoff commit precedes the transaction. Under Q19(B), `:16690` waits for the render and prints the sha.
+
+### Answer 2's detached bind, and the bind as one verb
+
+Lane 2 measured the bind (6579356984): 10.47 s median in files mode at `2a057a6d`, and an estimated 9.64 s median, 11.51 s p95 on primary, against about 3 s of room (`design.md:2998–3000`). Under lane 3's ruling 16 (6579459518), which the frame carries at `21f0191c` (SVC-8, `:2989–3017`; the timeouts row, `:2387`; the interfaces bullet, `:2441–2445`), answer 2 exits 2 with "binding in progress" and the bind runs in a detached child. Answer 2's writes take the ordinary writers' rows (D7, D8, D9), so `register commit` needs no `--end-line` or `--hook-pid`. This subsection answers the frame's two asks (`:3002–3008`): how the detached bind runs and what the guard answers meanwhile, and the bind as one verb.
+
+#### The detached bind (F6)
+
+- **`guard_answer`'s choice 2 starts it** (`code/lanes-edit.sh:11128–11207`). The three refusals (`:11129–11143`) and the window rename (`:11155`) stay in the hook. In place of `:11171` and `:11199` the guard rewrites the offer file (`guard_offer_file`, `:10271`) to `mode=binding` by temp file and `mv`, starts the child, prints the "BINDING" text and returns 2:
+  `( umask 077; TMUX_PANE=<pane> $detach nohup "$RESOLVED" guard-bind "$G_ID" </dev/null >"<offers>/<uuid>.bind.<k>.out" 2>&1 3>&- 4>&- 5>&- 6>&- 7>&- 8>&- 9>&- & ) >/dev/null 2>&1`
+- **`$detach`**, after `lane-start`'s own idiom (`code/lane-start:4616–4620`): `setsid` where it exists; else `python3 -c 'import os,sys; os.setsid(); os.execvp(sys.argv[1], sys.argv[1:])'`, which always exists on primary; else `nohup` alone, which survives a hangup but not a group kill (the one stated gap: macOS without python3).
+- **`guard-bind <uuid>`,** a new internal verb, not a register writer. It refuses unless the offer file says `mode=binding`; rewrites the record with its own `$$` and start time (bash 3.2 has no `BASHPID`, so a forked subshell could not); runs `lane-start --no-launch --bind "$G_ID" <args>` under `timeout -k 10 170` where `timeout` exists (unbounded otherwise, as `hs_git_net` is, `lane-start:4232–4246`); after a 0, runs the `set-row-state` for the lane the window left, with `LANES_ACT` from the record's `act` and `LANES_EXPECT="row:<from> bind:<from>"` on that call only (phase 2), and `guard_bound_check`'s read (`:11054–11075`); and writes the outcome.
+- **Working directory and descriptors:** the hook's own directory; stdin `/dev/null`; stdout and stderr to one 0600 file per attempt; fds 3 to 9 closed, as `index_nudge` closes them (`:2561`). These are hygiene, and they put the output in the attempt's file. A runner that waits for EOF on the hook's pipes would wait for the whole life of a child that kept them (PP-D's P3, with its own Python runner: 3.03 s, against 0.04 s with them closed); Claude Code 2.1.319 does not wait on them (the hook probe's R3, below), so that cost applies only to a runner that waits.
+
+| Variable | In the child | Why |
+|---|---|---|
+| `HOME`, `PATH`, `CLAUDE_CONFIG_DIR`, `LANES_WORKSTATION`, `LANES_CONTAINER`, `LANES_REPO`, `LANES_EDIT`, `LANES_LANE_START`, `LANES_INDEX_CONFIG`, `TMUX` | kept | the resolver picks the checkout from the lane; `lane-start` dies without `TMUX` (`:1440`) |
+| `TMUX_PANE` | the pane the hook resolved | with no tty, tmux finds the current pane only through it |
+| `LANES_NO_FETCH`, `LANES_ACT`, `LANES_EXPECT`, `LANES_WRITE_ID` | unset | the bind is a write act (D12); it takes its own `act-begin` base and its own write id; `LANES_ACT` is set from the record's `act` for the one `set-row-state "$from"` call only |
+| `LANES_GIT_TIMEOUT` | 45 | today's default is 60 (`lane-start:4234`); 45 bounds the stamp's pull and push |
+
+**It survives the hook.** The hook normally exits about 4.5 s inside `GUARD_TIMEOUT` (it reaches `guard_answer` at about `T0 + 0.43 s`, lane 2), and the child must outlive it whether it exits or is timed out. PP-D's probes, at load 10 to 19: a pid kill, both forms survive (P4); a group `SIGKILL` (P1, P2) and a group `SIGHUP` (P2), `index_nudge`'s `( … & )` form dies and the `setsid` form survives.
+
+**Claude Code's own hook runner, probed** (`runs-165/HOOKPROBE-report.md`: Claude Code 2.1.319, `claude -p` with a project-only `UserPromptSubmit` hook, 5 runs). Each hook runs under an `sh` that is its own session leader. At a 3 s timeout Claude Code sent SIGTERM to the hook's whole process group at 2.98 s: a `( … & )` child, already orphaned to pid 1 but in that group, was killed, and a `setsid` child completed (R1, R1b). On a normal exit it killed nothing, and both forms outlived `claude` itself by about 8 s (R2). It did not wait on pipes a child inherited (R3: `claude` exited at 4.20 s, the child 7.5 s later). So the `setsid` child outlives a hook that Claude Code times out and one that exits. Not shown: an escalation to SIGKILL, which cannot reach a `setsid` child either. The facts row (`design.md:3204`) narrows to that escalation alone.
+
+#### The record, and its liveness test
+
+The record is the offer file itself, `$CLAUDE_CONFIG_DIR/lanes/offers/<session uuid>` (`:10265–10273`): keyed by the transcript, read by the guard at the offer site (`:10648–10651`), and the session's own fact. The directory is a bind mount shared across containers (`design.md:3193`), so the record names its host and container, and liveness is judged only where both match. Its `key=value` lines:
+
+| Keys | What they hold |
+|---|---|
+| `mode` | `binding`, `bound`, `bind-failed`, or `name-drift` once the offer is restored |
+| `from`, `to`, `session`, `uuid`, `window`, `pane` | the offer's identity, as today's file has it (`:10965–10973`) |
+| `bind`; `started_utc`, `deadline_epoch` | the attempt, 1 to 3; the start, and the start plus 180 s |
+| `pid`, `pidstart`; `host`, `container` | the child; `LANES_WORKSTATION` (else the hostname) and `LANES_CONTAINER` |
+| `out`; `act`, `write_id`, `generation`, `not_after` | the attempt's output file; phase 2 only, `act` being the guard's base `<act-id>@<n>`, from the `n` of the prefetch that made the offer |
+| `rc`, `why`, `note=` lines, `ended_utc` | the outcome, with one `note=` per act still owed and its command |
+
+**Liveness:** the pid is live and its start time equals `pidstart` (Linux: field 22 of `/proc/<pid>/stat`, after the last `)`; macOS: `ps -o lstart=`). One helper, `pid_start_of`, serves this record and F10's pending record. It does not copy `lock_steal_if_dead`'s pid-only test (`:1286–1296`), under which a reused pid looks live until the 10-minute age (`:1311–1321`). P5: 200 checks take 1.42 s, about 7 ms each; a reused pid and a dead pid both read as not live.
+
+**The bound is 180 s of wall time** from `started_utc`: `timeout -k 10 170` in the child, `deadline_epoch` for the guard. It is arithmetic, not a measurement: the register write's 30 s plus 10 s in doubt (D7, D8), lane 2's 11.51 s p95 bind, and the stamp's pull and push, at most 2 × (45 + 5) s. On success the record ends `mode=bound`, `rc=0`, with a `note=` for each act still owed (the stamp not written or not pushed, `lane-start:4419–4460`; the cell not ending on this uuid; the lane left not marked). On failure it ends `mode=bind-failed`, `rc=<lane-start's code>`, `why` = `lane-start`'s last refusal line, the output kept; the lane left is not marked, as at `:11172–11174`. Stopped by its bound, it ends `rc=124` or `137`, "what it wrote is not known", `write_id` kept. If the session exits mid-bind, the child is in its own session: before `lane-start`'s check at `:2124–2131` the bind refuses, after it the bind completes, and the record holds the outcome either way.
+
+#### What the guard answers
+
+The check is a branch of its own at the offer site (`:10648–10659`), after 18(h)'s count and before the table, on `mode` in `binding`, `bound` or `bind-failed`; `guard_answer` is never called on these modes, since its identity test (`:11108`) would drop them once the window is named `to`. It costs one small file read, `kill -0` and one `/proc` read, about 7 ms, inside PP-C's `T0 + 4.4 s`. Every text goes to stderr; the hook string (`code/openRepoTools:2343–2353`) is unchanged.
+
+| Case | Exit | Record after | Text, in short |
+|---|---|---|---|
+| the answer `2` itself | 2 | `binding` | "BINDING: this window is now named `<to>` … detached (pid `<p>`, bounded at 180 s) … send your work again in about 15 s" |
+| same session; child live, inside the bound | 2 | unchanged | "BINDING IN PROGRESS: … Your prompt was NOT sent; send it again in a few seconds" |
+| same session; child live past the bound (no `timeout`) | 2 | unchanged | "THE BIND HAS RUN PAST ITS 180 s BOUND … wait, or `kill <p>`" |
+| another session wanting the same lane | its own table | its own record | it never sees this record. If it answers `2`, on primary `start-record`'s `bind:<to>` expectation refuses whichever bind commits second, with 2; in files mode, `lane-start`'s re-read at `:2614` |
+| after success | 2, once | removed | "MOVED: this window is lane `<to>`, bound … at `<utc>`", one line per owed note, "This prompt was NOT sent"; the next prompt exits 0 |
+| after failure, attempt `k` below 3 | 2, once | `name-drift`, `bind=k`; window renamed back to `<from>` | "THE BIND TO LANE `<to>` FAILED (exit `<rc>`): `<why>` … the offer is KEPT: reply `1`, `2` or `3`" |
+| failure on the third attempt | 2 | `name-drift`, `bind=3` | as above, and choice 2 is no longer offered |
+| does a failure restart it? | — | — | never by itself: a failed bind spends the person's yes; each `2` is one attempt, at most 3 per offer |
+| stale: `binding`, same host and container, pid dead or reused | 2, once | `name-drift`, `rc=unknown`, `write_id` kept | "THE BIND STARTED AT `<utc>` … IS NO LONGER RUNNING AND LEFT NO OUTCOME … the next `2` finds out first" |
+| `binding` from another host or container | 2 | unchanged until the deadline plus 60 s, then as stale | "A BIND OF THIS TRANSCRIPT IS RUNNING ON `<host>/<container>` … Your prompt was NOT sent" |
+| an unreadable record | 2 | dropped | today's text (`:11097–11101`) |
+
+**A finding in today's code, fixed by the rename back.** After a failed bind the window keeps `<to>`'s name (`:11155` renames before `:11171` runs), so at the next prompt `guard_answer`'s identity test (`:11108`) drops the "KEPT" offer and "answer `2` again" (`:11173`) cannot be taken; the table then refuses with `lane-start --no-launch <to>`, which vetoes: the #70 loop again.
+
+**Reruns.** Phase 1: the bind becomes idempotent in `lane-start`. In `--bind` mode, where the binding read (`:2437`, fields at `:2448`) names this window with `b_sess` the bound uuid and the cell's last id is that uuid (`:2132–2133`), it writes no register line again, and writes the Rule 3 stamp only where the handoff has no `RESUMED by <uuid> (lane <L>)` line. Phase 2, on primary, the child makes F3's lookup before a rerun: once the database clock is past the record's `not_after`, `find_write` on the recorded `write_id` (phase 2's "The in-doubt rule"):
+
+| The lookup | The rerun |
+|---|---|
+| found | rewrites nothing |
+| absent, with the head row's lock granted | binds anew, under a new id |
+| otherwise (55P03, or no answer) | `bind-failed`, `rc=3`, again |
+| the record's `generation` is another database's | no lookup: the old database's transactions cannot commit into the new one, so it binds anew |
+
+#### The bind as one verb: `start-record`
+
+At `2a057a6d` the bind makes three register writes, each its own commit and push: `append-session-id` (`code/lane-start:3848`, or `:3869` for a restored id), `set-row-state LIVE` (`:3985`) and `log RESUMED` (`:4178`, through `write_event`, `code/lanes-edit.sh:5968`, committed at `:6161`). Beside them are the host-local sidecar (`lane_state_follow`, `:6179`) and the Rule 3 stamp (`lane-start:4288–4462`: `publish-handoff`, then `git add` `:4412`, `commit` `:4414`, `pull --rebase` `:4422`, `push` `:4442`), which Amendment 23 keeps a git commit everywhere (`inputs/amendment-23.md:343`). A new row is `add-row` (`:3819`) plus `log STARTED`, with no stamp.
+
+On lane 3's direction (6579459518) the three become one write verb, so D5's one transaction per verb holds:
+
+```
+LANES_LANE=<L> LANES_SESSION=<sid> LANES_EXPECT="row:<L> bind:<L> alias:<L> archive:<L> sid:<sid>[ row:<window name>]" \
+  lanes-edit.sh start-record <L> <STARTED|RESUMED> \
+    { --add-row <row> | [--append-cell <anchor> <entry> <why>]… --state "<phrase>" } \
+    --log "lane:<L>" '→' "<payload>"
+```
+
+- **The arm:** one lock, one capture and one `handle_preexisting`; the edits in today's order, the cell, the state, the log line; one `commit_push` of `lanes/LANES.md` and the lane's log, with one message; then `lane_state_follow` after the lock, as `write_event` does (`:6164–6179`).
+- **On primary:** one attempt loop, one snapshot of the two files, one journal entry, one write id and one render; PP-B's expectations are the union of W2, W6 and W7, checked together against `lane-start`'s `act-begin` base.
+- **The message** ([L4-a]): `LOG(<L>@<WS>): RESUMED lane:<L> + row: LIVE, session cell → <sid>`. No reader parses a register commit's subject: a grep for `--grep` and `LOG(` over `lanes-edit.sh`, `lanes-index`, `lane-start`, `lane-handoff` and `lane-end` finds only the writer's own `we_msg` (`:6159`).
+- **Today's non-fatal cell append is kept** (`lane-start:3849–3852`) inside the one transaction: an anchor that does not hold is left out and said. On primary `row:<L>` already refuses a real race with 2.
+
+| `start-record` exits | `lane-start` |
+|---|---|
+| 0 | goes on to the stamp |
+| 2 (an expectation: a second binding) | `die 2` |
+| 3 | `die 3`, relaying the write id, with no stamp, which would record a resume not known to have happened |
+| 69 or 75 | dies with that code |
+
+| What cannot be in the transaction | Why | Where | If it fails |
+|---|---|---|---|
+| the stamp | not a register file (Q18(A)); Amendment 23 keeps it a git commit everywhere | after the transaction, as today's "AFTER 5b" (`lane-start:4210`) | a note, printed with its command at "MOVED"; it never undoes the bind |
+| the sidecar | host-local | after COMMIT | today's note |
+| the guard's `set-row-state` on the lane the window left | another lane's row, written only after the bind; each verb keeps its expectations to one lane | the child, after `lane-start` succeeds | a note in the record |
+
+Folding the lane left into the verb (`--leave <from> <line>`) would make answer 2 one transaction; it is not proposed, and is listed for lane 3. Files mode gains the verb too: three register commits and pushes become one, and the partial states that `lane-start:3828–3833` and `:4210–4214` reason about go away (the saving is not re-measured). After the change answer 2 is two register writes (`start-record`, and `set-row-state` on the lane left) plus the git stamp: three writer calls, where the frame counts five at the pin (`design.md:2993–2997`). The frame's direction (`:3005–3008`) is the bind's four writes as one verb; the fourth, the stamp, cannot join the transaction (the table above), so `start-record` makes the other three one.
+
+#### Phases, and AT-F6
+
+- **Phase 1:** in the guard, `mode=binding`, `guard-bind`, the fork, the case table, the rename back on failure, and `pid_start_of`; in `lane-start`, the idempotent-bind read rule, a small separate PR re-cited at each landing, since 2a and 2b also edit it. None touches a write seam. It also fixes today's files mode: today a 10.47 s bind runs inside the 5 s hook, and at the timeout Claude Code SIGTERMs the hook's whole process group (the hook probe's R1, R1b), so the bind and any `( … & )` child it forked, such as `index_nudge`'s, die part way through, which is more than the prompt passing. So it is placed first: phase 1's first guard PR, and the fix for lane 3's lane-tools issue (differences row 34). A transcript showing `hook_cancelled` stays lane 3's check.
+- **Phase 2:** `start-record` in both modes, `lane-start`'s arms on it and its union expectation, and the child's `find_write` lookup, with `act`, `write_id`, `generation` and `not_after` in the record. The verb calls the commit seam, which 1b renames.
+- **Phase 3:** nothing.
+- **Under Q7(A′)** `start-record` runs once in the held session and the lookup becomes the lock wait; **under "(A″) with 69"** the busy `rc` is 69. **Under Q27(b)** the bound must cover `acquire_lock`'s 60 s wait, and rises to 240 s.
+
+**AT-F6, for lane 2:** (1) answer `2` exits 2 with "BINDING" before `T0 + 1 s` while a stub `lane-start` sleeps 15 s, and a runner reading the hook's pipes sees EOF at once; (2) the child survives a group `SIGKILL` and `SIGHUP` and the record ends `bound`; (3) a prompt mid-bind gets "BINDING IN PROGRESS", is not passed, and the record is unchanged; (4) after `bound`, one "MOVED" with the notes, the record removed, the next prompt 0; (5) after a stub failure, the why, the rename back, the offer kept, attempt 2 on the next `2`, choice 2 withdrawn after the third failure; (6) a child killed with `-9` gives "no outcome", and an altered `pidstart` reads as dead; (7) a stub past the bound ends `rc=124`; (8) two sessions answer `2` for one lane on the primary fixture: one `start-record` commits, the other is refused 2 by `bind:<L>`; (9) the bind is one register commit plus one handoff commit in files mode, one journal entry on primary, and a row change injected after `act-begin` refuses 2 and writes nothing; (10) an injected `psql` exit 2 gives `rc=3` with the id, and at the next `2` found writes no second `RESUMED` and absent binds anew; (11) a rerun after a failed stamp push writes no register line and exactly one stamp; (12) a fake tmux sees the child's untargeted calls with `TMUX_PANE` set and stdin on `/dev/null`; (13) a stub `lane-start` sees `LANES_NO_FETCH`, `LANES_ACT` and `LANES_EXPECT` unset and `TMUX`, `TMUX_PANE` set; (14) the hook string and `GUARD_TIMEOUT` are byte for byte unchanged.
+
+**Evidence.** PP-D's probes, in `runs-165/sandbox-PP-D/`, 2026-11-02 about 14:30Z, Linux on py-bench, load 10 to 19, no lane tool, tmux or register touched: P1 `timeout -s KILL 1` on the parent, `nudge` form "done: NONE", `setsid` form done; P2 a group `KILL` and a group `HUP`, `nudge` NONE both times, `setsid` done both times; P3 the runner saw EOF after 3.03 s with the hook's stdio inherited, 0.04 s for both other forms; P4 a pid kill, both done; P5 live 200 of 200, reused 0, dead 0.
+
+### The acts and their expectations (D5, F5)
+
+**The form differs from D5's example** (`--expect-row <lane> <digest>`, `design.md:345–347`): a base seq with scopes, excluding the act's own entries. A digest fails twice. An act's own earlier writes change it: `lane-start` changes the row's session cell (W2–W5) before `set-row-state LIVE` (W6); `lane-handoff` adds a lane-kind line (W9) before W11 and W12; `lane-end`'s gate sweep is a child that writes `NOTED` lines before W13; chaining it would make every write report its new digest and every script pass it on. And a digest of a read verb's answer would copy that verb's logic into SQL, against the Goals' "reused, never rewritten in SQL"; a digest of the text it read is a scope with a worse failure.
+
+- **The base.** The act runs a new read verb, `lanes-edit.sh act-begin`, before its first deciding read. It prints `<act-id>@<head seq>`, or `<id>@files` off primary, touching no database. The act exports it as `LANES_ACT` to its own verb calls and its children.
+- **The scopes.** Each write takes `LANES_EXPECT="<scope> …"` as a prefix on its own call, as `LANES_LANE` and `LANES_SESSION` ride today, never exported. It is a variable, not a flag, because `log` and `append-line` take free-text positionals.
+- **The check,** in the commit transaction (S1's step 3.5): refuse with 2, `expectation: <scope> changed at seq <k> by <lane>/<verb>`, when any journal entry after the base touched a listed scope and has a different `act_id`.
+- **What the journal needs (lane 1):** an `act_id` column, and each entry's touched keys, computed at commit by the parsers `lanes-index` already has (`build_records`, `code/lanes-index:765`). Lane 1's v2 has neither.
+- **Re-basing.** `act-begin --rebase` keeps the id and takes a new base, only after a deliberate wait for another place's write, and only once every scope the act keeps has been re-read.
+- **Before a launch** `LANES_ACT` is unset (`exec`, `respawn-pane`), or the session and its guard would inherit it. **In files mode** both variables are ignored.
+
+| Scope | What it covers | The reads it stands for |
+|---|---|---|
+| `row:<L>` | the lane's row line, keyed as `row_line` keys it | `register-row`, the row count, `managed-projection`'s marker, the `RETIRED` word |
+| `bind:<L>` | the lane-kind lines of `lanes/log/<L>.md`: `STARTED`, `RESUMED`, `PAUSED`, `ENDED`, `RETIRED`, `RENAMED` | `binding`, `lane-last`, `lane-agent`, `lane-transcript`, `last-session`, `lane-dir`, `window-lane` |
+| `objects:<L>` | the lane's live claims and open takers in the structured layer (D18, D19) | `lane-objects` |
+| `alias:<L>` | alias lines naming the lane on either side | `canon-lane` |
+| `archive:<L>` | archive rows naming the lane | `retired-identity` |
+| `sid:<uuid>` | any row line or lane-kind line containing the uuid | `session-lane`, and the register half of `live-holder` and `transcript-holders` |
+
+A requester's `HANDOFF-REQUESTED` line is not a lane-kind line, so it never refuses the holder's own handoff.
+
+#### `lane-start`
+
+| Deciding read (`code/lane-start`) | Line | Scope |
+|---|---|---|
+| `canon-lane` | `:1129` (arms `:1133–1155`) | `alias:L`, `row:L` |
+| `managed-projection` | `:1551`, called by `seam_refuse` at `:1561` | `row:L` |
+| the row count, awk over `$LANES_FILE` (a verb read on primary) | `:1591–1593` (refusal `:1609`) | `row:L` |
+| `register-row` | `:1629`; anchors `:1808–1809`, `:2136`, `:2191` | `row:L` |
+| the `RETIRED` word in `$row` and `$pub_row` | `:2322` | `row:L` |
+| `retired-identity` | `:2301` | `archive:L` |
+| `lane-last` | `:2329` (refusal `:2335`) | `bind:L` |
+| `register-row` of the window's name | `:2086` | `row:<window name>` |
+| `register-row`, `register-row-local` of the window's name, new lane only | `:2369` | `row:<window name>` |
+| `session-lane` | `:2184` | `sid:<win_sid>` |
+| `binding` | `:2437`, again `:2614` | `bind:L` |
+| `lane-agent` | `:2522` | `bind:L` |
+| `lane-transcript` | `:3075`, `:3405` | `bind:L` |
+| `swapped`, `lane-dir` | `:1251`, `:1267` | `bind:L` |
+
+Host-local reads need none: `live-holder`, `idle-holders`, `transcript-holders`, `window-session`, `restart-intent`.
+
+| Write | Line | Expectation |
+|---|---|---|
+| W1 `add-row` | `:3819` | `row:L alias:L archive:L bind:L sid:<sid>`, plus `row:<window name>` where `:2369` ran |
+| W8 `request-handoff` | `:2497` | `bind:L` |
+| W2–W5 `append-session-id` | `:3848`, `:3869`, `:3906`, `:4019` | `row:L bind:L alias:L sid:<id appended>` |
+| W6 `set-row-state LIVE` | `:3985` | `row:L bind:L alias:L archive:L` |
+| W7 `log STARTED/RESUMED` | `:4178` | `row:L bind:L alias:L archive:L sid:<lane_sid>` |
+
+In phase 2, W1 or W2–W5, with W6 and W7, become one `start-record` call carrying the union of their expectations ("Answer 2's detached bind", above). After a W8 that returns 0 or 8, the holder's own `PAUSED` writes land inside the act, so at `:2614` `lane-start` must also re-read `register-row`, refuse on a change outside the state cell, and only then re-base; otherwise the read at `:1629` goes unchecked across the wait, 300 s by default. W7 is the binding line: a W7 refused by its expectation is a second binding, so `:4181` must stop the launch (`die 2`), not note and carry on.
+
+#### `lane-end`
+
+| Read (`code/lane-end`) | Line | Scope |
+|---|---|---|
+| `canon-lane` | `:921`, arms `:930`, `:934`, `:938` | `alias:L` |
+| the row count, awk | `:1744`, refusal `:1749` | `row:L` |
+| `managed-projection` | `:951`, called at `:1765` | `row:L` |
+| `lane-objects` | `:1801` | `objects:L`, `bind:L` |
+| `register-row`, for a lane with no log | `:1975` | `row:L` |
+| `lanes --fetch --closed --prefix` | `:748` | the rows and logs of each lane listed |
+
+The gate at `:2127` reads `LANDED` lines, which are append-only and only relax it, so it needs no expectation; it inherits `LANES_ACT`, so its `NOTED` writes count as the act's own. W13 `set-row-state ENDED/RETIRED` (`:2439`) and W14 `log ENDED/RETIRED` (`:2487`) carry `row:L bind:L objects:L alias:L`; `retire-rows` (`:858`) carries `row:<each> bind:<each> objects:<each>`.
+
+#### `lane-handoff`
+
+The base is taken before the first `sread` (`code/lane-handoff:1448`). Reads: `register-row` `:1649`, `:2514` (`row:L`); `window-lane` `:1655` (`bind:<candidate>`); `swapped` `:1666`, `last-session` `:1815`, `lane-dir` `:1862`, and `lane-last` on the late path `:1922` (`bind:L`); `canon-lane` `:1704` (`alias:L`); `managed-projection` `:1723` (`row:L`). Writes: the late `log PAUSED --utc` (`:2803`) and W9 `log PAUSED` (`:2874`), `bind:L row:L alias:L`; W11 `append-line` (`:2890`), `bind:L row:L alias:L`, since its line names the lane by the spelling `canon-lane` gave (`:1704`), as W9's and W12's do; W12 `set-row-state PAUSED` (`:2913`), `row:L bind:L alias:L`. A forced release writes a `PAUSED` for the holder after re-reading its log (`code/lanes-edit.sh:17157`, `:17188`); `bind:L` then refuses the holder's own record, which is right.
+
+#### `lane-rename`, the handoff skill, and two other acts
+
+- **`rename-lane`** (`code/lane-rename:214`) carries none: no register read precedes it, its deciding checks are inside the verb, where the head check covers them, and the reads after it (`:202`, `:227`, `:301`) decide only tmux acts.
+- **The handoff skill.** Reads: step 1's block (`code/skills/handoff/SKILL.md:143–243`: `:147`, `:210`, `:218`, `:239`), step 2's `register-row` (`:294`), `lane-dir` (`:576`). Writes: `:735`, `:743`, `:786`. Each block runs in its own shell, minutes apart, so a base cannot pass from step 1 to step 4 except through the agent. So step 4's block opens with `act-begin`, re-runs the identity's register reads, and refuses if `lane` differs from step 1's; its three writes carry `row:L bind:L alias:L`, the same set as `lane-handoff`'s W9, W11 and W12, since `:743` is the same `append-line` as W11.
+- **The guard's answer 2:** the bind is `start-record`'s act, with the union of W2, W6 and W7 ("Answer 2's detached bind", above). The `set-row-state "$ga_from"` that today follows it in the hook (`code/lanes-edit.sh:11199`) is run by the detached child after the bind, with `LANES_EXPECT="row:<from> bind:<from>"`. Its base is the record's `act`, `<act-id>@<n>` from the `n` of the prefetch that made the offer (D17), exported as `LANES_ACT` for that one call only, so a change to the lane left after the offer refuses it with 2 and puts a note in the bind's record. `start-record` runs under `lane-start`'s own `act-begin` base.
+- **`lane`'s `request-handoff`** (`code/lane:1132–1139`) carries `bind:L`.
+
+**Every listed act can carry one, under three conditions:** (1) `lane-start` re-reads the row at `:2614`; (2) the skill's step 4 re-derives the lane's identity; (3) `lane-end`'s gate inherits `LANES_ACT`. Each condition refused narrows S3: without (1), the reads before a handoff wait are unchecked across it; without (2), step 1's reads are. Host-local facts and `repos.tsv` stay outside S3 by nature, as the frame's risks say.
+
+#### Lane 4's position on D5: accept, with one composite verb
+
+Lane 4 withdraws R2's recommendation of one transaction per act:
+- the `PAUSED` record is partial on purpose: R-A11-11 writes it even when part is refused (`SKILL.md:738–742`), and one transaction per act would let a refused `set-row-state` roll back the `PAUSED` line;
+- `lane-start` keeps its compare-and-set non-fatal; R2C noted that fusing it into a group aborts the log and the stamp;
+- grouping across verbs needs a held session, which the Goals exclude, or a composite verb per act, which would rewrite every act;
+- expectations close R2C's races, R5 and R8.
+
+**The one exception, on lane 3's direction (6579459518):** `lane-start`'s three register writes become one composite verb, `start-record` ("Answer 2's detached bind", above). It is still one transaction per verb, for one act only. It keeps today's non-fatal cell append inside that one transaction: an anchor that does not hold is left out and said, and the state and log line are still written. Every other act stays one transaction per verb. The partial states left elsewhere (an `ENDED` row with no `ENDED` line, a lane left `SWAPPING`) are handled by the arms below. The `act_id` column leaves further grouping open for later.
+
+#### The callers that read exit 3 as "written" (F9)
+
+No caller of a write verb has a `3)` arm (`lane-end:2266`'s is the close-out gate's sweep code); the reading is implicit in five places.
+1. **Text that says 3 is written:** the exit table's row, `code/lanes-edit.sh:486–492`; `code/lane-rename:60–65` and its note at `:241`, "a 3 means the commit is local and may already be on origin"; `rename-lane`'s comment at `code/lanes-edit.sh:16255–16262`.
+2. **Acts that carry on after a failed write,** relying on the next push to carry it, which nothing does on primary: `lane-start` `:3851`, `:3872`, `:3909`, `:3989`, `:4022`, `:4181`; `lane-handoff` `:2878–2881`, `:2890–2891`, `:2913–2914`; `lane-end` `:2490`; the skill `:738–742`. On a 3, each prints the writer's printed rerun, never its own hint.
+3. **Hints that are not the same command line:** `lane-start:4182` leaves out `LANES_SESSION`; `lane-handoff:2890` and `SKILL.md:743` put a UTC of their own inside `append-line`'s text, so no rerun is the same command line; `lane-handoff:2890` and `:2913` send the writer's stderr to `/dev/null`, losing D8's rerun line, and must keep it.
+4. **Callers that read 3 as "not written",** the safe direction with the wrong text: `lane-start:3823`, `lane-handoff:2817`, `lane-worktrees:4156–4166`.
+5. **A side effect lost on rerun.** A rerun whose snapshot finds its id exits 0 without running the verb, so `rename-lane`'s `lane_state_rename` (`code/lanes-edit.sh:16273`) and the flush before it (`:16271`) never run. The rerun must replay the after-COMMIT side effects of a write it finds committed (open, beside [L4-a′]).
+
+#### The mode query's failures (F8, D3)
+
+`lanes-edit.sh` tests for the file exactly as `config_path` does (`code/lanes-index:161–170`): `LANES_INDEX_CONFIG` counts only when set and non-empty; `XDG_CONFIG_HOME` falls back to `$HOME/.config`; with `HOME` unset, the home comes from the password database (`_home`, `:157–158`).
+
+| Failure | Result |
+|---|---|
+| a named configuration file that is missing; a key, line or 0600 check refused; a mode value other than `index` or `primary` | `lanes-index` 2 → files mode, with a warning |
+| a `lanes-index` too old to have `mode` | 64 (`:2691`) → files mode, with a warning |
+| `lanes-index` or `python3` missing | 127 → files mode, with a warning |
+| a crash; a signal | 1; 128+n → files mode, with a warning |
+| a hang, such as a stale mount under Q23(a) | the query's client timer → files mode, with a warning |
+| exit 0 with stdout that is not exactly one line, `index` or `primary` | files mode, with a warning |
+| any other code, 69, 75 and 3 included | files mode, with a warning |
+| 78 | exit 69, writing nothing |
+
+In files mode the marker check then refuses on a SQL estate (D3). `LANES_INDEX=off` must never skip the query or the renderer fork: today it skips `index_nudge` (`code/lanes-edit.sh:2557`), and `lane-worktrees` sets it on every `lanes-edit.sh` call it makes, in `Helper.call` (`code/lane-worktrees:498`).
+
+#### The callers' default arms (Q9)
+
+"Pass the code" means the arm exits with the verb's code, not 1.
+
+| Where | Today | The arm needed |
+|---|---|---|
+| `lane-start:1154` (`canon-lane`) | notes and carries on | refuse 69, 75 and 3, passing the code |
+| `lane-start:1262`, `:1271`, `:3079`, `:3430` | notes | refuse 75 and 3; 69 stays a note |
+| `lane-start:1332` (`resolve-home`) | silent | refuse 75 and 3 (not in the frame's list) |
+| `lane-start:2184–2186` (`session-lane`) | notes on any code | refuse 69, 75 and 3 (not in the frame's list) |
+| `lane-start:1555`, `:1641–1643`, `:1661–1663`, `:2305`, `:2335`, `:2444`, `:2511–2512`, `:2534`, `:2638` | already refuse | pass the code |
+| `lane-start`'s writes, `:3851` to `:4181` | note | on a 3, relay the writer's rerun; an `expectation:` 2 at `:4181` must die |
+| `lane-start:1240`, `:4073` (`resolve-repo`) | `:1240` silent, `:4073` notes | none: a git read on primary (D19) |
+| `lane-end:930–938` | any code but 66 and the 15(d) pair falls through silently | refuse 69, 75 and 3 |
+| `lane-end:769`, `:955`, `:1806`, `:1984` | already die 1 | pass the code |
+| `lane-end:2490` | notes | exit with the code |
+| `lane-handoff:1463`, `SKILL.md:112` (`sread`) | die 1 | a `69)` arm that re-reads from the mirror with the `read: mirror` line |
+| `lane-handoff:2817` | dies 2 | pass the code |
+| `lane-rename:241` | text | new text for 3, 75 and 69 |
+| `lane-worktrees:508–524` (`canon_lane`) | keeps the typed spelling | refuse 69, 75 and 3 |
+| `lane:416`, `:444`, `:1058`, `:1144` | refuse | pass the code |
+| the guard's dispatcher, `lanes-edit.sh:16877–16881` | maps everything to 2 | none |
+| 78 | — | arms only at the mode-query site |
+
+Two of the frame's cites read better as: `lane-start`'s reads at `:1551` and `:1591`, with `:1555` and `:1609` their refusal arms; and `lane-end:921–945` has arms, at `:930`, `:934` and `:938`.
+
+**Phases.** Phase 1: `act-begin`, the commit's expectation check against the fixture, and the read arms; in files mode these codes are never emitted, so the read arms change nothing there. Phase 2: the scripts' `LANES_EXPECT`, the write arms and the texts for 3.
+
+### Phase 3: the renderer's git half, rollback's push, and tests 3, 5 and 6
+
+Under the private-index form, phase 3 changes `lanes-index` and `tests/` only. Under the in-place fallback (`design.md:1958–1966`), `lane-start`'s stamp and `lane-handoff`'s commit would change too, and phase 3 would wait for 2a and 2b.
+
+| File | Function or site | What changes |
+|---|---|---|
+| `lanes-index` | `render --checkout <c>` (new) | the lock, the pass, the push, the read-back, the bound |
+| `lanes-index` | `render --revert <sha>`, `import --single <sha>` (new) | the two ways out (`design.md:1940–1956`), each through `register commit` |
+| `lanes-index` | `cutover`, `cutover --after-loss`, `rollback` | their pushes of the operator entry with the renderer identity, the S4 read-back, and `record_marker` (lane 1's v2) (D24; `design.md:2145–2219`) |
+| `lanes-index` | `reconcile` | re-renders what is missing |
+| `lanes-index` | `RENDER_GIT_HALF` | set True, last |
+| `tests/` | agreement tests 3, 5 and 6 | below |
+
+#### The render lock (S2, `design.md:1877–1883`)
+
+Settled: lane 3 accepted the `flock` in 6579562840 and folded it at `21f0191c`, in D14 (`design.md:414–422`) and S2 (`:1877–1883`). The proof is the prototype's ([L4-4], below).
+
+- **A `fcntl.flock`, not a `mkdir` mutex:** `flock(LOCK_EX | LOCK_NB)` on `<git-dir>/lanes-render.lock`, the form `SyncLock` uses (`code/lanes-index:1539–1606`; the call at `:1564`), never the lane's write lock. The kernel releases a `flock` when its holder dies. A renderer SIGKILLed while holding a `mkdir` mutex leaves the directory, every later fork leaves a rerun mark nothing reads, and that checkout renders nothing again; the prototype showed it ([L4-4], below). `lanes-edit.sh` records the same failure for its own `mkdir` lock (`code/lanes-edit.sh:1279–1285`), which needed a pid test and a ten-minute age-out (`:1286–1296`, `:1308–1332`).
+- **Children cannot hold it:** Python opens the lock file close-on-exec, so a `git push` that outlives a killed renderer does not keep it.
+- **Both halves of `SyncLock`'s handshake** (`code/lanes-index:2225–2251`), which S2 should state: a fork that finds the lock held writes `lanes-render.rerun` and tries the lock once more before it exits (`:2233–2238`); the holder, after it releases, looks for a mark once more and takes the lock back for it (`:2247–2251`). Without the second half, a write that commits between the holder's last look and its release is never rendered; the prototype showed this.
+
+#### A pass (refines `design.md:1884–1897`)
+
+- Fetch `origin main` under `LANES_GIT_TIMEOUT` (`git_net`'s bound, `code/lanes-edit.sh:2012–2029`); find `m`; check for a divergence; read the head `h` with the renderer's bounds (the timeouts table).
+- **Finding `m`: form C, paged with `--skip`, bounded by `LANES_GIT_TIMEOUT`.** The renderer uses form C, the guard's lookup (SVC-12, `design.md:3116–3127`), in pages: `git log --first-parent -n 200 --skip <s> --format='%H%x00%(trailers:key=Register-Seq,valueonly)'`, 13 ms a page on the real register, taking the first non-empty value. Not `--grep`, which walks the whole first-parent line when nothing matches (about 300 ms on the real register's 30,006 first-parent commits, with or without `-n 200`; lane 2, 6579627366). Unlike the guard, which refuses 2 after one page, the renderer pages on until it finds one, the whole walk bounded in time by `LANES_GIT_TIMEOUT`. If the time runs out, or the whole line carries no `Register-Seq`, it renders and pushes nothing, records why with the mirror state (`record_mirror_state`), and ends; `status` shows it.
+- **The target is `t = min(h, m + 64, o − 1)`,** where `o` is the first operator entry after `m`, known by `journal.operator` (lane 1's v2), never by its edits or its number.
+- Under the lock, clear `lanes-render.index` and its `.lock` before each build: a renderer killed inside `read-tree` or `update-index` leaves that `.lock`, and git then refuses the next `read-tree` with "File exists".
+- Build `m+1 … t` with the private index and `commit-tree --no-gpg-sign`, setting each seq's render-set entries exactly to the images at `k` (adds, changes and removals), so the commit's render-set tree equals the images whatever its parent holds; that is what makes `render --revert` work. The render set is filtered in code: on git 2.43 `git ls-tree` refuses `:(exclude)` ("pathspec magic not supported by this command"), so `lanes/log/README.md` is dropped in code.
+- Every git call starts with the inherited `GIT_*` variables removed, and `LANES_NO_FETCH` dropped (D12).
+- Push, then read back with `fetch` plus `merge-base --is-ancestor`. A rejected push re-fetches; where origin then carries `≥ t`, because another renderer built the same commits, that counts as pushed; otherwise the pass rebuilds, **six attempts in all** (Amendment 23 S4 item 5, and `code/lanes-edit.sh:2392`; "up to six times" at `design.md:1904` could be read as seven).
+
+#### F15, the progress bound
+
+- **Every act is bounded:** each fetch and push by `LANES_GIT_TIMEOUT`, each database read by the renderer's row of the timeouts table.
+- **A pass** renders at most 64 seqs and makes at most six push attempts.
+- **A process goes on** only after a pass that moved origin's last `Register-Seq` past where the pass found it (its own push, or another renderer's push of the same commits), or once for each rerun mark it finds after it releases. So its passes are at most the seqs pushed, plus the late marks, plus one. A pass that cannot progress (an authentication failure, a divergence, an operator seq its command has not yet put on origin) ends the renderer.
+- **A lifetime cap of 16 passes hands over:** the renderer releases the lock and re-forks itself once, detached, only if its last pass made progress. `SyncLock`'s own cap (`code/lanes-index:2267–2274`) re-marks and waits for the next nudge instead, which strands the last write when no write follows; the handover keeps "the last write of a burst is rendered" without a process living unbounded under a steady stream.
+- **The batch** stops a long backlog pass from losing every push race; batch boundaries do not change the commits (below, "Bursts").
+- **Measured** on the prototype, which had neither the batch nor the lifetime cap: six lost races ended in 1.06 s with `exit passes=1`; a failed push and a failed fetch each ended after one pass with `last_failure` recorded; a divergence, and an operator seq not yet on origin, each ended after one pass.
+- **A known gap:** six races lost to handoff pushes leave the last write unrendered until the next write anywhere, or `reconcile`. The handover does not close it, since it follows progress only.
+
+#### F2, the stop at an operator seq
+
+Where `m + 1` is an operator entry (the cutover's, at seq 1, `m+1` after a re-import or `b+1` after a restore, or the rollback's `k+1`), `t ≤ m`: the pass pushes nothing and the renderer ends, since that seq's command owns it. Once its read-back has put it on origin it is `m`. A pass that pushed seqs before `o` is followed by one more pass, which ends. Shown on the prototype: with seq 1 not yet on origin the renderer logged `stop-at-operator seq=1`, pushed nothing and exited after one pass, and once the cutover pushed seq 1 the next render rendered 2..3; it rendered 4..5 and stopped at the rollback's 6, and after the rollback's own push and read-back `lanes/STORE` was gone from origin and the renderer had nothing to do.
+
+**The stop conditions,** each leaving nothing on any HEAD: nothing missing; an operator seq next; `diverged at` recorded (D16, through `record_mirror_state`, lane 1's v2); a fetch, authentication or six-rejection failure, recorded with the mirror state; a failed journal read; the cap's handover.
+
+#### The push URL for the deploy key against origin's HTTPS remote (D23, Q21(b)(B))
+
+- **The problem.** A deploy key authenticates only over SSH. `git push origin`, as `design.md:1901` says, would use the checkout's HTTPS remote and the lane's own credentials, which the ruleset refuses.
+- **The URL.** The renderer, the cutover and the rollback push to an explicit `ssh://git@github.com/<owner>/<repo>.git`, where `<owner>/<repo>` is `_norm_repo` (`code/lanes-index:367–375`) of the checkout's own `git remote get-url origin`, so the push names the repository that was fetched; it must equal `source_of`'s (`:378–397`). A non-GitHub origin with `render_key=` set is refused with 2.
+- **The push's own environment:** `GIT_SSH_COMMAND='ssh -i <render_key> -o IdentitiesOnly=yes -o BatchMode=yes'`; `SSH_AUTH_SOCK` removed, so no agent key is offered first; `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1`, so a global `url.….insteadOf` cannot turn the URL back into HTTPS; `--no-verify`, so a lane's `pre-push` hook does not run. Nothing is written to the checkout's config: no `set-url`, no `pushurl`.
+- **The read-back.** A push to a URL does not move `refs/remotes/origin/main`, so the read-back fetches `origin` (HTTPS, read rights) and checks ancestry.
+- **Without `render_key=`** (Q21(b)(A), and the bare-origin test fixtures), the push goes to `origin` as it stands. One push function serves the renderer, `cutover`, `cutover --after-loss` and `rollback`.
+- Not probed: no network was available.
+
+#### Rollback's push
+
+Step 2 runs the same render function in-process in the operator lane's checkout, with `--until k`, holding that checkout's render lock. Step 4 pushes the operator entry `k+1` with the push function and reads it back (`design.md:2186–2219`), then calls `record_marker` (lane 1's v2). The cutover's step 2, and the after-loss cutover, push the same way (D24).
+
+#### Agreement tests 3, 5 and 6 (`proposal.md:838ff`)
+
+- **Test 3, a files-mode writer refusing under the marker.** Its unit form, with a marker committed by hand on a bare origin, ships in phase 2 with the writers' marker check, since a phase must land tested (`design.md:106–108`). Its agreement form, with the marker pushed by `cutover`, is phase 3. The frame puts the test in phase 3 only; no other part of this section places it.
+- **Test 5, two renderers racing, and a renderer killed between commit and push.** Phase 3; it covers [L4-1], [L4-2] and [L4-4], whose evidence is the prototype's.
+- **Test 6, the v1.1.0 `lanes-edit.sh` pushing to a primary fixture, then each way out.** Phase 3; it covers [L4-5].
+
+#### F16: where a hand edit is found
+
+| Where the edit is | Found by | Phase |
+|---|---|---|
+| uncommitted in `<W>-lanes/<lane>/` | the primary writer's look before its snapshot (`design.md:1655–1660`), at act 2's S3 step-4 site | 2 |
+| the same, met by the lane's next git write (stamp, handoff) | act 2's S3 fast-forward refusal | act 2 |
+| committed in the lane checkout, unpushed | S3's "unpushed commits" row at the lane's next git write; the publish act refuses a `lanes/` commit on primary | 2 |
+| through the estate link into `W` | act 2's S5 fast-forward report | act 2 |
+| `lanes-edit.sh commit` on primary | refused with 2 (D10) | 2 |
+| pushed to origin | the ruleset first, under Q21(b)(B); otherwise the renderer's divergence check (`design.md:1928–1938`) | 3 |
+| in a render | cannot happen: the private index reads only origin's objects and the journal, never the checkout's tree or index | 3 |
+
+#### Phase 3 under the other options
+
+Under Q27(b), the renderer takes the lane checkout's write lock and S3's rows and fast-forward, phase 3 waits for 2a and 2b, and a lane's stamp and handoff can queue behind a render. Under Q21(b)(A), no key, and the push function's `origin` branch is the only one; (B′) is as (B). Under Q4(b)(iv), the rollback gains a path from the mirror with no database, and phase 2 adds an `ls-remote` to every attempt. Under Q18(B), (C) or (D), only the renderer's pathspec changes.
+
+### The cost of one attempt, [L4-c]
+
+**Result.** One attempt under (A″) costs about **0.55 s** on the measuring host with the smallest verb arm: 0.54 s as a sum of parts, and 0.58 to 0.61 s measured whole under load. A verb that reads the register once adds about 0.2 s. No figure in the frame is exceeded: 30 s (D7) holds about 50 attempts. The cost bears on the conflict window and on how many verb runs a burst re-does.
+
+**Method.** Linux 6.18 WSL2, 32 CPUs, Python 3.12.3, bash 5.2.21, git 2.43.0, a load average of 10 to 24 from other lanes, so absolute figures drift about ±25% between runs; compare figures within one interleaved run. The fixture is a workspace clone with a 1.3 MB `LANES.md` (1,304,871 bytes, 6,410 lines), 38 lane logs (their sizes assumed), `aliases.tsv`, an `archive/`, `repos.tsv`, `STORE` and a `handoffs/` README: 45 files, 2.78 MB. Medians (p90) in ms of 25 to 60 repetitions after warm-ups, from `env -i` runs. `psql` was not on the host: its figures are lane 2's R1, 14.7 ms per write (p95 22.8, `proposal.md:1243–1244`) and 0.97 ms in a session.
+
+| Part of one attempt | Median (p90) ms | n |
+|---|---|---|
+| Interpreter, `python3 -I -c pass` | 19.1 (25.6) | 60 |
+| Python start, `lanes-index` as a script with `load_config()` and `PostgresStore` built, no store reached | **109.8 (137.0)** | 60 |
+| …as a cached-`.pyc` module | 71.3 (92.0) | 60 |
+| `psql` start (R1) | **14.7** (p95 22.8) | R1 |
+| Scratch tree from images: write the files, `git init`, `add`, one commit | **162.0 (176.6)** | 25 |
+| …`git archive HEAD` into tar, then init, add, commit | 158.6 (197.8) | 25 |
+| …`cp -a` of a one-commit template | 85.9 (95.2) | 25 |
+| …`cp -al` (hardlinks): unsafe, see the scratch tree | 52.8 (59.2) | 25 |
+| …`git clone --local` of the template | 115.1 (131.7) | 25 |
+| …`git worktree add --detach`, mirror at exactly `n` / two files behind | 42.2 (54.7) / 111.7 (138.2) | 25 |
+| Verb: `bash -n lanes-edit.sh` | 42.9 (54.7) | 30 |
+| Verb: no argument (exits 2 at `code/lanes-edit.sh:15072`) | 119.6 (159.9) | 30 |
+| Verb: `workstation`, the smallest arm | **124.4 (144.5)** | 30 |
+| Verb: `verify-row`, one register read; on a scratch tree | 318.0 (370.7); 363.7 (409.2) | 30 |
+| The snapshot's cache check, 45 files read and hashed | 3.0 (3.6) | 40 |
+| A cache miss, 1.3 MB through a child's pipe | 10.3 (13.2) | 40 |
+
+| Sum, as the frame counts one attempt | ms |
+|---|---|
+| 2 × Python, 2 × `psql` (R1), scratch tree, smallest verb: 220 + 29 + 162 + 124 | **535** (p90s about 640) |
+| with a verb that reads the register once | about 730 |
+| measured whole, `psql` excluded, 2 runs × 30: 575 and 582 median | about 605 to 612 with `psql` |
+| the first row with lane 2's 52.5 ms per SERIALIZABLE write (6579356984) in place of R1's 14.7 ms: 535 − 29 + 105 | about 611 |
+
+**Where the time goes.** A Python start is about 20 ms of interpreter, +24 to 49 ms of stdlib imports, about 40 ms compiling the 2,695-line script on every start (in-process `compile()` 30.3 ms, about 11 µs a line, so every 1,000 lines the `register` subcommands add cost about 11 ms per start), and 2 to 5 ms for `load_config()` and the store (one `git rev-parse` probe, `code/lanes-index:262`). The verb's bash is mostly setup: about 20 forks before the dispatcher, and the 3,835-line `case` (`:15143` to `:18977`) parsed before any arm runs.
+
+**The conflict window.** From the snapshot's read to the commit's `UPDATE` it is the tail of call 1 plus the scratch tree, the verb, Python start 2 and `psql` start 2: **at least 410 ms** in the script form, not R1's 14.7 ms, as the frame's risk and ADV-C7 say. At one write per 18 s on average, a 0.41 s window is crossed about 2.3% of the time (arithmetic, not a measurement). In a burst of ten there are 55 verb runs and 110 Python starts, about 28 CPU-seconds; the last writer's 10 attempts take about 6 s, inside D7's 30 s. Test 4 measures bursts.
+
+**The named-pipe alternative.** One `lanes-index` per attempt over two FIFOs: `mkfifo` of two is 1.4 ms; a warm bash-to-Python round trip 177 µs (p90 237, n=300). Whole attempts, interleaved, N=30, `psql` excluded: 575 (644) and 582 (633) ms with two starts, against 472 (580) and 471 (507) with one server, a paired saving of 105 and 114 ms. Its total is about 427 ms by parts (500 measured whole with `psql`), 20% under 535, and about 413 ms if it also kept its `psql` connection between the calls, which (A″) excludes (`design.md:1686–1689`). The conflict window drops to about 300 ms (−27%), probably the better reason to adopt it. Its robustness costs: `printf x > fifo` with no reader hangs (probed: `timeout 2` exited 124; `exec 3<>fifo` did not hang), so every bash-side open must be read-write; bash 3.2 has no `coproc`, so the writer keeps a cleanup trap; and an orphaned server needs its own idle and lifetime cap.
+
+**Recommendations.** Do not adopt the pipe pair in phase 1; the frame lists it as deferrable (`design.md:3521–3522`). Decide at phase 2 from tests 9 and 4. A cheaper first step is trimming the Python share (lazy imports on the `register` path; a cached module, about −38 ms a start), an install-layout decision (`INSTALLABLES`, `code/openRepoTools:1292`, and the pip package). Build the scratch tree from images. Beside these: on primary there is also one Python start per write for the mode query (D3) and one detached renderer start after COMMIT, so one process per write would save more than one per attempt (about 2.3 s for the tenth writer of a burst). Under (A′) or (C), an attempt is about 0.43 s and a burst of ten runs 10 verbs, not 55, with a stuck verb blocking everyone; under (A) with six attempts, about 3.6 s; under (B), about 125 ms of Python and `psql` (arithmetic from the table). Lane 5's "about 72 ms" for the prefetch's start (`design.md:2934`, `:3034`) agrees with this floor.
+
+**What test 9 records,** per attempt, beside files mode: Python start to `main`'s first line, the snapshot call, the scratch tree ready, the verb's exit, and the commit call, with the host's load average and the Python version.
+
+### The renderer prototype: [L4-1] to [L4-5], and F29
+
+A prototype renderer in stdlib Python, the form `lanes-index render` would take, was run on git 2.43.0 and Python 3.12.3 against: a bare origin; a workspace checkout `W`; lane checkouts made as Amendment 23's S1 makes them (`clone --reference W --single-branch --branch main`); and a fake journal standing in for SQL (seq 0 the import's baseline at `C`, each entry with a fixed author, UTC and file images, operator entries flagged). Each render commit is built on `origin/main` in the lane checkout's object store: a private `GIT_INDEX_FILE` in its git directory, `read-tree <parent>`, `hash-object -w --no-filters --stdin`, `update-index -z --index-info`, `write-tree`, `commit-tree --no-gpg-sign -p <parent> -F -`, and `git push origin <sha>:refs/heads/main`, never forced.
+
+**The private-index form passes all five, with the `flock` lock. The in-place form (`design.md:1958–1966`) is not needed.**
+
+| Claim | Proof | Result |
+|---|---|---|
+| [L4-1] two renderers make identical commits | two checkouts, one with hostile config and `TZ=Asia/Kolkata`, build from one tip | **passes:** identical, byte for byte (4 commits) |
+| [L4-2] a lost push leaves nothing to discard | a push rejected by another lane's handoff | **passes:** HEAD, the symbolic HEAD, the index file, the work tree and `status` byte-identical; the renderer refetched, rebuilt and pushed; S3's rows read unpushed 0, staged 0, dirty 0; the lane's handoff then fast-forwarded and pushed |
+| [L4-3] a rerun mark coalesces a burst, the last write included | forks in bursts against passes of fixed length | **passes, qualified:** "at most two renders" holds for a burst that arrives within one pass; a slower stream gives one render per pass, never one per write |
+| [L4-4] a renderer killed between commit and push blocks nothing | SIGKILL after `commit-tree` | **passes with `flock`; fails with `mkdir`** |
+| [L4-5] each way out leaves a full render | a hand edit and a forged trailer, then each way out | **passes:** each render set's tree id equals a full render of the journal head |
+
+**Lost races.** The lost commit is referenced by nothing and has no reflog entry. Two renderers pushing the same sha one after the other: the second push is a no-op (`=`). At the same moment: one gets `[remote rejected] (failed to update ref)`, refetches, and finds nothing to push. Neither leaves anything to discard; the frame's "a second push of the same sha is a no-op" (`design.md:1907–1908`) holds only for the first case.
+
+**Bursts.** 10 forks in 0.71 s against a 1 s pass gave 1 push and 2 passes. 10 forks in 0.70 s against a pass of about 0.1 s gave 5 renders; 20 forks in 1.48 s against a 0.3 s pass gave 3. In every run one process held the lock, every other fork exited at once (9 of 10, 19 of 20), the last write was on origin, and no mark was left. Grouping does not change the commits: seq 11 was `313df17` in one push or in five. With the holder's post-release look switched off, the journal head was 3, `origin/main` at seq 2, and a mark was left.
+
+**Killed between commit and push.** With `flock`: the lane checkout was unchanged, S3's rows empty; the next write's render took the lock and pushed seqs 2..4; the lane's handoff pushed and read back; the killed renderer's unreferenced seq-3 commit (`47fe5c73d840`) was rebuilt with the same sha and is now on origin. With `mkdir`, after the same kill: the next fork left its mark and exited, and the mirror stayed at seq 1 with the journal head at 4. A kill inside `read-tree` left `lanes-render.index.lock` ("File exists"), which the pass now clears under the lock.
+
+**Divergence and the two ways out.** A hand edit of `lanes/LANES.md` or `lanes/aliases.tsv` stopped the renderer with `diverged at <sha>` recorded and nothing pushed; a stray carrying a forged `Register-Seq: 3` was caught too, since the render set at `m` did not match the images at `m`. `import --single` worked, and refused an edit that no longer applied ("patch does not apply"), after which `render --revert` cleared the divergence. One cost of the import: writes landed between the stray and the import are rendered over the stray before the import's own seq, so seq 4's commit (`LOG(...): c`) flips the stray's `PARKED` line back and seq 5 restores it. The end state is right, but that line's history toggles; the revert, or importing before the next write lands, avoids it.
+
+**F29: `commit-tree`'s determinism.** Each input that could change the sha, its pin, and what removing that pin alone did in checkout B:
+
+| Input | Pin | Pin removed alone |
+|---|---|---|
+| Blob bytes: clean filters, `core.autocrlf`, `.gitattributes` | `hash-object --no-filters --stdin`, `-c core.autocrlf=false` | sha differs |
+| Replace refs and grafts (which also move `m`) | `GIT_NO_REPLACE_OBJECTS=1` | sha differs |
+| Author and committer name and email | `GIT_AUTHOR_*`, `GIT_COMMITTER_*` from the journal | sha differs |
+| Dates and time zone | `@<epoch> +0000`, `TZ=UTC` | sha differs (`+0530`) |
+| The `encoding` header | `-c i18n.commitEncoding=UTF-8` | sha differs (`encoding ISO-8859-1`) |
+| Signature | `--no-gpg-sign`, `-c commit.gpgSign=false` | **same sha:** 2.43's `commit-tree` ignores `commit.gpgSign`; only `-S` signs (probed: 0 `gpgsig` headers, and 1 with `-S`) |
+| The trailer's place (`trailer.*` config) | `interpret-trailers` run outside any repository, system and global config off, `where`, `ifexists`, `ifmissing` and `separators` given | sha differs (`trailer.where=start`) |
+| Inherited environment (`GIT_DIR`, `GIT_INDEX_FILE`, `GIT_CONFIG_PARAMETERS`/`COUNT`, `GIT_REPLACE_REF_BASE`, …) | all removed | not probed |
+| Mode and path bytes | always `100644`; NUL-separated paths; `-c core.precomposeUnicode=false` | macOS only, not probed |
+| Object format | every lane checkout clones the one origin | not probed |
+| Message bytes | `-F -` (no cleanup) | — |
+| Parent | `origin/main`'s tip as fetched | different tips are [L4-2]'s case |
+
+One input remains, the git version: how `interpret-trailers` parses a message has changed between releases, and its `trailer.*` configuration moves the trailer (`trailer.where=start`, above). So `lanes-index` composes the message itself and never runs `interpret-trailers`; then no host's git version or configuration is an input. D15 at `21f0191c` still says "as `git interpret-trailers` places it" (`design.md:428–430`).
+
+**The final-trailer mechanics** (D15, `design.md:428–432`; lane 3's ask, `:3564–3566`). The render commit's message is the journal entry's message byte for byte, with `Register-Seq: <k>` in its last paragraph:
+- where the message has a body whose last paragraph is already a trailer block, every line `Token: value` with a token of letters, digits and `-`, the trailer is appended as that paragraph's last line;
+- otherwise (a subject alone, or a body ending in prose), one blank line and `Register-Seq: <k>` start a new last paragraph. A subject alone never counts as trailers, since git reads the first paragraph as the title;
+- the message goes to `commit-tree -F -` with no cleanup, so every renderer commits the bytes `lanes-index` composed ([L4-1]);
+- that last paragraph is the only place `%(trailers:key=Register-Seq,valueonly)` reads, so form C finds it, for the guard and for the renderer's own lookup of `m` (lane 2, 6579627366). The operator entries' commits follow the same rule;
+- a test renders three messages (a subject alone, a body ending in a trailer block, a body ending in prose) and asserts that form C reads `<k>` from each and that two checkouts give one sha. The git rules above are read, not probed; the test proves them.
+
+D15's "(it honours `commit.gpgSign`)" (`design.md:427`) is false for 2.43; `--no-gpg-sign` stays, since it overrides `-S` and costs nothing.
+
+### The routed items, answered
+
+Every item in "What lane 4's phase plan must confirm for S1" (`design.md:1823–1841`), "What lane 4's prototype must confirm" (`:1975–1982`) and lane 4's routed part (`:3544–3567`), with lane 3's asks of 6708646285. An item listed in two places has one row.
+
+| # | Item | Listed at | Answered in | Answer |
+|---|---|---|---|---|
+| 1 | [L4-a]: each verb runs unchanged on a scratch tree | `:1825` | Phase 2, "Each write verb on a scratch tree" | All but `rename-lane`, whose handoff half becomes its after-COMMIT tail; `commit` is refused |
+| 2 | [L4-a], F21: a verb that reaches the seam twice | `:1825–1828`, `:3544–3545` | Phase 2, the same | None can on primary; one run, one entry, and a second reach exits 2 |
+| 3 | [L4-a′], F22: the internal flag | `:1829–1830`, `:3545` | Phase 2, "The internal flag" | `LANES_REGISTER_SCRATCH=<attempt dir>`, checked and unexported; it also skips the mode query and D17's reads |
+| 4 | [L4-a′], F14: output buffering and the arms with side effects | `:1830–1831`, `:3546–3547` | Phase 2, "Output, and the side effects" | Two buffers, the deciding attempt's replayed; every side effect sits after the seam, which the child reaches once, after COMMIT |
+| 5 | [L4-a′], F5: the acts and their expectations (D5) | `:1831`, `:3548` | "The acts and their expectations" | `act-begin` and six scopes, per act; every act can carry one under three conditions; lane 4 accepts D5, with one composite verb, `start-record`, for `lane-start` |
+| 6 | [L4-a′], F8: every failure of the mode query, and Q6(c)'s code | `:1831–1832`, `:3547–3548` | Phase 1, "D3's refusal"; the acts, "The mode query's failures" | 78, lane 4's pick, folded in D3; every other failure runs files mode with a warning |
+| 7 | [L4-a′], F10: the pending record's format and age | `:1833`, `:3550` | Phase 2, "The pending record" | The format, 15 minutes, and a digest over lane, session, verb and arguments, stored as `journal.args_sha256` |
+| 8 | [L4-a′], F9: the callers that read 3 as "written" | `:1833–1834`, `:3549` | The acts, "The callers that read exit 3" | Five places, listed with their lines |
+| 9 | [L4-b]: the five acts that change several files | `:1835–1837` | Phase 2, "The change set" | All five are given by `--raw` plus the images |
+| 10 | The files the snapshot returns, `repos.tsv` and `log/README.md` included | `:3545–3546` | Phase 2, "The scratch tree" | The render set from SQL; those two from the lane checkout's `origin/main`, with blob ids recorded; never `STORE` or handoffs |
+| 11 | [L4-c]: the cost of one attempt | `:1838–1841` | "The cost of one attempt" | About 0.55 s, about 611 ms with lane 2's `psql` figure; the frame's figures hold; the pipe pair is deferred to phase 2 |
+| 12 | F3: the in-doubt rule at the deadline | `:3549–3550` | Phase 2, "The in-doubt rule" | Lane 1's `find_write`, plus `not_after` for an orphan not yet at the lock |
+| 13 | F15: the renderer's progress bound | `:3550–3551` | Phase 3, "F15" | Bounded acts; 64 seqs and six pushes a pass; progress or a late mark to go on; 16 passes, then one handover; a known gap |
+| 14 | F2: the stop at an operator seq | `:3551` | Phase 3, "F2" | `t = min(h, m + 64, o − 1)` by `journal.operator`; shown on the prototype |
+| 15 | F16: where a hand edit is found | `:3551–3552` | Phase 3, "F16" | Seven places, each with its finder and phase |
+| 16 | F17: the marker check for readers | `:3552` | Phase 1, "F17" | One function on the read ref, after any fetch, in the main shell; outcome by class |
+| 17 | [L4-1]: identical commits | `:1977`, `:3552` | The prototype | Passes |
+| 18 | [L4-2]: a lost push leaves nothing to discard | `:1978`, `:3552` | The prototype | Passes |
+| 19 | [L4-3]: a burst coalesces, the last write included | `:1978–1979`, `:3552` | The prototype | Passes, qualified: two renders only for a burst within one pass |
+| 20 | [L4-4]: a killed renderer blocks nothing | `:1980`, `:3552` | The prototype; phase 3, "The render lock" | Passes with `flock`; fails with `mkdir` |
+| 21 | [L4-5]: each way out leaves a full render | `:1981`, `:3552` | The prototype | Passes |
+| 22 | F29: `commit-tree`'s determinism | `:3552–3553` | The prototype, "F29" | Every input pinned; the git version remains unless `lanes-index` composes the message |
+| 23 | The push URL the deploy key needs | `:3553–3554` | Phase 3, "The push URL" | An explicit SSH URL from `origin`'s, in an isolated environment; the read-back fetches; not probed |
+| 24 | Question 10: `$SE_CACHE_FILE.log.<lane>` | `:3554–3555`, `:3291–3292` | Phase 1, "Question 10" | Phase 1, written only on primary, with a `.logpath.<lane>` sidecar and one flush helper |
+| 25 | Question 13: the image cache's second writer | `:3555–3557`, `:3298–3300` | Phase 1, "Question 13" | Yes: content-addressed objects and a forward-only head under a flock make any writer safe |
+| 26 | Question 11: `code/lanes-index:1315` | `:3557–3559`, `:3293–3296` | Phase 1, "Question 11" | The URL moves to `PG*` variables in `_env`; every connection, the admin's too, goes through the environment; phase 1's first PR |
+| 27 | `find_write` in the in-doubt lookup | `:3559–3560` | Phase 2, "The in-doubt rule"; "Answer 2's detached bind", reruns | Yes, after the wait past `not_after`: found 0, absent with the lock granted 75, otherwise 3 |
+| 28 | The generation in the printed rerun | `:3560` | Phase 2, "The pending record" | `LANES_WRITE_GENERATION=<generation>` beside `LANES_WRITE_ID`; `commit_write` refuses another generation with LR007 |
+| 29 | How the detached bind runs, and what the guard answers meanwhile | `:3560–3562`; 6579459518 | "Answer 2's detached bind" | `guard-bind` in a `setsid` child with the hook's descriptors closed, recorded in the offer file and bounded at 180 s; the guard answers 2 from an eleven-case table, "BINDING IN PROGRESS" while it runs |
+| 30 | `lane-start`'s bind as one verb, one transaction carrying F5's expectations, or the reason it cannot | `:3562–3564`; 6579459518 | "Answer 2's detached bind", "The bind as one verb" | `start-record`, one transaction with the union of W2, W6 and W7; the stamp, the sidecar and the lane left stay outside, each for a stated reason |
+| 31 | The final-trailer mechanics | `:3564–3566` | The prototype, "F29" | `lanes-index` composes the message: `Register-Seq: <k>` appended to a final trailer block, or as a new last paragraph; no `interpret-trailers` |
+| 32 | The `flock`'s proof | `:3566–3567` | Phase 3, "The render lock"; the prototype, [L4-4] | After a SIGKILL, `flock` let the next render push seqs 2..4; the `mkdir` mutex left the mirror at seq 1 with the head at 4 |
+| 33 | The renderer's own lookup of `m`, and its bound | 6708646285 | Phase 3, "A pass" | Form C paged with `--skip`, bounded by `LANES_GIT_TIMEOUT`; out of time or no trailer, it pushes nothing and records why |
+| 34 | That the detached child outlives the hook | 6708646285; the facts row, `:3204` | "Answer 2's detached bind", "It survives the hook" | Shown on Claude Code 2.1.319: the `setsid` child outlives a hook timed out by a group SIGTERM and one that exits; only a SIGKILL escalation is not shown |
+
+### Differences from the frame, and decisions for lane 3 or Brett
+
+**Already folded by lane 3 at `21f0191c`,** each checked against the new frame:
+- Q6(c)'s code 78, `EX_CONFIG` (6579562840): D3 (`design.md:317–319`) and [L4-a′] (`:1831–1832`).
+- The render lock as an `fcntl.flock` in `SyncLock`'s form (6579562840): D14 (`:414–422`) and S2 (`:1877–1883`).
+- Answer 2 detached, with "binding in progress" (ruling 16): SVC-8 (`:2989–3017`), the timeouts row (`:2387`), the interfaces bullet (`:2441–2445`) and ruling 16's entry (`:3307–3312`). The in-hook form, with its hook pid and end line, is gone.
+- Five writer calls for answer 2 at the pin: SVC-8 (`:2993–2997`) and the interfaces bullet (`:2441–2443`).
+- Form C for the guard's `Register-Seq` lookup: SVC-12's condition 3 (`:3116–3127`).
+- `Register-Seq` in the render commit's final trailer block: D15 (`:428–432`) and S2's pass (`:1892–1893`).
+
+Every row below waits on the decision it names.
+
+| # | Difference | Reason | Decision |
+|---|---|---|---|
+| 1 | S2 states the handshake's second half, the holder's look after it releases (`:1909–1915`) | without it a write that commits before the release is stranded, shown | lane 3 |
+| 2 | The push goes to an explicit SSH URL in an isolated environment, not `git push origin` (`:1901`) | a deploy key is SSH-only; `insteadOf` and agent keys could defeat it | lane 3; facts for Brett: `GIT_CONFIG_GLOBAL` needs git 2.32 or later in every environment; whether `ready` can prove the key's write right (`git push --dry-run` over SSH) |
+| 3 | F15 adds a 64-seq batch and a 16-pass lifetime cap with one handover re-fork; no `SyncLock`-style re-mark cap | an absolute bound per process without stranding the last write; the values are unmeasured | lane 3: the two values, and whether to accept the gap after six lost races |
+| 4 | [L4-3]'s "at most two renders" holds only for a burst within one pass; "a second push is a no-op" only one after the other; "up to six times" is six attempts in all; the private index's stale `.lock` is cleared under the lock | the prototype | lane 3 |
+| 5 | D15's "(it honours `commit.gpgSign`)" (`:427`) is false for git 2.43 | the probe | lane 3 |
+| 6 | `lanes-index` composes the render commit's message, not `interpret-trailers` as D15 still says (`:428–430`); the mechanics are in "F29" | the git version and `trailer.*` configuration are otherwise inputs to the sha | lane 3 and lane 1 |
+| 7 | The import way out toggles a line's history; the revert does not | the prototype | lane 3: keep, or prefer the revert |
+| 8 | Agreement test 3's unit form ships in phase 2; the frame puts the test in phase 3 | a phase must land tested (`:106–108`) | lane 3 |
+| 9 | `cutover` and `rollback`'s transactions are phase-1 code, runnable only on a scratch schema; their pushes are phase 3 | they run through no write seam | lane 3 |
+| 10 | Phase 3 is `lanes-index` and `tests/` only; phase 2 ships the fork and `<c>`, which the frame puts in phase 3 (`:1875`) | phase 3 then waits on nothing in `lanes-edit.sh` | lane 3 |
+| 11 | The readers' path generalises SVC-8's prefetch to every reader; the mode folds into it; a `.logpath.<lane>` sidecar; `LANES_READ_MIRROR=1` lowers `window-lane` and `swapped` to a mirror read for their callers | reads in `$( )` lose variables; one snapshot per verb | lane 3 |
+| 12 | The verb runs as a child process that suspends at the seam, not a subshell that returns (`:568`, `:1705`, `:1715–1717`) | run-once tails; file-scope setup; a fresh read family per attempt | lane 3 |
+| 13 | The flag also skips the mode query and D17's reads (`:1710–1712` names the resolver and S3) | recursion; one snapshot per verb | lane 3 |
+| 14 | The seam refuses paths outside Q18(A)'s render set; an empty change set exits 0 with no commit call and no head check, as `code/lanes-edit.sh:15223`'s no-op does today | enforces Q18(A) in code | lane 3 |
+| 15 | F3 keeps `not_after` beside lane 1's `find_write` | the lock cannot see an orphan not yet at `commit_write`'s step 1 | lane 3; an ask of lane 1 (the check inside `commit_write`) |
+| 16 | The pending record: a 15-minute age; a digest over `LANES_LANE`, `LANES_SESSION`, the verb and the arguments; the printed rerun carries `LANES_WRITE_GENERATION` | `LANES_SESSION` is written into the line; lane 1's v2 refuses a foreign generation | lane 3; the variable's name is new |
+| 17 | `gh_reads` is cached across attempts | three GitHub calls per attempt spend the shared quota | lane 3 |
+| 18 | `rename-lane`'s handoff move and stamp become its after-COMMIT tail, its stamp checks before the seam | the scratch tree has no handoff file | lane 3; beside Q13, for Brett: Amendment 16's "one commit, refused or whole" becomes a transaction plus a git commit |
+| 19 | One run, one journal entry; a second reach exits 2 | D5 and S2; no invented message, no partial state | lane 3 |
+| 20 | Expectations are scopes with a base seq and an act id (`act-begin`, `LANES_ACT`, `LANES_EXPECT`), not `--expect-row <lane> <digest>` (`:345–347`) | an act's own writes change a digest; a digest of an answer copies verb logic into SQL | lane 3; asks of lane 1: an `act_id` column and each entry's touched keys, which lane 1's v2 lacks |
+| 21 | Lane 4 accepts D5 and withdraws R2's per-act transaction, with one composite verb for `lane-start` (row 30) | the partial `PAUSED` record, `lane-start`'s non-fatal stamp, the Goals | lane 3 records it; D5's row stays Brett's |
+| 22 | Every act carries its expectations only under three conditions (`lane-start` re-reads at `code/lane-start:2614`; the skill's step 4 re-derives the identity; `lane-end`'s gate inherits `LANES_ACT`) | each refused condition narrows S3 | Brett, beside D5's row |
+| 23 | Two arms the frame does not list: `lane-start:1332` and `:2184`; and corrected cites, `lane-start:1551` and `:1591` for the reads, `lane-end:930–938` for the arms | the code at `2a057a6d` | lane 3 |
+| 24 | A rerun that finds its id committed must replay the write's after-COMMIT side effects | otherwise `rename-lane`'s `lane_state_rename` never runs | lane 3; open |
+| 25 | `LANES_INDEX=off` must never skip the mode query or the renderer fork | `lane-worktrees` sets it on every `lanes-edit.sh` call, in `Helper.call` (`code/lane-worktrees:498`) | lane 3 |
+| 26 | The frame counts Python starts per attempt; there is also one per write for the mode query and one renderer start after COMMIT | [L4-c] | lane 3 |
+| 27 | The pipe pair is not adopted in phase 1, but decided at phase 2 from tests 9 and 4; a cached module or lazy imports first | no frame figure is exceeded | lane 3 (install layout); Brett or lane 3: whether a `psql` connection may be kept between the two calls under (A″), 13.7 ms an attempt |
+| 28 | The scratch tree is built from images and never hardlinks a work-tree file | `register_rewrite` writes in place (`code/lanes-edit.sh:1662`, `:1666`) | lane 3 |
+| 29 | The bind's three register writes become one verb; the fourth of the frame's four, the Rule 3 stamp, stays a git commit outside the transaction, so answer 2 is three writer calls, not five (`:2993–2997`, `:3005–3008`) | Amendment 23 keeps the stamp a git commit everywhere; Q18(A) | lane 3 |
+| 30 | D5 gains one composite verb, `start-record`, for `lane-start` only; every other act stays one transaction per verb | lane 3's direction (6579459518) | lane 3; the name `start-record` and its message are lane 4's |
+| 31 | The detached bind's record is the existing offer file in new modes, not a new state file | it is keyed by the transcript and the guard already reads it | lane 3 |
+| 32 | The facts row (`:3204`) narrows to "an escalation to SIGKILL is not shown": Claude Code 2.1.319 SIGTERMs the hook's whole process group at the timeout, kills nothing on a normal exit and does not wait on inherited pipes, and a `setsid` child outlives both | the hook probe (`runs-165/HOOKPROBE-report.md`, R1, R1b, R2, R3); PP-D's P1 to P4 | a fact for lane 3 to fold |
+| 33 | Today's `index_nudge` form, `( … & )`, dies under a group kill, Claude Code's own timeout included | PP-D's P1, P2; the hook probe's R1, R1b | lane 3 |
+| 34 | A finding in today's code: answer 2 runs `lane-start --no-launch --bind`, about 10.47 s in files mode (6579356984), inside the hook's 5 s; at 5 s Claude Code SIGTERMs the hook's whole group, so the bind and its `( … & )` children, such as `index_nudge`'s, die part way through, which is more than the prompt passing | the hook probe's R1, R1b; it is evidence for lane 2's inference | **a lane-tools finding for lane 3**; the phase-1 detached form is the fix, placed first; a transcript showing `hook_cancelled` stays lane 3's check |
+| 35 | A finding in today's code: after a failed bind, "answer `2` again" cannot be taken, because `code/lanes-edit.sh:11155` renames before `:11171` and `:11108` then drops the offer | the code at `2a057a6d` | **a lane-tools finding for lane 3**; the rename back fixes it |
+| 36 | "MOVED" is shown once, consuming one prompt, rather than a silent pass that needs the record's end before `T0` and a fresh read; at most 3 binds per offer | a failed bind spends the person's yes | lane 3 |
+| 37 | The bind's bound is 180 s, with `LANES_GIT_TIMEOUT=45` in the child | arithmetic, not measured | lane 3 |
+| 38 | Whether `--leave <from>` joins `start-record`, making answer 2 one transaction | not proposed: each verb keeps its expectations to one lane | lane 3 |
+| 39 | The detached bind in phase 1, as its first guard PR and the lane-tools fix (row 34) | it touches no write seam; today's bind is cut down by the hook's timeout | lane 3 |
+| 40 | macOS without `setsid`: python3's `os.setsid`, else `nohup` alone, which does not survive a group kill | `setsid` is not on macOS | Brett |
+
+### Not established
+
+- **Slices 1a, 1b, 2a and 2b were not read:** no network. Phase 2's mapping onto `commit_publish` and S3's step-4 site follows Amendment 23's text, not code.
+- **No PostgreSQL was run by lane 4.** `not_after` checked before COMMIT and `find_write`'s interplay with an orphan are reasoned, not probed. No `psql` start was measured; [L4-c] uses R1's 14.7 ms, against lane 2's later 52.5 ms per SERIALIZABLE write over a Unix socket (6579356984), which [L4-c] adds as one line, about 611 ms.
+- **The renderer was not run against the real `lanes-index`,** a real database (`state.json` stood in for D16), concurrent journal appends, more than two racing renderers, a kill during a push, or `gc --auto` after a fetch. The forged-trailer case with a seq beyond the head was not probed; the render-set comparison ignored file modes. The batch and lifetime cap of F15 were not in the prototype.
+- **The push URL, the deploy key and `insteadOf`** are from knowledge, not probed. `plan_hook_merge`'s handling of a changed `timeout` was not checked, only the `conflict` arm.
+- **Answer 2's detached bind** (PP-D and the hook probe): an escalation to SIGKILL after Claude Code's SIGTERM (it cannot reach a `setsid` child, but was not run); tmux's resolution through `TMUX_PANE` from a child with no tty (AT-F6 item 12); macOS, bash 3.2 and the python3 fallback; whether today's transcripts show `hook_cancelled` (lane 3's check); whether `lane-start:3869`'s restored append runs under `--bind` (the repeatable `--append-cell` covers it); no figure for the bind after `start-record`; the 180 s bound and the 7 ms check, neither measured on primary.
+- **Other platforms:** only git 2.43.0, Python 3.12, bash 5.2 on Linux ext4. Not macOS, bash 3.2 (`exec 5<>fifo`, `read -t`), Python 3.9, sha256 repositories, or `flock` on drvfs, 9p or NFS.
+- **Not read in full:** `proposal.md`, `clarifications.md`, `council-review.md`, the specs, SVC-4, SVC-6, SVC-9 to SVC-11 and lane 5's facts table; `lane` past `:1296`.
+- **Not checked:** the tests' assertions on exit 3; `request-handoff`'s own re-read of the binding apart from `--force` (`:17188`); whether `retire-rows` re-proves dormancy (R2C's claim); whether `lane-start`'s inner write arguments are deterministic across a rerun; the real register's log sizes and the size of the new `register` code ([L4-c] assumed 38 logs and 120 commits); a verb run under the flag; ten attempts at once on one host (test 4's job); the teardown of non-worktree scratch trees.
+- **Relayed, not re-printed by lane 4:** `lane-start:1262`, `:1271`, `:3079`, `:3430`; `lane-end:921–945`; `lane-worktrees:508–524`; `lanes-edit.sh:7428–7429`, `:8104–8109`, from R2B, R2V1 and R2V2.
 
 ## The test plan — **PLACEHOLDER: lane openRepoTools-2's section**
 
@@ -3430,12 +4503,16 @@ The runbook is `operations.md`, summarised below. In order:
    roles; `register snapshot`, `commit`, `read` and `journal` against the
    fixture; `import --at` with its proof; `status` and `reconcile`; the
    renderer's pure function and the image cache; the readers' SQL path; the
-   operator tools. `lanes-index` refuses `mode=primary` throughout. The service
+   operator tools; and the guard's detached answer 2, as phase 1's first guard
+   PR, which fixes "Known defects in today's code" in every mode.
+   `lanes-index` refuses `mode=primary` throughout. The service
    and its read API sit off the seams too, but are 007's last slice (Q29(a)),
    after phase 3.
 2. **Phase 2, after slices 1a and 1b land in the code leg:** the attempt loop at
-   the commit seam, the refusals of direct writes, S6's checks, and the marker
-   check after S3's fetch and in the publish act.
+   the commit seam, the refusals of direct writes, S6's checks, the marker
+   check after S3's fetch and in the publish act, and `start-record`,
+   `lane-start`'s bind as one write (D5). The phase plan gives each phase's
+   files, functions and call sites.
 3. **Phase 3:** the renderer's git half, rollback's push, and agreement tests 3,
    5 and 6; then the constant that lifts Q6(c)'s refusal.
 4. **The service,** 007's last slice (Q29(a)), with the guard as its client.
@@ -3502,8 +4579,10 @@ Q29. "(A″) with 69" under Q7 also decides D7's number.
 until Brett confirms "1A 2A 3A 4A" by typing.
 
 **Not yet routed to Brett:** the items so marked under "Differences from
-Amendments 22 and 23, for Brett": D5's per-verb transactions and the S3
-narrowing of any act that cannot carry its expectations; D18 as a reading of
+Amendments 22 and 23, for Brett": D5's per-verb transactions, with
+`start-record` as its one composite verb, and D5's three conditions, each of
+which, refused, narrows S3; `rename-lane`'s after-COMMIT tail against
+Amendment 16's one commit, beside Q13; macOS without `setsid`; D18 as a reading of
 S6, beside Q17; D1's schema of its own; D25's `lanes-index cutover`; and a
 release for a stale `LANDING`, for which the recommendation is a
 `LANDING EXPIRED` line naming the holder, which any lane may write after Rule
@@ -3518,18 +4597,22 @@ ruleset with a deploy-key bypass, and whether it can name the render set
 exactly (Q21(b), D23); whether Eagle and Raven install by pipx or `./setup.sh`,
 and whether v1.2.0 carries #165 alone (Q24).
 
-**Deferrable within the design:** the image cache's form and the per-call
-process cost ([L4-c]), which change no spec; the writers' and readers' timeout
-values other than the guard's, which the test plan confirms.
+**Deferrable within the design:** the per-call process cost, which changes no
+spec: [L4-c] puts an attempt at about 0.55 to 0.61 s, inside every frame
+figure, and lane 4 recommends deciding the pipe pair at phase 2 from tests 9
+and 4 (the image cache's form is the phase plan's question 13); the writers'
+and readers' timeout values other than the guard's, which the test plan
+confirms.
 
 ### Routed to the section writers by the frame review
 
 Lane 3's independent review of this frame (`REVIEW-frame-20261102.md`, sha256
 `0689dde8…`, against `c7253108`) left these points for the sections that fold
-in later. Lane 5's section and lane 1's (the schema above, and
-`operations.md`) are folded; they settle their own points, and route the
-ones below marked with lane 5's question numbers or "from lane 1's v2".
-The placeholders for lanes 2 and 4 are left as they were.
+in later. Lane 5's section, lane 1's (the schema above, and
+`operations.md`) and lane 4's phase plan are folded; they settle their own
+points, and route the ones below marked with lane 5's question numbers,
+"from lane 1's v2" or "from the phase plan". The placeholder for lane 2 is
+left as it was.
 
 - **Lane 1, the schema and the operations:** its section v2, folded above and
   in `operations.md`, takes up the points this list routed to it (the
@@ -3541,30 +4624,53 @@ The placeholders for lanes 2 and 4 are left as they were.
   canonical repository key held with its spellings, as `spellings` is for
   D19, for D18's comparison, where v2 has `repo_key` alone (its
   `repo_spellings`); and the stale-`LANDING` release, if Brett takes it (F13).
-- **Lane 4, the phase plan:** the rule for a verb that reaches the commit seam
-  twice (F21); the internal flag for the scratch tree (F22); the files the
-  snapshot returns, `repos.tsv` and `log/README.md` included; output buffering
-  and the arms with side effects (F14); every failure of the mode query and
-  Q6(c)'s own code, given as 78 (F8); the acts and their expectations (F5); the
-  callers that read exit 3 as "written" (F9); the in-doubt rule at the deadline
-  (F3); the pending record's format and age (F10); the renderer's progress bound
-  and how it stops at an operator seq (F15, F2); where a hand edit is found
-  (F16); the marker check for readers (F17); [L4-1] to [L4-5]; `commit-tree`'s
-  determinism (F29); and the push URL the deploy key needs against origin's
-  HTTPS remote. From lane 5's section: the new cache file
-  `$SE_CACHE_FILE.log.<lane>` (its question 10); whether the image cache's form
-  allows the service as a second writer, or the service keeps its images in
-  memory only (question 13, [L4-c]); and `code/lanes-index:1315`, whose
-  connection string moves from the argument list into `psql`'s environment
-  (question 11). From lane 1's v2: the in-doubt lookup calls `find_write`
-  (§1.3.1), and the printed rerun carries the generation (D8). From lane 2's
-  measurements: how answer 2's detached bind runs, and what the guard answers
-  while it is in progress (SVC-8); and `lane-start`'s bind making its four
-  writes as one verb, one transaction carrying F5's expectations, or the reason
-  it cannot. From the follow-ups of 11-02: the mechanics of writing
-  `Register-Seq: <n>` in each render commit's final trailer block (D15), which
-  SVC-12's bounded lookup reads; and the renderer's `fcntl.flock` (D14), whose
-  proof its section carries.
+  From the phase plan: an `act_id` column and each entry's touched keys,
+  computed at commit by the parsers `lanes-index` already has, which F5's
+  expectations need and v2 lacks (D5; lane 4's row 20); that the operator
+  entries' commits put `Register-Seq` in the message by D15's rule (lane 4's
+  row 6); and, open for lane 3's word, `commit_write` raising unless
+  `clock_timestamp() < not_after` just before it returns (lane 4's row 15).
+- **Lane 4, the phase plan: answered.** Its section, folded above, answers
+  each item this list routed to it, in its "The routed items, answered" (34
+  rows), and lane 3 accepted it (#165 6708889286). Each item, answered: the
+  rule for a verb that reaches the commit seam twice (F21), one run and one
+  journal entry; the internal flag for the scratch tree (F22),
+  `LANES_REGISTER_SCRATCH`; the files the snapshot returns, `repos.tsv` and
+  `log/README.md` included; output buffering and the arms with side effects
+  (F14); every failure of the mode query and Q6(c)'s own code, 78 (F8); the
+  acts and their expectations (F5), `act-begin` and six scopes; the callers
+  that read exit 3 as "written" (F9); the in-doubt rule at the deadline (F3),
+  `find_write` with `not_after`; the pending record's format and age (F10); the
+  renderer's progress bound and how it stops at an operator seq (F15, F2);
+  where a hand edit is found (F16); the marker check for readers (F17); [L4-1]
+  to [L4-5], each passing with the `flock`; `commit-tree`'s determinism (F29);
+  and the push URL the deploy key needs against origin's HTTPS remote, an
+  explicit SSH URL. From lane 5's section, answered: the new cache file
+  `$SE_CACHE_FILE.log.<lane>` (its question 10), with a `.logpath.<lane>`
+  sidecar; the image cache's form, which any writer may fill, the service
+  included (question 13, [L4-c]); and `code/lanes-index:1315`, whose connection
+  string moves from the argument list into `psql`'s environment (question 11).
+  From lane 1's v2, answered: the in-doubt lookup calls `find_write` (§1.3.1),
+  and the printed rerun carries the generation (D8). From lane 2's
+  measurements, answered: how answer 2's detached bind runs, and what the guard
+  answers while it is in progress (SVC-8); and `lane-start`'s bind as one verb,
+  `start-record`, one transaction carrying the union of F5's expectations for
+  its three register writes, with the stamp outside it. From the follow-ups of
+  11-02, answered: the mechanics of writing `Register-Seq: <n>` in each render
+  commit's final trailer block (D15), which SVC-12's bounded lookup reads; and
+  the proof of the renderer's `fcntl.flock` (D14). From lane 3's asks of
+  6708646285, answered: the renderer's own lookup of `m`, by form C, paged and
+  bounded in time; and that the detached child outlives the hook, shown on
+  Claude Code 2.1.319. **Open after the fold, for lane 4 and lane 3:**
+  `start-record`'s exit table has `lane-start` die on 69 and 75, where round
+  1's 2A, as S3's table and `specs/sql-register/spec.md`'s requirement on
+  `lane-start` carry it, prints a note and lets the launch go on when the
+  bind's writes are refused with the database down, and lane 4's own table of
+  the callers' default arms keeps that note; the frame keeps 2A until lane 3
+  rules. And `start-record` in files mode, which lane 4 plans for phase 2,
+  changes files mode beyond the marker check, against the Non-Goals and
+  `specs/sql-register/spec.md`'s "Nothing changes where the marker is absent";
+  the deltas carry `start-record` on `mode=primary` until lane 3 rules.
 - **Lane 2, the test plan:** a test for each MUST as folded (a write in doubt at
   the deadline; a diverged rollback, and a failed seq-1 push; the ruleset, then
   a files-mode write after the rollback; a declared outage with the service and
@@ -3582,6 +4688,12 @@ The placeholders for lanes 2 and 4 are left as they were.
   abort of a restore-form cutover (D24). From the follow-ups of 11-02:
   AT-F7 and AT-F11 test the bounded `Register-Seq` lookup, including no
   trailer within 200, which refuses 2 (#165 6579627366); and AT-F8 takes 78.
+  From the phase plan: AT-F6's fourteen cases for the detached bind and
+  `start-record` ("Answer 2's detached bind"); what test 9 records per attempt
+  ([L4-c]); tests 5 and 6 as the agreement form of [L4-1], [L4-2], [L4-4] and
+  [L4-5]; the renderer's bounded lookup of `m`, with no trailer found; and a
+  test for each name the phase plan adds, marked new and unproven at the head
+  of the phase plan.
 - **Lane 5, the service:** from lane 1's v2, confirm the libpq service form
   (`bootstrap --admin-service`, `operations.md` §2.4) against SVC-2's
   mapping, and that the declared outage's mirror read fits SVC-8's budget
