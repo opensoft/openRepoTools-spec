@@ -159,10 +159,10 @@ On `mode=primary`, before an outage is declared and outside one, the guard SHALL
 - **THEN** it runs with no lane session and no guard
 
 ### Requirement: A declared outage lets the guard answer from the mirror
-During an outage Brett Heap declares on his word, when he knows that no workstation can still write, and until the expiry he names when he declares it, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. The declaration SHALL record the mirror's `Register-Seq` when it is declared. The guard's client, and never the service, SHALL check three conditions in this order, offline, and the guard SHALL answer from the mirror only when all three hold: its database read failed; a declaration is present, unexpired, and names this workstation's database; and the mirror it reads carries a `Register-Seq` at least as high as the declaration records. Where its database read failed and either other condition fails, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
+During an outage Brett Heap declares on his word, when he knows that no workstation can still write, or that a rollback's start declares on his act, and until the expiry he names or the rollback's end, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. The declaration SHALL record the mirror's `Register-Seq` when it is declared. A rollback's start SHALL write the declaration, marked as from a rollback, wherever its configuration directory is writable. The guard's client, and never the service, SHALL check three conditions in this order, offline, and the guard SHALL answer from the mirror only when all three hold: its database read failed, or found the switch at `files`, as at a rollback's start; a declaration is present, unexpired, and names this workstation's database; and the mirror it reads carries a `Register-Seq` at least as high as the declaration records. Where its database read failed and either other condition fails, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
 
 > Pending Brett's Q26: written under option (a′).
-> Pending Brett's Q4(b): written under option (iii). Under (i), (ii) or (iv), a rollback's start may also declare it.
+> Pending Brett's Q4(b): written under option (iii); a rollback's start declares the outage (design D20).
 
 #### Scenario: A mirror older than the declaration
 - **WHEN** an outage is declared and the tip the guard reads carries a `Register-Seq` below the one the declaration records
@@ -191,6 +191,10 @@ During an outage Brett Heap declares on his word, when he knows that no workstat
 #### Scenario: During a declared outage
 - **WHEN** Brett has declared an outage and a prompt is submitted
 - **THEN** the guard answers from the mirror, labelled `read: mirror`, and every write and every other deciding read still refuses
+
+#### Scenario: A rollback's start
+- **WHEN** a rollback has set the switch to `files` and a prompt is submitted
+- **THEN** the guard answers from the mirror under the rollback's declaration, and every write still refuses
 
 #### Scenario: The declaration does not need the database
 - **WHEN** an outage is declared while the database is down

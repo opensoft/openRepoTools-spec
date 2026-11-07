@@ -218,7 +218,7 @@ A write that cannot get its turn in time SHALL exit "register busy" with an exit
 - **THEN** the code differs from 69 and from every other code in the exit table
 
 ### Requirement: A COMMIT whose outcome the writer cannot learn is recovered by its write id
-Each write SHALL carry a write id that is UNIQUE in the journal. After an outcome it cannot learn (the connection lost after COMMIT was sent, `psql` exit 2, or an exit 124 from an outer timer), the writer SHALL reconnect and look up its id, SHALL exit 0 if the write is there, and SHALL retry cleanly if it is not. The retry SHALL go through the UNIQUE write id with a `lock_timeout`, and not through a lookup followed by a blind write. A verb SHALL read the journal by write id and by sequence number. A retry of an in-doubt write SHALL reuse its write id, and the in-doubt report SHALL name the id; the report's exit code where the writer cannot reconnect is the design's. A write any of whose commit calls was in doubt SHALL never exit "register busy": at the deadline it SHALL make one lookup once the head row is free, within its reconnect window, and SHALL exit 0 if the write is there, "register busy" if it is absent with the head row free, and otherwise the in-doubt code with the id, keeping the record of the pending write. A reused write id whose journal entry names a different lane, verb or arguments from this run's SHALL be refused with 2.
+Each write SHALL carry a write id that is UNIQUE in the journal. After an outcome it cannot learn (the connection lost after COMMIT was sent, `psql` exit 2, or an exit 124 from an outer timer), the writer SHALL reconnect and look up its id, SHALL exit 0 if the write is there, and SHALL retry cleanly if it is not. The retry SHALL go through the UNIQUE write id with a `lock_timeout`, and not through a lookup followed by a blind write. A verb SHALL read the journal by write id and by sequence number. A retry of an in-doubt write SHALL reuse its write id, and the in-doubt report SHALL name the id; the report's exit code where the writer cannot reconnect is the design's. A write any of whose commit calls was in doubt SHALL never exit "register busy": at the deadline it SHALL make one lookup once the head row is free, within its reconnect window, and SHALL exit 0 if the write is there, "register busy" if it is absent with the head row free, and otherwise the in-doubt code with the id, keeping the record of the pending write. A reused write id whose journal entry names a different lane, verb or arguments from this run's, or that was minted against another generation of the register, SHALL be refused with 2.
 
 #### Scenario: In doubt at the deadline (agreement test 12)
 - **WHEN** a write's commit call is in doubt and its own orphaned transaction still holds the head row when the deadline passes
@@ -227,6 +227,10 @@ Each write SHALL carry a write id that is UNIQUE in the journal. After an outcom
 
 #### Scenario: A reused id for a different write
 - **WHEN** a run reuses a write id whose journal entry names a different lane, verb or arguments
+- **THEN** it is refused with 2 and nothing is written
+
+#### Scenario: A write id from another generation
+- **WHEN** a pending record or a printed rerun made against a lost database is run against its replacement
 - **THEN** it is refused with 2 and nothing is written
 
 #### Scenario: COMMIT landed, then exit 2 (agreement test 12)
@@ -291,11 +295,11 @@ The claim comment SHALL cite "register seq `<n>`", where `<n>` matches the `Regi
 - **THEN** the mirror commit with `Register-Seq: n` in `git log` is that write's commit
 
 ### Requirement: The journal records each write
-Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`) and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically. An entry whose edits touch only `lanes/STORE` SHALL be an operator entry, flagged as such in the journal. Exactly two kinds of operator entry SHALL pass the switch check, each written in its command's own transaction: the cutover's entry (seq 1, or `m+1` after a loss, where the cutover's after-loss form writes the marker's rewrite with the head re-imported at `m`, so that the next write is `m+2`), in the transaction that sets the switch to `primary`; and the rollback's last seq, in the transaction that sets the switch to `files`. No other entry SHALL be journalled while the switch is not `primary`.
+Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`) and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically. An entry whose edits touch only `lanes/STORE` SHALL be an operator entry, flagged as such in the journal. Exactly two kinds of operator entry SHALL pass the switch check, each written in its command's own transaction: the cutover's entry, at the seq after the head (seq 1 at a first cutover; `m+1` after a re-import, where the cutover's after-loss form writes the marker's rewrite so that the next write is `m+2`; or `b+1` after a restore), in the transaction that sets the switch to `primary`; and the rollback's last seq, in the transaction that sets the switch to `files`. Besides the import's baseline (seq 0, or `m` after a loss), which is journalled while the switch is `files`, no other entry SHALL be journalled while the switch is not `primary`.
 
 #### Scenario: The operator entries
 - **WHEN** a cutover and then a rollback run to their end
-- **THEN** the journal holds exactly two operator entries, the cutover's entry (seq 1, or `m+1` after a loss) and the rollback's last seq, each flagged, and nothing journalled after the switch went to `files`
+- **THEN** the journal holds exactly two operator entries, the cutover's entry (seq 1, `m+1` after a re-import or `b+1` after a restore) and the rollback's last seq, each flagged, and nothing journalled after the switch went to `files`
 
 #### Scenario: Sequence follows commit order
 - **WHEN** two writers commit in a known order
@@ -589,7 +593,7 @@ The import SHALL take origin's records only; lanes publish or archive their own 
 - **THEN** they are imported byte-for-byte, flagged, and the warning stays
 
 ### Requirement: The cutover is one guarded sequence
-The cutover SHALL run with `LANES_LANE` naming the operator lane, through that lane's checkout. In one short transaction it SHALL set the database switch to `primary` and write seq 1, the operator entry adding `lanes/STORE`. It SHALL then push that commit, with the renderer identity, as a fast-forward of origin's tip, which descends from the imported commit and whose `lanes` tree has the imported commit's id; SHALL confirm it by Amendment 23's S4 read-back; and SHALL then flip `mode=primary` on the workstations act 3 configured. It SHALL abort if `main` moved under `lanes/` since the import, in which case the import is re-run at the new tip. A push it cannot confirm SHALL take neither the success nor the abort branch until a read-back settles it. The abort SHALL set the switch back, delete seq 1 and set the head back to 0, in one transaction, and only after a read-back proves the marker absent from origin. `lanes/STORE` SHALL carry `Register-Seq` 1, and the first write after the cutover SHALL be mirrored as `Register-Seq: 2`. No operator command SHALL hold a database transaction across a git act.
+The cutover SHALL run with `LANES_LANE` naming the operator lane, through that lane's checkout. In one short transaction it SHALL set the database switch to `primary` and write the cutover's entry, the operator entry adding `lanes/STORE`, at the seq after the head: seq 1 at a first cutover, `m+1` after a re-import, or `b+1` after a restore. No write SHALL commit until the cutover's push is confirmed and recorded. It SHALL then push that commit, with the renderer identity, as a fast-forward of origin's tip, which descends from the imported commit and whose `lanes` tree has the imported commit's id; SHALL confirm it by Amendment 23's S4 read-back; and SHALL then flip `mode=primary` on the workstations act 3 configured. It SHALL abort if `main` moved under `lanes/` since the import, in which case the import is re-run at the new tip. A push it cannot confirm SHALL take neither the success nor the abort branch: the cutover SHALL exit 3, and its rerun SHALL read origin back before it acts. The abort SHALL set the switch back, delete the cutover's entry and set the head back to the import's seq, in one transaction, and only after a read-back proves the marker absent from origin; the abort of a restore's cutover SHALL leave no seq after `b` and change nothing else. `lanes/STORE` SHALL carry the cutover's entry's `Register-Seq`, and the first write after the cutover SHALL be mirrored at the next seq (`Register-Seq: 2` after a first cutover). No operator command SHALL hold a database transaction across a git act.
 
 > Pending Brett's Q18: written under option (A).
 
@@ -599,18 +603,26 @@ The cutover SHALL run with `LANES_LANE` naming the operator lane, through that l
 
 #### Scenario: The smoke test
 - **WHEN** one `NOTED` write is made after the cutover
-- **THEN** it has a SQL row, a mirror commit with `Register-Seq: 2`, reads back, and `status` shows a lag of 0
+- **THEN** it has a SQL row, a mirror commit at the seq after the cutover's entry (`Register-Seq: 2` after a first cutover), reads back, and `status` shows a lag of 0
 
 #### Scenario: `main` moved under `lanes/`
 - **WHEN** `main` has moved under `lanes/` since the import
-- **THEN** the cutover aborts, pushes no marker, leaves the switch not `primary`, and leaves no seq 1 in the journal and the head at 0
+- **THEN** the cutover aborts, pushes no marker, leaves the switch not `primary`, and leaves no cutover entry in the journal, with the head back at the import's seq
 
 #### Scenario: A push the cutover cannot confirm
 - **WHEN** the cutover's push of `lanes/STORE` cannot be confirmed by its read-back
-- **THEN** the cutover neither aborts nor flips any workstation until a read-back shows whether the marker is on origin
+- **THEN** the cutover exits 3, and neither aborts nor flips any workstation until a read-back shows whether the marker is on origin
+
+#### Scenario: A write before the cutover's push is confirmed
+- **WHEN** a write is tried after the cutover's entry is written and before its push is confirmed and recorded
+- **THEN** it is refused with 69 and nothing is written
+
+#### Scenario: An abort after a restore
+- **WHEN** a restore's after-loss cutover, at `b+1`, aborts
+- **THEN** the journal holds no seq after `b`, and the switch and `lanes/STORE`'s rows are as the restore left them
 
 ### Requirement: Rollback returns the estate to the files
-`lanes-index rollback` SHALL run with `LANES_LANE` naming the operator lane, through that lane's checkout, from a shell or from a `CLAUDE_NO_LANE=1` session, with no lane session and no guard. It SHALL refuse to start while `status` shows `diverged at`: S2's two ways out resolve the divergence first, and they run only while the switch is `primary`. In one transaction it SHALL switch to `files`, so that every SQL write refuses from that transaction on, and write its last seq, the operator entry removing `lanes/STORE`; nothing SHALL be journalled after it. It SHALL render until `status` shows the mirror holding every seq before that one and byte-identical to a full render. The rollback SHALL remove the ruleset, where one is in place, as Brett Heap's act, after that render and before the next step. It SHALL push the commit removing `lanes/STORE`, with the renderer identity, and confirm it by Amendment 23's S4 read-back; and SHALL clear `mode=primary` on every workstation. A mirror that a divergence has stopped SHALL NOT count as current.
+`lanes-index rollback` SHALL run with `LANES_LANE` naming the operator lane, through that lane's checkout, from a shell or from a `CLAUDE_NO_LANE=1` session, with no lane session and no guard. It SHALL refuse to start while `status` shows `diverged at`: S2's two ways out resolve the divergence first, and they run only while the switch is `primary`. In one transaction it SHALL switch to `files`, so that every SQL write refuses from that transaction on, and write its last seq, the operator entry removing `lanes/STORE`; nothing SHALL be journalled after it. It SHALL render until `status` shows the mirror holding every seq before that one and byte-identical to a full render. The rollback SHALL remove the ruleset, where one is in place, as Brett Heap's act, after that render and before the next step: `lanes-index rollback --hold-marker` stops after the render, and `lanes-index rollback`, run again, resumes at the push. It SHALL push the commit removing `lanes/STORE`, with the renderer identity, and confirm it by Amendment 23's S4 read-back, exiting 3 for a push it cannot confirm, with a rerun that reads origin back first; and SHALL clear `mode=primary` on every workstation. A mirror that a divergence has stopped SHALL NOT count as current.
 
 #### Scenario: A diverged mirror
 - **WHEN** `status` shows `diverged at` and a rollback is tried
@@ -619,6 +631,10 @@ The cutover SHALL run with `LANES_LANE` naming the operator lane, through that l
 #### Scenario: The rollback journals its own last seq
 - **WHEN** the rollback sets the switch to `files`
 - **THEN** its last seq, removing `lanes/STORE`, is written in that same transaction, and nothing is journalled after it
+
+#### Scenario: A rollback held at the marker
+- **WHEN** `lanes-index rollback --hold-marker` runs
+- **THEN** it stops after the render's proof with the marker still on origin, and a second `lanes-index rollback` pushes the marker's removal
 
 #### Scenario: A rollback (agreement test 8)
 - **WHEN** a rollback runs to its end
@@ -663,7 +679,7 @@ Once a rollback has run to its end and the database is back, a `mode=primary` wr
 - **THEN** the test fails
 
 ### Requirement: The operator's bootstrap is idempotent and holds no secret
-This change SHALL build a `lanes-index` bootstrap that makes the register's schema, the three roles and their GRANTs from one admin connection that Brett supplies, prints the password-file lines for him to place, and stores no secret. The admin connection SHALL be used once and held by nothing. The command names are the design's.
+This change SHALL build a `lanes-index` bootstrap that makes the register's schema, the three roles and their GRANTs from one admin connection that Brett supplies, prints the password-file lines for him to place, and stores no secret. The admin connection SHALL be used once and held by nothing, and SHALL be named as a libpq service with its own password file: an argument that carries a connection string SHALL be refused with 2. A roles-only form SHALL make only the roles, for a restore, since roles are cluster objects that a database backup does not hold. The command names are the design's.
 
 #### Scenario: Run twice
 - **WHEN** the bootstrap runs twice against the same database
@@ -673,8 +689,12 @@ This change SHALL build a `lanes-index` bootstrap that makes the register's sche
 - **WHEN** the bootstrap completes
 - **THEN** it has printed the password-file lines and written no secret to any file
 
+#### Scenario: A connection string as an argument
+- **WHEN** the bootstrap is given a connection string in an argument
+- **THEN** it refuses with 2 and makes nothing
+
 ### Requirement: The readiness check proves an environment before the cutover
-This change SHALL build a readiness check, run in each environment that writes the register (the bench containers, the host shells, Raven's install and the Codex lane's tools), that verifies the installed tools' digests against the release, that `psql` is present, that the configuration is readable and says `mode=index` before the cutover, that each role connects and is refused outside its scope, and that the installed `lanes-index` no longer carries the refusal of `mode=primary`. A pass in every environment SHALL be a precondition of act 4. The check is a check at one moment: a container started after it SHALL NOT be covered, and the check SHALL say so.
+This change SHALL build a readiness check, run in each environment that writes the register (the bench containers, the host shells, Raven's install and the Codex lane's tools), that verifies the installed tools' digests against the release, that `psql` is present, that the configuration is readable and says `mode=index` before the cutover, that each role connects and is refused outside its scope, that the installed `lanes-index` no longer carries the refusal of `mode=primary`, and that the tools' schema version lies inside the database's window; with `primary` expected, it SHALL also verify that the switch is `primary` with the marker `present` and that `lanes/STORE` names this database. A pass in every environment SHALL be a precondition of act 4. The check is a check at one moment: a container started after it SHALL NOT be covered, and the check SHALL say so.
 
 #### Scenario: A stale digest
 - **WHEN** the installed tools' digests differ from the release
@@ -692,8 +712,12 @@ This change SHALL build a readiness check, run in each environment that writes t
 - **WHEN** the installed `lanes-index` still refuses `mode=primary`
 - **THEN** the check fails
 
+#### Scenario: Tools outside the schema's window
+- **WHEN** the installed tools' schema version is outside the database's window
+- **THEN** the check fails
+
 ### Requirement: The `mode=primary` flip is a command run once per host
-This change SHALL build the `mode=primary` flip as a command, run once per host where one configuration serves the host. It SHALL write only the `mode=` line and SHALL keep the file's 0600 mode. A read-only mount SHALL be flipped from the host, not from a bench. Under Q20 the flip is the cutover's last step; act 3 leaves `mode=index`.
+This change SHALL build the `mode=primary` flip as a command, run once per host where one configuration serves the host. It SHALL write only the `mode=` line and SHALL keep the file's 0600 mode. A read-only mount SHALL be flipped from the host, not from a bench. Setting `primary` SHALL refuse unless the switch is `primary` with the marker `present` and the fetched `origin/main` carries a `lanes/STORE` naming this database. Under Q20 the flip is the cutover's last step; act 3 leaves `mode=index`.
 
 > Pending Brett's Q23: written under option (a).
 
@@ -720,11 +744,15 @@ Rule 1's race SHALL be decided by the register's commit order: of two claimants 
 - **THEN** one `CLAIMED` exists and the other claim exits 2
 
 ### Requirement: `HOLD` and `LANDING` are ordered by commit sequence
-Amendment 10's `HOLD` and `LANDING` lines on one repository's `main` SHALL be ordered by commit sequence: the earlier commit wins, and the later writer's transaction SHALL report the earlier line to it before it acts. The later writer's verb SHALL exit non-zero, with a code the design names that is neither 0 nor 69, and SHALL print the earlier line, so that a landing script that sees the exit does not merge second. The line SHALL still come before the act that moves `main`. Recognising which lines take and release `main` SHALL be done inside the transaction, by `append-line` or by a verb of the design's choosing.
+Amendment 10's `HOLD` and `LANDING` lines on one repository's `main` SHALL be ordered by commit sequence: the earlier commit wins, and the later writer's transaction SHALL report the earlier line to it before it acts. The later writer's verb SHALL exit non-zero, with a code the design names that is neither 0 nor 69, and SHALL print the earlier line, so that a landing script that sees the exit does not merge second. The line SHALL still come before the act that moves `main`. Recognising which lines take and release `main` SHALL be done inside the transaction, by `append-line` or by a verb of the design's choosing. The repository SHALL be compared by a canonical key, so that one repository spelled two ways is one `main`.
 
 #### Scenario: Two `HOLD`s (agreement test 4)
 - **WHEN** two lanes write a `HOLD` for one repository
 - **THEN** they land in commit order, the later writer exits the named code, and it prints the earlier line
+
+#### Scenario: One repository spelled two ways
+- **WHEN** two lanes write a `HOLD` for one repository under two spellings
+- **THEN** they are ordered as one `main`, and the later writer exits the named code
 
 #### Scenario: A script that checks the exit
 - **WHEN** a landing script runs after a later `HOLD` writer exited non-zero
