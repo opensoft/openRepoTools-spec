@@ -32,8 +32,11 @@ its prototype), and act 3's step 9, which points at the phase plan's push URL;
 2.3's sentence on the re-import form's abort; 2.6's line on a `LANDING
 EXPIRED`'s spelling; and round 1, now RULED. Lane 1's v2.4 (#165 6711221999)
 changes only part 1, in `design.md`; lane 3's ruling on its fourth point
-(6711233420) adds 2.3's bullet on the lost tail's window after a restore. Lane
-1's numbering is kept: a cross-reference to part 1 names
+(6711233420) adds 2.3's bullet on the lost tail's window after a restore.
+Lane 1's v2.5 (#165 6711914507) also changes only part 1; lane 3's ruling on
+its import cost, option (a) (6711924759), adds act 4's step 6 bullet on the
+import's key check and its time, and a line on the same check at the
+disaster path's re-import, in 2.3. Lane 1's numbering is kept: a cross-reference to part 1 names
 `design.md`, as in "`design.md` §1.3".
 
 - **Basis:** the proposal at `0607526d`. A citation of `proposal.md`, `clarifications.md` or `council-review.md` is to the frozen copy, sha256 `b284a0eb2078fd24a48e833685b0073e881fdbe1625a1019d81a55a4aadaa340`, `636fb45369f825dd7f3d763bdb8d8bcb475ef4d76a3f7cf23203b907713ac2ff` and `9fa18c5ed76d88d4f25b3f8eaa37626ad0511985061f9e0649ff49d13c0fce62`.
@@ -136,6 +139,7 @@ Each step gives who acts and where, the command, its check, its refusal and its 
    - **Command:** `lanes-index import --at <C>`, where `C` is the tip of `origin/main` (`proposal.md:518-521`; `r3b/REPORT.md:250`). The journal's seq 0 is its baseline (`proposal.md:1259-1262`).
    - **Its transaction (F23):** it builds the entry and proves its bytes before it sends them, then loads them in one short transaction, so it holds none across git or its render. The S3 answers are compared after the load, with the switch still at `files`. `design.md` §1.4 says how.
    - **Check:** the proof's three parts: each rendered path's blob id equals `C`'s, the counts match, and every lane's S3 answers are the same from the files and from SQL (`proposal.md:1257-1259`; `r3b/REPORT.md:222-230`).
+   - **Its key check (LR010):** the import derives every key its lines and holds give and checks each, in path and line order. A line whose key is not a scope stops the import in its own transaction, before anything is written, and `lanes-index import` exits 2 naming the path, the line and the key (`design.md` §1.3's "The act"). The check makes an import of today's register take about 25 s instead of 3 s, by lane 1's measurement of 57.7 s against 7.7 s for 42,001 lines, with 18,205 lines under `lanes/` today. That is inside the import's 300 s bound (`design.md`, "The timeouts (D9)"), and act 3's rehearsal (step 8) measures it on the real register first (lane 3's ruling, option (a), #165 6711924759).
    - **Refusal:** any difference, or a `C` that is not an ancestor of `origin/main` (`r3b/REPORT.md:205`). Nothing is set in the switch (R3a's `register_switch`, `r3a/REPORT.md:179-185`).
    - **Way back:** a re-import replaces the whole store in one transaction, which is allowed while the switch is not `primary` (`r3b/REPORT.md:233`).
 7. **The cutover.** The operator lane acts, on Brett's cutover word, with `LANES_LANE=` its name (F12).
@@ -246,6 +250,7 @@ Under (iii) this is not a rollback. It is a restore or a re-import, run with eve
    - **Re-import,** the default (D22), where no backup is newer than `m`. Brett runs `bootstrap`, and after the re-pointing the operator lane runs `lanes-index import --at <M> --after-loss` **(new)**, where `M` is the tip of `origin/main`, which still carries the marker.
      - **The seq:** the import's baseline takes `M`'s newest `Register-Seq` instead of 0 (`design.md` §1.3: the chain's one root sits at `m`, and the head starts there). Seqs on `main` then stay unique, so a claim comment's "register seq `<n>`" (Q19, `proposal.md:1763-1767`) still names one commit.
      - **Lost:** every seq after `m`.
+     - **Its time:** the key check of act 4's step 6, about 25 s on today's register instead of 3 s, inside the 300 s bound; a bad key stops the import before anything is written (lane 3's ruling, #165 6711924759).
    - **The re-pointing (F18),** on either route, before any `lanes-index` command reaches the replacement: on Eagle and on Raven (Q22 (a)), from each host, Brett sets `register_url=`, `reader_url=` and their password files to the replacement's, with the password lines the bootstrap printed. The lanes stay paused (step 3).
    - **The marker, as the cutover's own entry (F18; D24):** the operator lane runs `lanes-index cutover --import <M> --after-loss` **(new)**. The marker's rewrite is not a third operator entry: it is the cutover's entry in its after-loss form, in the cutover's own transaction, at seq `m+1`, so the next write is `m+2`. That transaction sets the switch to `primary` with the replacement's label, a new generation id (F10, F18) and `set_seq` `m+1`, its own seq (lane 3's open point 23), and rewrites `lanes/STORE`'s fields for the replacement. The command then pushes the rewrite as 2.1 says. D22 as first written left the marker as it was, so its next write would have been `m+1`; this part rewrites it, as lane 3 ruled (#165 6578020193), because `ready` and `set-mode` check that `lanes/STORE` names this database, and the replacement's label differs.
      - **The abort of this form,** the re-import's, keeps the label and generation its cutover set. The new generation is what keeps every pending record and printed rerun made against the lost database refusing with LR007, and the next cutover sets both again (lane 3's ruling, #165 6710770304, lane 1's point 2).

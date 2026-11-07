@@ -395,20 +395,26 @@ the section that carries it.
   "inside the act's transaction". **The design keeps S3 by expectations** (F5;
   the phase plan's "The acts and their expectations"): an act takes a base
   with `lanes-edit.sh act-begin` before its first deciding read,
-  `<act-id>@<head seq>`, and exports it as `LANES_ACT`. **`act-begin` also
-  gives the act its generation,** the register generation it read that base
-  in (D22), so that a base from a lost database's tail, whose seq numbers a
-  new database reuses, is refused with LR007 (lane 3's ruling on lane 1's
-  v2.4, #165 6711233420, point 1); the exact form of `act-begin`'s output and
-  of `LANES_ACT` with the generation is lane 4's to confirm, routed below.
-  Each write it decides
+  `<act-id>@<head seq>:<generation>`, read in one snapshot, and exports it
+  as `LANES_ACT`. **`act-begin` also gives the act its generation,** the
+  register generation it read that base in (D22), so that a base from a lost
+  database's tail, whose seq numbers a new database reuses, is refused with
+  LR007 (lane 3's ruling on lane 1's v2.4, #165 6711233420, point 1). The
+  form is lane 4's: `<act-id>@<seq>:<generation>` on primary and
+  `<act-id>@files` off it, and `act-begin --rebase` refuses with 2 where
+  `LANES_ACT` is malformed, where its base is `files` on primary, or where
+  the generation has changed (lane 4's check of v2.4, #165 6711545001, as
+  lane 3 ruled in 6711564365). At each attempt's snapshot the client also
+  refuses with 2 an act whose generation is not the switch's or whose base
+  is past the head, so the commit's LR007 and LR004 for an act are
+  backstops. Each write it decides
   names, in `LANES_EXPECT` on that call, the scopes its earlier reads cover
   (`row:`, `bind:`, `objects:`, `alias:`, `archive:` and `sid:`); and the
-  commit checks them in its own transaction (S1's step 3.5, `commit_write`'s
+  commit checks them in its own transaction (S1's step 3.2, `commit_write`'s
   step 3b in §1.3), refusing with LR009, "expectation changed", which the
   client maps to 2,
-  and writing nothing where a journal entry after the base, with another
-  `act_id`, touched a listed scope. A digest of the row, the form first
+  and writing nothing where a journal entry after the base, made outside the
+  act, touched a listed scope. A digest of the row, the form first
   written here, would fail, since an act's own earlier writes change it. Every
   listed act can carry its expectations under three conditions: `lane-start`
   re-reads the row at `code/lane-start:2614` after a handoff wait, the handoff
@@ -656,7 +662,7 @@ to him.
 | Component | Role on `mode=primary` | Credential |
 |---|---|---|
 | `lanes-index` | The one configuration parser and the one database client: `mode`, `register snapshot`, `register commit`, `register read`, `journal`, `render`, `import`, `cutover`, `rollback`, `status`, `reconcile`, `outage`, `serve` (the service, SVC-3), and the operator tools (bootstrap, readiness check, flip) | per subcommand: REGISTER-WRITER, READER, or the bootstrap's one-time admin connection |
-| `lanes-edit.sh` | Every verb, unchanged in its logic, and three new ones from the phase plan: `act-begin`, a read verb that takes an act's base (D5); `start-record`, `lane-start`'s bind as one write (D5); and the internal `guard-bind`, the guard's detached bind (SVC-8). Its three write seams: the resolver, which the write path no longer needs and the renderer does; `handle_preexisting`, where the captures refuse; and the commit seam, which hands a change set to the attempt loop (D4). Its readers enter at `register_text_checked` | none of its own: it calls `lanes-index` |
+| `lanes-edit.sh` | Every verb, unchanged in its logic, and three new ones from the phase plan: `act-begin`, a read verb that takes an act's base (D5); `start-record`, `lane-start`'s bind as one write (D5); and the internal `guard-bind`, the guard's detached bind (SVC-8); and one new flag, `canon-lane --walk`, which prints the names `canon-lane`'s walk visits, for an act's expectations (D5). Its three write seams: the resolver, which the write path no longer needs and the renderer does; `handle_preexisting`, where the captures refuse; and the commit seam, which hands a change set to the attempt loop (D4). Its readers enter at `register_text_checked` | none of its own: it calls `lanes-index` |
 | The renderer | `lanes-index render`, forked by a writer after its COMMIT, in that lane's checkout; builds one commit per sequence on `origin/main` with a private index and pushes it | REGISTER-WRITER; the renderer identity's key under Q21(b)(B) |
 | `lanes-register`, the `lanes-index serve` subcommand (SVC-3) | The local-socket service, one per environment (SVC-1): one READER connection per process, answering the register's text at `n` for the guard and the other readers, which decide (4A; D17; SVC-7). Last slice (Q29(a)); its internals are lane 5's section | READER |
 | The guard | `lanes-edit.sh guard`, the hook: the service's client through one `lanes-index register read --for guard --prefetch` a prompt (SVC-8), falling back to a direct read (Q11(a)), and deciding by today's parser | READER, through `lanes-index` |
@@ -758,7 +764,7 @@ v2.4's; `operations.md` has none. v2.4 adds lane 4's row 20:
 `journal.act_id`, set only on a `write`, from the entry's new `act` key
 `{id, base, generation, expect}`; and each entry's touched keys, derived inside
 `commit_write` by `line_scopes` and `doc_line_scopes` and stored in
-`journal_scopes (seq, scope)`. Lane 4's "S1's step 3.5" check is
+`journal_scopes (seq, scope)`. Lane 4's expectation check, S1's step 3.2, is
 `commit_write`'s step 3b, with a new code, LR009, "expectation changed", which
 the client maps to 2 with lane 4's `expectation:` message; lane 3 keeps that
 check in SQL (#165 6710840240). v2.4 also carries ruling 1's LR004 at commit,
@@ -773,6 +779,43 @@ D5 (the act's generation), the routed list at the end of this file (what lane
 closing sentence, lane 3's acceptance, and `operations.md` §2.3 (the lost
 tail's window).
 
+**Lane 1's v2.5** (#165 comment 6711914507) is folded on top, from
+`/workspace/projects/.openrepotools-private-prep/work-20261102/165-section-v25/`:
+`fix-v2.5.diff` (sha256
+`684c877f3cfb50114af3d275579d7595efbb408aa22c228e47498fc808c719e8`, 10 hunks,
+from v2.4), which rebuilds `section-lane1-v2.5.md` (sha256
+`f7705d450f6defa3a40bf0da624feda8bddbcce4911366e0145ccc7f3164f270`, 1,848
+lines), with `renames-v2.5.md` (sha256
+`01b6b40d39e343187c4ba547ec2b6bda65bf8f889deba84a665ad35b8fe2772e`) and the
+SQL its final run tested, `out/mig1-body-v25-final.sql` (sha256
+`812f56ccdae9cdd9e225611df73f359d41251002de2f1849def1227e9484ff74`). All 10
+hunks are in this part and are applied here, so lane 1's text in this part is
+v2.5's; `operations.md` has none. Nine applied by `patch` at fuzz 0. The fifth, two
+new bullets after "Over-reporting only refuses", went in by hand, since that
+bullet now ends with lane 3's acceptance, and its "(2.2, step 8)" reads
+"(`operations.md` §2.2, step 8)" here. v2.5 carries three points of lane 4's
+check of v2.4 (#165 6711545001), as lane 3 asked (6711564365): lane 1's half
+of S3, `line_scopes` also giving an archived row its normalized `archive:`
+key by `RETIRED_ROWS_AWK`'s `key()`, trimmed as text; N1, step 8a's
+`objects:` key lower-cased, through a new function, `entry_new_keys`; and N2,
+a new code, LR010, "key not well formed", which `scope_checked` raises, with
+`scope_fault`, where a key a line derives, at a write or at an import, is not
+a scope, and which the client maps to 2. Lane 3 took option (a) on the
+import's cost, keeping the check at import (#165 6711924759), so
+`operations.md` §2.2's act 4 gives the import's new time. Lane 3's choice of
+lane 4's S2 (#165 6711564365) changes three places of lane 1's text here:
+§1.3's step 3 runs the commit call with `VERBOSITY=verbose` and
+`SHOW_CONTEXT=never`, in place of `VERBOSITY=sqlstate`; LR009's bullet takes
+the message from that one call, in place of the check's own query; and the
+sentence after the signals table reads the SQLSTATE from the `ERROR:` line.
+LR010's message is readable only under that choice. Lane 4's form of
+`LANES_ACT`, `<act-id>@<seq>:<generation>` (6711545001, as lane 3 ruled in
+6711564365), changes §1.3's "The act": its first sentence, the `base` and
+`generation` bullets, and the files-mode bullet, whose refusal lane 4
+confirmed. Where lane 1's text quotes lane 4's "S1's step 3.5", it now reads
+"S1's step 3.2", where S1's step list puts the check since this fold (lane
+4's S5).
+
 - **Basis:** the proposal at `0607526d`. A citation of `proposal.md`, `clarifications.md` or `council-review.md` is to the frozen copy, sha256 `b284a0eb2078fd24a48e833685b0073e881fdbe1625a1019d81a55a4aadaa340`, `636fb45369f825dd7f3d763bdb8d8bcb475ef4d76a3f7cf23203b907713ac2ff` and `9fa18c5ed76d88d4f25b3f8eaa37626ad0511985061f9e0649ff49d13c0fce62`.
 - **Round 1, held as provisional when lane 1 wrote this, and RULED since** (Brett's confirmation of 2026-11-07, #165 6710653292): Q6 = 1A (the split by seam), Q8 = 2A, Q20 = 3A (`mode=primary` written at act 4), and Q2(a) and (b) = 4A.
 - **Round 2, the recommended options:** Q4(a) (i), Q4(b) (iii), Q7 (A″), Q21(b) (B), Q22 (a), Q26 (a′), Q28 (i) and Q29 (a). Where a part turns on one of them, it says what changes under each other option.
@@ -786,9 +829,10 @@ proposal does not name are accepted as new and unproven: `set_seq`,
 and LR008, and v2.4's `journal.act_id` with `journal_act_id_check` and
 `journal_act_id_write`, `journal_scopes` with `journal_scopes_seq`,
 `line_scopes`, `doc_line_scopes`, the entry's `act` key, the scope `*` and
-LR009. Lane 1's v2, v2.3 and v2.4 runs on
+LR009, and v2.5's `entry_new_keys`, `scope_fault`, `scope_checked`, the
+normalized `archive:` key and LR010. Lane 1's v2, v2.3, v2.4 and v2.5 runs on
 PostgreSQL 16.15 exercised them (`renames.md`, `renames-v2.3.md`,
-`renames-v2.4.md`); each still needs a real-engine
+`renames-v2.4.md`, `renames-v2.5.md`); each still needs a real-engine
 test in lane 2's plan before it counts as proven.
 
 This part gives the SQL register's tables as PostgreSQL 16 DDL, the roles and their GRANTs, the version check with forward-only migrations, and what the schema itself holds of S1's transaction under Q7 (A″). It starts from R3a's sketch (`r3a/REPORT.md:156-283`) and reconciles it with the proposal at `0607526d`, the council's folds (`council-review.md`, `clarifications.md`) and the code at `2a057a6d`, cited as the proposal cites it (`code/<file>:<line>`). It assumes round 1 as answered provisionally, since RULED (#165 6710653292) (4A: each `lanes-edit.sh` write opens its own transaction with its own REGISTER-WRITER credential, and the service keeps one connection for reads) and round 2's recommended options; §1.6 says what changes under the others. Other sections of `design.md` hold the rest: the runbook is part 2's, in `operations.md`, the write path's call sites and the renderer are lane 4's, and the service is lane 5's.
@@ -1076,12 +1120,18 @@ CREATE FUNCTION line_scopes(p_path text, p_text text) RETURNS SETOF text LANGUAG
   -- a row by ROW_AWK's (row_name, :648-660), in LANES.md (:831-837) or the archive (:843-847); a
   -- lane-kind line by its verb (parse_log_line, :538-546) in the log that file_lane names
   -- (:530-532); an alias line by its first two tab fields (:849-865); a uuid by UUID_RE (:110).
+  -- S3: an archived row also names its normalized key, where that differs from its own, by
+  -- RETIRED_ROWS_AWK's key() (code/lanes-edit.sh:3743-3760): the name before its last '-',
+  -- lower-cased, '-', and the digits after it, less one trailing letter, without leading zeros.
   WITH l AS (SELECT substring(p_text FROM '^\|[^`]*`([^`]*)`') AS rown,
                p_path ~ '^lanes/log/' AND p_text ~
                  '^[ \t]*(STARTED|RESUMED|PAUSED|ENDED|RETIRED|RENAMED)[ \t]* — ' AS lane_kind,
-               lower(regexp_replace(regexp_replace(p_path, '^.*/', ''), '\.[Mm][Dd]$', '')) AS flane)
+               lower(regexp_replace(regexp_replace(p_path, '^.*/', ''), '\.[Mm][Dd]$', '')) AS flane),
+       a AS (SELECT lower(m[1]) || '-' || coalesce(nullif(ltrim(m[2], '0'), ''), '0') AS akey
+             FROM l, regexp_match(rown, '^(.*)-([0-9]+)[A-Za-z]?$') AS m)   -- NULL: no key
   SELECT 'row:' || lower(rown) FROM l WHERE p_path = 'lanes/LANES.md' AND rown <> ''
   UNION SELECT 'archive:' || lower(rown) FROM l WHERE p_path ~ '^lanes/archive/' AND rown <> ''
+  UNION SELECT 'archive:' || akey FROM l, a WHERE p_path ~ '^lanes/archive/' AND akey <> lower(rown)
   UNION SELECT 'bind:' || flane FROM l WHERE lane_kind
   UNION SELECT 'sid:' || u.m[1] FROM l, regexp_matches(lower(p_text),
           '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', 'g') AS u(m)
@@ -1100,6 +1150,45 @@ CREATE FUNCTION doc_line_scopes(p_line_id bigint, p_path text) RETURNS SETOF tex
     WHERE g.line_id = p_line_id AND NOT g.unreadable AND g.object NOT LIKE 'lane:%'
   UNION SELECT 'objects:' || lower(x) FROM register_lines r, unnest(ARRAY[r.lane, r.for_lane]) AS x
     WHERE r.line_id = p_line_id AND r.slot_role IS NOT NULL AND x IS NOT NULL $f$;
+
+CREATE FUNCTION entry_new_keys(p_seq bigint) RETURNS TABLE (path text, line_no integer, scope text)
+  LANGUAGE sql STABLE SET search_path = lanes_register, pg_catalog, pg_temp AS $f$
+  -- Step 8a's new side, each key with the line it came from (N2): every line entry p_seq appended
+  -- or replaced, every line a rename moved, read at its new path, and objects: for every lane
+  -- holding an object it wrote a hold for, at that lane's last line on the object.
+  SELECT d.path, d.line_no, k.scope FROM doc_lines d, doc_line_scopes(d.line_id, d.path) AS k(scope)
+    WHERE d.written_seq = p_seq
+  UNION SELECT d.path, d.line_no, k.scope FROM journal_edits j JOIN doc_lines d ON d.path = j.to_path,
+      doc_line_scopes(d.line_id, d.path) AS k(scope)
+    WHERE j.seq = p_seq AND j.op = 'rename'
+  UNION SELECT h.file, h.ordinal, 'objects:' || lower(h.lane_key)   -- N1: lower(), as doc_line_scopes;
+    FROM object_holds n JOIN object_holds h ON h.object = n.object  -- lane_key is lower case by construction
+    WHERE n.seq = p_seq AND n.object NOT LIKE 'lane:%' $f$;
+
+CREATE FUNCTION scope_fault(p_scope text) RETURNS text LANGUAGE sql IMMUTABLE
+  SET search_path = lanes_register, pg_catalog, pg_temp AS $f$
+  -- N2: NULL where a derived key has a scope's form, journal_scopes' CHECK read with Unicode's
+  -- White_Space (the no-break space included; the CHECK's [:space:] under "C" is ASCII's alone);
+  -- else the key, each white-space character shown as [U+hhhh].
+  SELECT CASE WHEN p_scope ~ '^sid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+                OR (p_scope ~ '^(row|bind|objects|alias|archive):.' AND p_scope !~ w.re
+                    AND p_scope = lower(p_scope COLLATE "C")) THEN NULL
+         ELSE (SELECT string_agg(CASE WHEN c ~ w.re THEN '[U+' || lpad(upper(to_hex(ascii(c))), 4, '0')
+                                      || ']' ELSE c END, '' ORDER BY n)
+               FROM regexp_split_to_table(p_scope, '') WITH ORDINALITY AS t(c, n)) END
+  FROM (VALUES ('[\t\n\v\f\r \u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]')) AS w(re) $f$;
+
+CREATE FUNCTION scope_checked(p_path text, p_line integer, p_scope text) RETURNS text
+  LANGUAGE plpgsql IMMUTABLE SET search_path = lanes_register, pg_catalog, pg_temp AS $f$
+-- N2: a derived key, returned as it is, or LR010 naming the line it came from.
+DECLARE
+  v_shown text := scope_fault(p_scope);
+BEGIN
+  IF v_shown IS NOT NULL THEN
+    RAISE EXCEPTION 'key: % line % derives %, which is not a scope (a scope''s name is lower case, not empty, and holds no white space)',
+      p_path, p_line, v_shown USING ERRCODE = 'LR010'; END IF;
+  RETURN p_scope;
+END $f$;
 -- commit_write, switch_to_files, record_marker, find_write and record_mirror_state follow in §1.3.1, in this transaction;
 -- its block ends migration 1: schema_version (1, 1, 1), register_head (-1), an empty
 -- mirror_state row, the switch at 'files' (set_seq -1), the migrations row, then COMMIT.
@@ -1115,7 +1204,7 @@ CREATE FUNCTION doc_line_scopes(p_line_id bigint, p_path text) RETURNS SETOF tex
 | `mirror_state` | S2's divergence record and a failed pass (D16) | 5, 6 |
 | `journal` | S2's journal; S5's seq 0, the cutover's seq and rollback's last; S1's in-doubt write (`write_id`); S6's clock | 1, 4, 5, 6, 7, 8, 12 |
 | `journal_edits`, `journal_files` | S2's replay and per-write byte proof; S5's rollback proof | 1, 5, 6, 8 |
-| `journal_scopes`, `line_scopes`, `doc_line_scopes`; `journal.act_id` | D5 and F5: each entry's touched keys and the act that made it, for step 3b's check (lane 4's row 20) | lane 4's AT-F6 (8) and (9); lane 2's plan |
+| `journal_scopes`, `line_scopes`, `doc_line_scopes`, `entry_new_keys`, `scope_fault`, `scope_checked`; `journal.act_id` | D5 and F5: each entry's touched keys and the act that made it, for step 3b's check (lane 4's row 20); S3's normalized `archive:` key; N2's LR010 | lane 4's AT-F6 (8) and (9); lane 2's plan |
 | `files`, `doc_lines` | S2's truth; S5's byte-identical import; S1's mode last written | 1, 7, 11; S1's mode test |
 | `lanes` | S3 (`binding`, `next-free`, `who`); S4's copy of `owner`; Amendment 15's one row | 11; S3's table |
 | `log_lines`, `object_holds`, `holds`, `stale_claims`, `one_live_claim` | S3 (`who`, `history`); S6's Rule 1; 7(b) | 4, 7, 11, 12; ADV-C10's alias race (`clarifications.md:209-216`) |
@@ -1139,7 +1228,7 @@ Under (A″) each attempt is two `psql` calls, made by `lanes-index register sna
 
 1. **The snapshot read:** one `BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY` transaction, as #160 reads (`code/lanes-index:1331-1344`). It reads `schema_version`, `register_switch` (with its `generation`, which the commit call sends back, F10), `register_head` (the base `n`), the database clock in whole seconds (`r3b/REPORT.md:220`), `files`, the journal's edits since the writer's cached seq (or every line, when the cache fails its `files.sha256` check), what the verb decides on (`holds`, `stale_claims`, `main_slots` for its repository) and, when it retries a write in doubt, `journal` by `write_id`. A failure here sent nothing that writes: 69.
 2. **The verb** runs unchanged on the scratch copy, outside SQL, and its lines carry the clock read in step 1.
-3. **The commit:** `BEGIN ISOLATION LEVEL SERIALIZABLE; SELECT lanes_register.commit_write(n, write_id, REGISTER_SCHEMA_VERSION, generation, entry); COMMIT;` under `ON_ERROR_STOP` and `VERBOSITY=sqlstate`, so the writer can tell a 40001 from every other exit 3 (`proposal.md:1442-1443`; `clarifications.md:250-252`). The entry is one `jsonb` literal: the journal fields, the edits, `journal_files`' digests, the structured rows, which name lines by path and `line_no`, and `not_after`, the call's bound (step 9). A write made inside one of lane 4's acts also carries `act`, its base and expectations (step 3b, below). In files mode no entry is made, and `LANES_ACT` and `LANES_EXPECT` are ignored there, as lane 4 has it.
+3. **The commit:** `BEGIN ISOLATION LEVEL SERIALIZABLE; SELECT lanes_register.commit_write(n, write_id, REGISTER_SCHEMA_VERSION, generation, entry); COMMIT;` under `ON_ERROR_STOP`, with `VERBOSITY=verbose` and `SHOW_CONTEXT=never`, so that psql's first line on stderr is `ERROR:  <SQLSTATE>: <message>`. The writer reads every code from that one line, 40001, 55P03, 23505 and the LR codes alike, so it can tell a 40001 from every other exit 3 (`proposal.md:1442-1443`; `clarifications.md:250-252`), and LR009's and LR010's messages come back in the same call (lane 3's choice of lane 4's S2, #165 6711564365). The entry is one `jsonb` literal: the journal fields, the edits, `journal_files`' digests, the structured rows, which name lines by path and `line_no`, and `not_after`, the call's bound (step 9). A write made inside one of lane 4's acts also carries `act`, its base and expectations (step 3b, below). In files mode no entry is made, and `LANES_ACT` and `LANES_EXPECT` are ignored there, as lane 4 has it.
 
 `commit_write` and `switch_to_files` are owned by `lanes_register_owner`, `SECURITY DEFINER`, with `SET search_path = lanes_register, pg_catalog, pg_temp`. Neither holds a verb's rule: R3a's generic `apply_edits` (`r3a/REPORT.md:285`) becomes step 6. The head comes before the journal (`proposal.md:235-239`), and the version and switch are read under the head's lock. Steps 1 to 5, as §1.3.1 has them; an import's reset, between steps 3 and 4, sets `v_head` to -1, so steps 4 and 5 read `v_head`, not `p_base`:
 
@@ -1188,16 +1277,16 @@ Steps 6 to 9 are §1.3.1's SQL:
 8. **The proof:** every edited path has a row in the entry's `files`, and each present one's `encode(sha256(render_file(path)), 'hex')` must not be distinct from it, or LR004; then `files.sha256`, `final_newline` and `last_seq` move. The deferred foreign keys check at COMMIT.
 9. **The bound (F3):** last, just before it returns, `commit_write` raises LR008 unless `clock_timestamp()` is still before the entry's `not_after`. Every commit call carries it, the snapshot's database clock plus the call's client timer plus 2 s, and an entry without it is LR004. A writer whose commit call is in doubt waits at the deadline until the database clock passes the largest `not_after` its calls carried, then makes its one lookup. So an orphaned attempt that had not reached the head row's lock by then can no longer commit after that lookup reports the write absent (lane 4's section, `5f26bf0a`, its ask of lane 1).
 
-**The act (D5, F5; lane 4's row 20).** Lane 4's acts take a base with `lanes-edit.sh act-begin`, which prints `<act-id>@<head seq>`, and list the scopes each write rests on in `LANES_EXPECT` (lane 4's section, "The acts and their expectations"). The schema keeps what the check needs, and `commit_write` runs the check inside the commit's transaction, where no client can skip it.
+**The act (D5, F5; lane 4's row 20).** Lane 4's acts take a base with `lanes-edit.sh act-begin`, which prints `<act-id>@<head seq>:<generation>` on primary (lane 4's form, #165 6711545001), and list the scopes each write rests on in `LANES_EXPECT` (lane 4's section, "The acts and their expectations"). The schema keeps what the check needs, and `commit_write` runs the check inside the commit's transaction, where no client can skip it.
 
 - **The entry's `act` key,** on a `write` made inside an act, and on nothing else: `{id, base, generation, expect}`.
   - `id`, required: the act's id, the part of `LANES_ACT` before the `@`, a string with no `@` and no white space. `journal.act_id` stores it as given.
-  - `base`, required: the act's base seq, the part after the `@`, a JSON number of at least 0.
-  - `generation`, required: the register generation that `act-begin` read with its base (F10, F18). Lane 4's printed form, `<act-id>@<head seq>`, does not carry it, so `act-begin` must hand it to the act beside the seq; the last bullet of this paragraph says why.
+  - `base`, required: the act's base seq, the part between the `@` and the `:`, a JSON number of at least 0.
+  - `generation`, required: the register generation that `act-begin` read with its base, in the same snapshot (F10, F18): the part after the `:`. The last bullet of this paragraph says why.
   - `expect`, a list, absent meaning empty: `LANES_EXPECT`'s scopes, each `row:`, `bind:`, `objects:`, `alias:` or `archive:` with a lane, or `sid:` with a uuid, compared in lower case.
   - **Without an act,** an entry has no `act` key and `act_id` is NULL: an import, the two operator entries, `stray-import` and `stray-revert`, which `lanes-index` runs outside any act, and a write run outside any act. NULL is never an act's own, so such an entry counts against every act.
   - **Refusals:** an `act` key on any kind but `write`, or one that is malformed, including a scope of another form, is LR004, before the head's lock. The client checks `LANES_EXPECT` first and refuses a malformed one with 2, so the database's LR004 is a backstop.
-  - **Files mode:** both variables are ignored there, and no entry is made. On primary, an act whose base is `files`, begun before its workstation's flip, has no seq for the check, so the client refuses its writes with 2 rather than send them unchecked (lane 4's to confirm).
+  - **Files mode:** both variables are ignored there, and no entry is made. On primary, an act whose base is `files`, begun before its workstation's flip, has no seq for the check, so the client refuses its writes with 2 rather than send them unchecked (confirmed by lane 4's check of v2.4, #165 6711545001).
 - **The touched keys,** derived by `commit_write` from the lines the entry changes, never sent, so no client can under-report them.
   - **Step 5a,** before step 6 changes anything, reads the old side: each line a `replace` or `delete` names, found by its path and `old_sha256`, and every line of a path the entry removes or renames.
   - **Step 8a,** after step 8's proof, reads the new side: every line the entry appended or replaced (its `written_seq`), and every line a rename moved, read at its new path. It adds `objects:` for every lane that holds a row on an object the entry wrote a hold for, since a `TAKEOVER` supersedes the others' claims and the taker's next line may restore them.
@@ -1206,7 +1295,7 @@ Steps 6 to 9 are §1.3.1's SQL:
   | Scope | Derived from | `code/lanes-index` |
   |---|---|---|
   | `row:L` | a `lanes/LANES.md` line that is a row by `ROW_AWK`'s rule: it opens with `\|`, and its first backticked token is the lane | `row_name`, `:648-660`; the rows, `:831-837` |
-  | `archive:L` | the same rule, on a line under `lanes/archive/` | `:843-847` |
+  | `archive:L` | the same rule, on a line under `lanes/archive/`; and, where it differs, the row's normalized key, by `RETIRED_ROWS_AWK`'s `key()` (S3, below) | `:843-847`; `key()`, `code/lanes-edit.sh:3743-3760` |
   | `bind:L` | a line of `lanes/log/L.md` whose verb, the text before its first ` — ` trimmed of spaces and tabs, is `STARTED`, `RESUMED`, `PAUSED`, `ENDED`, `RETIRED` or `RENAMED`; `L` is the file's name without `.md` | `parse_log_line`, `:538-546`; `file_lane`, `:530-532` |
   | `sid:U` | every uuid by `UUID_RE`, lower-cased, in a row line or a lane-kind line | `UUID_RE`, `:110`; the session cell, `:885-887` |
   | `alias:L` | the first two tab-separated fields of a `lanes/aliases.tsv` line that is not a comment, trimmed | `:849-865` |
@@ -1214,13 +1303,22 @@ Steps 6 to 9 are §1.3.1's SQL:
 
   - **Why the text, for five of the six:** v2.3's structured layer has no rows for `lanes/aliases.tsv`, keeps one `lanes` row per lane, so a lane with a row in both `LANES.md` and the archive has only one, and keys no line by session. Each rule above is one regular expression of the parser's own, and reading the old text in step 5a also covers a deleted line, whose structured row cascades away. `objects:` needs the object field and #160's supersession, so it comes from the rows step 7 wrote, which the register's own reads already rest on (the agreement tests check them).
   - **Over-reporting only refuses:** the text rule does not check that a lane-kind line is readable, and step 8a touches every holder of an object the entry wrote a hold for. An extra key refuses a write that the act then runs again; a missing one would let a stale read through. Lane 3 accepted both over-reports, since an extra key can only cause a refusal (#165 6711233420, point 3).
+  - **The normalized `archive:` key (S3; lane 4's check, #165 6711545001):** `retired-identity` matches an archived row by its name in any case, or by `RETIRED_ROWS_AWK`'s `key()` (`code/lanes-edit.sh:3743-3760`, blob `d28ed8f2`). So `line_scopes` gives an archived row a second `archive:` key, its normalized key, where that differs from its own.
+    - **The rule, as the awk has it:** `p` is the name after its last `-`, less one trailing letter, and `h` the name before that `-`. A name with no `-`, or whose `p` is not all digits, has no key. Otherwise the key is `h` lower-cased, `-`, and `p` as a number. So `foo-03`, `Foo-3b` and `foo-3` all key to `foo-3`, `foo-033` to `foo-33` and `foo-00` to `foo-0`, and `alpha` and `foo-x3` have none.
+    - **The SQL strips `p`'s leading zeros as text,** keeping a lone `0`, so no digit run overflows. `check_lane_name` (`code/lanes-edit.sh:2916-2920`) limits a name's characters, not its length, so it caps no digit run. The awk's `p + 0` is a double. mawk 1.3.4 and BusyBox 1.37's awk agree with the SQL on every run of up to 15 digits. From 16 digits, a run past 2^53 can lose its last digits there (`foo-9007199254740993` keys to `foo-9007199254740992`), and a run of 30 prints with an exponent. Only on such a name can the awk match a row that no SQL key names.
+    - **A read lists both forms:** `archive:` with the lower-cased name, and `archive:` with its normalized key, so that it meets every spelling `retired-identity` would match. Lane 4's text owns that read; this part states only the key a write gives.
+  - **A key that is not a scope (N2):** wherever steps 5a and 8a derive a key, `scope_checked` refuses one whose name is empty or holds white space with LR010 **(new)**: `key: <path> line <n> derives <key>, which is not a scope (…)`. It names the line the key came from, and shows each white-space character in the key as `[U+hhhh]`.
+    - **White space** is Unicode's White_Space, the no-break space included. `journal_scopes`' CHECK reads `[:space:]` under `COLLATE "C"`, which is ASCII's alone, so it takes a key holding a no-break space. The CHECK stays as the backstop.
+    - **At a write,** the write is refused and nothing is written. The client exits 2 with the server's message, which S2's `VERBOSITY=verbose` returns in the one call (lane 3's choice, #165 6711564365). It never retries, since the same line derives the same key.
+    - **At an import,** which stores only `*`, the import still derives every key its lines and holds give, and checks each in path and line order. A key that is not a scope stops it in its own transaction, before it commits, so nothing is written. `lanes-index import` exits 2 with the same message, so act 3's rehearsal (`operations.md` §2.2, step 8) shows it on a scratch schema, before act 4's import. The pass is the import's one cost: on lane 1's PostgreSQL 16.15, an import of 42,001 lines took 57.7 s with it and 7.7 s without, inside the import's 300 s bound (the bounds table, below), and the rehearsal measures it on the real register.
+    - **Why not LR004:** LR004's writer reloads every line, retries and then exits 69, and the same line would only derive the same key again.
   - **An import, a cutover in any form and a rollback** store one key, `*`, which every expectation meets: each replaces or moves what every read rests on. `stray-import` is derived as a write is; `stray-revert` changes no line and touches nothing.
   - **The store:** `journal_scopes (seq, scope)`, with the primary key `(scope, seq)` and `ON DELETE CASCADE` from `journal`, so an import's reset and a cutover's abort take an entry's keys with it, and `journal_scopes_seq` serves that cascade. This part chose the table over an array with a GIN index: the check is a seq range within each listed scope, which a btree on `(scope, seq)` answers directly, and a GIN index cannot also bound the seq.
-- **The check, step 3b, lane 4's "S1's step 3.5":** under the head's lock, after step 3's switch and generation checks and 3a, and before the seq is taken. A write with an empty `expect`, or none, skips it.
+- **The check, step 3b, S1's step 3.2:** under the head's lock, after step 3's switch and generation checks and 3a, and before the seq is taken. A write with an empty `expect`, or none, skips it.
   1. The act's `generation` must be the switch's, or LR007: the base was read in another database.
   2. The act's `base` must not be past the head, or LR004.
   3. One indexed query finds the first entry after the base, in seq order, that has a key in the list, or `*`, and an `act_id` other than this act's. If there is one, the write is refused with LR009. An act's own entries never refuse it.
-- **LR009 (new), "expectation changed":** its message is lane 4's, `expectation: <scope> changed at seq <k> by <lane>/<verb>`: the listed scope (the first listed, where the entry's key is `*`), the entry's seq, and its journal `lane` and `verb`. The client exits 2 with that message, and nothing is written. Under `VERBOSITY=sqlstate` psql prints the code alone, so the client reads the four fields with the check's own query, which REGISTER-WRITER may run (§1.4). The entries after the base do not change once committed, so it finds the same entry.
+- **LR009 (new), "expectation changed":** its message is lane 4's, `expectation: <scope> changed at seq <k> by <lane>/<verb>`: the listed scope (the first listed, where the entry's key is `*`), the entry's seq, and its journal `lane` and `verb`. The client exits 2 with that message, and nothing is written. The commit call runs with `VERBOSITY=verbose` and `SHOW_CONTEXT=never` (step 3), so psql prints `ERROR:  LR009: expectation: …` and the client takes the message from that one line, with no second query (lane 3's choice of lane 4's S2, #165 6711564365).
 - **A base taken before a generation change or a cutover:**
   - **The after-loss cutover,** in its re-import form at `m+1` and its restore form at `b+1`, sets a new generation. So every base read before it is refused with LR007, a base from the lost database's tail included, whose seq the new database reuses. The write's own `p_generation` cannot show this, since it is read at the write's own snapshot.
   - **Every cutover form, and every import,** stores `*`. So a base taken before one meets it, and the write is refused with LR009, naming it. The first cutover, at seq 1, follows only files-mode acts, which carry no seq.
@@ -1262,6 +1360,7 @@ All of it is one transaction, so a failure at any step leaves the journal, the l
 | LR008 | this attempt reached step 9 past its `not_after`: it wrote nothing, and the write was not in the journal while it held the head's lock | lane 4's: the attempt is absent (F3) |
 | LR005 | a rule of the register: an object is held (`one_live_claim`'s 23505, raised again, or D19), or `main` is held (D18) | exits 2 with the holder or the earlier line, writing nothing (Q12 (a); S1's outcomes) |
 | LR009 (new), "expectation changed" | an entry after the act's base, made outside the act, touched a scope the write lists (step 3b; D5, F5) | exits 2 with lane 4's `expectation: <scope> changed at seq <k> by <lane>/<verb>`, writing nothing |
+| LR010 (new), "key not well formed" | a key that a line derives, in step 5a, step 8a or an import's check, is not a scope: its name is empty or holds white space (N2) | exits 2 with the server's message, `key: <path> line <n> derives <key>, which is not a scope (…)`, writing nothing, and never retries; `lanes-index import` exits 2 the same way |
 | LR002 | the switch, or its marker, is not what the kind needs (the kinds table) | 69, with S1's text (`proposal.md:169-171`) |
 | LR003 | the client is outside the schema's window (§1.5) | 69 |
 | LR007 | the write id belongs to another write: minted against another generation of the register (F10, F18), or in the journal for another lane, verb or arguments (F10). In step 3b, an act whose base was read in another generation | exits 2, naming the id and what differs: check the mirror for the write before running it again without `LANES_WRITE_ID`; nothing written. For an act, exits 2 naming it, and the act runs again |
@@ -1269,7 +1368,7 @@ All of it is one transaction, so a failure at any step leaves the journal, the l
 | any other SQLSTATE | the database refused the transaction | 69, naming the store and the error (`proposal.md:213-217`) |
 | `psql` exit 2, or 124 from the client timer, on the commit call | the outcome is unknown | in doubt: reconnects, reads `journal` by `write_id` (`proposal.md:253-267`), and retries under the same id (D8). At the deadline, once the database clock has passed the largest `not_after` its calls carried (step 9), it makes one lookup (F3), `find_write` in a transaction it rolls back, within the 10 s reconnect window: found is 0; absent, with the head row's lock granted, is 75; otherwise, 55P03 or no answer, it exits 3 naming the id and keeps its pending record |
 
-Under `VERBOSITY=sqlstate` psql prints the code alone, so no signal rests on a constraint's name. With the head updated before the journal row, a lost race is never a 23505 on `journal_pkey`. Nor does a retry reach `journal_write_id_key`'s 23505: step 1's lookup under the head row's lock finds an earlier attempt that committed before this transaction began, and one that commits while it is open fails this transaction at the lock with SERIALIZABLE's 40001, or with 55P03 once `lock_timeout` passes (lane 2, 6708917587). Either 23505 would be a bug, and is 69. `LANES_NO_FETCH=1` cannot weaken the switch check, because it is read inside the transaction, not fetched (`proposal.md:571-575`). The in-doubt report is exit 3, naming the write id, and a rerun reuses the id (D8; `proposal.md:1725` left the code open).
+The writer reads only the SQLSTATE from psql's `ERROR:` line (step 3), never the constraint's name the message may carry, so no signal rests on one. With the head updated before the journal row, a lost race is never a 23505 on `journal_pkey`. Nor does a retry reach `journal_write_id_key`'s 23505: step 1's lookup under the head row's lock finds an earlier attempt that committed before this transaction began, and one that commits while it is open fails this transaction at the lock with SERIALIZABLE's 40001, or with 55P03 once `lock_timeout` passes (lane 2, 6708917587). Either 23505 would be a bug, and is 69. `LANES_NO_FETCH=1` cannot weaken the switch check, because it is read inside the transaction, not fetched (`proposal.md:571-575`). The in-doubt report is exit 3, naming the write id, and a rerun reuses the id (D8; `proposal.md:1725` left the code open).
 
 **Bounds, set when connecting through `options=`** (`clarifications.md:296-302`), are D9's, in the one table under "Roles and credentials" ("The timeouts (D9)"), which now carries this part's `import` row and gives `reconcile` the renderer's values (lane 3's ruling, #165 6578020193). Only the guard's are measured; the others are the design's, for tests 4 and 9 to confirm, and R1's 14.7 ms per call (`proposal.md:1219-1220`) leaves them wide.
 
@@ -1431,7 +1530,7 @@ IF p_generation IS DISTINCT FROM v_sw.generation THEN       -- F10, F18: an id f
                 WHERE d.path = 'lanes/STORE'));
   END IF;
 
-  -- 3b. The act's expectations (lane 4's "S1's step 3.5"; D5, F5), under the head's lock and
+  -- 3b. The act's expectations (S1's step 3.2; D5, F5), under the head's lock and
   -- before the seq is taken: refused when an entry after the act's base, made outside this act,
   -- touched a listed scope. Each entry's scopes are its steps 5a and 8a's, stored at its commit.
   IF cardinality(v_expect) > 0 THEN             -- no expectations: no check
@@ -1467,7 +1566,7 @@ SELECT v_seq, nullif(v_head, -1), p_write_id, e.*, p_entry -> 'act' ->> 'id'  --
   -- before step 6 changes it.
   IF v_kind IN ('write', 'stray-import') THEN
     INSERT INTO journal_scopes (seq, scope)
-    SELECT DISTINCT v_seq, k.scope
+    SELECT DISTINCT v_seq, scope_checked(d.path, d.line_no, k.scope)   -- N2: LR010, not 23514
     FROM jsonb_to_recordset(coalesce(p_entry -> 'edits', '[]')) AS x(op text, path text,
          old_sha256 text)
     JOIN doc_lines d ON d.path = x.path AND (x.op IN ('remove', 'rename')
@@ -1701,19 +1800,20 @@ SELECT v_seq, nullif(v_head, -1), p_write_id, e.*, p_entry -> 'act' ->> 'id'  --
   -- 8a. The touched keys' new side (D5, F5), from what the entry wrote, never from a list it
   -- sends: each line it appended or replaced, each line a rename moved, read at its new path,
   -- and objects: for every lane holding an object it wrote a hold for, since a TAKEOVER
-  -- supersedes the others and the taker's next line may restore them. An import, a cutover
-  -- and a rollback move what every read rests on: their one key is '*', which every scope meets.
+  -- supersedes the others and the taker's next line may restore them (entry_new_keys). An
+  -- import, a cutover and a rollback move what every read rests on: their one key is '*', which
+  -- every scope meets. N2: each key is checked before it is stored, in path and line order, and
+  -- an import checks every key its lines and holds derive, though it stores only '*'.
   IF v_kind IN ('import', 'cutover', 'rollback') THEN
     INSERT INTO journal_scopes (seq, scope) VALUES (v_seq, '*');
-  ELSE
+  END IF;
+  IF v_kind = 'import' THEN
+    PERFORM count(scope_checked(k.path, k.line_no, k.scope))
+      FROM (SELECT * FROM entry_new_keys(v_seq) ORDER BY 1, 2, 3) AS k;
+  ELSIF v_kind NOT IN ('cutover', 'rollback') THEN
     INSERT INTO journal_scopes (seq, scope)
-    SELECT v_seq, x.scope FROM (
-      SELECT doc_line_scopes(d.line_id, d.path) FROM doc_lines d WHERE d.written_seq = v_seq
-      UNION SELECT doc_line_scopes(d.line_id, d.path) FROM journal_edits j
-        JOIN doc_lines d ON d.path = j.to_path WHERE j.seq = v_seq AND j.op = 'rename'
-      UNION SELECT 'objects:' || h.lane_key FROM object_holds n
-        JOIN object_holds h ON h.object = n.object
-        WHERE n.seq = v_seq AND n.object NOT LIKE 'lane:%') AS x(scope)
+    SELECT v_seq, scope_checked(k.path, k.line_no, k.scope)
+      FROM (SELECT * FROM entry_new_keys(v_seq) ORDER BY 1, 2, 3) AS k
     ON CONFLICT DO NOTHING;
   END IF;
 
@@ -1979,8 +2079,9 @@ The writer's idle-in-transaction bound ends a half-open writer's transaction on 
 | `not_after`, a key of the entry | entry key | **(new)**; F3's bound on a commit call, required (lane 4's section, `5f26bf0a`) |
 | `act` (`id`, `base`, `generation`, `expect`), a key of the entry; `journal.act_id` | entry key, column | **(new)**; lane 4's act and expectations (D5, F5; its row 20); step 3b |
 | `journal_scopes` (`seq`, `scope`), `journal_scopes_seq` | table, index | **(new)**; each entry's touched keys (lane 4's row 20), derived by steps 5a and 8a |
-| `row:`, `bind:`, `objects:`, `alias:`, `archive:`, `sid:`; `*` | scope values | lane 4's six scopes (its section, `5f26bf0a`); `*`, every scope, is **(new)**, this part's, for an import or an operator entry |
+| `row:`, `bind:`, `objects:`, `alias:`, `archive:`, `sid:`; `*` | scope values | lane 4's six scopes (its section, `5f26bf0a`); `*`, every scope, is **(new)**, this part's, for an import or an operator entry; an archived row's second `archive:` key, its normalized key (S3), is `RETIRED_ROWS_AWK`'s `key()` (`code/lanes-edit.sh:3743-3760`) |
 | `line_scopes`, `doc_line_scopes` | functions | **(new)**; steps 5a and 8a, by `build_records`' rules (`code/lanes-index:765`) |
+| `entry_new_keys`, `scope_fault`, `scope_checked` | functions | **(new)**; step 8a's new side, each key with its line, and N2's check of a derived key (LR010) |
 | `author`, `git_commit`, `git_tree`, `repos_blob` | columns | **(new)**; `repos_blob` is R3a's risk 9 (`r3a/REPORT.md:353`) |
 | kinds `import`, `write`, `rollback` | column values | `r3a/REPORT.md:192` |
 | kinds `cutover`, `stray-import`, `stray-revert` | column values | **(new)** |
@@ -2004,7 +2105,7 @@ The writer's idle-in-transaction bound ends a half-open writer's transaction on 
 | `apply_edits` | function (now `commit_write`'s step 6) | `r3a/REPORT.md:285` |
 | `commit_write`, `switch_to_files`, `render_file`, `record_mirror_state`, `record_marker`, `find_write` | functions | **(new)**; `switch_to_files` is the cutover's abort (F2), `record_marker` S4's read-back (F12), `find_write` F3's one lookup |
 | `lock_head` (under Q7 (A′) only) | function | **(new)** |
-| SQLSTATEs `LR001`, `LR002`, `LR003`, `LR004`, `LR005`, `LR006`, `LR007`, `LR008`, `LR009` | error codes | **(new)**; `LR007` is F10's and F18's, and an act's base from another generation; `LR008` is F3's bound, `not_after`; `LR009`, "expectation changed", is D5's check (step 3b) |
+| SQLSTATEs `LR001`, `LR002`, `LR003`, `LR004`, `LR005`, `LR006`, `LR007`, `LR008`, `LR009`, `LR010` | error codes | **(new)**; `LR007` is F10's and F18's, and an act's base from another generation; `LR008` is F3's bound, `not_after`; `LR009`, "expectation changed", is D5's check (step 3b); `LR010`, "key not well formed", is N2's |
 | `journal_files.final_newline`, `log_lines_pos`, the six `*_seq` indexes | column, constraint, indexes | **(new)**; lane 1's real-engine run |
 | REGISTER-WRITER, READER, indexer | roles | `proposal.md:683-691` |
 | `lanes_register_writer`, `lanes_register_reader` | roles | `r3a/REPORT.md:172`, `:281` |
@@ -2098,7 +2199,15 @@ stays open across the shell code.
    text. A write id already in the journal exits 0 where the entry's lane,
    verb and arguments are this run's, and refuses with 2 where they are not,
    or where the run's generation is not the switch's (D8); the commit makes
-   the same checks under the head row's lock (LR006, LR007; §1.3).
+   the same checks under the head row's lock (LR006, LR007; §1.3). For a
+   write made inside an act, `lanes-edit.sh` refuses with 2, sending nothing,
+   before the first snapshot where `LANES_ACT` is malformed, where
+   `LANES_EXPECT` is not empty and `LANES_ACT` is unset or empty, where a
+   scope is outside the six forms, or where the act's base is `files`; and at
+   each snapshot where the act's generation is not the switch's or its base
+   is past `n`. The commit's LR007 and LR004 for an act are then backstops
+   (lane 4's check of v2.4, #165 6711545001; the phase plan's "The acts and
+   their expectations").
 2. **The verb.** The verb runs as a child process, the script re-run with the
    original command line, on a scratch work tree whose
    one commit holds the images at `n`, as its `LANES_REPO`, so that its git
@@ -2147,25 +2256,30 @@ stays open across the shell code.
       there is a bug, and exits 69;
    2. refuse unless the head is still `n` (LR001: the attempt has lost its
       turn, D6), the client is inside the schema's window (LR003, §1.5) and
-      the switch is `primary` with the marker `present` (LR002);
+      the switch is `primary` with the marker `present` (LR002); then, for a
+      write made inside an act, check the expectations it carries for the
+      act's earlier reads (D5; `commit_write`'s step 3b, §1.3), still under
+      the head row's lock and before the head moves: LR007 where the act's
+      base is from another generation, and LR004 where it is past the head,
+      both of which the client's checks at the snapshot refuse with 2 first
+      (step 1); and LR009, `expectation: <scope> changed at seq <k> by
+      <lane>/<verb>`, a 2, where a journal entry after the act's `LANES_ACT`
+      base, made outside the act, touched a scope named in `LANES_EXPECT`;
    3. move the head to `n+1`, then insert the journal row (D6's order);
    4. apply the line edits to `doc_lines`, checking the base digests (LR004);
    5. refill the structured layer for the rows and lines touched, and check its
-      constraints: one live claim per object, spelled any way (D19), the hold
-      order (D18), each LR005, and the expectations the verb carries for the
-      act's earlier reads (D5): a scope named in `LANES_EXPECT` that a journal
-      entry after the act's `LANES_ACT` base, with another `act_id`, touched
-      refuses with LR009, `expectation: <scope> changed at seq <k> by
-      <lane>/<verb>`; each refusal a 2. Lane 1's v2.4 makes the expectations'
-      check earlier than this list's order, under the head's lock and before
-      the seq is taken (`commit_write`'s step 3b, §1.3), where an act whose
-      base was read in another generation is LR007;
+      constraints: one live claim per object, spelled any way (D19), and the
+      hold order (D18), each LR005 and a 2;
    6. prove the per-file digests (LR004); last, refuse with LR008 unless the
       database clock is still before the call's `not_after` (§1.3's step 9,
       lane 1's v2.3); and `COMMIT`.
 
-   It runs with `VERBOSITY=sqlstate`, so a 40001 is told from the other errors
-   by its SQLSTATE and not by `psql`'s exit 3.
+   It runs with `VERBOSITY=verbose` and `SHOW_CONTEXT=never` (lane 3's choice
+   of lane 4's S2, #165 6711564365), so `psql`'s first line on stderr is
+   `ERROR:  <SQLSTATE>: <message>`. Every code is read from that one line,
+   40001, 55P03, 23505 and the LR codes alike, so a 40001 is told from the
+   other errors by its SQLSTATE and not by `psql`'s exit 3, and LR009's and
+   LR010's messages come back in the same call, with nothing read again.
 
 ### The outcomes
 
@@ -2176,12 +2290,13 @@ stays open across the shell code.
 | `psql` exit 3 for any other SQLSTATE: the transaction was rolled back | 69, with the SQLSTATE | 69, naming the store and the error | nothing |
 | LR005, a rule of the register (an object held, spelled any way, or `main` held) | 2, with the holder or the earlier line | 2 | nothing |
 | LR006: this write is already in the journal | 0, with its seq | exits 0, as committed | the write, by an earlier attempt |
-| LR007: the id belongs to another write, or to another generation; or an act's base was read in another generation (§1.3's step 3b) | 2, naming the id and what differs | 2 | nothing |
+| LR007: the id belongs to another write, or to another generation; or an act's base was read in another generation (§1.3's step 3b), which for an act is a backstop to the client's check at the snapshot (step 1) | 2, naming the id and what differs | 2 | nothing |
 | LR008: the attempt reached step 9 past its `not_after`, and its transaction rolled back | 75, a lost turn | inside D7's 30 s, a lost turn: a fresh snapshot, then a new attempt under the same write id, as 40001 is; at the deadline, F3's rule ("A write in doubt", below); never 3 or 69 by itself (lane 4, #165 6709038351, as lane 3 ruled in 6710770304) | nothing |
-| LR009, "expectation changed": an entry after the act's base, made outside the act, touched a scope the write lists in `LANES_EXPECT` (§1.3's step 3b; D5) | 2, with lane 4's `expectation: <scope> changed at seq <k> by <lane>/<verb>`, its four fields read by the check's own query, since `psql` under `VERBOSITY=sqlstate` prints only the code (§1.3) | 2 (lane 1's v2.4; lane 3's rulings, #165 6710840240 and 6711233420) | nothing |
+| LR009, "expectation changed": an entry after the act's base, made outside the act, touched a scope the write lists in `LANES_EXPECT` (§1.3's step 3b; D5) | 2, with lane 4's `expectation: <scope> changed at seq <k> by <lane>/<verb>`, the server's message, from the same `ERROR:` line as the code (step 3) | 2 (lane 1's v2.4; lane 3's rulings, #165 6710840240, 6711233420 and 6711564365) | nothing |
+| LR010, "key not well formed": a key that a line of the write derives, on its old side or its new, is not a scope: its name is empty or holds white space (§1.3's "The act", steps 5a and 8a) | 2, with the server's `key: <path> line <n> derives <key>, which is not a scope (…)`, from the same `ERROR:` line; never retried, since the same line derives the same key | 2 (lane 1's v2.5; lane 3's ruling, #165 6711924759) | nothing |
 | LR002: the switch, or its marker, is not what a write needs | 69, Amendment 22's text | 69 | nothing |
 | LR003: the client is outside the schema's window | 69, naming both numbers | 69 | nothing |
-| LR004: the edits do not apply, or the proof differs; or the write's act is malformed, or its base is past the head (§1.3) | 69 after one reload and retry | 69 | nothing |
+| LR004: the edits do not apply, or the proof differs; or the write's act is malformed, or its base is past the head (§1.3), which for an act is a backstop: the client refuses both with 2 first (step 1) | 69 after one reload and retry | 69 | nothing |
 | `psql` exit 2, or the call's client timer expired | 3 | in doubt: the next attempt's snapshot looks the id up | unknown |
 | no connection at the first snapshot, before any commit was sent | — | 69 | nothing |
 
@@ -2551,7 +2666,11 @@ The five `lane-start` arms that note an unknown code and carry on (`:1154`,
 75 under (A″), since only a commit can lose its turn, but the arms refuse on it
 so that a later change cannot reopen the fail-open. `:1154` refuses 69 too, by
 2A; at `:1262`, `:1271`, `:3079` and `:3430` a 69 stays the note it is today,
-as R3's option A leaves those four reads.
+as R3's option A leaves those four reads. Lane 4's table of the callers'
+default arms (the phase plan) adds two read arms the frame's list lacked,
+`:1332` (`resolve-home`, silent today) and `:2184–2186` (`session-lane`),
+which refuse 75 and 3 as well, `:2184–2186` 69 too; so
+`specs/sql-register/spec.md` names seven read arms.
 
 ### The mirror reads
 
@@ -3911,7 +4030,7 @@ three more, worded by its writer: lane 3's ruling on lane 1's v2.4 (#165
 6711233420, point 1) adds the act's generation to `act-begin`'s output, in the
 interfaces table's `act-begin` row and as a new sentence in "The acts and
 their expectations"' bullet "The base."; and lane 3's D9 ruling (#165
-6711028142) names the mode query's 2 s client timer in F8's "a hang" row. Its line 1 is this heading. Lane 4 wrote
+6711028142) names the mode query's 2 s client timer in F8's "a hang" row. Commit J makes more, as lane 3 ruled (#165 6711564365). From lane 4's check of v2.4 (6711545001; its report, `V24-CHECK-report.md` in the same folder, sha256 `7ab46ad752c74e1594cbb3a8481649f047cda03b0655f9dd4117a306f09eab75`): the report's replacement text for M1 to M4 in the interfaces table's `register read` and `act-begin` rows, the bind record's `act` row, the guard's answer 2, and "The acts and their expectations"' bullets from "The base." to "Re-basing.", now six with "The form."; "The scopes." also gains the confirmation (b)'s split and refusal, and "What the journal needs" a pointer that its agreement test, S7, is lane 2's (the routed list); a new bullet after "Before a launch", the report's text for the confirmation (a), carries M4 and S1; `lane-start`'s re-read at `:2614` re-bases first (M3); and the check's place reads "S1's step 3.2" (S5). From lane 4's text of 6711623039: the paragraph "Two reads stand for more than one name." after the scope table (lane 4's half of S3, and S4), the three read rows it changes, lane-handoff's paragraph and the handoff skill's writes (N3). From lane 4's check of v2.5 (6711949237): the arms row for `lane-start`'s writes has any 2 at `:4181` die, LR010's included. Its line 1 is this heading. Lane 4 wrote
 it against this file at `21f0191c` and the code at `2a057a6d`, so every
 `design.md` and `proposal.md` line it cites is at `21f0191c`, before this fold
 moved them; the sections it names (D5, S1, S2, SVC-8, the facts table) are
@@ -3939,7 +4058,7 @@ with the probes' raw output in `sandbox-RENDER`, `sandbox-PP-D` and
   proposal's guard bullet.
 - **D5 stands,** one transaction per verb, with `start-record` as its one
   composite verb, and F5's expectations are `act-begin` plus six scopes, in
-  place of `--expect-row <lane> <digest>`. In D5, S1's step 3.5 and
+  place of `--expect-row <lane> <digest>`. In D5, S1's step 3.2 and
   `specs/sql-register/spec.md`'s readers' requirement, with a scenario for an
   act's own earlier write. D5's three conditions (lane 4's row 22) join the
   table for Brett beside D5.
@@ -4001,14 +4120,16 @@ written before these rulings, so a row may still read "lane 3" or "open":
   its three register commits and pushes become one, which the Goals, the
   Non-Goals and both deltas now carry.
 
-So after these rulings and lane 1's v2.4 the only items still open from lane
-4's section are rows 18, 22 and 40, for Brett, and the four points lane 3's
-rulings on v2.4 give lane 4 to confirm (#165 6711233420; the routed list at
-the end of this file). Round 1, which lane
+So after these rulings, lane 1's v2.4 and v2.5, and lane 4's checks of v2.4
+and v2.5, the only items still open from lane 4's section are rows 18, 22 and
+40, for Brett, and one change for phase 2 on lane 4's side, `key()`'s zeros
+trimmed as text (#165 6711949237; the routed list at the end of this file).
+The four points lane 3's rulings on v2.4 gave lane 4 to confirm (#165
+6711233420) are confirmed (6711545001). Round 1, which lane
 4's basis below holds as provisional, is RULED since (#165 6710653292).
 
 **New and unproven:** the names this section adds that the proposal does not:
-`act-begin`, `LANES_ACT`, `LANES_EXPECT` and the six scopes; `start-record`;
+`act-begin`, `LANES_ACT`, `LANES_EXPECT` and the six scopes; `canon-lane --walk`; `start-record`;
 `guard-bind`, `pid_start_of` and the offer file's modes `binding`, `bound`,
 `bind-failed` and `name-drift`; `LANES_REGISTER_SCRATCH`;
 `LANES_WRITE_GENERATION` and `LANES_REGISTER_PENDING_MAX_AGE_S`;
@@ -4037,10 +4158,10 @@ The frame's wording governs (Q6, 1A, `design.md:131–135`; the rollout, `:3429�
 | `lanes-index mode` | 0 with `index` or `primary`; 78 for Q6(c); 2 for a refused configuration | entry (D3) | lifts 78 |
 | `register snapshot` | the switch with its marker state and `generation` (lane 1's v2); `n`; the database clock (D13); the write-id lookup, checked against lane, verb and `args_sha256` (D8; LR007); the images of `--files` or `--all` at `n`; and `--tree <dir>`, which builds the scratch tree (phase 2, below) | the attempt loop | — |
 | `register commit` | the attempt directory's format (paths, renames, removals, images, base digests, message, author, the act's expectations, the `repos.tsv` blob id and alias sets, D19); `not_after` (F3); the call `commit_write(n, write_id, REGISTER_SCHEMA_VERSION, generation, entry)` (lane 1's v2); exits 0 `committed <seq>`, 75, 69, 2, 3; no `--end-line` or `--hook-pid`, since answer 2 runs detached | the commit seam (D4) | `render --revert`, `import --single` |
-| `register read` | `--prefetch --cache <file>`, `--files` or `--all`, `--for guard`; text at `n` with digests; 0, 69, 78 or 2 | — | — |
+| `register read` | `--prefetch --cache <file>`, `--files` or `--all`, `--for guard`; text at `n` with digests, and the `n` and the register `generation` it read, in the same snapshot; 0, 69, 78 or 2 | — | — |
 | `journal` | `--write-id <id>`, which calls `find_write` (lane 1's v2); `--since <m>` (message, author, commit UTC, edits, digests, `journal.operator`); `--last --path --grep` | the in-doubt lookup (S1) | the renderer |
 | `render` | `--images --at <k> --out <dir>`, the pure function; the image cache | the snapshot's images | `--checkout`, `--until`, `--revert` |
-| `lanes-edit.sh act-begin` | `<act-id>@<head seq>` with the generation it was read in, or `<act-id>@files` off primary (the acts, below) | the scripts' `LANES_ACT` | — |
+| `lanes-edit.sh act-begin` | `<act-id>@<seq>:<generation>` on primary, the head seq and the register generation read in one snapshot; `<act-id>@files` off primary; `--rebase` (the acts, below) | the scripts' `LANES_ACT` | — |
 | `lanes-edit.sh guard-bind`, the offer file's bind record | the record's form, `pid_start_of`, the guard's case table ("Answer 2's detached bind") | adds `act`, `write_id`, `generation` and `not_after` to the record, and the child's `find_write` lookup | — |
 | `lanes-edit.sh start-record` | — (phase 2's own verb) | `lane-start`'s bind, one transaction with the union of its expectations | — |
 | schema | every column phase 3 reads: author, commit UTC, `journal.operator`, the mirror state (lane 1); and lane 4's two asks, `act_id` and the touched keys (the acts, below) | — | no migration |
@@ -4356,7 +4477,7 @@ The record is the offer file itself, `$CLAUDE_CONFIG_DIR/lanes/offers/<session u
 | `from`, `to`, `session`, `uuid`, `window`, `pane` | the offer's identity, as today's file has it (`:10965–10973`) |
 | `bind`; `started_utc`, `deadline_epoch` | the attempt, 1 to 3; the start, and the start plus 180 s |
 | `pid`, `pidstart`; `host`, `container` | the child; `LANES_WORKSTATION` (else the hostname) and `LANES_CONTAINER` |
-| `out`; `act`, `write_id`, `generation`, `not_after` | the attempt's output file; phase 2 only, `act` being the guard's base `<act-id>@<n>`, from the `n` of the prefetch that made the offer |
+| `out`; `act`, `write_id`, `generation`, `not_after` | the attempt's output file; phase 2 only, `act` being the guard's base `<act-id>@<n>:<generation>`, from the `n` and `generation` of the prefetch that made the offer |
 | `rc`, `why`, `note=` lines, `ended_utc` | the outcome, with one `note=` per act still owed and its command |
 
 **Liveness:** the pid is live and its start time equals `pidstart` (Linux: field 22 of `/proc/<pid>/stat`, after the last `)`; macOS: `ps -o lstart=`). One helper, `pid_start_of`, serves this record and F10's pending record. It does not copy `lock_steal_if_dead`'s pid-only test (`:1286–1296`), under which a reused pid looks live until the 10-minute age (`:1311–1321`). P5: 200 checks take 1.42 s, about 7 ms each; a reused pid and a dead pid both read as not live.
@@ -4442,12 +4563,46 @@ Folding the lane left into the verb (`--leave <from> <line>`) would make answer 
 
 **The form differs from D5's example** (`--expect-row <lane> <digest>`, `design.md:345–347`): a base seq with scopes, excluding the act's own entries. A digest fails twice. An act's own earlier writes change it: `lane-start` changes the row's session cell (W2–W5) before `set-row-state LIVE` (W6); `lane-handoff` adds a lane-kind line (W9) before W11 and W12; `lane-end`'s gate sweep is a child that writes `NOTED` lines before W13; chaining it would make every write report its new digest and every script pass it on. And a digest of a read verb's answer would copy that verb's logic into SQL, against the Goals' "reused, never rewritten in SQL"; a digest of the text it read is a scope with a worse failure.
 
-- **The base.** The act runs a new read verb, `lanes-edit.sh act-begin`, before its first deciding read. It prints `<act-id>@<head seq>`, or `<id>@files` off primary, touching no database. On primary it also gives the act the register generation that head was read in, so that a base from a lost database's tail is refused with LR007 (lane 3's ruling on lane 1's v2.4, #165 6711233420, point 1; the exact form of the output and of `LANES_ACT` with it is lane 4's to confirm). The act exports it as `LANES_ACT` to its own verb calls and its children.
-- **The scopes.** Each write takes `LANES_EXPECT="<scope> …"` as a prefix on its own call, as `LANES_LANE` and `LANES_SESSION` ride today, never exported. It is a variable, not a flag, because `log` and `append-line` take free-text positionals.
-- **The check,** in the commit transaction (S1's step 3.5): refuse with 2, `expectation: <scope> changed at seq <k> by <lane>/<verb>`, when any journal entry after the base touched a listed scope and has a different `act_id`.
-- **What the journal needs (lane 1):** an `act_id` column, and each entry's touched keys, computed at commit by the parsers `lanes-index` already has (`build_records`, `code/lanes-index:765`). Lane 1's v2 has neither.
-- **Re-basing.** `act-begin --rebase` keeps the id and takes a new base, only after a deliberate wait for another place's write, and only once every scope the act keeps has been re-read.
+- **The base.** The act runs a new read verb, `lanes-edit.sh act-begin`, before its first deciding read.
+  - On primary it makes one `lanes-index register snapshot` call. It reads the head seq `n` and the switch's `generation` in that call's one REPEATABLE READ READ ONLY transaction, and prints `<act-id>@<n>:<generation>`.
+  - It exits 69 where that read fails, or where the switch is not `primary` with the marker `present`, since every write of the act would then be refused with 69 as well.
+  - Off primary it prints `<act-id>@files` and touches no database.
+  - `<act-id>` is 32 lower-case hex digits from 16 random bytes, new for every act, since an act's own entries never refuse it.
+  - The act exports the line as `LANES_ACT` to its own verb calls and its children.
+- **The form.** `LANES_ACT` is `<act-id>@files`, or `<act-id>@<seq>:<generation>`.
+  - `<seq>` is 1 to 18 digits, with no leading zero except `0` itself. `<generation>` is a lower-case 8-4-4-4-12 uuid.
+  - A bash 3.2 client splits it with `${LANES_ACT%%@*}`, `${LANES_ACT#*@}`, `${rest%%:*}` and `${rest#*:}`, and tests each part with a `case` pattern of spelled-out bracket lists.
+  - It becomes the entry's `act`: `{id, base: <seq> as a JSON number, generation, expect}`.
+- **The scopes.** Each write takes `LANES_EXPECT="<scope> …"` as a prefix on its own call, as `LANES_LANE` and `LANES_SESSION` ride today, and it is never exported.
+  - The scopes are separated by white space.
+  - Each scope is `row:`, `bind:`, `objects:`, `alias:` or `archive:` followed by a name that `check_lane_name` accepts, or `sid:` followed by a uuid.
+  - They are sent in lower case, in the order given.
+  - It is a variable, not a flag, because `log` and `append-line` take free-text positionals.
+  - They are split under `set -f` (noglob), in a subshell, so that a lone `*` cannot expand to file names.
+  - A token outside these forms, `*` and `row:*` included, exits 2 before any database call: `LANES_EXPECT carries "<token>", which is not row:, bind:, objects:, alias: or archive: and a lane name, or sid: and a session uuid. Nothing was sent.` It is never dropped, since dropping a token under-checks.
+- **The check,** in the commit transaction (lane 1's step 3b, S1's step 3.2):
+  - Refuse with 2 and `expectation: <scope> changed at seq <k> by <lane>/<verb>` (LR009) when a journal entry after the base, made outside this act (by another act or by none), touched a listed scope.
+  - An import, a cutover or a rollback touches every scope (`*`), and is reported as the first listed scope.
+  - A base from another generation is refused with 2 (LR007).
+- **What the journal needs (lane 1, v2.4):** `journal.act_id` and `journal_scopes`, derived inside `commit_write` (steps 5a and 8a) from `build_records`' rules (`code/lanes-index:765`) and never sent by the client. An agreement test runs `line_scopes` over every line of the imported register against the same rules in Python, since a rule that drifted would under-report; it is lane 2's, in its pass after the review (S7; the routed list at the end of this file).
+- **Re-basing.** `act-begin --rebase` keeps the id and takes a new seq and generation from one snapshot, only after a deliberate wait for another place's write.
+  - It runs before the act re-reads the scopes it keeps. A write that lands after the new base is then checked, and the act refuses on any change it did not expect.
+  - It refuses with 2 where `LANES_ACT` is malformed, where the base is `files` on primary, or where the generation has changed.
 - **Before a launch** `LANES_ACT` is unset (`exec`, `respawn-pane`), or the session and its guard would inherit it. **In files mode** both variables are ignored.
+- **The client's checks on primary, before the first snapshot,** in `lanes-edit.sh`'s primary branch, and again in `lanes-index register commit` before `psql`. Each exits 2, names the variable, and sends nothing:
+  1. `LANES_ACT` is malformed;
+  2. `LANES_EXPECT` is not empty and `LANES_ACT` is unset or empty;
+  3. a scope is outside the six forms, `*` included;
+  4. the base is `files`: "LANES_ACT was taken off primary (`<id>@files`) and this write runs on primary: run the act again from its start".
+
+  **At each attempt's snapshot,** it also exits 2 where:
+  - the act's generation is not the switch's;
+  - the act's base is past `n`;
+  - `LANES_WRITE_GENERATION` is not the switch's.
+
+  The server's LR007 and LR004 for an act are then backstops.
+
+  A well-formed `LANES_ACT` with an empty `LANES_EXPECT` sends `act` with `expect: []`, which records `act_id` and checks nothing. Files mode reads neither variable.
 
 | Scope | What it covers | The reads it stands for |
 |---|---|---|
@@ -4460,16 +4615,21 @@ Folding the lane left into the verb (`--leave <from> <line>`) would make answer 
 
 A requester's `HANDOFF-REQUESTED` line is not a lane-kind line, so it never refuses the holder's own handoff.
 
+**Two reads stand for more than one name.**
+
+- **`canon-lane` stands for its whole walk.** It follows alias lines hop by hop, and a row wins at every hop (`code/lanes-edit.sh:5573–5588`, `:5621`), so its answer changes when a row or an alias line appears for any name on the walk, not only for the answer. A new flag, `canon-lane --walk <name>`, prints the names the walk visited, the typed name first and the last hop last, one per line, with `canon-lane`'s exit codes. An act that decides on `canon-lane` takes the names from `--walk` and lists `row:<n>` and `alias:<n>` for every name `<n>` on it. In the lists below, `alias:L` stands for those keys; for a lane with no alias the walk is `L` alone, and the keys are `row:L alias:L`, as before.
+- **`retired-identity` stands for every spelling its `key()` folds together.** `RETIRED_ROWS_AWK` (`code/lanes-edit.sh:3743–3760`) matches an archived token whose lower-cased spelling equals the lane's, or whose `key()` equals the lane's. `key()` is the text before the last `-`, lower-cased, then `-`, then the part after it with one trailing letter dropped and its leading zeros removed (`0` stays `0`); there is no key where there is no `-` or that part is not all digits. So `foo-3` matches `foo-03` and `Foo-3b`. Lane 1's v2.5 `line_scopes` emits `archive:<key(t)>` beside `archive:<t>` for every archived token `t`, by string trimming, never a cast (lane 1's half of S3, owed by its v2.5, which this design folds: "The schema", §1.3's "The act"). An act that decides on `retired-identity` lists `archive:<key(L)>` beside `archive:L` where the two differ, and in the lists below `archive:L` stands for both.
+
 #### `lane-start`
 
 | Deciding read (`code/lane-start`) | Line | Scope |
 |---|---|---|
-| `canon-lane` | `:1129` (arms `:1133–1155`) | `alias:L`, `row:L` |
+| `canon-lane` | `:1129` (arms `:1133–1155`) | the walk's keys |
 | `managed-projection` | `:1551`, called by `seam_refuse` at `:1561` | `row:L` |
 | the row count, awk over `$LANES_FILE` (a verb read on primary) | `:1591–1593` (refusal `:1609`) | `row:L` |
 | `register-row` | `:1629`; anchors `:1808–1809`, `:2136`, `:2191` | `row:L` |
 | the `RETIRED` word in `$row` and `$pub_row` | `:2322` | `row:L` |
-| `retired-identity` | `:2301` | `archive:L` |
+| `retired-identity` | `:2301` | `archive:L`, and `archive:<key(L)>` where it differs |
 | `lane-last` | `:2329` (refusal `:2335`) | `bind:L` |
 | `register-row` of the window's name | `:2086` | `row:<window name>` |
 | `register-row`, `register-row-local` of the window's name, new lane only | `:2369` | `row:<window name>` |
@@ -4489,13 +4649,13 @@ Host-local reads need none: `live-holder`, `idle-holders`, `transcript-holders`,
 | W6 `set-row-state LIVE` | `:3985` | `row:L bind:L alias:L archive:L` |
 | W7 `log STARTED/RESUMED` | `:4178` | `row:L bind:L alias:L archive:L sid:<lane_sid>` |
 
-In phase 2, W1 or W2–W5, with W6 and W7, become one `start-record` call carrying the union of their expectations ("Answer 2's detached bind", above). After a W8 that returns 0 or 8, the holder's own `PAUSED` writes land inside the act, so at `:2614` `lane-start` must also re-read `register-row`, refuse on a change outside the state cell, and only then re-base; otherwise the read at `:1629` goes unchecked across the wait, 300 s by default. W7 is the binding line: a W7 refused by its expectation is a second binding, so `:4181` must stop the launch (`die 2`), not note and carry on.
+In phase 2, W1 or W2–W5, with W6 and W7, become one `start-record` call carrying the union of their expectations ("Answer 2's detached bind", above). After a W8 that returns 0 or 8, the holder's own `PAUSED` writes land inside the act, so at `:2614` `lane-start` must also re-base, then re-read `register-row` and refuse on a change outside the state cell; otherwise the read at `:1629` goes unchecked across the wait, 300 s by default. W7 is the binding line: a W7 refused by its expectation is a second binding, so `:4181` must stop the launch (`die 2`), not note and carry on.
 
 #### `lane-end`
 
 | Read (`code/lane-end`) | Line | Scope |
 |---|---|---|
-| `canon-lane` | `:921`, arms `:930`, `:934`, `:938` | `alias:L` |
+| `canon-lane` | `:921`, arms `:930`, `:934`, `:938` | the walk's keys |
 | the row count, awk | `:1744`, refusal `:1749` | `row:L` |
 | `managed-projection` | `:951`, called at `:1765` | `row:L` |
 | `lane-objects` | `:1801` | `objects:L`, `bind:L` |
@@ -4506,13 +4666,13 @@ The gate at `:2127` reads `LANDED` lines, which are append-only and only relax i
 
 #### `lane-handoff`
 
-The base is taken before the first `sread` (`code/lane-handoff:1448`). Reads: `register-row` `:1649`, `:2514` (`row:L`); `window-lane` `:1655` (`bind:<candidate>`); `swapped` `:1666`, `last-session` `:1815`, `lane-dir` `:1862`, and `lane-last` on the late path `:1922` (`bind:L`); `canon-lane` `:1704` (`alias:L`); `managed-projection` `:1723` (`row:L`). Writes: the late `log PAUSED --utc` (`:2803`) and W9 `log PAUSED` (`:2874`), `bind:L row:L alias:L`; W11 `append-line` (`:2890`), `bind:L row:L alias:L`, since its line names the lane by the spelling `canon-lane` gave (`:1704`), as W9's and W12's do; W12 `set-row-state PAUSED` (`:2913`), `row:L bind:L alias:L`. A forced release writes a `PAUSED` for the holder after re-reading its log (`code/lanes-edit.sh:17157`, `:17188`); `bind:L` then refuses the holder's own record, which is right.
+The base is taken before the first `sread` (`code/lane-handoff:1448`). Reads: `register-row` `:1649`, `:2514` (`row:L`); `window-lane` `:1655` (`row:<window name>` and `bind:<candidate>`); `swapped` `:1666`, `last-session` `:1815`, `lane-dir` `:1862`, and `lane-last` on the late path `:1922` (`bind:L`); `canon-lane` `:1704` (the walk's keys); `managed-projection` `:1723` (`row:L`). Writes: the late `log PAUSED --utc` (`:2803`) and W9 `log PAUSED` (`:2874`), `bind:L row:L alias:L`; W11 `append-line` (`:2890`), `bind:L row:L alias:L`, since its line names the lane by the spelling `canon-lane` gave (`:1704`), as W9's and W12's do; W12 `set-row-state PAUSED` (`:2913`), `row:L bind:L alias:L`. Where the window's name is not `L`, the late `PAUSED`, W9, W11 and W12 also list `row:<window name>`. A forced release writes a `PAUSED` for the holder after re-reading its log (`code/lanes-edit.sh:17157`, `:17188`); `bind:L` then refuses the holder's own record, which is right.
 
 #### `lane-rename`, the handoff skill, and two other acts
 
 - **`rename-lane`** (`code/lane-rename:214`) carries none: no register read precedes it, its deciding checks are inside the verb, where the head check covers them, and the reads after it (`:202`, `:227`, `:301`) decide only tmux acts.
-- **The handoff skill.** Reads: step 1's block (`code/skills/handoff/SKILL.md:143–243`: `:147`, `:210`, `:218`, `:239`), step 2's `register-row` (`:294`), `lane-dir` (`:576`). Writes: `:735`, `:743`, `:786`. Each block runs in its own shell, minutes apart, so a base cannot pass from step 1 to step 4 except through the agent. So step 4's block opens with `act-begin`, re-runs the identity's register reads, and refuses if `lane` differs from step 1's; its three writes carry `row:L bind:L alias:L`, the same set as `lane-handoff`'s W9, W11 and W12, since `:743` is the same `append-line` as W11.
-- **The guard's answer 2:** the bind is `start-record`'s act, with the union of W2, W6 and W7 ("Answer 2's detached bind", above). The `set-row-state "$ga_from"` that today follows it in the hook (`code/lanes-edit.sh:11199`) is run by the detached child after the bind, with `LANES_EXPECT="row:<from> bind:<from>"`. Its base is the record's `act`, `<act-id>@<n>` from the `n` of the prefetch that made the offer (D17), exported as `LANES_ACT` for that one call only, so a change to the lane left after the offer refuses it with 2 and puts a note in the bind's record. `start-record` runs under `lane-start`'s own `act-begin` base.
+- **The handoff skill.** Reads: step 1's block (`code/skills/handoff/SKILL.md:143–243`: `:147`, `:210`, `:218`, `:239`), step 2's `register-row` (`:294`), `lane-dir` (`:576`). Writes: `:735`, `:743`, `:786`. Each block runs in its own shell, minutes apart, so a base cannot pass from step 1 to step 4 except through the agent. So step 4's block opens with `act-begin`, re-runs the identity's register reads, and refuses if `lane` differs from step 1's; its three writes carry `row:L bind:L alias:L` and `row:<window name>` where the window's name is not `L`, the same set as `lane-handoff`'s W9, W11 and W12, since `:743` is the same `append-line` as W11.
+- **The guard's answer 2:** the bind is `start-record`'s act, with the union of W2, W6 and W7 ("Answer 2's detached bind", above). The `set-row-state "$ga_from"` that today follows it in the hook (`code/lanes-edit.sh:11199`) is run by the detached child after the bind, with `LANES_EXPECT="row:<from> bind:<from>"`. Its base is the record's `act`, `<act-id>@<n>:<generation>` from the `n` and `generation` of the prefetch that made the offer (D17), exported as `LANES_ACT` for that one call only, so a change to the lane left after the offer refuses it with 2 and puts a note in the bind's record. `start-record` runs under `lane-start`'s own `act-begin` base.
 - **`lane`'s `request-handoff`** (`code/lane:1132–1139`) carries `bind:L`.
 
 **Every listed act can carry one, under three conditions:** (1) `lane-start` re-reads the row at `:2614`; (2) the skill's step 4 re-derives the lane's identity; (3) `lane-end`'s gate inherits `LANES_ACT`. Each condition refused narrows S3: without (1), the reads before a handoff wait are unchecked across it; without (2), step 1's reads are. Host-local facts and `repos.tsv` stay outside S3 by nature, as the frame's risks say.
@@ -4564,7 +4724,7 @@ In files mode the marker check then refuses on a SQL estate (D3). `LANES_INDEX=o
 | `lane-start:1332` (`resolve-home`) | silent | refuse 75 and 3 (not in the frame's list) |
 | `lane-start:2184–2186` (`session-lane`) | notes on any code | refuse 69, 75 and 3 (not in the frame's list) |
 | `lane-start:1555`, `:1641–1643`, `:1661–1663`, `:2305`, `:2335`, `:2444`, `:2511–2512`, `:2534`, `:2638` | already refuse | pass the code |
-| `lane-start`'s writes, `:3851` to `:4181` | note | on a 3, relay the writer's rerun; an `expectation:` 2 at `:4181` must die |
+| `lane-start`'s writes, `:3851` to `:4181` | note | on a 3, relay the writer's rerun; any 2 at `:4181` must die, LR010's included |
 | `lane-start:1240`, `:4073` (`resolve-repo`) | `:1240` silent, `:4073` notes | none: a git read on primary (D19) |
 | `lane-end:930–938` | any code but 66 and the 15(d) pair falls through silently | refuse 69, 75 and 3 |
 | `lane-end:769`, `:955`, `:1806`, `:1984` | already die 1 | pass the code |
@@ -5097,8 +5257,15 @@ left as it was.
   derived inside `commit_write` and stored in `journal_scopes`, with F5's
   check as LR009 (D5; lane 4's row 20); and the SQL that refuses with LR004,
   at commit, a `cutover` or `rollback` entry that writes a row outside
-  `lanes/STORE` (D24; lane 1's point 1). The stale-`LANDING` release waits on
-  Brett (F13).
+  `lanes/STORE` (D24; lane 1's point 1). **Answered by lane 1's v2.5** (#165
+  6711914507, folded above): lane 1's half of S3, and N1 and N2, from lane
+  4's check of v2.4 (6711545001), as lane 3 asked (6711564365): `line_scopes`
+  also gives an archived row its normalized `archive:` key, trimmed as text;
+  step 8a's `objects:` key is lower-cased, through `entry_new_keys`; and a
+  key a line derives that is not a scope is a new code, LR010, a 2, at a
+  write and at an import, whose cost at import lane 3 accepted (option (a),
+  #165 6711924759; `operations.md` §2.2, act 4's step 6). The
+  stale-`LANDING` release waits on Brett (F13).
 - **Lane 4, the phase plan: answered.** Its section, folded above, answers
   each item this list routed to it, in its "The routed items, answered" (34
   rows), and lane 3 accepted it (#165 6708889286). Each item, answered: the
@@ -5140,13 +5307,22 @@ left as it was.
   Goals, the Non-Goals, `specs/sql-register/spec.md`'s "Nothing changes where
   the marker is absent" and its requirement on `lane-start`'s bind now carry.
   Lane 4's other rows are ruled at the head of the phase plan; rows 18, 22 and
-  40 are Brett's, with the spec PR. **For lane 4 to confirm,** from lane 3's
-  rulings on lane 1's v2.4 (#165 6711233420): the exact form of `act-begin`'s
-  output and of `LANES_ACT` with the generation (D5); that on primary the
-  client refuses with 2 a write from an act whose base is `files`; that the
-  client checks `LANES_EXPECT` before it calls; and that on LR009 the client
-  reads the message's four fields with the check's own SELECT, because `psql`
-  under `VERBOSITY=sqlstate` prints only the code (§1.3's "The act").
+  40 are Brett's, with the spec PR. **Confirmed by lane 4's check of v2.4**
+  (#165 6711545001, as lane 3 ruled in 6711564365), so none of lane 3's
+  rulings on lane 1's v2.4 (6711233420) waits on lane 4: the form of
+  `act-begin`'s output and of `LANES_ACT`, `<act-id>@<seq>:<generation>` on
+  primary and `<act-id>@files` off it (D5); that on primary the client
+  refuses with 2 a write from an act whose base is `files`; and that the
+  client checks `LANES_EXPECT` before it calls. LR009's re-read is not
+  needed: the commit call runs with `VERBOSITY=verbose` and
+  `SHOW_CONTEXT=never`, so the message comes back in the one call (lane 3's
+  choice of lane 4's S2; S1's step 3). The check's other points are folded in
+  the phase plan's "The acts and their expectations" (M1 to M4, S1, lane 4's
+  half of S3, S4 and N3) and in S1's step 3.2 (S5); S7 is lane 2's, below.
+  **For phase 2, on lane 4's side** (its check of v2.5, #165 6711949237):
+  `RETIRED_ROWS_AWK`'s `key()` (`code/lanes-edit.sh:3748`, `(p + 0)`) should
+  trim the zeros as text, `sub(/^0+/, "", p); if (p == "") p = "0"`, so that
+  the read and v2.5's keys agree on 16 digits or more.
 - **Lane 2, the test plan:** a test for each MUST as folded (a write in doubt at
   the deadline; a diverged rollback, and a failed seq-1 push; the ruleset, then
   a files-mode write after the rollback; a declared outage with the service and
@@ -5174,6 +5350,10 @@ left as it was.
   after the review; AT-11 to lane 4's corrected `start-record` table;
   and the agreement tests of `main_slots`' pairing by spellings against files
   mode's Rule 6 on the imported history (D18), which the plan already has.
+  From lane 4's check of v2.4, as lane 3 ruled (#165 6711545001 and
+  6711564365): S7, the agreement test of `line_scopes` against
+  `build_records`' rules over the whole imported register, in the pass after
+  the review.
 - **Lane 5, the service:** from lane 1's v2, confirm the libpq service form
   (`bootstrap --admin-service`, `operations.md` §2.4) against SVC-2's
   mapping, and that the declared outage's mirror read fits SVC-8's budget

@@ -501,7 +501,7 @@ On `mode=primary` the post-write index nudge SHALL NOT re-index the mirror into 
 - **THEN** no re-index of the mirror runs against the register's database
 
 ### Requirement: Readers read the database and fail closed
-On `mode=primary` every act and every guard SHALL read the database: `who`, `binding`, `live-holder`, `next-free`, `managed-projection`, the guard, `lane`, `lane-start`, `lane-end`, `lane-handoff` and `lane-rename`. Where the act writes, the reads it decides by SHALL hold at its COMMIT: they run inside the transaction that commits the write, or on a snapshot at head `n` whose SERIALIZABLE commit succeeds only while the head is still `n`. Where an act's deciding reads come before the write verb they decide (one transaction per verb), each such verb SHALL carry them as expectations: the act SHALL take a base, the journal's head sequence, before its first deciding read, and each write it decides SHALL name the scopes its earlier reads cover (a lane's row, its lane-kind log lines, its live claims and open takers, the alias lines that name it, the archive rows that name it, and the lines that carry a session's id). Its commit SHALL check them in its own transaction, refusing with 2, and writing nothing, where a journal entry after the base, made by another act, touched a named scope; the database SHALL raise that refusal as a code of its own, LR009, "expectation changed", and the refusal SHALL name the scope, that entry's seq, and its lane and verb, as `expectation: <scope> changed at seq <k> by <lane>/<verb>`. The act's own earlier writes SHALL NOT refuse it. An act that cannot carry its reads that way, or that carries them only under a condition Brett Heap refuses, is a narrowing of Amendment 22's S3, and is Brett Heap's to decide. A read that fails SHALL refuse with 69, or with 2 in the guard, except where the next requirement says otherwise.
+On `mode=primary` every act and every guard SHALL read the database: `who`, `binding`, `live-holder`, `next-free`, `managed-projection`, the guard, `lane`, `lane-start`, `lane-end`, `lane-handoff` and `lane-rename`. Where the act writes, the reads it decides by SHALL hold at its COMMIT: they run inside the transaction that commits the write, or on a snapshot at head `n` whose SERIALIZABLE commit succeeds only while the head is still `n`. Where an act's deciding reads come before the write verb they decide (one transaction per verb), each such verb SHALL carry them as expectations: the act SHALL take a base, the journal's head sequence and the register's generation, read together, before its first deciding read, and each write it decides SHALL name the scopes its earlier reads cover (a lane's row, its lane-kind log lines, its live claims and open takers, the alias lines that name it, the archive rows that name it, and the lines that carry a session's id). Its commit SHALL check them in its own transaction, refusing with 2, and writing nothing, where a journal entry after the base, made outside the act, touched a named scope, or where the base was read in another generation of the register; the refusal for a changed scope SHALL name the scope, that entry's seq, and its lane and verb, as `expectation: <scope> changed at seq <k> by <lane>/<verb>`. The act's own earlier writes SHALL NOT refuse it. A write from an act whose base was taken where the workstation was not `mode=primary` SHALL be refused with 2 on a `mode=primary` workstation, before any database call. What each entry touched SHALL be derived from the lines it changes, never sent by the writer; a write, or an import, a line of which derives a key that is not well formed (a scope's name is lower case, not empty, and holds no white space) SHALL be refused with 2, naming the path, the line and the key, and nothing SHALL be written. An act that cannot carry its reads that way, or that carries them only under a condition Brett Heap refuses, is a narrowing of Amendment 22's S3, and is Brett Heap's to decide. A read that fails SHALL refuse with 69, or with 2 in the guard, except where the next requirement says otherwise.
 
 > Brett's answer to Q7: option (A″), #165 6710653292; the wording holds under (A′) and (A) as well.
 
@@ -512,6 +512,18 @@ On `mode=primary` every act and every guard SHALL read the database: `who`, `bin
 #### Scenario: An act's own earlier write
 - **WHEN** an act's earlier write changed a scope that its later write names as an expectation, and no other act touched that scope after the act's base
 - **THEN** the later write is not refused for it
+
+#### Scenario: A base read before an after-loss cutover
+- **WHEN** an act takes its base, an after-loss cutover then replaces the register with a new generation, and a write the act decides runs with that base
+- **THEN** the write refuses with 2 and writes nothing
+
+#### Scenario: An act begun off primary whose write runs on primary
+- **WHEN** an act takes its base where the workstation is not `mode=primary`, so the base holds no sequence, and a write the act decides then runs on a `mode=primary` workstation
+- **THEN** the write refuses with 2 before any database call, and writes nothing
+
+#### Scenario: A line that derives a key that is not well formed
+- **WHEN** a write changes a line, or an import loads one, that derives a key whose name is empty or holds white space
+- **THEN** the write or the import refuses with 2, naming the path, the line and the key, and writes nothing
 
 #### Scenario: The reader table (agreement tests 2 and 11)
 - **WHEN** the database is unreachable and `who`, `binding`, `live-holder`, `next-free`, `lane`, `lane-end` or `lane-rename` runs
@@ -593,11 +605,11 @@ On `mode=primary`, `lane-start` SHALL refuse with 69 before anything is renamed 
 - **WHEN** a fake `psql` fails only the `canon-lane` call at `lane-start:1154`
 - **THEN** the launch refuses and no second row is made for a lane already running
 
-### Requirement: The busy code refuses the launch at `lane-start`'s five default arms
-At the five arms of `lane-start` that note an unknown code and carry on (`:1154` `canon-lane`, `:1262` `swapped`, `:1271` `lane-dir`, `:3079` `lane-transcript` for the row's session cell, `:3430` `lane-transcript` for the last `PAUSED` record's resume id), the busy code SHALL refuse the launch, naming the code and saying that nothing was written and a retry in seconds is safe. Every caller's default arm SHALL refuse on the busy code. The manual SHALL list it.
+### Requirement: The busy and in-doubt codes refuse the launch at `lane-start`'s seven default read arms
+At the seven read arms of `lane-start` whose default arm notes an unknown code and carries on, or passes it silently (`:1154` `canon-lane`, `:1262` `swapped`, `:1271` `lane-dir`, `:1332` `resolve-home`, `:2184–2186` `session-lane`, `:3079` `lane-transcript` for the row's session cell, `:3430` `lane-transcript` for the last `PAUSED` record's resume id), the busy code or the in-doubt code SHALL refuse the launch, naming the code and saying that nothing was written and a retry in seconds is safe. Every caller's default arm on a read SHALL refuse on the busy code. `lane-start`'s bind is not a read arm: the busy code or the in-doubt code from its `start-record` follows the requirement "`lane-start`'s bind is one write". The manual SHALL list it.
 
 #### Scenario: One test per arm
-- **WHEN** the verb at any one of the five arms exits the busy code
+- **WHEN** the verb at any one of the seven read arms exits the busy code or the in-doubt code
 - **THEN** the launch refuses and the register's rows and log are unchanged
 
 ### Requirement: `lane-handoff` and the handoff skill with the database unreachable
