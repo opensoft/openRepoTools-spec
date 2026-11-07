@@ -54,7 +54,7 @@ New bash SHALL keep to the hygiene suite's bash-3.2 rules. New Python SHALL be s
 - **THEN** it passes under its bash-3.2 rules and finds only standard-library imports
 
 ### Requirement: The `UserPromptSubmit` guard is the service's client
-The guard SHALL send the service only the names of the files it reads. What it reads today and a service cannot read for itself (the hook's `session_id`, `cwd`, `agent_id` and `prompt`; the window reference and the window name; and the live record's `name`, `nameSource` and liveness facts) SHALL stay in the guard, which SHALL read them from this container's session records and tmux. The service SHALL answer the register's text at `n`, and the reader SHALL decide: the guard SHALL run today's parser on that text and SHALL exit 0 or 2 as it decides, passing the prompt, refusing it, or making the offer of the three Amendment 12 Addendum 1 choices. The offer file, the `/rename` typing, and answer 2's `lane-start --no-launch --bind` and `set-row-state` SHALL stay client-side acts, and those two writes SHALL be transactions through the storage layer. The hook SHALL stay, because the harness's exit code is the only thing that refuses a prompt. The socket call SHALL be a standard-library Python client. The client's form (a block at the top of `lanes-edit.sh guard` that keeps the hook string, or a separate program with a new hook string) is the design's.
+The guard SHALL send the service only the names of the files it reads. What it reads today and a service cannot read for itself (the hook's `session_id`, `cwd`, `agent_id` and `prompt`; the window reference and the window name; and the live record's `name`, `nameSource` and liveness facts) SHALL stay in the guard, which SHALL read them from this container's session records and tmux. The service SHALL answer the register's text at `n`, and the reader SHALL decide: the guard SHALL run today's parser on that text and SHALL exit 0 or 2 as it decides, passing the prompt, refusing it, or making the offer of the three Amendment 12 Addendum 1 choices. The offer file, the `/rename` typing, and answer 2's writes (`lane-start --no-launch --bind`, whose bind makes four writer calls at the code pin, and `set-row-state`) SHALL stay client-side acts, run detached from the hook, and SHALL be transactions through the storage layer. The hook SHALL stay, because the harness's exit code is the only thing that refuses a prompt. The socket call SHALL be a standard-library Python client. The client's form (a block at the top of `lanes-edit.sh guard` that keeps the hook string, or a separate program with a new hook string) is the design's.
 
 #### Scenario: The request carries only file names
 - **WHEN** the guard asks the service for its read
@@ -71,7 +71,7 @@ The guard SHALL send the service only the names of the files it reads. What it r
 #### Scenario: An offer
 - **WHEN** the service answers the text at `n` and today's parser makes the offer on it
 - **THEN** the client writes the offer file and handles the answer to a pending offer client-side
-- **AND** answer 2's two writes are register transactions
+- **AND** answer 2's writes are register transactions, run detached from the hook
 
 ### Requirement: The `CLAUDE_NO_LANE=1` exception is kept
 The guard's `CLAUDE_NO_LANE=1` exception of `skip-no-lane-guard` (the exact value, exit 0 before any input is read or any identity probed) SHALL be kept unchanged, whether the guard goes through the service or reads directly.
@@ -119,7 +119,7 @@ A service that accepts a connection and never answers SHALL be treated as unavai
 - **THEN** the hook prints the fallback line, exits as the direct read does, and finishes inside its 5 s
 
 ### Requirement: The 5 s is one budget, spent once
-The client's wait for the service, the fallback's own reads and every database access on the guard's path SHALL each get a share, and the shares SHALL add up to less than `GUARD_TIMEOUT`, with room to print the refusal. Every connection on that path, the service's and the fallback's, SHALL set its own connect timeout, `statement_timeout` and `lock_timeout`, each within its share, except the service's connect, which SHALL run only in the background, outside any share, so that no request waits for it; none SHALL use `lanes-index`'s default `PGCONNECT_TIMEOUT=5` or the 300 s it allows a `psql` run. Answer 2's two writes SHALL cut their deadline and each call's timer to what the hook has left, and a busy, 69 or in-doubt outcome SHALL exit 2, naming the write id. A database that does not answer SHALL be a 2 inside the hook and never a kill.
+The client's wait for the service, the fallback's own reads and every database access on the guard's path SHALL each get a share, and the shares SHALL add up to less than `GUARD_TIMEOUT`, with room to print the refusal. Every connection on that path, the service's and the fallback's, SHALL set its own connect timeout, `statement_timeout` and `lock_timeout`, each within its share, except the service's connect, which SHALL run only in the background, outside any share, so that no request waits for it; none SHALL use `lanes-index`'s default `PGCONNECT_TIMEOUT=5` or the 300 s it allows a `psql` run. Answer 2's writes SHALL run nowhere on the hook's time: the guard SHALL exit 2 with "binding in progress" and run the bind detached. A database that does not answer SHALL be a 2 inside the hook and never a kill.
 
 #### Scenario: A database address whose connect never completes (agreement test 10)
 - **WHEN** the database address is one whose connect never completes, with the service up and with it down
@@ -133,9 +133,9 @@ The client's wait for the service, the fallback's own reads and every database a
 - **WHEN** the guard's read is held behind a lock, with the service up and with it down
 - **THEN** the hook exits 2 inside its 5 s
 
-#### Scenario: Answer 2 with a slow database
-- **WHEN** a person answers `2` to an offer and the bind's write is busy or in doubt when the hook's time runs short
-- **THEN** the hook exits 2 inside its 5 s, naming the write id
+#### Scenario: Answer 2 runs detached
+- **WHEN** a person answers `2` to an offer
+- **THEN** the hook exits 2 inside its 5 s with "binding in progress", and the bind runs detached and is not ended with the hook
 
 ### Requirement: The hook's environment carries no credential
 The hook's environment, and every environment a session inherits, SHALL carry no database URL and no password (Amendment 14(c)).

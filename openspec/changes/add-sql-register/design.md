@@ -281,7 +281,10 @@ stand apart from "all as recommended" are marked so.
 24. **Q29, the cutover and the service (stands apart): (a).** The service is 007's
     last slice, and act 4 waits for it only if the guard measured without it is
     over a budget Brett names. Under (b), act 4 waits for the service, and the
-    direct read stays the fallback (Q11(a)).
+    direct read stays the fallback (Q11(a)). Lane 2's figure (`MEASURE.md`,
+    (14)): the guard on primary is about 0.42 to 0.47 s warm, against about
+    0.55 to 0.60 s in files mode today, both an order of magnitude inside the
+    hook's 5 s (SVC-9).
 
 ### The design's own decisions
 
@@ -2366,7 +2369,7 @@ only the import keeps its 300 s bound (`:1317`), as its statement timeout.
 |---|---|---|---|---|---|
 | the guard's direct read | 2 s | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s (SVC-8) | 2 |
 | the service's connection, per request | 2 s, in the background only, outside any share (SVC-6) | 150 ms | 180 ms | 200 ms, inside the client's 300 ms wait | `unavailable`, and the client reads directly (SVC-8); `refuse db <cause>` only where the refusal is definitive (SVC-7) |
-| the guard's answer-2 writes | as a writer's | as a writer's | as a writer's | the deadline and each call's timer cut to what the hook has left, `T0 + 4.25 s`; no call starts with less than its minimum left (SVC-8) | busy, 69 or in doubt exits 2, naming the write id |
+| the guard's answer 2 | — | — | — | nothing on the hook's time: the guard exits 2 with "binding in progress", and the bind runs detached with a writer's bounds and D7's deadline (SVC-8) | as a writer's; lane 4 says how the guard reports it |
 | a writer's snapshot | 2 s | 2000 ms | 5000 ms | 8 s | a failed read: 69, or in doubt where an earlier commit of the same write was |
 | a writer's commit | 2 s | 2000 ms | 5000 ms | 8 s | in doubt |
 | a whole write | — | — | — | 30 s before a new attempt; 10 s to reconnect in doubt | 75, or 3 |
@@ -2404,8 +2407,8 @@ the rest of the design relies on.
   answers the register's text at `n`, and the reader decides** (lane 5's
   question 1; D17; SVC-7, SVC-8): the guard runs today's parser on that text,
   passes the prompt, refuses it or makes the offer, and exits 0 or 2. The
-  offer file, the `/rename` typing and answer 2's two writes stay client-side;
-  those writes are S1's transactions.
+  offer file, the `/rename` typing and answer 2's writes stay client-side;
+  those writes are S1's transactions, run detached (SVC-8).
 - **The fallback.** A service that is absent, refuses the connection, answers
   `unavailable` or does not answer within its share is unavailable, and the
   guard reads directly with the READER credential (Q11(a)), printing
@@ -2416,16 +2419,15 @@ the rest of the design relies on.
   the wait for the service, the direct read, the parse and printing the
   refusal fit inside `GUARD_TIMEOUT`, 5 s, together (SVC-8's table). The
   direct read is therefore cut to the parse's start line, `T0 + 3.75 s`,
-  leaving a 0.5 s reserve for the parse until lane 2 measures the real one
-  (lane 5's question 7), and the test's assertion is the probes': exit 2 in
+  leaving a 0.5 s reserve for the parse, which lane 2's measurement keeps
+  (lane 5's questions 7 and 14: 92.9 ms median, 156.6 ms p95 on the real
+  register), and the test's assertion is the probes': exit 2 in
   under 4.5 s in every case. `CLAUDE_NO_LANE=1` still exits 0 before any input
-  is read. **Answer 2's two writes are on the guard's path too**
-  (`lane-start --no-launch --bind` and `set-row-state`). They run inside the
-  hook (lane 5's question 16; SVC-8): the deadline and each call's timer are
-  cut to what the hook has left, `T0 + 4.25 s`, and busy, 69 or in doubt exits
-  2, naming the write id (the timeouts table). The detached form, exit 2 with
-  "binding in progress", is the fallback if lane 2's timing of the bind says
-  so.
+  is read. **Answer 2 runs detached** (lane 5's question 16; SVC-8): its
+  writes, five writer calls at the code pin (`lane-start --no-launch --bind`'s
+  four and the guard's `set-row-state`), take 9.64 s median on primary by lane
+  2's estimate, so the guard exits 2 with "binding in progress" and the bind
+  runs detached, off the hook's time.
 - **The read API: the service answers the register's text at `n`, and the
   reader decides** (lane 5's question 1; D17; SVC-7). `who`, `binding`,
   `live-holder`, `next-free`, `managed-projection` and the guard's triple
@@ -2851,8 +2853,8 @@ stays `~/projects/xFactory/lanes-edit.sh guard` (`code/openRepoTools:2343`), so
 the installer's idempotence, the workBenches launcher's copies and #237's
 probe are untouched. `guard_run` (`code/lanes-edit.sh:10391`) changes only
 around its register reads. The window reads, the record scan, the parses, the
-decision, the offer file, the `/rename` typing and answer 2's two writes stay
-where they are.
+decision, the offer file, the `/rename` typing and answer 2's writes stay
+where they are, though answer 2 now runs them detached (below).
 
 **One prefetch, before the first read.** The guard's reads run in `$( )`
 substitutions and pipelines (`:10518`, `:10546`, `:10585`, `:10603`,
@@ -2913,7 +2915,7 @@ the interfaces section now says the same (question 1).
 | The service's own work | 200 ms | its per-request timer, inside the client's 300 ms, so it answers `unavailable` before the client gives up |
 | The direct read | `T0 + 3.75 s − now`, with `connect_timeout` 2 s, `lock_timeout` 1000 ms, `statement_timeout` 1500 ms | the timeouts table's guard row, which the frame had at "4 s, cut to what the hook has left"; this section cuts earlier, to the parse's start line, to leave the parse and the print their time, and the row now says so (question 7). The timer is never above 3.75 s |
 | **The parse's start line** | `T0 + 3.75 s` | a read, through the service or direct, that completes after it is a refusal: the client exits as "too late to verify", and the guard refuses 2 without parsing |
-| The parses and the decision | a reserve of 0.5 s | about 145 ms measured on synthetic data, so about three times that; lane 2's real-size measurement sets it (question 14) |
+| The parses and the decision | a reserve of 0.5 s | measured on the real register (2,590,927 bytes): 92.9 ms median, 156.6 ms p95, 99.2 ms cold (lane 2's `MEASURE.md`, (14)), so the reserve holds with 0.34 s to spare at p95 |
 | Printing the refusal and exiting | 0.15 s | reserved |
 
 So the last moment a read may finish is `T0 + 3.75 s`, the parses then have
@@ -2932,8 +2934,10 @@ the parses and 0.15 s to print. The reserve is a measured share, not a bound
 bash 3.2 can enforce (it has no clock finer than `SECONDS`); if lane 2 finds
 the real parse above about 0.5 s, the reserve grows and the start line moves
 earlier by the same amount, or the parse must leave the guard (the keyed form
-SVC-7 records, not taken). Lane 3's ruling keeps the 0.5 s reserve until lane
-2 measures the real parse (question 7).
+SVC-7 records, not taken). Lane 2 has measured it on the real register,
+2,590,927 bytes: 92.9 ms median, 156.6 ms p95 and 99.2 ms cold, so the 0.5 s
+reserve stays and the start line stays at `T0 + 3.75 s` (lane 3's ruling,
+#165 6579459518; `MEASURE.md`, (14)).
 
 **How the client knows `T0`.** The guard passes its own pid (`$$`, the hook
 process). On Linux the client reads that process's start from
@@ -2949,41 +2953,35 @@ otherwise give a plausible wrong figure.
 above runs: 3.3 ms of process wall here, with no input read, no service
 contacted and nothing started.
 
-**Answer 2's writes (F6): inside the hook, cut to what it has left.** When
-the person answers `2` to an offer, `guard_answer` runs `lane-start --no-launch
---bind` and then `set-row-state` (`:11171`, `:11199`), two S1 writes, and the
-guard exits 2 whatever they do: it refuses that prompt either way, and the
-person resends. **Decision: they run inside the hook, with every deadline and
-timer cut to the hook's remaining time; they are not detached.** The guard
-passes its own pid and an end line of `T0 + 4.25 s` to both commands in their
-environment (two variables, which carry no credential). Every `lanes-index`
-call they make (their reads, `register snapshot` and `register commit`) cuts
-its client timer to what is left before that line, and starts nothing with
-less than its minimum left (2 s, one `connect_timeout`, for a call that must
-connect); the attempt loop's 30 s deadline (D7) becomes that line. Under lane
-3's F3 ruling:
+**Answer 2's writes (F6): detached, after lane 2's timing.** When the person
+answers `2` to an offer, `guard_answer` runs `lane-start --no-launch --bind`
+and then `set-row-state` (`:11171`, `:11199`), and the guard exits 2 whatever
+they do: it refuses that prompt either way, and the person resends. At
+`2a057a6d` they are five writer calls, not two: `lane-start`'s bind makes four
+(`append-session-id`, `set-row-state` LIVE, `log RESUMED` and the Rule 3
+stamp), and the guard's `set-row-state` on the lane it left is the fifth
+(lane 2's `MEASURE.md`, sha256
+`cbaa243d5bd6161f53375e1d4e44d9498ff6cf26615e420140854a914a4754d9`, (16a)).
+Lane 2 estimates the bind on primary at 9.64 s median (11.51 s p95, 7.72 s at
+the best of 20 runs) against about 3 s of room, so the condition of lane 3's
+ruling on question 16 is met (#165 6579459518). **Decision: answer 2 exits 2
+with "binding in progress", and the bind runs detached,** with a writer's
+bounds and D7's 30 s deadline, none of it on the hook's time. Lane 4's phase
+plan says how the detached bind is run and what the guard answers while it is
+in progress; the form rests on a detached child outliving the hook, which the
+facts table below lists as not shown, and lane 2's AT-F6 follows it. **The
+design's direction:** `lane-start`'s bind makes its four writes as one verb,
+so they are one transaction carrying F5's expectations together; lane 4
+confirms that in its phase plan, or says why it cannot be.
 
-| The write's outcome | The writer exits | The guard |
-|---|---|---|
-| committed | 0 | 2, as today after a bind |
-| busy: every attempt lost its turn, and none was in doubt | 75 | 2, naming the write id: "answer `2` again" |
-| unreachable or refused | 69 | 2, naming the store and the cause |
-| in doubt: at the line, one lookup does not find the id, and the head is not free (F3) | 3 | 2, naming the write id; D8's pending record stays, so answering `2` again reruns the same command line under the same id |
-| not started: less than the minimum left | — | 2: "too little of the hook's 5 s was left to bind; answer `2` again" |
-
-The offer is kept on every row but the first, as today's refusal keeps it
-("The offer is KEPT, so answer `2` again", `:11173`). The timeouts table (D9)
-carries its row: **"the guard's answer-2 writes: the deadline and each call's
-timer cut to `T0 + 4.25 s`; busy, 69 or in doubt exits 2, naming the write
-id."** Reason: the outcome is known before the hook exits, so the person
-reads it at once; D8's pending record makes "answer `2` again" the same write;
-and the detached form needs a state file for the next prompt to report, and
-rests on a detached child outliving the hook, which is not shown (the facts
-table). Its cost is that a slow database turns answer 2 into "answer `2`
-again" more often. Lane 2 should time `lane-start --no-launch --bind` on
-primary: if it does not fit in about 3 s on a healthy fixture, the detached
-form, exit 2 with "binding in progress", is the fallback (question 16, routed
-to lane 2).
+The form first chosen here ran the writes inside the hook, with every deadline
+and timer cut to `T0 + 4.25 s`, and kept the detached form as the fallback if
+the bind did not fit in about 3 s on a healthy fixture. By lane 2's estimate
+the bind would end near `T0 + 10.2 s`, and the 2 s connect minimum would turn
+every answer 2 into "too little left", so that form is not taken. The
+timeouts table (D9) carries the row: **"the guard's answer 2: nothing on the
+hook's time; it exits 2 with "binding in progress", and the bind runs detached
+with a writer's bounds."**
 
 **The exit mapping.** `register read` and `register read --for guard` are the
 two client forms; `unavailable` never leaves the client.
@@ -3002,7 +3000,8 @@ two client forms; `unavailable` never leaves the client.
 
 With the service up, part 4 shrinks to the prefetch's start (about 72 ms as
 `lanes-index`, and it answers the mode too), the round trip (about 3 ms) and
-today's parses on the text (about 145 ms). Without it, on primary, part 4 is
+today's parses on the text (about 145 ms on synthetic data, 92.9 ms median on
+the real register). Without it, on primary, part 4 is
 the same start, a `psql` start and connect, the head and digest query, the
 image cache, and the same parses. The service removes the `psql` start, the
 connect and the query: R1 measured one write at 14.7 ms through a new `psql`
@@ -3010,8 +3009,11 @@ process against 0.97 ms in a session; a read is not measured, and a connect
 over TCP adds more. It does not remove parts 1 to 3, or the parses. That is
 the honest size of Q29's question: on this host the direct guard on primary
 should land near half a second warm, an order of magnitude inside its 5 s,
-and the service saves tens of milliseconds of it. The figure that decides is
-test 10's, on the fixture.
+and the service saves tens of milliseconds of it. **Q29's figure,** as lane 2
+assembled it on the real register (`MEASURE.md`, (14)): about 0.42 to 0.47 s
+warm for the guard on primary through the prefetch, against about 0.55 to
+0.60 s in files mode today (0.9 to 1.0 s with a cold record walk). The figure
+that decides is test 10's, on the fixture.
 
 **Under the interfaces section's form, where the service decides,** or under
 keyed answers (SVC-7's last paragraph): the parses would leave the guard, and
@@ -3038,7 +3040,9 @@ the 50 ms is **the service's answer time**:
   PR body").
 - **Beside it,** the whole hook's wall time through the service and through
   the direct read, and today's files-mode guard, each in the four parts above
-  (P5's baseline and Q29's figure), with the record walk cold and warm.
+  (P5's baseline and Q29's figure, which lane 2 assembled at about 0.42 to
+  0.47 s warm on primary against 0.55 to 0.60 s in files mode today, SVC-9),
+  with the record walk cold and warm.
 
 The probes' toy service answered a warm request in about 3 to 5 ms (3.8 ms
 median in `run/b2.out`; 4.5 ms in the check's re-run, `run/check-b2-rerun.out`)
@@ -3128,7 +3132,7 @@ The frame review (`REVIEW-frame-20261102.md`, sha256 `0689dde8…`, section
 | Item | Answered in |
 |---|---|
 | Whether the service or the client reads the declaration (F7, F11) | SVC-12: the client, with `mirror-seq` |
-| Answer 2's writes inside the 5 s, or detached (F6) | SVC-8, "Answer 2's writes": inside, cut |
+| Answer 2's writes inside the 5 s, or detached (F6) | SVC-8, "Answer 2's writes": detached, after lane 2's timing |
 | One service per workstation or per container, and the socket's place when `/tmp` is not shared (Q2(c)) | SVC-1 and SVC-2 |
 | Starting with no supervisor | SVC-4 |
 | The `psql` child's timeouts and reconnect | SVC-6: 150, 180 and 200 ms per request, a 2 s connect in the background only, `SIGINT` then kill, a lazy restart |
@@ -3157,7 +3161,7 @@ The frame review (`REVIEW-frame-20261102.md`, sha256 `0689dde8…`, section
 | The four parts' figures | probes C, C2 and C3, on synthetic records and a synthetic register |
 | R1's 14.7 ms and 0.97 ms (one write); ADV-C4's timeouts | the proposal and `clarifications.md`, not re-measured |
 | **Not shown:** the whole of SVC-6: `psql` on pipes, the `\echo` framing, the `SIGINT` cancel, and the 150, 180, 200 and 100 ms values | no PostgreSQL on py-bench until 1A; lane 2's fixture |
-| **Not shown:** that a detached child started from a hook outlives the hook under Claude Code | a hook that starts `lanes-index serve` and a check of the child after the hook returns, in a real session |
+| **Not shown:** that a detached child started from a hook outlives the hook under Claude Code: the service's start, and, since lane 2's timing, answer 2's detached bind | a hook that starts `lanes-index serve` and a check of the child after the hook returns, in a real session |
 | **Not shown:** a socket on the shared disk reached from another container; `flock` on it from two containers | a bind in one container and a connect from the other |
 | **Not shown:** `SO_PEERCRED` with a second uid or across pid namespaces; macOS's `LOCAL_PEERCRED` | one uid and one namespace here; SVC-2's owner file does not rely on them |
 
@@ -3237,8 +3241,8 @@ spec. Lane 3 accepted all nine and lane 5's other choices (#165 comment
    answer time (SVC-10), and the whole guard's figure is Q29's. The spec's
    sixteenth requirement says so.
 7. **The parse reserve (a difference).** Ruled: the 0.5 s reserve, with the
-   direct read cut to `T0 + 3.75 s`, stands until lane 2 measures the real
-   parse (question 14). The timeouts table's guard row and the interfaces
+   direct read cut to `T0 + 3.75 s`, stands; lane 2's measurement keeps it
+   (question 14). The timeouts table's guard row and the interfaces
    section's budget say so.
 8. **The client's start.** Ruled: `lanes-index` stays the client (SVC-3).
 9. **`serve` and the prefetch (a difference).** Ruled: D2's verb list gains
@@ -3254,16 +3258,18 @@ spec. Lane 3 accepted all nine and lane 5's other choices (#165 comment
 13. **The image cache's writers.** Routed to lane 4: whether the cache's form
     ([L4-c]) allows the service as a second writer, or the service keeps its
     images in memory only.
-14. **The register read's and the parse's real cost.** Routed to lane 2: a
-    measurement on a real-sized copy decides Q29's figure and SVC-8's reserve.
+14. **The register read's and the parse's real cost.** Measured by lane 2
+    (`MEASURE.md`): the parse is 92.9 ms median, 156.6 ms p95 and 99.2 ms cold
+    on 2,590,927 bytes, and Q29's figure is about 0.42 to 0.47 s warm on
+    primary against 0.55 to 0.60 s in files mode (SVC-8, SVC-9).
 15. **Across containers.** Not needed by SVC-1 as ruled; the facts table keeps
     it as not shown.
-16. **Answer 2's writes (F6).** Ruled: inside the hook, cut to `T0 + 4.25 s`
-    (SVC-8). The timeouts table carries the frame's row, "the guard's answer-2
-    writes: the deadline and each call's timer cut to what the hook has left;
-    busy, 69 or in doubt exits 2, naming the write id". The detached form is
-    the fallback if lane 2's timing of the bind says so; the timing is routed
-    to lane 2.
+16. **Answer 2's writes (F6).** Ruled: inside the hook, cut to `T0 + 4.25 s`,
+    with the detached form as the fallback if lane 2's timing of the bind said
+    so. Lane 2's estimate, 9.64 s median against about 3 s of room, met that
+    condition, so the detached form applies (#165 6579459518): answer 2 exits
+    2 with "binding in progress", the bind runs detached, and the timeouts
+    table's row says so (SVC-8).
 17. **The `SessionStart` block (F24, a difference).** Ruled: it stays a mirror
     reader that only starts the service (SVC-12). The spec's requirement reads
     as SVC-12 gives it.
@@ -3357,8 +3363,8 @@ spec. Lane 3 accepted all nine and lane 5's other choices (#165 comment
   "carry on" → each arm refuses and names the code (S3); one test per
   `lane-start` arm.
 - **[The guard exceeds its 5 s]** A killed hook passes the prompt → one budget,
-  the direct read cut to the parse's start line (SVC-8), answer 2's writes cut
-  to what the hook has left, and the probes' 4.5 s assertion.
+  the direct read cut to the parse's start line (SVC-8), answer 2 run
+  detached, and the probes' 4.5 s assertion.
 - **[The scratch tree reads host-local facts at the snapshot]** Liveness for
   `claim --force`, `rename-lane` and `retire-rows`, and tmux for
   `request-handoff`, are read outside the transaction → the head check covers
@@ -3511,7 +3517,11 @@ The placeholders for lanes 2 and 4 are left as they were.
   in memory only (question 13, [L4-c]); and `code/lanes-index:1315`, whose
   connection string moves from the argument list into `psql`'s environment
   (question 11). From lane 1's v2: the in-doubt lookup calls `find_write`
-  (§1.3.1), and the printed rerun carries the generation (D8).
+  (§1.3.1), and the printed rerun carries the generation (D8). From lane 2's
+  measurements: how answer 2's detached bind runs, and what the guard answers
+  while it is in progress (SVC-8); and `lane-start`'s bind making its four
+  writes as one verb, one transaction carrying F5's expectations, or the
+  reason it cannot.
 - **Lane 2, the test plan:** a test for each MUST as folded (a write in doubt at
   the deadline; a diverged rollback, and a failed seq-1 push; the ruleset, then
   a files-mode write after the rollback; a declared outage with the service and
@@ -3521,15 +3531,12 @@ The placeholders for lanes 2 and 4 are left as they were.
   than `mirror-seq` (F11); the disaster path with an old record (F18); a failed
   mode query on `mode=index` and on primary (F8); output printed once in a burst
   (F14); which cases need TCP rather than the Unix socket; and no test that
-  expects F33's backstop to fire. From lane 5's section: the real register's
-  and the parse's cost on a real-sized copy, which set Q29's figure and
-  SVC-8's parse reserve (its question 14); and the time of
-  `lane-start --no-launch --bind` on primary, which keeps answer 2 inside the
-  hook or moves it to the detached form (question 16). From lane 1's v2 and
-  lane 3's rulings: a real-engine test for each object marked new and
-  unproven ("The schema"); two writers claiming one object under two
-  spellings (D19); one repository spelled two ways (D18); and the abort of a
-  restore-form cutover (D24).
+  expects F33's backstop to fire. From lane 5's section: its questions 14
+  and 16 are measured (`MEASURE.md`), and AT-F6 follows the detached form.
+  From lane 1's v2 and lane 3's rulings: a real-engine test for each object
+  marked new and unproven ("The schema"); two writers claiming one object
+  under two spellings (D19); one repository spelled two ways (D18); and the
+  abort of a restore-form cutover (D24).
 - **Lane 5, the service:** from lane 1's v2, confirm the libpq service form
   (`bootstrap --admin-service`, `operations.md` §2.4) against SVC-2's
   mapping, and that the declared outage's mirror read fits SVC-8's budget
