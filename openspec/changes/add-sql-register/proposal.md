@@ -141,8 +141,10 @@ Everything below applies on a `mode=primary` workstation, except the estate
 marker. Every act-2 writer, in every mode, reads `lanes/STORE` and refuses with 69
 where the marker is present and the workstation is not `mode=primary` (Amendment
 22's S1: "Every act-2 writer reads it"). Where the marker is absent, `mode=index`
-and unconfigured workstations write and read as today. Each item names the test
-that checks it; the agreement tests are listed together at the end.
+and unconfigured workstations write and read as today, except the guard's
+answer 2, whose bind runs detached in every mode, the fix for two defects in
+today's guard (design, "Known defects in today's code"). Each item names the
+test that checks it; the agreement tests are listed together at the end.
 
 ### The configuration and the estate switch (S1)
 
@@ -353,11 +355,13 @@ that checks it; the agreement tests are listed together at the end.
 - **One render at a time per checkout, and no fork waits,** in the form of
   `lanes-index`'s `SyncLock` (`code/lanes-index:1540–1543`: "A second sync that
   finds the lock held leaves a RERUN mark and returns at once"). A fork that
-  finds a render running leaves a rerun mark and exits; the running render reads
-  the journal head again before it lets go, and renders again while the mirror
-  lacks a sequence. Under the private-index form its lock is its own, not the
-  lane's write lock, so `lane-start`'s stamp and `lane-handoff`'s commit never
-  queue behind a render.
+  finds a render running leaves a rerun mark, tries the lock once more and
+  exits; the running render, after it lets go, looks for a mark once more and
+  takes the lock back for it, and renders again while the mirror lacks a
+  sequence and its passes make progress, within the bounds the design sets
+  (design S2 and "The phase plan"). Under the private-index form its lock is
+  its own, not the lane's write lock, so `lane-start`'s stamp and
+  `lane-handoff`'s commit never queue behind a render.
 - **A pending hand edit needs a way out on `mode=primary`** (ADV-C6). Amendment
   23's S3 step 4 refuses every writer but `commit` while one is pending and
   prints `lanes-edit.sh commit` as the recovery, which refuses on `mode=primary`
@@ -406,7 +410,8 @@ that checks it; the agreement tests are listed together at the end.
   Amendment 23's S3 checks leaves SQL true and is reported; a renderer killed
   between its commit and its push leaves the lane's next handoff commit and the
   next render unrefused, with no manual step; a burst of writes from one lane
-  gives at most two renders, and no fork waits; the last write of a burst is
+  that arrives within one pass gives at most two renders, a slower stream at
+  most one render per pass, and no fork waits; the last write of a burst is
   rendered even if no later write happens anywhere; the v1.1.0 `lanes-edit.sh`
   pushing to a primary fixture stops the renderer, and each way out (the write
   imported, or reverted by the renderer) resumes it, after which `reconcile`
@@ -735,7 +740,11 @@ also open a database connection per prompt.
   the hygiene suite's bash-3.2 rules; new Python is standard-library only,
   Python 3.9 or later (`code/pyproject.toml:45`).
 - **The `UserPromptSubmit` guard becomes the service's client.** The client
-  sends what the guard reads today and a service cannot read for itself:
+  sends the service only the names of the files it reads, `lanes/LANES.md`,
+  `lanes/aliases.tsv` and `lanes/log/<lane>.md` (lane 3's ruling on lane 5's
+  question 3, #165 6578521506; design SVC-8, SVC-11). What the guard reads
+  today and a service cannot read for itself stays in the guard, read in its
+  own container:
   - the hook's `session_id`, `cwd`, `agent_id` and `prompt`; the prompt answers
     a pending offer (`code/lanes-edit.sh:10399–10412`);
   - the window reference and the window name (`#W`, `:10432–10433`);
@@ -744,10 +753,13 @@ also open a database connection per prompt.
     records and tmux, because a pid is pronounced only inside its own namespace
     (Amendment 18(b)).
 
-  It gets back `ok`, `refuse <reason>` or `offer <the three A12 Addendum 1
-  choices>`, and exits 0 or 2. The offer file, the `/rename` typing, and answer
-  2's `lane-start --no-launch --bind` and `set-row-state` (`:11171`, `:11199`)
-  stay client-side acts. They are three writer calls: `start-record`, which
+  The service answers the register's text at the journal's head `n`, and the
+  reader decides (lane 3's ruling on lane 5's question 1; design D17, SVC-7):
+  the guard runs today's parser on that text, passes the prompt, refuses it,
+  or makes the offer of the three A12 Addendum 1 choices, and exits 0 or 2.
+  The offer file, the `/rename` typing, and answer 2's `lane-start --no-launch
+  --bind` and `set-row-state` (`:11171`, `:11199`) stay client-side acts. They
+  are three writer calls: `start-record`, which
   makes the bind's three register writes in one transaction; the guard's
   `set-row-state` on the lane the window left; and the Rule 3 stamp, a git
   commit to the handoff outside the register. The two register writes are
@@ -755,13 +767,12 @@ also open a database connection per prompt.
   runs them detached, in a `setsid` child recorded in the session's offer file
   (design SVC-8 and "The phase plan"). The hook stays, because the harness's
   exit code is the only thing that refuses a prompt. Q2 decides whether the
-  client is a block at the
-  top of `lanes-edit.sh guard`, keeping the hook string and #237's probe, or a
-  separate program with a new hook string. Either way the socket call is a
-  standard-library Python client, because bash has no AF_UNIX and the code leg
-  has no `nc -U` or `socat`. The `CLAUDE_NO_LANE=1` exception of
-  `skip-no-lane-guard` (exact value, exit 0 before any input or identity probe)
-  is kept.
+  client is a block at the top of `lanes-edit.sh guard`, keeping the hook
+  string and #237's probe, or a separate program with a new hook string.
+  Either way the socket call is a standard-library Python client, because bash
+  has no AF_UNIX and the code leg has no `nc -U` or `socat`. The
+  `CLAUDE_NO_LANE=1` exception of `skip-no-lane-guard` (exact value, exit 0
+  before any input or identity probe) is kept.
 - **The `SessionStart` block stays a mirror reader that only starts the
   service** (design SVC-12). It is read-only, exits 0 always and reads offline
   through the mirror; on a `mode=primary` workstation it starts the service
