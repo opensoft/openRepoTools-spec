@@ -702,7 +702,8 @@ lines at the pin) and reads the register and tmux; under Amendment 22 it would
 also open a database connection per prompt.
 
 - **`lanes-register`,** this change's storage layer served over a local socket:
-  one process per workstation holds the database connection and the credential,
+  one service per environment, a bench container or a host shell (design
+  SVC-1), holds the database connection and the credential,
   and answers the reads every act and guard makes (`who`, `binding`,
   `live-holder`, `next-free`, `managed-projection`, the guard's triple check) in
   milliseconds. #165's body has it hold the REGISTER-WRITER and READER roles,
@@ -746,8 +747,10 @@ also open a database connection per prompt.
   It gets back `ok`, `refuse <reason>` or `offer <the three A12 Addendum 1
   choices>`, and exits 0 or 2. The offer file, the `/rename` typing, and answer
   2's `lane-start --no-launch --bind` and `set-row-state` (`:11171`, `:11199`)
-  stay client-side acts, and those two writes are transactions through the
-  storage layer. The hook stays, because the harness's exit code is the only
+  stay client-side acts. At the code pin they are five writer calls, since
+  the bind makes four, and each is a transaction through the storage layer;
+  answer 2 exits 2 with "binding in progress" and runs them detached (design
+  SVC-8). The hook stays, because the harness's exit code is the only
   thing that refuses a prompt. Q2 decides whether the client is a block at the
   top of `lanes-edit.sh guard`, keeping the hook string and #237's probe, or a
   separate program with a new hook string. Either way the socket call is a
@@ -755,8 +758,10 @@ also open a database connection per prompt.
   has no `nc -U` or `socat`. The `CLAUDE_NO_LANE=1` exception of
   `skip-no-lane-guard` (exact value, exit 0 before any input or identity probe)
   is kept.
-- **The `SessionStart` block becomes a client the same way.** It is read-only,
-  still exits 0 always, and still reads offline through the mirror.
+- **The `SessionStart` block stays a mirror reader that only starts the
+  service** (design SVC-12). It is read-only, exits 0 always and reads offline
+  through the mirror; on a `mode=primary` workstation it starts the service
+  after its answer, without waiting for it.
 - **With the service unavailable,** the hook falls back to `lanes-edit.sh
   guard`'s direct read. On `mode=primary` that read is of the database, never
   the mirror: S3 names the guard among the readers that fail closed and lets
@@ -824,9 +829,11 @@ also open a database connection per prompt.
   process between two requests is in the next answer, equal to the direct
   read; the
   hook's environment, and every environment a session inherits, carries no
-  database URL or password (Amendment 14(c)); the service-backed guard answers in
-  under 50 ms on the suite's fixture register, measured as Q10 settles and
-  recorded in the PR body, with today's direct guard recorded beside it (P5).
+  database URL or password (Amendment 14(c)); the service answers the guard's
+  read in under 50 ms on the suite's fixture register, its answer time,
+  measured as Q10 settles and recorded in the PR body, with the whole guard's
+  figure, which is Q29's, and today's direct guard recorded beside it (P5;
+  design SVC-10).
 
 ### The agreement tests
 
@@ -890,8 +897,10 @@ and credentials, the 69 refusal, the SQL's shape) always run.
    same host.
 10. The guard through the service: byte-identical answers (stdout, stderr less
     the fallback line, and the exit code), the fallback line, no credential in
-    any environment a session inherits, and under 50 ms, recorded in the PR body
-    (Q10), with today's direct guard beside it (P5); and the hook inside its
+    any environment a session inherits, and the service's answer to the
+    guard's read under 50 ms, recorded in the PR body (Q10), with the whole
+    guard's figure, which is Q29's, and today's direct guard beside it (P5;
+    design SVC-10); and the hook inside its
     5 s against a database that does not answer (the architecture seat's
     concern 1, ADV-C4).
 11. A lane's day on `mode=primary` (the product seat's P6), on the local cluster
@@ -913,14 +922,14 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 14. The build before the renderer's git half (Q6(c); the product seat; lane 2),
     with the fake `psql`, so it always runs. One test covers both states, since
     a single constant is the flip. With the refusal in place, the mode query,
-    `lanes-index mode`, exits a code of its own, which lane 4 picks and which
-    is never 2 (design D3), with the text `mode=primary is not available in
-    this build: the renderer's git half is not installed, so a write could not
-    be mirrored; nothing was written`; any other `lanes-index` command exits 2
-    with it; and `lanes-edit.sh`, run on a workstation whose configuration says
-    `mode=primary`, exits 69, repeats that text and changes neither the
-    register nor the files. With the constant flipped, the same write goes to
-    SQL. The readiness check fails the first state.
+    `lanes-index mode`, exits 78 (`EX_CONFIG`), a code of its own that lane 4
+    picked and that is never 2 (design D3), with the text `mode=primary is not
+    available in this build: the renderer's git half is not installed, so a
+    write could not be mirrored; nothing was written`; any other `lanes-index`
+    command exits 2 with it; and `lanes-edit.sh`, run on a workstation whose
+    configuration says `mode=primary`, exits 69, repeats that text and changes
+    neither the register nor the files. With the constant flipped, the same
+    write goes to SQL. The readiness check fails the first state.
 
 ### The manual
 
@@ -946,7 +955,9 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 - **A runbook for acts 3 and 4 and the rollback** (P7): every act, word, command
   and owner, in order, among them the readiness check in each environment
   ("Operator tools", above), the freeze (Q4(a)), R3b's smoke test (one `NOTED`,
-  its row, `Register-Seq: 2`, a lag of 0) and the rollback's triggers. It
+  its row, its mirror commit at the seq after the cutover's entry,
+  `Register-Seq: 2` at a first cutover (design D24), a lag of 0) and the
+  rollback's triggers. It
   proposes one bench image rebuild that carries both the re-vendor (Q24) and the
   configuration mount (Q23), since each rebuild ends every lane in the
   container, and a rehearsal of the real register into a scratch schema before
