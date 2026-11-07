@@ -36,12 +36,19 @@ changes only part 1, in `design.md`; lane 3's ruling on its fourth point
 Lane 1's v2.5 (#165 6711914507) also changes only part 1; lane 3's ruling on
 its import cost, option (a) (6711924759), adds act 4's step 6 bullet on the
 import's key check and its time, and a line on the same check at the
-disaster path's re-import, in 2.3. Lane 1's numbering is kept: a cross-reference to part 1 names
+disaster path's re-import, in 2.3. Commit L, on lane 3's rulings on the
+review of commit J, changes only the places those findings name: a
+rollback's declaration records the rollback's head, `k`, in 2.3's step 2 and
+2.5 (R2's M1); 2.5's note on the frame's S3 and its lookup form (R1's N1);
+`register read`'s 78 beside `lanes-index mode`'s in 2.4 and 2.7 (R1's M1);
+answered questions marked so, Q7's 75 and Q28's owner (R1's S2); `b+1` in
+2.9 (R1's N3); the round-2 label (R1's N4); and 2.3's lost-tail window,
+where S1's client check exits 2 first (commit J's writer's item 3). Lane 1's numbering is kept: a cross-reference to part 1 names
 `design.md`, as in "`design.md` §1.3".
 
 - **Basis:** the proposal at `0607526d`. A citation of `proposal.md`, `clarifications.md` or `council-review.md` is to the frozen copy, sha256 `b284a0eb2078fd24a48e833685b0073e881fdbe1625a1019d81a55a4aadaa340`, `636fb45369f825dd7f3d763bdb8d8bcb475ef4d76a3f7cf23203b907713ac2ff` and `9fa18c5ed76d88d4f25b3f8eaa37626ad0511985061f9e0649ff49d13c0fce62`.
 - **Round 1, held as provisional when lane 1 wrote this, and RULED since** (Brett's confirmation of 2026-11-07, #165 6710653292): Q6 = 1A (the split by seam), Q8 = 2A, Q20 = 3A (`mode=primary` written at act 4), and Q2(a) and (b) = 4A.
-- **Round 2, the recommended options:** Q4(a) (i), Q4(b) (iii), Q7 (A″), Q21(b) (B), Q22 (a), Q26 (a′), Q28 (i) and Q29 (a). Where a part turns on one of them, it says what changes under each other option.
+- **Round 2, the recommended options, which Brett took** (#165 6710653292): Q4(a) (i), Q4(b) (iii), Q7 (A″), Q21(b) (B), Q22 (a), Q26 (a′), Q28 (i) and Q29 (a). Where a part turns on one of them, it says what changes under each other option.
 
 ## 2. The operations
 
@@ -208,7 +215,7 @@ R3b's first trigger, the database down past Brett's limit, leads under (iii) to 
 2. **The switch.** The operator lane runs `lanes-index rollback` in its own checkout, with `LANES_LANE=` its name (`proposal.md:527-530`; F12).
    - **Before it starts (F1):** `rollback` refuses with 2 while `status` shows `diverged at <sha>`, since a diverged mirror can never be proved current. The divergence is resolved first, on a person's word, by one of S2's two ways out, `lanes-index import --single <sha>` or `lanes-index render --revert <sha>`. Each is one journal entry through S1's commit call while the switch is still `primary`. A stray whose edits no longer apply to SQL's images is reverted.
    - **What it does first:** in one transaction it sets the switch to `files` and writes the journal's last seq, `k+1`, where `k` is the head it found: the operator entry that removes `lanes/STORE` (F1, F2). Every later SQL write then refuses with 69 everywhere, whatever a writer has fetched (`proposal.md:551-554`), and nothing is journalled after the switch.
-   - **The declaration:** from that transaction on, no SQL write can commit anywhere, so the rollback's start declares the outage (2.5). `rollback` writes the declaration itself where its configuration directory is writable. From a bench, whose mount is read-only, it prints the `outage declare --rollback` command, and Brett runs it on each host.
+   - **The declaration:** from that transaction on, no SQL write can commit anywhere, so the rollback's start declares the outage (2.5). Its `mirror-seq` is `k`, the head that transaction found, not the mirror's `m`: `k+1`, the operator entry, is never rendered (R2's M1). `rollback` writes the declaration itself where its configuration directory is writable. From a bench, whose mount is read-only, it prints the `outage declare --rollback --mirror-seq <k>` command, and Brett runs it on each host.
    - **Refusal:** if the database is unreachable, it exits 69 and changes neither the switch nor the marker (`proposal.md:592-594`). The lanes wait, or Brett takes the disaster path.
    - **A rerun** finds the switch at `files` with the marker `removing` and its own entry as the last seq, and goes on from step 3. A switch transaction whose outcome is unknown is settled the same way, by reading the switch again (F12).
 3. **The render.** `rollback` renders until the mirror carries every seq up to `k`, and skips `k+1`, an operator entry (F2). It proves a full render from SQL equal to the mirror tip by `lanes` tree id, with `lanes/STORE` aside (`r3b/REPORT.md:288-289`).
@@ -256,7 +263,7 @@ Under (iii) this is not a rollback. It is a restore or a re-import, run with eve
      - **The abort of this form,** the re-import's, keeps the label and generation its cutover set. The new generation is what keeps every pending record and printed rerun made against the lost database refusing with LR007, and the next cutover sets both again (lane 3's ruling, #165 6710770304, lane 1's point 2).
      - **After a restore,** the same entry follows the backup's head instead, as `lanes-index cutover --after-loss` with no import, at `b+1`. It first renders every seq the mirror lacks, up to `b`, as the rollback renders.
      - **Its abort,** once a read-back proves the rewrite absent from origin, removes the entry at `b+1` and puts the head back to `b`. It restores what the entry changed: the switch's fields, with the marker `present`, and `lanes/STORE`'s lines (`design.md` §1.3). It does not set `files`. It leaves no seq after `b` and changes nothing else, so the estate stays stopped, with the lanes paused (step 3), until the cutover is run again (lane 3's ruling, 6579459518, point 1).
-     - **The lost tail's window:** between the restore and this cutover, and again after its abort, the database carries the lost database's generation, so neither a write id nor an act's base from the lost tail, above `b`, is refused for its generation; an act's base is refused with LR004 only while it is past the head (`design.md` §1.3). The window stays as v2.3 left it for write ids, and the pause (step 3) covers it until the cutover's new generation closes it (lane 3's ruling on lane 1's v2.4, #165 6711233420, point 4).
+     - **The lost tail's window:** between the restore and this cutover, and again after its abort, the database carries the lost database's generation, so neither a write id nor an act's base from the lost tail, above `b`, is refused for its generation; an act's base is refused only while it is past the head, where S1's client check at the snapshot exits 2 before the call and LR004 is the backstop (`design.md` §1.3). The window stays as v2.3 left it for write ids, and the pause (step 3) covers it until the cutover's new generation closes it (lane 3's ruling on lane 1's v2.4, #165 6711233420, point 4).
    - **The generation (F10, F18):** every pending record and every printed rerun made against the lost database carries the old generation, and now refuses with 2 rather than re-apply a write the mirror may already hold. Each lane checks the mirror instead (step 7).
 7. **The resumption.** `ready --expect primary` in each environment, the smoke test, and `lanes-index outage clear` (D20) on Eagle and on Raven. N8 names `m`, `h` and the loss. Each lane then checks its last records against the mirror, and writes any owed record again, with the database's UTC and the original time in its free text (`r3b/REPORT.md:318`).
 
@@ -337,7 +344,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 - **Output:** the path, the old mode and the new one.
 - **Refusals, setting `primary`:**
   - 2: the switch is not `primary` with the marker `present`, or the fetched `origin/main` has no `lanes/STORE` naming this database. A flip before the cutover makes every write refuse (Q20 (A), `proposal.md:1772-1773`);
-  - 2: the installed `lanes-index` still carries Q6(c)'s refusal, which `lanes-index mode` reports with 78 (`EX_CONFIG`) (F8). `set-mode` refuses with 2, as every other `lanes-index` command refuses `mode=primary` then, and prints test 14's text (`proposal.md:916-918`);
+  - 2: the installed `lanes-index` still carries Q6(c)'s refusal, which `lanes-index mode` reports with 78 (`EX_CONFIG`) (F8), as `register read` does. `set-mode` refuses with 2, as every other `lanes-index` command refuses `mode=primary` then, and prints test 14's text (`proposal.md:916-918`);
   - 2: the file is on a read-only mount, so it must be flipped from the host (`proposal.md:621-622`);
   - 2: `store=sqlite`;
   - 69: the database is unreachable.
@@ -352,17 +359,17 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 **How it is declared.**
 
 - **By Brett's word:** Brett runs `lanes-index outage declare --until '<utc>' --why "<Brett's words>"` (D20) on Eagle and on Raven (Q22 (a)), from each host, as with `set-mode`.
-  - **`mirror-seq` (F11):** it records the newest `Register-Seq` on `origin/main`, read as `status` reads `m`, after a fetch. Where the host cannot fetch, Brett names it with `--mirror-seq <m>` **(new)**, from `status` on a host that can; with neither, it refuses with 2.
+  - **`mirror-seq` (F11):** it records the newest `Register-Seq` on `origin/main`, read as `status` reads `m`, after a fetch. Where the host cannot fetch, Brett names it with `--mirror-seq <m>` **(new)**, from `status` on a host that can; with neither, it refuses with 2. A rollback's declaration records the rollback's head instead (below).
   - `--until` is required. Brett names how long the outage lasts, in line with Q22's downtime limit; the expiry is his (D20).
   - `--why` records his words verbatim.
-- **From a rollback's start:** at its first step, `lanes-index rollback` writes the same record, marked as from a rollback, wherever its configuration directory is writable. Brett runs `outage declare --rollback` on each other host, and on its own host where it runs in a bench (2.3). The frame's S3 has no declaration at a rollback's start, since under Q4(b) (iii) the database is up; it is kept here because a guard that finds the switch at `files` would otherwise refuse every prompt while the rollback still needs a session (`r3a/REPORT.md:319`; `proposal.md:1872-1875`), and lane 3 accepted it for D20 at this section's fold (#165 6578020193).
+- **From a rollback's start:** at its first step, `lanes-index rollback` writes the same record, marked as from a rollback, wherever its configuration directory is writable, with `mirror-seq=<k>`, where `k` is the head its transaction found (2.3's step 2), not the mirror's `m`: the database is up, so `k` is known exactly, and `k+1`, the rollback's own entry, is never rendered (R2's M1). Brett runs `outage declare --rollback --mirror-seq <k>`, as `rollback` prints it, on each other host, and on its own host where it runs in a bench (2.3). A guard whose ref is behind `k` then refuses 2 with SVC-12's text for a mirror below the declaration's seq, which tells the person to fetch it (below). The frame's S3 has the same declaration at a rollback's start (`design.md` S3, "A rollback's start declares one too"): under Q4(b) (iii) the database is up, but a guard that finds the switch at `files` would otherwise refuse every prompt while the rollback still needs a session (`r3a/REPORT.md:319`; `proposal.md:1872-1875`), and lane 3 accepted it for D20 at this section's fold (#165 6578020193).
 - **Refusals:**
   - 2: the database answers from this host, unless the switch reads `files` (a rollback's start). From this host the outage is then not estate-wide, which is lane 2's point (`proposal.md:1886-1891`);
   - 2: no `--until`.
 
 **Where it is recorded.** In a file, `register-outage` (D20), beside `lanes-index.conf` in the same directory (`code/lanes-index:62-64`).
 
-- **Its fields,** none of them a secret: the database label it covers, his words verbatim, the UTC, the host and the expiry (D20); `mirror-seq=<m>`, the mirror's `Register-Seq` when it was declared, which the guard's client checks (F11; SVC-12); and, for the disaster path's notice, the last head `status` recorded.
+- **Its fields,** none of them a secret: the database label it covers, his words verbatim, the UTC, the host and the expiry (D20); `mirror-seq=<m>`, the mirror's `Register-Seq` when it was declared, or the rollback's head `k` in a rollback's declaration, which the guard's client checks (F11; SVC-12; R2's M1); and, for the disaster path's notice, the last head `status` recorded.
 - **Its reach:** under Q23 (a), the host's read-only mount carries the file into every bench container on that host, a mount py-bench does not have yet (SVC-12). One write per host reaches every guard there.
 - **The audit record:** the coordinator posts the declaration on #165 and on each coordination issue, as N5 or N7. No register write can carry it, since every write refuses during the outage.
 
@@ -370,7 +377,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 
 1. Its database read has failed: the service answered `refuse db …`, or it was unavailable and the direct read then failed (`register read` exit 69). This part also counts a read that finds the switch at `files` as failed, for the rollback's start above.
 2. `register-outage` is present beside `lanes-index.conf`, well formed and unexpired, and names this workstation's database label. The client reads it once, at the prefetch, before the direct read (the budget, below).
-3. The mirror it reads, `origin/main` as last fetched (the guard never fetches), carries a `Register-Seq` of at least the declaration's `mirror-seq=<m>` (F11). The client reads the last `Register-Seq` trailer on that ref's first-parent history. SVC-12 has it as one `git log -1 --first-parent --grep='^Register-Seq: '`, which walks the whole history when no render commit is near the tip, so the client instead runs one `git log --first-parent -n 200 --format='%H%x00%(trailers:key=Register-Seq,valueonly)'` on that ref, takes the first non-empty value, and refuses 2 if none of the 200 carries one (lane 5, 6579523948 and 6579761607; lane 2 timed it at 13 ms median on 34,144 commits). The bound must come from a `git log` that does not filter with `--grep`, because with `--grep` the limit counts matches and not commits walked. The renderer writes `Register-Seq: <n>` in each render commit's final trailer block, where `%(trailers)` reads it.
+3. The mirror it reads, `origin/main` as last fetched (the guard never fetches), carries a `Register-Seq` of at least the declaration's `mirror-seq=<m>` (F11). The client reads the last `Register-Seq` trailer on that ref's first-parent history. SVC-12 has it as form C, one `git log --first-parent -n 200 --format='%H%x00%(trailers:key=Register-Seq,valueonly)'` on that ref: the client takes the first non-empty value, and refuses 2 if none of the 200 carries one (lane 5, 6579523948 and 6579761607; lane 2 timed it at 13 ms median on 34,144 commits). The earlier form, one `git log -1 --first-parent --grep='^Register-Seq: '`, walks the whole history when no render commit is near the tip, and is not used. The bound must come from a `git log` that does not filter with `--grep`, because with `--grep` the limit counts matches and not commits walked. The renderer writes `Register-Seq: <n>` in each render commit's final trailer block, where `%(trailers)` reads it.
 
 It then runs today's parser on the mirror's text and exits 0 or 2 as it gives, with S3's `read: mirror at <sha12>, …` line and `(declared outage <utc>: <why>)` in place of the cause (`proposal.md:444`; D20), where `<utc>` and `<why>` are the declaration's own. Once the marker is gone the files are the truth, so the mirror's answer stays right.
 
@@ -400,8 +407,8 @@ The 0.1 s, from the cap at `T0 + 3.65 s` to the mirror path's start by `T0 + 3.7
 **What it does not prove.**
 
 - It is Brett's word in place of a check a guard cannot make (`proposal.md:1893-1896`). In a partition another workstation may still write, and a guard may let a session through for a lane that has moved elsewhere (`proposal.md:1886-1893`).
-- From a rollback's start under Q4(b) (iii) that cannot happen. The switch at `files` refuses every SQL write, and the marker refuses every files-mode write until it is removed, after which the files are the truth.
-- The mirror may also lag by the unrendered tail. The guard prints that lag, `<k>`. Its read is never older than the mirror was at the declaration (F11).
+- From a rollback's start under Q4(b) (iii) that cannot happen. The switch at `files` refuses every SQL write, and the marker refuses every files-mode write until it is removed, after which the files are the truth. And the rollback's declaration records its head, 2.3's `k`, so a guard answers from the mirror only where its ref carries every write SQL committed; a guard behind it refuses 2 until a fetch brings the rendered seqs (R2's M1).
+- Under a declaration by Brett's word, the mirror may also lag by the unrendered tail. The guard prints that lag, `<k>`. Its read is never older than the mirror was at the declaration (F11); under a rollback's, never older than the rollback's head.
 
 **Q26's other options.**
 
@@ -417,7 +424,7 @@ The 0.1 s, from the cap at `T0 + 3.65 s` to the mirror path's start by `T0 + 3.7
 **What the lanes are told.** The manual's "What changes for a lane" (`proposal.md:932-939`), which the runbook posts before the window (`proposal.md:940-943`):
 
 - exit 69, and what to do;
-- exit 75, "register busy" (D7): nothing was written, and a retry in seconds is safe (`proposal.md:933-935`); under "(A″) with 69" the busy outcome exits 69, and the notice says so;
+- exit 75, "register busy" (D7): nothing was written, and a retry in seconds is safe (`proposal.md:933-935`); 75 is Brett's answer to Q7, so the busy outcome never exits 69 (#165 6710653292);
 - exit 3, a write in doubt (D8): the report names the write id, and a rerun reuses it;
 - the guard during an outage, its two ways out, and the declared outage (2.5);
 - `commit` and hand edits refused;
@@ -468,10 +475,10 @@ Every PR lands on Brett's typed word, by merge commit (Q25(a) (i), `proposal.md:
 
    Under Q29 (a) the service is 007's last slice and may trail (`proposal.md:1973-1976`).
 
-   **The refusal of `mode=primary`:** from group A's first PR, `lanes-index mode` refuses `mode=primary` with 78 (`EX_CONFIG`), Q6(c)'s code, never 2 (F8), and test 14's text; the other `lanes-index` commands refuse it with 2, as the configuration parser does; and `lanes-edit.sh` fails closed on it with 69 (`proposal.md:1380-1388`). That is agreement test 14's first state, and `ready` fails any environment in it (`proposal.md:913-921`).
+   **The refusal of `mode=primary`:** from group A's first PR, `lanes-index mode` and `register read`, in both its forms, refuse `mode=primary` with 78 (`EX_CONFIG`), Q6(c)'s code, never 2 (F8), and test 14's text; the other `lanes-index` commands refuse it with 2, as the configuration parser does; and `lanes-edit.sh` fails closed on it with 69 (`proposal.md:1380-1388`). That is agreement test 14's first state, and `ready` fails any environment in it (`proposal.md:913-921`).
 6. **Group B, the write path,** after Amendment 23's #282 (1a) and #307 (1b) are re-homed and land in the code leg: S1's transaction at the commit seam, M4's refusals, S6's pre-check and hold order, and the marker check after S3's fetch (`proposal.md:1374-1376`).
 
-   Who re-homes #282 and #307, and by when, is Q28's second part, which is still open (`proposal.md:1955-1967`). Group B cannot start before it is answered.
+   Who re-homes #282 and #307, and by when, is Q28's second part (`proposal.md:1955-1967`). Its owner is answered: lane openRepoShape-2, Q28's (a) (#165 6710653292). Only its two dates stay open, one for slices 1a and 1b and one for the other four, Brett's to name (`clarifications.md`), so of Q28 group B waits only on the dates.
 7. **Group C, then:** the renderer's commit and push, rollback's push, and agreement tests 3, 5 and 6 (`proposal.md:1377-1379`).
    - **Also here:** this part places `cutover`'s push of the marker in group C, for the same reason as rollback's push.
    - **Its wait:** under the private-index form, it need not wait for 2a and 2b (`proposal.md:1377-1379`, `:1934-1938`).
@@ -537,7 +544,7 @@ Four more bear on this part:
 | `register_switch`, with `mode` and `database_label` | table, columns | `r3a/REPORT.md:179-185` (R3a's; the proposal says "the estate switch", `proposal.md:166`) |
 | `register_head`, with `seq` | table, column | `r3a/REPORT.md:187` (R3a's; the proposal says "a one-row head", `proposal.md:1226`) |
 | `journal`, with `seq` and `kind` (`'import'`, `'write'`, `'rollback'`) | table, columns | `proposal.md:299`; columns `r3a/REPORT.md:189-195` |
-| operator entry: the cutover's (`'cutover'`, seq 1, or `m+1` after a loss) and the rollback's last seq (`'rollback'`), each touching only `lanes/STORE` | journal entry | **(new)**; F2, D24, with `design.md` §1.2's flag |
+| operator entry: the cutover's (`'cutover'`, seq 1, `m+1` after a re-import, or `b+1` after a restore) and the rollback's last seq (`'rollback'`), each touching only `lanes/STORE` | journal entry | **(new)**; F2, D24, with `design.md` §1.2's flag |
 | generation id, `register_switch.generation` | switch field | **(new)**; F10, F18 (`design.md` §1.2) |
 | `record_marker`; `marker_state` (`absent`, `adding`, `present`, `removing`) | function; switch field | **(new)**; S4's read-back recorded (F12, `design.md` §1.3) |
 | `write_id` | column | `proposal.md:253-258` |
@@ -572,7 +579,7 @@ Four more bear on this part:
 | `diverged at <sha>` | text | `proposal.md:378` |
 | 69 | exit code | `proposal.md:213-217` |
 | 2, from the guard | exit code | `proposal.md:216-217` |
-| "register busy", exit 75 | exit code | `proposal.md:224-234`; 75 is the frame's D7, suggested at `clarifications.md:360-373`, and `design.md` §1.3 adopts it unless Brett says "(A″) with 69" |
+| "register busy", exit 75 | exit code | `proposal.md:224-234`; 75 is the frame's D7, suggested at `clarifications.md:360-373`, and `design.md` §1.3 adopts it; Brett's answer to Q7 keeps it (#165 6710653292) |
 | 3, a write in doubt | exit code | the frame's D8; from `cutover` and `rollback`, an operator entry's push not confirmed (F12) |
 | `store=`, `database=`, `import=`, `lanes-tree=`, `utc=` | `lanes/STORE` fields | the frame's D21 |
 | `lanes-index`'s 0, 2 and 64 | exit code | `code/lanes-index:72-76` |

@@ -373,8 +373,8 @@ seconds is safe. With one code, a landing's five writes that lose a burst read a
 an outage; a lane reports the database down, or a script retries into a real
 outage, and `add-row`, which passes its code through, refuses a launch with an
 outage text. Its two conditions are in the proposal: every caller's default arm
-refuses on the new code (S3, the five `lane-start` arms), and the manual lists
-it. The number is the design's, and Brett may keep 69 for "busy" (Q7, Q15).
+refuses on the new code (S3, the five `lane-start` arms [seven read arms since commit J; lane 4's table]), and the manual lists
+it. The number is the design's, and Brett may keep 69 for "busy" (Q7, Q15). [Answered: Brett took 75 under Q7 (A″), #165 6710653292.]
 
 ### ADV-C1: a rollback with the database down
 

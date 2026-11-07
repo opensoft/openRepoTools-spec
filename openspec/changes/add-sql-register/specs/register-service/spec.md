@@ -9,6 +9,8 @@
 ### Requirement: The service serves the reads and the guard, and writes do not depend on it
 `lanes-register` SHALL serve this change's storage layer over a local socket. One process SHALL hold the database connection and the credential for the reads. For the reads every act and guard makes (`who`, `binding`, `live-holder`, `next-free`, `managed-projection` and the guard's triple check), the service SHALL answer the register's text at the journal's head `n` in milliseconds, and the reader SHALL decide, running today's parser on that text in its own process. A `lanes-edit.sh` write SHALL open its own transaction with its own REGISTER-WRITER credential, and SHALL go on when the service is down.
 
+> Brett's answer to Q2(a) and (b): round 1's 4A, #165 6710653292.
+
 #### Scenario: A read through the service
 - **WHEN** a reader runs `who` through the service on a `mode=primary` workstation
 - **THEN** the service answers the register's text at `n` from the database, and the reader's answer equals the direct read
@@ -175,7 +177,7 @@ On `mode=primary`, before an outage is declared and outside one, the guard SHALL
 - **THEN** it runs with no lane session and no guard
 
 ### Requirement: A declared outage lets the guard answer from the mirror
-During an outage Brett Heap declares on his word, when he knows that no workstation can still write, or that a rollback's start declares on his act, and until the expiry he names or the rollback's end, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. The declaration SHALL record the mirror's `Register-Seq` when it is declared. A rollback's start SHALL write the declaration, marked as from a rollback, wherever its configuration directory is writable. The guard's client, and never the service, SHALL check three conditions in this order, offline, and the guard SHALL answer from the mirror only when all three hold: its database read failed, or found the switch at `files`, as at a rollback's start; a declaration is present, unexpired, and names this workstation's database; and the mirror it reads carries a `Register-Seq` at least as high as the declaration records. The client SHALL read the mirror's `Register-Seq` by a lookup bounded to the 200 most recent first-parent commits of the ref it reads, and SHALL refuse with 2 where none of them carries one. Where its database read failed and either other condition fails, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
+During an outage Brett Heap declares on his word, when he knows that no workstation can still write, or that a rollback's start declares on his act, and until the expiry he names or the rollback's end, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. A declaration on Brett Heap's word SHALL record the mirror's `Register-Seq` when it is declared. A rollback's start SHALL write the declaration, marked as from a rollback, wherever its configuration directory is writable, and SHALL record in it the head its transaction found, the seq before the rollback's own entry, not the mirror's; the declaration the rollback prints for other hosts SHALL carry that seq too. The guard's client, and never the service, SHALL check three conditions in this order, offline, and the guard SHALL answer from the mirror only when all three hold: its database read failed, or found the switch at `files`, as at a rollback's start; a declaration is present, unexpired, and names this workstation's database; and the mirror it reads carries a `Register-Seq` at least as high as the declaration records. The client SHALL read the mirror's `Register-Seq` by a lookup bounded to the 200 most recent first-parent commits of the ref it reads, and SHALL refuse with 2 where none of them carries one. Where its database read failed and either other condition fails, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
 
 > Brett's answer to Q26: option (a′), #165 6710653292.
 > Brett's answer to Q4(b): option (iii), #165 6710653292; a rollback's start declares the outage (design D20).
@@ -213,8 +215,13 @@ During an outage Brett Heap declares on his word, when he knows that no workstat
 - **THEN** the guard answers from the mirror, labelled `read: mirror`, and every write and every other deciding read still refuses
 
 #### Scenario: A rollback's start
-- **WHEN** a rollback has set the switch to `files` and a prompt is submitted
+- **WHEN** a rollback has set the switch to `files` at head `k`, and a prompt is submitted on a workstation whose ref carries a `Register-Seq` of at least `k`
 - **THEN** the guard answers from the mirror under the rollback's declaration, and every write still refuses
+
+#### Scenario: A ref behind a rollback's head
+- **WHEN** a rollback has set the switch to `files` at head `k`, and the ref a guard reads carries a `Register-Seq` below `k`
+- **THEN** the guard refuses with 2, telling the person that the mirror there is behind the declared outage's seq, to fetch it or wait for the database
+- **AND** it does not answer from that mirror
 
 #### Scenario: The declaration does not need the database
 - **WHEN** an outage is declared while the database is down

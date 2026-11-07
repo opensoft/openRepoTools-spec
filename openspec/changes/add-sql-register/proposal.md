@@ -231,8 +231,8 @@ test that checks it; the agreement tests are listed together at the end.
   code of its own that the design names, so a caller such as `lane-start` can
   tell the two apart (the council's adversary seat, ADV-C7; lane 2's probes of
   2026-10-31); the bound or deadline is Q15's. That code narrows Amendment 22's
-  S1, which gives 69 to a transaction the database refuses, and Brett may say
-  "(A″) with 69" (Q7) to keep 69 for "busy" too. It tells a lane that nothing
+  S1, which gives 69 to a transaction the database refuses; Brett's answer to
+  Q7 keeps it a code of its own, 75, not "(A″) with 69" (#165 6710653292). It tells a lane that nothing
   was written and a retry in seconds is safe, where 69 tells it to stop and tell
   Brett (the council's product seat); the manual lists it (below), and every
   caller's default arm refuses on it (S3, below).
@@ -463,11 +463,11 @@ test that checks it; the agreement tests are listed together at the end.
   |---|---|---|
   | `who`, `binding`, `live-holder`, `next-free`, `lane`, `lane-end`, `lane-rename` | 69; no answer on stdout | S3 |
   | `lane-last`, `register-row`, `session-lane`, `canon-lane`, `resolve-home` | 69; no answer on stdout, and never 8 ("no record") for a read that failed | S3; the adversary seat's ADV-C5 |
-  | `register-row-local` | the design's: Q7 asks what a local row means on `mode=primary` and offers no option, so this row's test waits for the design | S3; ADV-C5 |
+  | `register-row-local` | answered by the design's D11: it reads the database on `mode=primary`, as `register-row` does, and exits 69, never 8, where the read fails | S3; ADV-C5 |
   | the `UserPromptSubmit` guard | 2 | S1, S3; Amendment 12's D3 |
   | `managed-projection` | 1, UNKNOWN, never 8 | S4 |
-  | `lane-start` | per Q8: refuse 69 before the launch, or launch with a note | S3 against Amendment 8(d) and Amendment 23's S3 |
-  | `lane-handoff` and the handoff skill | per Q8 | S3 against R-A11-11 |
+  | `lane-start` | answered by Q8(a), 2A (#165 6710653292): 69 before anything is renamed or written at the reads that decide, and where the write must exist; a note, and the launch goes on, at the later stamps | S3 against Amendment 8(d) and Amendment 23's S3 |
+  | `lane-handoff` and the handoff skill | answered by Q8(b), 2A (#165 6710653292): the naming reads from the mirror, labelled, so the handoff file is written; the `PAUSED` record's writes exit 69 and then a note naming the late `PAUSED` path; the lane stays `SWAPPING` | S3 against R-A11-11 |
   | the listings `lanes` and `history` | the mirror's answer, the `read: mirror` line, and the listing's own exit | S3 |
   | the `SessionStart` block and the launcher's bare window reads | the mirror, offline; exit 0 | S3; Amendment 8 |
 
@@ -479,20 +479,24 @@ test that checks it; the agreement tests are listed together at the end.
   has been running all day". A static outage hides it, because the read at
   `:1555` refuses next; a one-call blip does not. Where `:1154` stands under Q8
   is recorded there. The busy code (S1) is as new to the default arms as 69 is.
-  Five arms of `lane-start` note an unknown code and carry on, checked at
-  `2a057a6d`: `:1154` (`canon-lane`), `:1262` (`swapped`), `:1271` (`lane-dir`),
-  `:3079` (`lane-transcript`, for the row's session cell) and `:3430`
-  (`lane-transcript`, for the last `PAUSED` record's resume id). Lane 2 named
-  four; `:3079` is the same class, and was added with its test. The busy code is
+  Seven read arms of `lane-start` note an unknown code and carry on, or pass
+  it silently, checked at `2a057a6d`: `:1154` (`canon-lane`), `:1262`
+  (`swapped`), `:1271` (`lane-dir`), `:1332` (`resolve-home`, silent),
+  `:2184–2186` (`session-lane`), `:3079` (`lane-transcript`, for the row's
+  session cell) and `:3430` (`lane-transcript`, for the last `PAUSED` record's
+  resume id). Lane 2 named four; `:3079` is the same class, and was added with
+  its test; `:1332` and `:2184–2186` are lane 4's, from its table of the
+  callers' default arms (the design's phase plan). The busy code is
   refuse-class at each of them: under Q8(a)(i) and (ii) the launch refuses,
   naming the code and saying that nothing was written and a retry in seconds is
   safe; under Q8(a)(iii), where every refused read is a note, they stay notes
   (lane 2's SHOULD c; Q9).
-- Tests: each row of the table, for each reader in it, with the rows marked
-  "per Q8" written once Q8 is answered; each mirror read prints its line on
+- Tests: each row of the table, for each reader in it, with the rows Q8
+  answers written to its answer, 2A (#165 6710653292); each mirror read prints its line on
   stderr and keeps its exit; a fake `psql` that fails exactly one call, run
-  across each caller's read sequence (ADV-C5); for each of the five `lane-start`
-  arms above (`:1154`, `:1262`, `:1271`, `:3079`, `:3430`), one test in which the
+  across each caller's read sequence (ADV-C5); for each of the seven
+  `lane-start` read arms above (`:1154`, `:1262`, `:1271`, `:1332`,
+  `:2184–2186`, `:3079`, `:3430`), one test in which the
   verb exits the busy code and the launch refuses, with the register's rows and
   log unchanged (and, under Q8(a)(iii), a note and the launch going on); the
   guard's refusal on an unreachable database naming the store, the cause and
@@ -939,11 +943,14 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 14. The build before the renderer's git half (Q6(c); the product seat; lane 2),
     with the fake `psql`, so it always runs. One test covers both states, since
     a single constant is the flip. With the refusal in place, the mode query,
-    `lanes-index mode`, exits 78 (`EX_CONFIG`), a code of its own that lane 4
-    picked and that is never 2 (design D3), with the text `mode=primary is not
-    available in this build: the renderer's git half is not installed, so a
-    write could not be mirrored; nothing was written`; any other `lanes-index`
-    command exits 2 with it; and `lanes-edit.sh`, run on a workstation whose
+    `lanes-index mode`, and the read, `register read`, exit 78 (`EX_CONFIG`),
+    a code of its own that lane 4 picked and that is never 2 (design D3), with
+    the text `mode=primary is not available in this build: the renderer's git
+    half is not installed, so a write could not be mirrored; nothing was
+    written`; any other `lanes-index` command exits 2 with it; the readers
+    answer it as a failed read (a read that decides 69, the listings and the
+    `SessionStart` block the mirror with a note, the guard 2,
+    `managed-projection` 1); and `lanes-edit.sh`, run on a workstation whose
     configuration says `mode=primary`, exits 69, repeats that text and changes
     neither the register nor the files. With the constant flipped, the same
     write goes to SQL. The readiness check fails the first state.
@@ -959,7 +966,10 @@ and credentials, the 69 refusal, the SQL's shape) always run.
   reads say where `mode=primary` changes them.
 - **It opens with "What changes for a lane"** (the council's product seat, P10):
   exit 69 and what to do; the busy code, which says that nothing was written
-  and a retry in seconds is safe, so it is not an outage (S1); the guard during
+  and a retry in seconds is safe, so it is not an outage (S1); exit 3, which on
+  `mode=primary` means the write may not have been written, so the lane runs
+  the printed `LANES_WRITE_ID` rerun, which writes it once or finds it (design
+  D8); the guard during
   an outage and its two ways out (S3); `commit` and hand edits refused; the
   files as a mirror that lags, and the verbs that give the truth (`who`,
   `history`, `lanes`, `lanes-index status`);
@@ -985,7 +995,9 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 - **Act 3, Brett Heap's:** Eagle and Raven configured together, with
   `mode=primary`, `store=postgres`, the register-writer and reader roles, and act
   2 installed on both. Whether `mode=primary` is written at act 3 or at the
-  cutover is Q20; the database itself, and Raven's role, are Q22. This change
+  cutover is Q20, answered (B), round 1's 3A: at the cutover, with act 3
+  leaving `mode=index` (#165 6710653292); the database itself, and Raven's
+  role, are Q22, answered (a) (6710653292). This change
   builds the tools act 3 and the cutover use ("Operator tools", above).
   Not done: at 2026-10-31T18:51Z the bench this was drafted
   on had no `lanes-index.conf` and `LANES_INDEX_CONFIG` unset, as Amendment 23
@@ -1082,12 +1094,16 @@ Every PR below lands only on Brett Heap's word.
    together; then this change is archived.
 5. Acts 3 and 4, on his word.
 
-**Open, Brett's (Q28):** whether item 5 also waits for Amendment 23's slices 2a
-(#312), 2b (#316) and 3 (#311), not only for 1a and 1b. The product seat's P2
-says it does, and lane 3 agrees with P2 as the product seat narrows it: act 4
-waits for 2a, 2b and 3, and the renderer's merge need not wait for 2a and 2b
-under the private-index form (S2, whichever way Q27 is read). R3's (a′) (Q6)
-lets #311 trail, and stands as R3 wrote it until he answers.
+**Answered, Brett's (Q28), #165 6710653292:** item 5 also waits for Amendment
+23's slices 2a (#312), 2b (#316) and 3 (#311), not only for 1a and 1b, option
+(i). The product seat's P2 says it does, and lane 3 agrees with P2 as the
+product seat narrows it: act 4 waits for 2a, 2b and 3, and the renderer's
+merge need not wait for 2a and 2b under the private-index form (S2, whichever
+way Q27 is read). R3's (a′) (Q6) lets #311 trail; under (i), act 4 waits for
+#311 all the same. Q28's
+owner is answered too, (a): lane openRepoShape-2 re-homes them. Only its two
+dates stay open, one for 1a and 1b and one for the other four, Brett's to
+name.
 
 R3 completes this order, as a proposal (Q24 and Q25 carry its questions):
 
@@ -1603,6 +1619,7 @@ PR.
      busy register from an outage (the adversary seat, ADV-C7). That narrows
      Amendment 22's S1, which gives 69 to a transaction the database refuses, so
      it is put to Brett: he may say "(A″) with 69" to keep 69 for "busy" too.
+     (Answered: he took (A″) with 75, #165 6710653292.)
      Test 4's burst case, with a window injected as it sets out, must pass under
      whichever he takes.
 8. **`lane-start`, `lane-handoff` and the handoff skill with the database
@@ -1702,8 +1719,9 @@ PR.
    "no record" when the read failed (`canon_lane`, `live-holder`,
    `register-row`, `session-lane`, `binding`), so a 69, or a "register busy",
    from a verb is not safe until those callers and reads change. The busy code
-   is refuse-class at the five `lane-start` arms (R2's four and `:3079`), one
-   test each (S3, above), and the manual lists it.
+   is refuse-class at the seven `lane-start` read arms (R2's four, `:3079`,
+   and lane 4's `:1332` and `:2184–2186`), one test each (S3, above), and the
+   manual lists it.
    - **R3's proposal:** 69 wherever a database read or write fails,
      `lanes-index`'s register commands included; local sidecar reads keep 1 and
      10, and `managed-projection` keeps 1 (S4); the guard maps 69 to 2; exit 7 is
@@ -1799,7 +1817,8 @@ PR.
     drains it. "Register busy" is a code of its own (S1), so that a caller can
     tell a busy register from an outage (the council's adversary seat, ADV-C7).
     It narrows Amendment 22's S1, which gives 69 to a transaction the database
-    refuses, and Brett may keep 69 for it ("(A″) with 69", Q7).
+    refuses, and Brett may keep 69 for it ("(A″) with 69", Q7). (Answered: he
+    took 75, #165 6710653292.)
     Which code, is the design's, with Q9's; the product seat suggests 75
     (sysexits' `EX_TEMPFAIL`), which the exit table leaves free
     (`clarifications.md`).
