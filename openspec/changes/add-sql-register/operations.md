@@ -11,7 +11,14 @@ with `fix-v2.diff` (sha256
 `renames.md` (sha256
 `e0087c0ff5f8fd19425df75224617d540391819115614c6a5ad3541d37ff3f33`) beside it,
 under lane 3's rulings on v1 (#165 comment 6578020193) and on v2
-(6579459518). Lane 1's numbering is kept: a cross-reference to part 1 names
+(6579459518). Lane 1's v2.1 (`fix-v2.1.diff`, sha256
+`7b54372637c079371777c396a1cc52c2409641aa9efcfd2865f1f8f15a8098c8`) and v2.2
+(`fix-v2.2.diff`, sha256
+`57b5a5a091358c819d318e09d024000d592928d06a25eabfbcca0ff8f2c6f10d`) are
+applied on top (#165 6579719525 and 6708446448; lane 5 confirmed v2.1 in
+6579761607), so lane 1's text here is v2.2's (`section-lane1-v2.2.md`, sha256
+`d9908578c48f05772adc59b20f4a5c3ddbe58dc4877920325a5b5c5bcf060b25`). Lane
+1's numbering is kept: a cross-reference to part 1 names
 `design.md`, as in "`design.md` §1.3".
 
 - **Basis:** the proposal at `0607526d`. A citation of `proposal.md`, `clarifications.md` or `council-review.md` is to the frozen copy, sha256 `b284a0eb2078fd24a48e833685b0073e881fdbe1625a1019d81a55a4aadaa340`, `636fb45369f825dd7f3d763bdb8d8bcb475ef4d76a3f7cf23203b907713ac2ff` and `9fa18c5ed76d88d4f25b3f8eaa37626ad0511985061f9e0649ff49d13c0fce62`.
@@ -55,7 +62,7 @@ Each step gives who acts and where, the command, its check, its refusal and its 
    - **Check:** each environment reaches it within `connect_timeout=2`, at one address, since each extra address adds 2 s (`proposal.md:799`; `clarifications.md:278-280`). `ready` (step 6) tests this.
    - **Way back:** nothing depends on the database yet.
 2. **The schema and the roles.** Brett acts, from a host shell and not from a lane session.
-   - **Command:** `lanes-index bootstrap --admin-service '<service>' --label '<name>'` **(new)** (2.4). The admin connection is a libpq service of Brett's own, never a connection string in an argument list (lane 5's choice 11, which lane 3 accepted for every `lanes-index` path, #165 6578521506).
+   - **Command:** `lanes-index bootstrap --admin-service '<service>' --label '<name>'` **(new)** (2.4). The admin connection is a libpq service of Brett's own, never a connection string in an argument list (lane 5's choice 11, which lane 3 accepted for every `lanes-index` path, #165 6578521506). `psql` receives it only as `PGSERVICE=<service>` in its environment, never as `service=` or `-d` on a command line (2.4; SVC-2; lane 5, 6579523948).
    - **Check:** a second run prints `unchanged` for every object (`proposal.md:623-624`).
    - **Refusal:** as 2.4 lists. Nothing is left half-made, because Postgres DDL is transactional (`r3a/REPORT.md:327`).
    - **Way back:** the schema holds no register data before the import. Brett drops schema `lanes_register` and the roles the bootstrap made (`design.md` §1.4; R3a's names for two of them, `r3a/REPORT.md:172`, `:281`) through the same admin service.
@@ -247,13 +254,13 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 
 - **Exits:** `lanes-index`'s own 0, 2 for a refusal, and 64 for usage (`code/lanes-index:72-76`), plus 69 where the database cannot be reached or refuses. The 69 is R3's answer to Q9 (`proposal.md:1610-1611`), and Q9 settles it.
 - **Secrets:** none reads a secret from the environment (Amendment 14(c), `clarifications.md:144-146`).
-- **Connections:** none takes a connection string in an argument list, its own or `psql`'s. The admin connection is a libpq service name, and every other connection comes from `lanes-index.conf` (lane 5's choice 11, which lane 3 accepted for every `lanes-index` path, #165 6578521506).
+- **Connections:** none takes a connection string in an argument list, its own or `psql`'s. The admin connection is a libpq service name, which `psql` receives only through its environment as `PGSERVICE=<service>`, never as `service=` or `-d` on a command line (SVC-2; lane 5, 6579523948), and every other connection comes from `lanes-index.conf` (lane 5's choice 11, which lane 3 accepted for every `lanes-index` path, #165 6578521506).
 - **Bounds:** every database connection sets its bounds when it connects, from D9's table (`design.md` §1.3). `ready` and `set-mode` are readers: `connect_timeout=2`, `lock_timeout=1000` and `statement_timeout=3000`, with a 6 s client timer (`proposal.md:799-800` has the guard's tighter pair). `bootstrap` is a migration, with its own `lock_timeout`, retried.
 
 #### `lanes-index bootstrap` (new)
 
 - **Inputs:**
-  - `--admin-service '<service>'` **(new)**: the admin connection Brett supplies, used once and held by nothing (`proposal.md:607-611`). It names a service in his own `~/.pg_service.conf`, with its password in his own 0600 `~/.pgpass`, so neither the name nor anything else on the command line is a connection string. `lanes-index` drops an inherited `PGSERVICEFILE`, `PGPASSFILE` or `PGPASSWORD`, as it drops the last two today (`code/lanes-index:1300-1305`), so no secret comes from the environment (Amendment 14(c));
+  - `--admin-service '<service>'` **(new)**: the admin connection Brett supplies, used once and held by nothing (`proposal.md:607-611`). It names a service in his own `~/.pg_service.conf`, with its password in his own 0600 `~/.pgpass`, so neither the name nor anything else on the command line is a connection string. `lanes-index` drops an inherited `PGSYSCONFDIR`, `PGSERVICEFILE`, `PGPASSFILE` or `PGPASSWORD`, as it drops the last two today (`code/lanes-index:1300-1305`), so only his own `~/.pg_service.conf` defines the service (lane 5, 6579523948) and no secret comes from the environment (Amendment 14(c));
   - `--roles-only` **(new)**: only the roles, for the disaster path's restore, since roles belong to the cluster and no database backup carries them (F18; 2.3);
   - `--label '<name>'`: the database's label, with no credential, which the bootstrap writes into the switch and the cutover into `lanes/STORE` (`proposal.md:166-168`);
   - the role names: by default `design.md` §1.4's, `lanes_register_owner`, `lanes_register_writer` and `lanes_register_reader` (the last two R3a's, `r3a/REPORT.md:172`, `:281`), and `lanes_indexer` for the indexer, whose `url=` is `code/lanes-index:2607`;
@@ -340,8 +347,8 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 **How each guard reads it.** Only a guard on `mode=primary` reads it, through its client, never the service (SVC-12). It answers from the mirror only when SVC-12's three conditions hold, checked in this order, offline:
 
 1. Its database read has failed: the service answered `refuse db …`, or it was unavailable and the direct read then failed (`register read` exit 69). This part also counts a read that finds the switch at `files` as failed, for the rollback's start above.
-2. `register-outage` is present beside `lanes-index.conf`, well formed and unexpired, and names this workstation's database label.
-3. The mirror it reads, `origin/main` as last fetched (the guard never fetches), carries a `Register-Seq` of at least the declaration's `mirror-seq=<m>` (F11). The client reads the last `Register-Seq` trailer on that ref's first-parent history with one `git log -1 --first-parent --grep='^Register-Seq: '`.
+2. `register-outage` is present beside `lanes-index.conf`, well formed and unexpired, and names this workstation's database label. The client reads it once, at the prefetch, before the direct read (the budget, below).
+3. The mirror it reads, `origin/main` as last fetched (the guard never fetches), carries a `Register-Seq` of at least the declaration's `mirror-seq=<m>` (F11). The client reads the last `Register-Seq` trailer on that ref's first-parent history. SVC-12 has it as one `git log -1 --first-parent --grep='^Register-Seq: '`, which walks the whole history when no render commit is near the tip, so the client instead runs one `git log --first-parent -n 200 --format='%H%x00%(trailers:key=Register-Seq,valueonly)'` on that ref, takes the first non-empty value, and refuses 2 if none of the 200 carries one (lane 5, 6579523948 and 6579761607; lane 2 timed it at 13 ms median on 34,144 commits). The bound must come from a `git log` that does not filter with `--grep`, because with `--grep` the limit counts matches and not commits walked. The renderer writes `Register-Seq: <n>` in each render commit's final trailer block, where `%(trailers)` reads it.
 
 It then runs today's parser on the mirror's text and exits 0 or 2 as it gives, with S3's `read: mirror at <sha12>, …` line and `(declared outage <utc>: <why>)` in place of the cause (`proposal.md:444`; D20), where `<utc>` and `<why>` are the declaration's own. Once the marker is gone the files are the truth, so the mirror's answer stays right.
 
@@ -351,7 +358,14 @@ It then runs today's parser on the mirror's text and exits 0 or 2 as it gives, w
 
 Every write and every other deciding read still refuses (`proposal.md:1870-1871`). The `SessionStart` block is unchanged.
 
-**The budget** is SVC-8's one budget for the guard's client. The declaration and the `Register-Seq` check are offline reads, made only after the database read has failed, so this part sets no share of its own.
+**The budget** is SVC-8's one budget for the guard's client. Without a declaration, SVC-8 is unchanged apart from one `stat` at the prefetch. Where an unexpired declaration names this database, the client changes four things (lane 5, 6579523948):
+
+- it reads the declaration once, at the prefetch, before the direct read;
+- it moves the direct read's cap 0.1 s earlier, to `T0 + 3.65 s`. A database that accepts the connection and then goes silent would otherwise run the direct read to SVC-8's parse start line, `T0 + 3.75 s`, and the mirror path would start after it, where SVC-8 refuses 2;
+- it starts the mirror path by `T0 + 3.75 s`, so the mirror's reads and parse use SVC-8's 0.5 s reserve;
+- its `Register-Seq` lookup is bounded, and refuses 2 where it finds no trailer (condition 3).
+
+The 0.1 s is lane 5's estimate for the `Register-Seq` lookup, not a measurement.
 
 **How it ends.**
 
@@ -518,6 +532,7 @@ Four more bear on this part:
 | `lanes-index bootstrap` | verb | **(new)** |
 | `--admin-service '<service>'`, `--roles-only` on `bootstrap` | flag | **(new)**; lane 5's choice 11 (#165 6578521506), and F18 |
 | `~/.pg_service.conf`, `~/.pgpass`, the admin's own | file | libpq's; the bootstrap's admin connection |
+| `PGSERVICE=<service>` | environment value | libpq's; in `psql`'s own environment, the only way the admin connection's service reaches `psql`, never as `service=` or `-d` (SVC-2; lane 5, 6579523948) |
 | `lanes-index ready` | verb | **(new)** |
 | `lanes-index set-mode` | verb | **(new)** |
 | `lanes-index outage declare`, `outage clear` | verb | the frame's D20 |

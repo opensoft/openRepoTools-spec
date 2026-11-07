@@ -315,8 +315,10 @@ the section that carries it.
   process is started. Testing that a file exists is not parsing it, so
   `lanes-index` stays the one parser, and an unconfigured workstation pays
   nothing. Q6(c)'s refusal has an exit code of its own from `lanes-index mode`,
-  never 2, which lane 4 picks within D10's map; any other failure of the query
-  (a configuration it refuses, a crash, 127, a timeout) runs files mode with a
+  78 (`EX_CONFIG`), never 2, which lane 4 picked within D10's map, since no
+  lane tool exits 78 at `2a057a6d` (#165 6579524611); any other failure of the
+  query (a configuration it refuses, a crash, 127, a timeout) runs files mode
+  with a
   warning, and files mode's mandatory marker check after Amendment 23's S3
   fetch refuses on a SQL estate, so no failure of the query writes files there.
   A configuration typo on a `mode=index` host, as Eagle and Raven are between
@@ -412,15 +414,22 @@ the section that carries it.
 - **D14. The renderer is the writer's fork, in `lanes-index`, in the
   private-index form** (Q5): R3's recommendation, and the service is last under
   Q29(a). The in-place form, with its fence, is the fallback if lane 4's
-  prototype fails the private-index form (S2).
+  prototype fails the private-index form. One render runs at a time per
+  checkout, under an `fcntl.flock` in `SyncLock`'s form, not a `mkdir` mutex:
+  a renderer killed by SIGKILL leaves a `mkdir` mutex behind, and the checkout
+  then renders nothing. Lane 4's prototype passes [L4-1], [L4-2], [L4-4] and
+  [L4-5] with the `flock` and fails [L4-4] with the mutex; its section carries
+  the proof (#165 6579524611) (S2).
 - **D15. A render commit's author and committer are the identity the journal
   recorded** (the writing environment's `user.name` and `user.email` at write
   time), both dated by the journal entry's commit UTC, so that two renderers
   build the same commit and the history keeps today's attribution. For that to
   hold, `commit-tree` runs with `--no-gpg-sign` (it honours `commit.gpgSign`),
-  the encoding is pinned to UTF-8, and `Register-Seq` joins the message's
-  existing trailer block, as `git interpret-trailers` places it, rather than
-  starting a second one (S2).
+  the encoding is pinned to UTF-8, and `Register-Seq: <n>` is written in the
+  message's final trailer block, its last paragraph, as `git interpret-trailers`
+  places it, rather than starting a second one. That is where git's
+  `%(trailers)` reads it, which SVC-12's bounded lookup needs (#165
+  6579666731); lane 4's phase plan gives the mechanics (S2).
 - **D16. A divergence is recorded in the database,** as the register's mirror
   state, by the first renderer that finds it, and cleared by the single-write
   import or the renderer's revert. Each renderer still re-detects it from git,
@@ -591,8 +600,11 @@ Lane openRepoTools-1's part 1, folded from its section v2,
 `fix-v2.diff` (sha256 `d1e05586cc3a22c6f9c7d33259e045040c16fd5cdedb8ea6740861304e8cb12a`, from
 `d36a4232` to v2) and `renames.md` (sha256
 `e0087c0ff5f8fd19425df75224617d540391819115614c6a5ad3541d37ff3f33`) beside it, under
-lane 3's rulings on v1 (#165 comment 6578020193) and on v2 (6579459518). Part
-2, the operations, is `operations.md` beside this file; a cross-reference
+lane 3's rulings on v1 (#165 comment 6578020193) and on v2 (6579459518),
+with v2.1's one hunk in this part, §1.4's admin row (`fix-v2.1.diff`, sha256
+`7b54372637c079371777c396a1cc52c2409641aa9efcfd2865f1f8f15a8098c8`); v2.2
+changes only part 2. Part 2, the operations, is `operations.md` beside this
+file; a cross-reference
 names it, as in "`operations.md` §2.3". Lane 1's numbering is kept: §1.1 to
 §1.6 here, §2.1 to §2.9 there.
 
@@ -1519,7 +1531,7 @@ The writer's idle-in-transaction bound ends a half-open writer's transaction on 
 | READER | `lanes_register_reader` | the service's one connection (4A); the guard's direct read (Q11 (a)); S3's readers, the listings and the `SessionStart` block; `status`, `reconcile` and the readiness check | `reader_url=` and `reader_passfile=` (`code/lanes-index:64-65`) |
 | indexer | `lanes_indexer` | `lanes-index sync` and `reconcile` of the index half | `url=` and `passfile=` |
 | owner | `lanes_register_owner` | nothing: the admin connection takes it by `SET ROLE` | none |
-| admin | Brett's | the bootstrap and its migrations | a libpq service and 0600 `~/.pgpass` of his own, named by `--admin-service`; never an argument, never in the environment, never stored by the tools |
+| admin | Brett's | the bootstrap and its migrations | a libpq service and 0600 `~/.pgpass` of his own, named by `--admin-service`; `psql` receives the service's name only as `PGSERVICE=<service>` in its environment (SVC-2; lane 5, 6579523948); never a password or a connection string in an argument or the environment, never stored by the tools |
 
 - **The file:** `${XDG_CONFIG_HOME:-$HOME/.config}/openRepoTools/lanes-index.conf`, or the file `$LANES_INDEX_CONFIG` names. It is refused when group- or world-readable, inside a git work tree or under `~/.agents/`, or when a URL carries a password (`code/lanes-index:62-68`, `:296-301`); `register_url=` joins that check. Passwords live only in 0600 libpq password files, and an inherited `PGPASSWORD` or `PGPASSFILE` is dropped (`code/lanes-index:1300-1305`). `lanes-index` stays the one parser (`proposal.md:157-160`); R3a's `register_schema=` (default `lanes_register`) names a rehearsal's scratch schema (`r3a/REPORT.md:323`). On benches the file sits on Q23 (a)'s read-only mount (`proposal.md:1837-1839`). No URL or password enters an environment a session inherits (Amendment 14(c); `proposal.md:826-827`).
 - **The renderer holds REGISTER-WRITER** (clause (b), `proposal.md:683-685`; the frame's roles table), because D16 has it record a divergence or a failed pass in `mirror_state`, through `record_mirror_state` and nothing else: the records that clear a divergence, the cutover and the rollback are `lanes-index`'s, as REGISTER-WRITER.
@@ -1631,7 +1643,7 @@ and `LANES_INDEX_CONFIG` unset, the workstation is not primary and the verb runs
 in files mode, as today, with the marker check after Amendment 23's S3 fetch
 (phase 2). Otherwise `lanes-edit.sh` runs `lanes-index mode`, which prints
 `index` or `primary` and exits 0. While Q6(c)'s refusal is built in,
-`lanes-index mode` exits a code of its own, never 2, with its text, for a
+`lanes-index mode` exits 78 (`EX_CONFIG`), never 2, with its text, for a
 `mode=primary` configuration, and `lanes-edit.sh` exits 69 repeating it and
 writes nothing (agreement test 14); the other `lanes-index` commands refuse
 it with 2, as the configuration parser does. Any other failure of the query (a
@@ -1817,7 +1829,7 @@ this case.
 - **[L4-a′]** the internal flag that bypasses the resolver and S3 for the
   scratch tree; the arms with side effects outside the register, which run once
   after COMMIT; the expectations each act's write verbs carry (D5); every
-  failure of the mode query and the exit code for Q6(c)'s refusal (D3); the
+  failure of the mode query and Q6(c)'s code, now 78 (D3); the
   pending record's format (D8); and the callers that read exit 3 as "written"
   (D8);
 - **[L4-b]** that the staged change set gives the journal's edits for the five
@@ -1863,24 +1875,26 @@ detached as `index_nudge` forks today (`code/lanes-edit.sh:2561`), with
 lane's checkout, `<W>-lanes/<lane>/`, from Amendment 23's resolver (phase 3).
 
 - **One render at a time per checkout, and no fork waits.** The renderer takes
-  its own lock, a `mkdir` mutex in the checkout's git directory
-  (`lanes-render.lock`), never the lane's write lock. A fork that finds it held
-  leaves a rerun mark (`lanes-render.rerun`) and exits at once, as `SyncLock`
-  does (`code/lanes-index:1539–1543`). [L4-3]
+  its own lock, an `fcntl.flock` on `lanes-render.lock` in the checkout's git
+  directory, in `SyncLock`'s form, never the lane's write lock. The kernel
+  releases it when the renderer dies, even by SIGKILL, where a `mkdir` mutex
+  would stay behind and stop the checkout's renders (D14). A fork that finds
+  it held leaves a rerun mark (`lanes-render.rerun`) and exits at once, as
+  `SyncLock` does (`code/lanes-index:1539–1543`). [L4-3]
 - **A pass.** Clear the rerun mark; fetch `origin main`, bounded by
   `LANES_GIT_TIMEOUT`; find `m`, the last `Register-Seq` on `origin/main`'s
   first-parent history, and its commit `R` (an operator seq counts as rendered
   once its own command's read-back has put it there); check for a divergence
   (below); read the journal entries after `m`; and for each seq `k` in order,
-  build the images at `k`, then the commit: a private index (`GIT_INDEX_FILE`
-  in the checkout's git directory), `read-tree` of the parent, the changed
-  blobs written with `hash-object -w` and staged with `update-index`,
-  `write-tree`, and `commit-tree --no-gpg-sign -p <parent>`, with the entry's
-  message and `Register-Seq: <k>` in its trailer block (D15), its author and
-  committer and both dates set to the entry's commit UTC, in UTF-8. The first
-  parent is `origin/main`'s tip; each later commit's parent is the one before
-  it. Where the next seq the mirror lacks is an operator entry, the pass stops
-  there and renders nothing past it: its command owns it.
+  build the images at `k`, then the commit: a private index (`GIT_INDEX_FILE` in
+  the checkout's git directory), `read-tree` of the parent, the changed blobs
+  written with `hash-object -w` and staged with `update-index`, `write-tree`,
+  and `commit-tree --no-gpg-sign -p <parent>`, with the entry's message and
+  `Register-Seq: <k>` in its final trailer block (D15), its author and committer
+  and both dates set to the entry's commit UTC, in UTF-8. The first parent is
+  `origin/main`'s tip; each later commit's parent is the one before it. Where
+  the next seq the mirror lacks is an operator entry, the pass stops there and
+  renders nothing past it: its command owns it.
 - **A fetch that fails** ends the pass with nothing pushed: SQL stays true, the
   failure is recorded with the mirror state (D16) where the database can be
   written, `status` shows the lag, and the next render catches up.
@@ -2045,7 +2059,8 @@ their own fetch.
   unexpired and names this workstation's database label; and the tip
   the guard reads, `origin/main` as last fetched, carries a `Register-Seq` of
   at least `m` (`mirror-seq` is the declaration's field, and its check is the
-  client's: lane 5's question 18). It then answers from the mirror, as above,
+  client's: lane 5's question 18), found by SVC-12's bounded lookup, form C.
+  It then answers from the mirror, as above,
   with `(declared outage <utc>: <why>)` in place of the cause, and exits 0 or
   2 as that answer gives. A tip older than `m` is a refusal, 2: Brett's word
   covers writes during the outage, not how current a guard's last fetch is.
@@ -2367,7 +2382,7 @@ only the import keeps its 300 s bound (`:1317`), as its statement timeout.
 
 | Path | `connect_timeout` | `lock_timeout` | `statement_timeout` | Client timer | On expiry |
 |---|---|---|---|---|---|
-| the guard's direct read | 2 s | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s (SVC-8) | 2 |
+| the guard's direct read | 2 s | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s, or to `T0 + 3.65 s` where an unexpired declaration names this database (SVC-8, SVC-12) | 2 |
 | the service's connection, per request | 2 s, in the background only, outside any share (SVC-6) | 150 ms | 180 ms | 200 ms, inside the client's 300 ms wait | `unavailable`, and the client reads directly (SVC-8); `refuse db <cause>` only where the refusal is definitive (SVC-7) |
 | the guard's answer 2 | — | — | — | nothing on the hook's time: the guard exits 2 with "binding in progress", and the bind runs detached with a writer's bounds and D7's deadline (SVC-8) | as a writer's; lane 4 says how the guard reports it |
 | a writer's snapshot | 2 s | 2000 ms | 5000 ms | 8 s | a failed read: 69, or in doubt where an earlier commit of the same write was |
@@ -2600,6 +2615,12 @@ from cloud-bench would show it.
   parameter the direct read's `-d <url>` would apply and it would not. The
   label it may name is `where` (`:1296`) with any userinfo removed, since
   `where` strips the scheme and the query but not a user name.
+- **The admin connection, too** (lane 5's change to lane 1's libpq service
+  form, #165 6579523948, which lane 3 accepted): the bootstrap passes Brett's
+  service to `psql` only as `PGSERVICE=<service>` in its environment, never as
+  `service=` or `-d` on a command line, and drops an inherited `PGSYSCONFDIR`
+  beside `PGSERVICEFILE`, `PGPASSFILE` and `PGPASSWORD`, so that only his own
+  `~/.pg_service.conf` defines the service (`operations.md` §2.4).
 
 **The clients**, each through one implementation, `lanes-index`'s reader path
 (SVC-3): the guard, at its register reads (SVC-8), and every reader D17
@@ -2867,7 +2888,7 @@ itself). So on a configured workstation, `guard_run` makes **one** call,
 - answers the mode first, which folds D3's `lanes-index mode` into it, so a
   prompt pays one `lanes-index` start, not two. It follows lane 3's F8 ruling:
   `index` and the guard goes on as today; Q6(c)'s refusal with its own code,
-  which lane 4 picks, and the guard refuses 2; and any other failure of the
+  78, which lane 4 picked, and the guard refuses 2; and any other failure of the
   call (a refused configuration, a crash, exit 127, its timer) is files mode
   with a warning on stderr, after which a workstation under `lanes/STORE`
   refuses by Q21(a)(A), as the marker check does for a writer;
@@ -2939,6 +2960,18 @@ SVC-7 records, not taken). Lane 2 has measured it on the real register,
 reserve stays and the start line stays at `T0 + 3.75 s` (lane 3's ruling,
 #165 6579459518; `MEASURE.md`, (14)).
 
+**Under a declared outage** (lane 5's change, #165 6579523948, which lane 3
+accepted). Where an unexpired declaration names this database, the client
+reads it once, at the prefetch, before the direct read; it caps the direct
+read at `T0 + 3.65 s`, 0.1 s earlier, so that a database that accepts the
+connection and then goes silent still leaves the mirror path its start by
+`T0 + 3.75 s`; and the mirror's reads and parse then use the 0.5 s reserve.
+They are today's six register reads, which lane 2 measured at 308 ms median
+and 435 ms p95. The 0.1 s covers SVC-12's bounded `Register-Seq` lookup,
+form C, which lane 2 timed at 13 ms median and 16 ms p95 on 34,144 commits
+(#165 6579627366). Without a declaration, SVC-8 is unchanged apart from one
+`stat` at the prefetch.
+
 **How the client knows `T0`.** The guard passes its own pid (`$$`, the hook
 process). On Linux the client reads that process's start from
 `/proc/<pid>/stat` against `/proc/uptime`. On macOS it reads `ps -o etime= -p
@@ -2993,7 +3026,7 @@ two client forms; `unavailable` never leaves the client.
 | `refuse db <cause>`, or the direct read failed | 69, as S3's table | 69 | SVC-12's declared-outage check; otherwise 2, naming the store, the cause and the two ways out |
 | a read completed after the parse's start line | — | 2 | 2: "too late in the hook's 5 s to verify the triple" |
 | mode `index` | — (D3 asks first) | 0, `mode index` | today's files-mode guard |
-| Q6(c)'s refusal of `mode=primary` | lane 4's code (F8) | the same code | 2 |
+| Q6(c)'s refusal of `mode=primary` | 78, `EX_CONFIG` (lane 4's code; F8) | 78 | 2 |
 | any other failure of the mode question or the prefetch | — | any other code, or none | files mode with a warning (F8); under `lanes/STORE`, 2 by Q21(a)(A) |
 
 #### SVC-9. What the service removes from the guard, and what it cannot
@@ -3078,13 +3111,20 @@ when all three of these hold, checked in this order, offline:
 1. its database read has failed: the service answered `refuse db …`, or it
    was unavailable and the direct read then failed (`register read` exit 69);
 2. `register-outage` (D20) is present beside `lanes-index.conf`, unexpired,
-   and names this workstation's database label;
+   and names this workstation's database label; the client reads it once, at
+   the prefetch, before the direct read (SVC-8);
 3. the mirror it reads, `origin/main` as last fetched (the guard never
    fetches), carries a `Register-Seq` of at least the declaration's
    `mirror-seq=<m>`, the field lane 3's F11 ruling adds and `outage declare`
    records (`operations.md` §2.5): the client reads the last `Register-Seq`
-   trailer on that ref's first-parent history with one `git log -1
-   --first-parent --grep='^Register-Seq: '` and compares.
+   trailer on that ref's first-parent history by form C (#165 6579666731),
+   exactly one
+   `git log --first-parent -n 200 --format='%H%x00%(trailers:key=Register-Seq,valueonly)'`
+   on `origin/main` as last fetched, with no `--grep`; it takes the first
+   non-empty value, and refuses 2 if none of the 200 carries one. With `--grep`
+   beside it, `-n` counts matches, not commits walked, so the walk would be
+   unbounded. Form C needs every render commit to write `Register-Seq: <n>`
+   in its message's final trailer block (D15).
 
 Then the guard runs today's parser on the mirror's text and exits 0 or 2 as it
 gives, with S3's `read: mirror at <sha12>, …` line and `(declared outage <utc>:
@@ -3505,23 +3545,26 @@ The placeholders for lanes 2 and 4 are left as they were.
   twice (F21); the internal flag for the scratch tree (F22); the files the
   snapshot returns, `repos.tsv` and `log/README.md` included; output buffering
   and the arms with side effects (F14); every failure of the mode query and
-  Q6(c)'s own code (F8); the acts and their expectations (F5); the callers that
-  read exit 3 as "written" (F9); the in-doubt rule at the deadline (F3); the
-  pending record's format and age (F10); the renderer's progress bound and how
-  it stops at an operator seq (F15, F2); where a hand edit is found (F16); the
-  marker check for readers (F17); [L4-1] to [L4-5]; `commit-tree`'s
+  Q6(c)'s own code, given as 78 (F8); the acts and their expectations (F5); the
+  callers that read exit 3 as "written" (F9); the in-doubt rule at the deadline
+  (F3); the pending record's format and age (F10); the renderer's progress bound
+  and how it stops at an operator seq (F15, F2); where a hand edit is found
+  (F16); the marker check for readers (F17); [L4-1] to [L4-5]; `commit-tree`'s
   determinism (F29); and the push URL the deploy key needs against origin's
   HTTPS remote. From lane 5's section: the new cache file
-  `$SE_CACHE_FILE.log.<lane>` (its question 10); whether the image cache's
-  form allows the service as a second writer, or the service keeps its images
-  in memory only (question 13, [L4-c]); and `code/lanes-index:1315`, whose
+  `$SE_CACHE_FILE.log.<lane>` (its question 10); whether the image cache's form
+  allows the service as a second writer, or the service keeps its images in
+  memory only (question 13, [L4-c]); and `code/lanes-index:1315`, whose
   connection string moves from the argument list into `psql`'s environment
   (question 11). From lane 1's v2: the in-doubt lookup calls `find_write`
   (§1.3.1), and the printed rerun carries the generation (D8). From lane 2's
   measurements: how answer 2's detached bind runs, and what the guard answers
   while it is in progress (SVC-8); and `lane-start`'s bind making its four
-  writes as one verb, one transaction carrying F5's expectations, or the
-  reason it cannot.
+  writes as one verb, one transaction carrying F5's expectations, or the reason
+  it cannot. From the follow-ups of 11-02: the mechanics of writing
+  `Register-Seq: <n>` in each render commit's final trailer block (D15), which
+  SVC-12's bounded lookup reads; and the renderer's `fcntl.flock` (D14), whose
+  proof its section carries.
 - **Lane 2, the test plan:** a test for each MUST as folded (a write in doubt at
   the deadline; a diverged rollback, and a failed seq-1 push; the ruleset, then
   a files-mode write after the rollback; a declared outage with the service and
@@ -3536,7 +3579,9 @@ The placeholders for lanes 2 and 4 are left as they were.
   From lane 1's v2 and lane 3's rulings: a real-engine test for each object
   marked new and unproven ("The schema"); two writers claiming one object
   under two spellings (D19); one repository spelled two ways (D18); and the
-  abort of a restore-form cutover (D24).
+  abort of a restore-form cutover (D24). From the follow-ups of 11-02:
+  AT-F7 and AT-F11 test the bounded `Register-Seq` lookup, including no
+  trailer within 200, which refuses 2 (#165 6579627366); and AT-F8 takes 78.
 - **Lane 5, the service:** from lane 1's v2, confirm the libpq service form
   (`bootstrap --admin-service`, `operations.md` §2.4) against SVC-2's
   mapping, and that the declared outage's mirror read fits SVC-8's budget

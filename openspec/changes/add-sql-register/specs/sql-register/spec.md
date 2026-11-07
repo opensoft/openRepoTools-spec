@@ -84,11 +84,11 @@ Once `lanes/STORE` exists, the acts and the prompt guard on a workstation that i
 - **THEN** the answer comes from the mirror and stderr carries the `read: mirror` line
 
 ### Requirement: A build without the renderer's git half refuses `mode=primary`
-Until the renderer's git half is installed, `lanes-index` SHALL refuse `mode=primary` with the text `mode=primary is not available in this build: the renderer's git half is not installed, so a write could not be mirrored; nothing was written`. Its commands SHALL refuse it with exit 2, the configuration parser's code, except the mode query, `lanes-index mode`, which SHALL report it with an exit code of its own, never 2, so that `lanes-edit.sh` can tell it from every other failure of the query; the design names the code. `lanes-edit.sh`, run on a workstation whose configuration says `mode=primary`, SHALL then exit 69, repeat that text and change neither the register nor the files, and SHALL NOT write the files instead. The design MAY reword the text and SHALL NOT weaken the refusal. The readiness check SHALL fail an environment whose installed `lanes-index` still carries this refusal.
+Until the renderer's git half is installed, `lanes-index` SHALL refuse `mode=primary` with the text `mode=primary is not available in this build: the renderer's git half is not installed, so a write could not be mirrored; nothing was written`. Its commands SHALL refuse it with exit 2, the configuration parser's code, except the mode query, `lanes-index mode`, which SHALL report it with an exit code of its own, 78 (`EX_CONFIG`), never 2, so that `lanes-edit.sh` can tell it from every other failure of the query. `lanes-edit.sh`, run on a workstation whose configuration says `mode=primary`, SHALL then exit 69, repeat that text and change neither the register nor the files, and SHALL NOT write the files instead. The design MAY reword the text and SHALL NOT weaken the refusal. The readiness check SHALL fail an environment whose installed `lanes-index` still carries this refusal.
 
 #### Scenario: The refusal in place (agreement test 14)
 - **WHEN** the refusal's constant is set and `lanes-edit.sh` runs a write on a workstation configured `mode=primary`, using the fake `psql`
-- **THEN** `lanes-index mode` exits its own code with the text above, any other `lanes-index` command exits 2 with it, and `lanes-edit.sh` exits 69 repeating it
+- **THEN** `lanes-index mode` exits 78 with the text above, any other `lanes-index` command exits 2 with it, and `lanes-edit.sh` exits 69 repeating it
 - **AND** neither the register nor the files changed
 
 #### Scenario: The refusal lifted
@@ -321,7 +321,7 @@ The database's clock SHALL stamp each row's UTC, written in whole seconds as `ut
 - **THEN** that UTC is stored as written
 
 ### Requirement: The renderer commits one mirror commit per sequence
-After a transaction commits, the writer SHALL fork the renderer. The renderer SHALL commit every sequence the mirror lacks, in sequence order, one commit per write, with that write's message and a `Register-Seq: <n>` trailer, so that `git log` of the workspace repository stays the audit trail in commit order. It SHALL render `lanes/LANES.md`, `lanes/log/<lane>.md`, `lanes/aliases.tsv` and `lanes/archive/`, and SHALL touch nothing else. Two renderers racing SHALL produce one commit per sequence, in order. The renderer SHALL NOT render an operator entry: the command that wrote it pushes its commit, with the renderer identity, and confirms it by Amendment 23's S4 read-back, and the renderer counts that seq as rendered once it is on origin.
+After a transaction commits, the writer SHALL fork the renderer. The renderer SHALL commit every sequence the mirror lacks, in sequence order, one commit per write, with that write's message and a `Register-Seq: <n>` trailer in the message's final trailer block, so that `git log` of the workspace repository stays the audit trail in commit order. It SHALL render `lanes/LANES.md`, `lanes/log/<lane>.md`, `lanes/aliases.tsv` and `lanes/archive/`, and SHALL touch nothing else. Two renderers racing SHALL produce one commit per sequence, in order. The renderer SHALL NOT render an operator entry: the command that wrote it pushes its commit, with the renderer identity, and confirms it by Amendment 23's S4 read-back, and the renderer counts that seq as rendered once it is on origin.
 
 > Pending Brett's Q18: written under option (A).
 
