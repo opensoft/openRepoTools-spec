@@ -2531,7 +2531,7 @@ can hold the head row, so its later commits get 55P03, which is otherwise a
 lost turn; and an orphaned commit call that has not yet reached the head
 row's lock, its query still queued at a loaded server, can commit after a
 later attempt of the same write has failed fast for another reason (the
-phase plan's "The in-doubt rule at the deadline"; R2's S1). Were the write to
+phase plan's "The in-doubt rule"; R2's S1). Were the write to
 exit 75, 69, 2 or the verb's own code on such an attempt, "nothing was
 written" could be false, the pending record would go, and a rerun would mint
 a new id, which is ADV-C3's second `CLAIMED`. **So once any commit call of a
@@ -3293,7 +3293,7 @@ only the import keeps its 300 s bound (`:1317`), as its statement timeout.
 | `cutover`, its transaction: the switch to `primary` and its entry, in every form | 2 s | 5000 ms | 10 s | 15 s; it carries `not_after` (D24) | 69, with the switch unknown: the rerun reads the switch and the journal first, and goes on from its own entry where it finds one (F12) |
 | `switch_to_files`, the cutover's abort, either form | 2 s | 5000 ms | 10 s | 15 s | 69: the rerun reads the switch. At `files`, or back at the restored generation with the head at `b`, the abort is done; otherwise it runs again |
 | `record_marker`, after an operator entry's read-back | 2 s | 5000 ms | 10 s | 15 s | 69: the push stands, and the marker stays `adding` or `removing`, so writes keep refusing; the rerun reads origin back and records it again (F12) |
-| `outage declare`'s database probe (`operations.md` §2.5's first refusal): one read of the switch, connected as a writer's snapshot is, as REGISTER-WRITER | 2 s | 2000 ms | 5000 ms | 8 s | the database does not answer from this host, so the declaration is written; any other end before the switch is read counts the same. A switch read at `primary` refuses 2, and one read at `files` writes the declaration (a rollback's start) |
+| `outage declare`'s database probe (`operations.md` §2.5's refusals): one read, connected as a writer's snapshot is, as REGISTER-WRITER, of the switch's `mode` and `set_seq` and the kind of the journal entry at `set_seq` | 2 s | 2000 ms | 5000 ms | 8 s | the database does not answer from this host, so the declaration is written; any other end before the read completes counts the same. At `primary`, 2. At `files`, the declaration is written only in the `--rollback` form, where the entry at `set_seq` is a `rollback` and `<k>` is `set_seq - 1`, the head before it (§1.3's `set_seq`); otherwise 2 |
 | `import --single <sha>` and `render --revert <sha>`, their commit call | 2 s | 2000 ms | 5000 ms | 8 s | in doubt, as a writer's commit: each goes through S1's commit call (S2's "The two ways out"), `register commit` (the phase plan's interfaces table) |
 | `import --single <sha>` and `render --revert <sha>`, their other database calls: the snapshot read, as a writer's; in doubt, the lookup's row above; the render that follows is the renderer's row | 2 s | 2000 ms | 5000 ms | 8 s | a failed read: 69, or in doubt where an earlier commit call of the same entry was |
 
@@ -3956,7 +3956,7 @@ answers each prompt of that session from the record by an eleven-case table:
 failure's why after it fails, with the window renamed back and the offer kept
 for at most three attempts. That a `setsid` child outlives the hook is now
 shown on Claude Code 2.1.319 (the facts table below), and lane 2's AT-F6 takes
-the phase plan's fourteen cases. **The bind as one verb:** `lane-start`'s
+the phase plan's seventeen cases. **The bind as one verb:** `lane-start`'s
 three register writes become `start-record`, one transaction carrying the
 union of their expectations (D5). The Rule 3 stamp cannot join it, since it is
 no register file (Q18(A)) and Amendment 23 keeps it a git commit everywhere, so
@@ -4370,7 +4370,7 @@ written before these rulings, so a row may still read "lane 3" or "open":
 - **Row 13:** the flag also skips the mode query and D17's reads (S1's step 2).
 - **Row 15:** closed by lane 1's v2.3, whose step 9 raises LR008 past
   `not_after` (§1.3; S1's "A write in doubt"; D8). Lane 4's reading of LR008
-  is in "The in-doubt rule at the deadline" and S1's outcomes table.
+  is in "The in-doubt rule" and S1's outcomes table.
 - **Row 16:** the pending record as lane 4 gives it: a 15-minute age, a digest
   over `LANES_LANE`, `LANES_SESSION`, the verb and its arguments, and a printed
   rerun carrying `LANES_WRITE_GENERATION`, a new variable (S1's "The write id"
@@ -4380,8 +4380,9 @@ written before these rulings, so a row may still read "lane 3" or "open":
   the check as `commit_write`'s step 3b and LR009 (§1.3's "The act"; D5).
 - **Row 24:** a rerun that finds its write id committed runs the verb's
   after-COMMIT tail, so that `rename-lane`'s `lane_state_rename` still runs;
-  every such tail must be safe to run twice, and S1's "A write in doubt" lists
-  each verb's tail. Lane 2 adds a test per tail after the review.
+  every such tail must be safe to run twice; since commit N, at most once
+  (lane 4's "The tail, once"), and S1's "A write in doubt" lists each verb's
+  tail. Lane 2 adds a test per tail after the review.
 - **Row 37:** the bind's 430 s bound over the child's whole body (R2's S6),
   with `LANES_GIT_TIMEOUT=45` in the child, accepted as arithmetic: 278 +
   2`v` + 6`N_r` s, 384 s at `v` = 2 and `N_r` = 17, under the body's 420 s;
@@ -4410,8 +4411,12 @@ The four points lane 3's rulings on v2.4 gave lane 4 to confirm (#165
 `bind-failed` and `name-drift`; `LANES_REGISTER_SCRATCH`;
 `LANES_WRITE_GENERATION` and `LANES_REGISTER_PENDING_MAX_AGE_S`;
 `RENDER_GIT_HALF`; `not_after`; `LANES_READ_MIRROR`; the `.logpath.<lane>`
-sidecar; the image cache's `register-images/` layout; and the renderer's 64-seq
-batch and 16-pass cap. As lane 3's ruling on v1 has it for every new object
+sidecar; the image cache's `register-images/` layout; `LANES_REGISTER_SEAM_CAP_S`
+(N4), `LANES_BIND_BOUND_S` (N15) and `seam.out` (N4); the pending record's `call`
+lines and `tail` key (N8); the bind record's `bound_s` and `bounded` (N15);
+`register snapshot --at` (N1), `journal --not-after` (N2) and `guard-bind --body`
+(N13); and the renderer's 64-seq batch and 16-pass cap. As lane 3's ruling on v1
+has it for every new object
 (#165 6578020193), each is accepted as new and unproven, and needs a test in
 lane 2's plan (AT-F6 for the bind; tests 3, 4, 5, 6 and 9 for the rest) before
 it counts as proven.
@@ -5512,9 +5517,9 @@ Every row below waits on the decision it names.
 | 38 | Whether `--leave <from>` joins `start-record`, making answer 2 one transaction | not proposed: each verb keeps its expectations to one lane | lane 3 |
 | 39 | The detached bind in phase 1, as its first guard PR and the lane-tools fix (row 34) | it touches no write seam; today's bind is cut down by the hook's timeout | lane 3 |
 | 40 | macOS without `setsid`: python3's `os.setsid`, else `nohup` alone, which does not survive a group kill | `setsid` is not on macOS | Brett |
-| 41 | A plain rerun that still finds an identical write's pid live at its deadline exits 3 with that write's id, not 75 (R2's N2) | it sent nothing, and the other write's outcome is not known; 75's "a retry in seconds is safe" can double the write | lane 3 |
-| 42 | A call in doubt keeps its child at the seam; the child replays its own buffered output after `committed`; it waits in 1 s turns while its parent lives, up to a 120 s cap (R2's N5) | the exact tail; no caller's slow read stands between the call and `committed` | lane 3 |
-| 43 | Under the flag, the tail's sidecar acts take the lane checkout's mutex, not the scratch tree's | `LOCK` is computed from `LANES_DIR` (`code/lanes-edit.sh:1100`); `set-lane-state` takes the checkout's (`:18585`) | lane 3 |
+| 41 | A plain rerun that still finds an identical write's pid live at its deadline exits 3 with that write's id, not 75 (R2's N2) | it sent nothing, and the other write's outcome is not known; 75's "a retry in seconds is safe" can double the write | lane 3: accepted (#165 6715013264) |
+| 42 | A call in doubt keeps its child at the seam; the child replays its own buffered output after `committed`; it waits in 1 s turns while its parent lives, up to a 120 s cap (R2's N5) | the exact tail; no caller's slow read stands between the call and `committed` | lane 3: accepted (#165 6715013264) |
+| 43 | Under the flag, the tail's sidecar acts take the lane checkout's mutex, not the scratch tree's | `LOCK` is computed from `LANES_DIR` (`code/lanes-edit.sh:1100`); `set-lane-state` takes the checkout's (`:18585`) | lane 3: accepted (#165 6715013264) |
 
 ### Not established
 
@@ -5561,7 +5566,7 @@ Every row below waits on the decision it names.
   it waits until the database clock has passed `<n>`, the largest
   `not_after` its commit calls carried, takes the head row's lock within the
   reconnect window, checks the clock again under it, and looks its write id
-  up. Found, it exits 0 and runs the verb's after-COMMIT tail; absent, with
+  up. Found, it exits 0 and runs the verb's after-COMMIT tail once; absent, with
   the lock held, it exits the code its last attempt earned, whether 75
   ("register busy"), 69, 2 or the verb's own; with the lock not held within
   the window, or the lookup refused (LR011), it exits 3, naming the write id.
@@ -5892,7 +5897,7 @@ left as it was.
   abort of a restore-form cutover (D24). From the follow-ups of 11-02:
   AT-F7 and AT-F11 test the bounded `Register-Seq` lookup, including no
   trailer within 200, which refuses 2 (#165 6579627366); and AT-F8 takes 78.
-  From the phase plan: AT-F6's fourteen cases for the detached bind and
+  From the phase plan: AT-F6's seventeen cases for the detached bind and
   `start-record` ("Answer 2's detached bind"); what test 9 records per attempt
   ([L4-c]); tests 5 and 6 as the agreement form of [L4-1], [L4-2], [L4-4] and
   [L4-5]; the renderer's bounded lookup of `m`, with no trailer found; and a

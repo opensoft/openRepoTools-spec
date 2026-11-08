@@ -250,6 +250,14 @@ Each write SHALL carry a write id that is UNIQUE in the journal. After an outcom
 - **WHEN** a rerun that holds the record of the pending write, its tail not yet run, finds its write id in the journal by its snapshot or its commit, as for an in-doubt `rename-lane` whose transaction had committed
 - **THEN** it exits 0, writes the edit no second time, and runs the verb's after-COMMIT tail once, for `rename-lane` the handoff file's move and its stamp
 
+#### Scenario: A run that finds its write committed runs none of the tail
+- **WHEN** a run finds its write id committed, but its record of the pending write shows the tail sent or done, or it holds no record of the pending write
+- **THEN** it writes nothing, runs none of the tail, and names the tail it did not run
+
+#### Scenario: A rerun that finds the same write still running
+- **WHEN** a plain rerun finds the record of an identical pending write whose pid is still live when the deadline passes, counted from the rerun's own start
+- **THEN** it exits the in-doubt code naming that record's write id, and sends nothing
+
 #### Scenario: A lookup made too early
 - **WHEN** a write in doubt makes its lookup before the database's clock has passed the largest `not_after` its commit calls carried, and the lookup cannot wait for it, as where that `not_after` is too far ahead or the clock stepped back before the lookup held the head row's lock
 - **THEN** the lookup is refused, and the writer exits the in-doubt code naming the write id and keeps the record of the pending write
