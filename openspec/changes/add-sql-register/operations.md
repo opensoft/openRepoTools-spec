@@ -53,7 +53,16 @@ what R2's M1 costs a rerun after a failed render (R2's S5; step 3); and the
 after-loss cutover's label (R2's N4), as lane 3 ruled, lane 1's option (a).
 Commit M also folds lane 5's check of commit L (#165 6714540821) into 2.5
 and 2.9: `--rollback` requires `--mirror-seq <k>`, a rollback's declaration
-needs no `--until`, and SVC-12's refusal text is lane 5's. Lane 1's numbering is kept: a cross-reference to part 1 names
+needs no `--until`, and SVC-12's refusal text is lane 5's.
+Commit O places lane 5's three texts from its check of commit M (#165
+6714928254) in 2.5: the first refusal lets a database that answers pass only
+where the switch reads `files` after a rollback, and then only in the
+`--rollback` form; the "and with it" bullet passes `<k>` only where the
+journal entry at the switch's `set_seq` is a `rollback` and `<k>` is
+`set_seq - 1`; and a new refusal turns Brett's word away while the probe reads
+the switch at `files` after a rollback, printing the `--rollback` form for him
+to run instead.
+Lane 1's numbering is kept: a cross-reference to part 1 names
 `design.md`, as in "`design.md` §1.3".
 
 - **Basis:** the proposal at `0607526d`. A citation of `proposal.md`, `clarifications.md` or `council-review.md` is to the frozen copy, sha256 `b284a0eb2078fd24a48e833685b0073e881fdbe1625a1019d81a55a4aadaa340`, `636fb45369f825dd7f3d763bdb8d8bcb475ef4d76a3f7cf23203b907713ac2ff` and `9fa18c5ed76d88d4f25b3f8eaa37626ad0511985061f9e0649ff49d13c0fce62`.
@@ -582,7 +591,7 @@ Four more bear on this part:
 | `lanes-index ready` | verb | **(new)** |
 | `lanes-index set-mode` | verb | **(new)** |
 | `lanes-index outage declare`, `outage clear` | verb | the frame's D20 |
-| `--mirror-seq <m>`, `--rollback` on `outage declare` | flag | **(new)**; `--mirror-seq` is F11's; with `--rollback` it is required, as `--mirror-seq <k>`, the rollback's head, and its absence refuses 2 (2.5; lane 5, #165 6714540821) |
+| `--mirror-seq <m>`, `--rollback` on `outage declare` | flag | **(new)**; `--mirror-seq` is F11's; with `--rollback` it is required, as `--mirror-seq <k>`, the rollback's head, and its absence refuses 2; where the database probe reads the switch at `files`, 2 unless the journal entry at the switch's `set_seq` is a `rollback` and `<k>` is `set_seq - 1` (2.5; lane 5, #165 6714540821 and 6714928254) |
 | `mirror-seq=<m>` | `register-outage` field | **(new)**; F11; SVC-12's name |
 | "the mirror here is at seq `<s>`, behind the declared outage's seq `<d>`; …" | text | SVC-12, lane 5's section as folded at `1c45123a`, with lane 5's text of #165 6714540821 |
 | `rollback --hold-marker` | flag | **(new)**; F4 |
@@ -599,7 +608,7 @@ Four more bear on this part:
 | 3, a write in doubt | exit code | the frame's D8; from `cutover` and `rollback`, an operator entry's push not confirmed (F12) |
 | `store=`, `database=`, `import=`, `lanes-tree=`, `utc=` | `lanes/STORE` fields | the frame's D21 |
 | `lanes-index`'s 0, 2 and 64 | exit code | `code/lanes-index:72-76` |
-| 78 (`EX_CONFIG`), Q6(c)'s refusal, from `lanes-index mode` | exit code | F8: never 2; sysexits' `EX_CONFIG`, as D3 and test 14 have it (lane 3, 6708646285) |
+| 78 (`EX_CONFIG`), Q6(c)'s refusal, from `lanes-index mode` and `register read` | exit code | F8: never 2; sysexits' `EX_CONFIG`, as D3 and test 14 have it (lane 3, 6708646285) |
 | `CLAUDE_NO_LANE=1` | environment value | `proposal.md:431-432`; `code/lanes-edit.sh:648` |
 | `LANES_LANE=` the operator lane | environment value | Amendment 23's S2 ("no lane, no write"); F12 |
 | `GUARD_TIMEOUT=5` | constant | `proposal.md:772-773`; `code/openRepoTools:2344` |

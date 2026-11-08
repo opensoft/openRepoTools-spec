@@ -141,11 +141,14 @@ Everything below applies on a `mode=primary` workstation, except the estate
 marker. Every act-2 writer, in every mode, reads `lanes/STORE` and refuses with 69
 where the marker is present and the workstation is not `mode=primary` (Amendment
 22's S1: "Every act-2 writer reads it"). Where the marker is absent, `mode=index`
-and unconfigured workstations write and read as today, except the guard's
-answer 2, whose bind runs detached in every mode, the fix for two defects in
-today's guard (design, "Known defects in today's code"; opensoft/openRepoTools#347),
-and `lane-start`'s bind, whose three register writes become one write,
-`start-record`, in every mode (lane 3 confirmed both, #165 6710770304). Each item names the
+and unconfigured workstations write and read as today, with three exceptions:
+the guard's answer 2, whose bind runs detached in every mode, the fix for two
+defects in today's guard (design, "Known defects in today's code";
+opensoft/openRepoTools#347); `lane-start`'s bind, whose three register writes
+become one write, `start-record`, in every mode; and `openRepoTools wip init`'s
+refusal wherever any file under `lanes/` exists, in every mode (Q14(a)). Lane 3
+confirmed the first two (#165 6710770304), and the third is Brett's answer to
+Q14 (#165 6710653292). Each item names the
 test that checks it; the agreement tests are listed together at the end.
 
 ### The configuration and the estate switch (S1)
@@ -224,7 +227,8 @@ test that checks it; the agreement tests are listed together at the end.
   committed: R1 reproduced it on PostgreSQL 16.15, where the second writer
   blocked about a second and then failed, and its `psql` exited 3. The
   transaction re-runs from its reads, so S6's losing claimant sees the winner
-  and exits 2. Exit 69 stays for an unreachable database and any other refusal.
+  and exits 2. Exit 69 stays for an unreachable database and any other refusal,
+  and a refusal by the register's own rules exits 2.
   A write that cannot get its turn in time is "register busy", not an outage:
   under Q7's (A) a spent retry bound, under (A″) a spent deadline, under (A′)
   the head row's lock not granted within the writer's limit. It exits with a
@@ -2222,5 +2226,9 @@ change `skip-no-lane-guard`, not yet archived) is kept unchanged, not modified.
     `--install` until that entry is removed (`:3317–3331`).
 - **Unchanged while `lanes/STORE` is absent:** the output and exit codes of every
   `mode=index` and unconfigured workstation; each writer gains the configuration
-  read and the marker check. **Unchanged everywhere:** the ledger half; the
+  read and the marker check. There are three exceptions, in every mode: the
+  guard's answer 2, whose bind runs detached; `lane-start`'s bind, whose three
+  register writes become one, `start-record`; and `openRepoTools wip init`'s
+  refusal wherever any file under `lanes/` exists (Q14(a)). **Unchanged
+  everywhere:** the ledger half; the
   handoffs; Rules 1–10 as rules; Amendment 7's grammar.

@@ -597,7 +597,8 @@ the section that carries it.
   expiry, and needs none before the rollback's end clears it. The rollback is
   Brett's act, so the declaration is his, as Q26(a′) requires, and a guard's
   read that finds the switch at `files` counts as failed (lane 3's ruling,
-  #165 6578020193; `operations.md` §2.5). It goes to Brett under Q26.
+  #165 6578020193; `operations.md` §2.5). It is answered: Brett took Q26's
+  (a′) (#165 6710653292).
 - **D21. `lanes/STORE`'s fields:** `store=primary`, `database=<label>`,
   `import=<sha>`, `lanes-tree=<tree id>` and `utc=<UTC>`, in a commit carrying
   the cutover's entry's `Register-Seq` (D24) (S5).
@@ -978,7 +979,7 @@ CREATE TABLE register_switch (                 -- S1: the database half; lanes/S
   import_seq     bigint,
   set_utc        timestamptz NOT NULL,
   set_seq        bigint      NOT NULL CHECK (set_seq >= -1),  -- the seq of the last change: an operator
-                              -- entry's own (a cutover's 1 or m+1, a rollback's k+1), or an abort's base
+                              -- entry's own (a cutover's 1, m+1 or b+1, a rollback's k+1), or an abort's base
   set_by_lane    text        NOT NULL,
   set_by_ws      text        NOT NULL CHECK (set_by_ws <> ''),
   restore_prior  jsonb,                        -- the restore form's cutover: the switch row and
@@ -1442,7 +1443,7 @@ All of it is one transaction, so a failure at any step leaves the journal, the l
 |---|---|---|
 | `write` | `primary`, `present` | the verb's edits; `written_mode` and `mode` are `primary` |
 | `import` | `files`, `absent` | With only its root in the journal, it deletes every journal and data row (head to -1) and takes seq 0 (under `--after-loss`, D22 and `operations.md` §2.3, the baseline seq `m` that the entry names in `root_seq`: the head moves from -1 to `m`, the chain's one root sits at `m`, and a `root_seq` on a journal that is not empty is LR004), so each re-import before a confirmed cutover replaces the root (`proposal.md:1259-1261`; `switch_to_files` deletes an aborted cutover's entry); otherwise it clears the data tables and takes the next seq, so a seq never repeats in the mirror's history and a later cutover never reuses a `Register-Seq` that `main` carries. Every line is a `create` or `append` edit, so the journal alone renders any seq from the import on. It never loads `lanes/STORE`, which is not a rendered path (F2). Sets `exempt`. |
-| `cutover` (operator, D24) | `files`, `absent`; leaves `primary`, `adding` | base must be the latest import's seq; sets the switch's fields from it (`import_seq`, `import_commit`, `import_tree`) and `set_seq` to its own seq, 1 or `m+1` after a loss; creates `lanes/STORE`'s lines, D21's fields: `store=primary`, `database=` the label, `import=` the commit, `lanes-tree=` the tree id and `utc=`. Its after-loss form, `lanes-index cutover --import <M> --after-loss` (`after_loss` in the entry; lane 3's F18 ruling), is this same entry at `m+1`, not a third operator entry; it also sets `database_label` from the entry and a new `generation`. After a restore, whose switch reads `primary`, `present`, it starts from there, with the head as its base, records in `restore_prior` what it replaces, for its abort, and replaces `lanes/STORE`'s lines whole (`operations.md` §2.3; lane 3's ruling, 6579459518, point 1). **N4:** an after-loss cutover with no `database_label` is LR004 in either form. One that meets the switch at `primary` is LR004 unless the entry's `database_label` `IS DISTINCT FROM` the switch's: the restore form, and either form run by mistake against the live database, which is at `primary`, `present` with its own label. Neither form can find a NULL label in the switch, whose column is NOT NULL (§1.2), a restored backup's included. After a re-import the switch is at `files` and holds the replacement's own label, which its bootstrap wrote and the entry names, so the label is not compared there. `lanes-index cutover` exits 2 with the message, writing nothing |
+| `cutover` (operator, D24) | `files`, `absent`; leaves `primary`, `adding` | base must be the latest import's seq; sets the switch's fields from it (`import_seq`, `import_commit`, `import_tree`) and `set_seq` to its own seq, 1, `m+1` after a re-import, or `b+1` after a restore; creates `lanes/STORE`'s lines, D21's fields: `store=primary`, `database=` the label, `import=` the commit, `lanes-tree=` the tree id and `utc=`. Its after-loss form, `lanes-index cutover --import <M> --after-loss` (`after_loss` in the entry; lane 3's F18 ruling), is this same entry at `m+1`, not a third operator entry; it also sets `database_label` from the entry and a new `generation`. After a restore, whose switch reads `primary`, `present`, it starts from there, with the head as its base, records in `restore_prior` what it replaces, for its abort, and replaces `lanes/STORE`'s lines whole (`operations.md` §2.3; lane 3's ruling, 6579459518, point 1). **N4:** an after-loss cutover with no `database_label` is LR004 in either form. One that meets the switch at `primary` is LR004 unless the entry's `database_label` `IS DISTINCT FROM` the switch's: the restore form, and either form run by mistake against the live database, which is at `primary`, `present` with its own label. Neither form can find a NULL label in the switch, whose column is NOT NULL (§1.2), a restored backup's included. After a re-import the switch is at `files` and holds the replacement's own label, which its bootstrap wrote and the entry names, so the label is not compared there. `lanes-index cutover` exits 2 with the message, writing nothing |
 | `stray-import` | `primary`, `present` | the stray commit's edits as one entry, `written_mode` `files` |
 | `stray-revert` | `primary`, `present` | no line edits; `journal_files` names the paths the renderer restores. A rollback refuses to start while a divergence is recorded (F1), so a revert is never needed at `files` |
 | `rollback` (operator, D24) | `primary`, `present`; leaves `files`, `removing` | removes `lanes/STORE`; the journal's last seq, written in the transaction that sets the switch to `files`, with `set_seq` its own seq (F1); refused with LR012 **(new)** while `mirror_state` records a divergence, which it reads `FOR SHARE` under the head row's lock (S5) |
@@ -1937,7 +1938,7 @@ SELECT v_seq, nullif(v_head, -1), p_write_id, e.*, p_entry -> 'act' ->> 'id'  --
   END IF;
 
   -- The kinds table's rules that come after: D24's two operator entries move the switch.
-  IF v_kind = 'cutover' THEN                    -- set_seq: its own seq, 1, or m+1 after a loss
+  IF v_kind = 'cutover' THEN                    -- set_seq: its own seq, 1, m+1 after a re-import, or b+1 after a restore
     UPDATE register_switch SET mode = 'primary', marker_state = 'adding', marker_seq = v_seq,
       import_seq = coalesce(v_imp.seq, import_seq),             -- a restore's has no import entry
       import_commit = coalesce(v_imp.git_commit, import_commit),
@@ -2520,7 +2521,7 @@ tails, from the phase plan's "Output, and the side effects that run once"
 | `retire-rows` | the follow loop | only with the committing attempt's pre-image |
 | `claim`, `release` | `gh_comment` | no |
 | `request-handoff` | tmux's `guard_type`, and the poll | the typing, no; the poll, yes |
-| `rename-lane` | the flush, `lane_state_rename`, the `gh_comment` loop, and the handoff's move and stamp | the flushes and `lane_state_rename`, yes; the comments and the stamp, no |
+| `rename-lane` | the flush, `lane_state_rename`, the `gh_comment` loop, and the handoff's move and stamp | the flushes, `lane_state_rename` and the handoff's move, yes, since a second move finds nothing at the old path; the comments and the stamp, no |
 | `start-record` | `lane_state_follow`, after the lock, as `write_event` runs it | only with the committing attempt's pre-image |
 
 Each needs a test of its own, in lane 2's pass after the review (lane 3's
@@ -3412,6 +3413,14 @@ frame or the spec now says the same; the questions and their rulings close the
 section. Commit L changes one place of lane 5's text, as lane 3 ruled on the
 review of commit J: SVC-8's clamp refuses an elapsed time at or above the
 parse's start line (R2's S4).
+Commit M changes three more, from lane 5's check of commit L (#165
+6714540821): SVC-8's clamp line is the direct read's cap, 3.75 s, or 3.65 s
+where an unexpired declaration names this database, with the reason for the
+earlier line; the exit mapping's late row says the same; and SVC-12's text for
+a mirror below the declaration's seq is lane 5's. Commit N changes one, from
+lane 4's texts: SVC-8's detached bind is bounded at 430 s over its whole body,
+not 180 s (R2's S6). Commit O changes one: SVC-8 gives AT-F6 seventeen cases,
+not fourteen.
 
 #### What today's guard costs, in four parts (the architecture seat's concern 4)
 
@@ -4412,7 +4421,7 @@ The four points lane 3's rulings on v2.4 gave lane 4 to confirm (#165
 `LANES_WRITE_GENERATION` and `LANES_REGISTER_PENDING_MAX_AGE_S`;
 `RENDER_GIT_HALF`; `not_after`; `LANES_READ_MIRROR`; the `.logpath.<lane>`
 sidecar; the image cache's `register-images/` layout; `LANES_REGISTER_SEAM_CAP_S`
-(N4), `LANES_BIND_BOUND_S` (N15) and `seam.out` (N4); the pending record's `call`
+(N4), `LANES_BIND_BOUND_S` (N15) and `seam.out` (N4); `parent.pid` (N4), the call directory's `snapshot`, `files` and `preimages` (N8); the pending record's `call`
 lines and `tail` key (N8); the bind record's `bound_s` and `bounded` (N15);
 `register snapshot --at` (N1), `journal --not-after` (N2) and `guard-bind --body`
 (N13); and the renderer's 64-seq batch and 16-pass cap. As lane 3's ruling on v1
@@ -5809,6 +5818,14 @@ left as it was.
   `cutover`, `switch_to_files`, `record_marker`, the lookup and the other
   calls of `import --single` and `render --revert`, measured where they are
   operator calls, with their commit call's row confirmed (R2's N1).
+  **For commit Q, from verifier V2's review of commit O
+  (`VERIFY-V2-report-20261108.md`, sha256 `1da276f9…`):** S-2, nothing
+  supplies the after-loss cutover's label; S-3's half, the order of the
+  generation and switch checks in `commit_write`, and LR006 before the
+  generation check; NIT 1's half, `find_write`'s "found" checks no lane, verb
+  or arguments; NIT 3, the rollback's retry after a 40001; NIT 4, N6 against
+  (ii′)'s marker-first; and NIT 8, a rollback rerun whose first run died
+  before declaring.
 - **Lane 4, the phase plan: answered.** Its section, folded above, answers
   each item this list routed to it, in its "The routed items, answered" (34
   rows), and lane 3 accepted it (#165 6708889286). Each item, answered: the
@@ -5880,6 +5897,12 @@ left as it was.
   `journal --write-id <id> --not-after <n>` at its ten places, with the
   reconnect window starting when the client's own wait ends, which answers
   lane 1's other note.
+  **For commit Q, from verifier V2's review of commit O:** S-1, a writer
+  killed mid-call is never marked in doubt; S-3's half, the snapshot's order,
+  and a plain rerun that meets another generation's record; S-5, "The tail,
+  once" leaves no trace after a success, and its takeover races; NIT 1's half;
+  NIT 2, the bind's 430 s sum leaves out two terms; NIT 5, the TERM trap where
+  `timeout` is missing; and NIT 6, which tries are retried.
 - **Lane 2, the test plan:** a test for each MUST as folded (a write in doubt at
   the deadline; a diverged rollback, and a failed seq-1 push; the ruleset, then
   a files-mode write after the rollback; a declared outage with the service and
@@ -5933,6 +5956,16 @@ left as it was.
   one whose change set differs; a write with no pending record; and the bind's
   "found" row. And AT-F6's items (7) and (15) to (17), with a count of `N_r`,
   the read calls on the `--bind` resume path.
+  From commit P (lane 4's check of commit N, #165 6715074114; commit O's
+  leftovers; and verifier V1's review of commit O
+  (`VERIFY-V1-report-20261108.md`, sha256 `dfefdab7…`)), for its pass after
+  the review, a test for each new scenario: in the sql-register delta, a
+  `request-handoff` that runs none of its tail, which exits 2; a
+  `Register-Seq` above the head, recorded as a divergence at the commit that
+  carries it, and the revert of that commit; and a stray on origin not yet
+  recorded, which the rollback's fetch right before its transaction finds; and
+  in the register-service delta, a guard that starts too late, which refuses 2
+  as "too late to verify".
 - **Lane 5, the service: answered.** From lane 1's v2: the libpq service
   form (`bootstrap --admin-service`, `operations.md` §2.4) against SVC-2's
   mapping, and the declared outage's mirror read within SVC-8's budget
@@ -5941,3 +5974,12 @@ left as it was.
   answered:** the bound of `outage declare`'s database probe, D9's row, one
   read of the switch connected as a writer's snapshot is, as REGISTER-WRITER
   (R2's N1; #165 6714373660).
+  **For commit Q, from verifier V2's review of commit O:** S-4, a rollback's
+  declaration never expires, and the probe writes it outside a rollback, with
+  verifier V1's NIT 5 (`VERIFY-V1-report-20261108.md`, sha256 `dfefdab7…`),
+  SVC-12's "unexpired" for a rollback's declaration; and NIT 7, the clamp just
+  below its line.
+- **Lane 3, the deltas, for commit Q, with the lanes' texts:** verifier V1's
+  SHOULD 1(c), N4's label rule, and SHOULD 2(a), `outage declare`'s refusals
+  during a rollback, each as a delta requirement with a scenario once V2's S-2
+  and S-4 are settled.
