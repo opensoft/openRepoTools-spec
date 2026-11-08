@@ -605,12 +605,25 @@ the section that carries it.
   the cutover's entry's `Register-Seq` (D24) (S5).
 - **D22. The disaster path re-imports at the mirror's tip by default,** continuing
   the sequence, and restores a backup only where it is newer than the mirror.
+  Two backups count (Q22, Brett, 2026-11-08): the daily `pg_dump` of both
+  schemas, which a scheduled job in opensoft's prod subscription writes into a
+  storage container there, with soft delete and 30-day retention ("Dump both",
+  #165 6722541787; "Job + storage in prod sub", #165 6722593397), and the
+  provider's own automated backups and point-in-time restore ("Count both", #165
+  6722541787). If the subscription is lost, the GitHub mirror is the copy
+  outside Azure, and the re-import stays the default route, which loses the
+  journal's history, the write ids and #160's index ("Accept; mirror is the
+  copy", #165 6723413756).
   A generation id, in the switch row and in every pending record, changes with
   each new database, and a record of another generation is refused, since the
-  ids up to the mirror's seq are lost with the old journal. The bootstrap runs
-  before the restore, as `bootstrap --roles-only`, because roles are cluster
-  objects a database backup does not hold; every host is re-pointed at the new
-  database. The re-import rewrites the marker as the cutover's entry, at
+  ids up to the mirror's seq are lost with the old journal. For a restore from
+  the dump, the bootstrap runs first, as `bootstrap --roles-only`, because roles
+  are cluster objects a database backup does not hold; a provider's
+  point-in-time restore is instead a new server that carries the roles and their
+  passwords, so `--roles-only` prints `unchanged` there, and the admin then sets
+  new passwords for the login roles (`operations.md` §2.3, lane 1's O5). Every
+  host is re-pointed at the new database. The re-import rewrites the marker as
+  the cutover's entry, at
   `m+1`, so the next write is `m+2` (`b+1` after a restore; D24), and `ready`
   and `set-mode` check that `lanes/STORE` names this database (lane 3's
   ruling, #165 6578020193). `operations.md` §2.3 details the steps (S5).
@@ -687,7 +700,7 @@ puts it to him.
 | D18: the later `HOLD` or `LANDING` writer writes nothing | a reading of Amendment 22's S6 | answered: D18, 6721583757: accepted as a reading of S6 |
 | D1: the register in a schema of its own, not #160's | Amendment 22, "Everything Amendment 14 built is reused" | answered: D1, 6721583757: accepted |
 | D25: `lanes-index cutover` as a command of its own | Amendment 22's S5 and its ratified names | answered: D25, 6721583757: accepted |
-| A release for a stale `LANDING` (S6): lane 1's v2 carries it as the line kind `LANDING EXPIRED`, `register_lines.for_lane` and LR005 (§1.2, §1.3.1), tested on the engine and inert until a verb writes it | Amendment 10 and Rule 6, under Q17(B) | answered: 6721583757: adopted, on Brett's word |
+| A release for a stale `LANDING` (S6): lane 1's v2 carries it as the line kind `LANDING EXPIRED`, `register_lines.for_lane` and LR005 (§1.2, §1.3.1), tested on the engine, and written only on Brett's word by `append-line --landing-expired` (lane 4's E1 to E4), whose commit refuses with LR005, naming its reason by a DETAIL token, a `LANDING EXPIRED` that names no open, stale `LANDING` (lane 1's v3.1) | Amendment 10 and Rule 6, under Q17(B) | answered: 6721583757: adopted, on Brett's word |
 | A stray landing during a rollback: the rollback refuses while a divergence is recorded, at its start, after a fresh fetch right before its transaction, and inside that transaction (LR012). So only a stray that lands after that check, once the rollback's entry has set the switch to `files`, has no journalled way out, since S2's two ways out each need `primary` (lane 1's v2; narrowed by its v2.6, R2's S5) | Amendment 22's S5, under Q4(b)(iii) | answered: 6721583757: the gap accepted as S5's remaining gap |
 | Files mode changes, against Amendment 22's scope, "a workstation with `mode=index`, or with no configuration, runs exactly as today": the guard's answer 2 runs its bind detached, and `lane-start`'s bind is one write, `start-record`, in every mode, which lane 3 ruled (#165 6710770304) and Brett was not asked; and `wip init` refuses wherever any file under `lanes/` exists, in every mode, the delta's third exception, which is his Q14(a) | Amendment 22's scope | answered: A, 6721370130: both accepted as recorded departures |
 | D8's exit 3: a write in doubt that cannot settle exits 3, naming its write id, and may have been written, where S1 has an unreachable database refuse with 69 and write "nothing anywhere"; Q16 was not in round 2 | Amendment 22's S1 | answered: B, 6721370130: exit 3 accepted |
@@ -1373,7 +1386,8 @@ END $f$;
 - `base_seq` references `journal (seq)` and is UNIQUE, so the journal is one chain with no gap.
 - `object_holds.exempt` replaces R3a's `post_cutover` in `one_live_claim`: a new claim over a live imported claim is caught too, and only a pair already at C is exempt. At `527f3c7` there is none, since #198's pair is `OPENED` and `CLAIMED` (`r3a/REPORT.md:79-80`). The index covers `CLAIMED` and `TAKEOVER` only, as R3a's inference about `OPENED` requires (`r3a/REPORT.md:409`); `claim` refuses over any open holder (`code/lanes-edit.sh:16527`) and takes over only a stale `CLAIMED` (`:16578`).
 - **Order-blind supersession, kept at parity.** Under #160's rule, which ignores order, a new `CLAIMED` after another lane's `TAKEOVER` on the same object is born superseded, so neither `one_live_claim` nor D19 refuses it; `claim`'s own check does, as in files mode. A stricter SQL rule would answer differently from the files and break the agreement tests on imported history, so the schema keeps parity.
-- `register_lines.slot_kind` makes each close match its own kind, as Q17 (B) has it: `HOLD RELEASED`, `HOLD WITHDRAWN` and `HOLD EXPIRED` close a `HOLD`; `LANDED` closes its own lane's `LANDING`, and, if Brett takes F13's release, `LANDING EXPIRED`, on a person's word, closes another lane's `LANDING` once Rule 6's 30 minutes have passed (`for_lane` names that lane); `(refresh)`, `(run id)`, `QUEUED-HOLD` and `LANDING WITHDRAWN` take and close nothing (`proposal.md:1736-1743`).
+- `register_lines.slot_kind` makes each close match its own kind, as Q17 (B) has it: `HOLD RELEASED`, `HOLD WITHDRAWN` and `HOLD EXPIRED` close a `HOLD`; `LANDED` closes its own lane's `LANDING`, and `LANDING EXPIRED`, F13's release, adopted by Brett on 2026-11-08 (#165 6721583757), which a lane writes only on his word, closes the holder's `LANDING` once more than Rule 6's 30 minutes have passed on the database's clock (`for_lane` names the holder, who may be the writer); `(refresh)`, `(run id)`, `QUEUED-HOLD` and `LANDING WITHDRAWN` take and close nothing (`proposal.md:1736-1743`).
+- **A `LANDING EXPIRED` line's fields (F13).** The one classifier reads its kind with the em dash or the hyphen, as it reads the other kinds; its holder, `for_lane`, from the line's first `for lane <name>`, cut as a `lane <name>` is cut; and its `lane`, PR, repository, UTC and session as for any slot line, each by its first match (`parse_register_line`, `code/lanes-index:683-713`), so `lane` is the writer, whose `lane <name>` comes first. The CHECKs above need the holder, the PR and the repository's key for this kind, so a line in its shape from which any of the three cannot be read is a line of no kind, with no slot role: it takes and releases nothing, and an import loads it as text instead of failing on it.
 - `doc_lines.kind` is dropped: it decided nothing, and the structured layer types each line. R3a's `exists` is `present`, because `EXISTS` is an SQL keyword.
 - The schema's owner is a role that cannot log in, and writers change it only through `commit_write` (§1.4), not R3a's `AUTHORIZATION lanes_register_writer` (`r3a/REPORT.md:172`).
 
@@ -1381,9 +1395,9 @@ END $f$;
 
 Under (A″) each attempt is two `psql` calls, made by `lanes-index register snapshot` and `lanes-index register commit` (D2: `lanes-index` is the one database client, so `lanes-edit.sh` runs no `psql`; `proposal.md:1458-1471`; R3a's steps, `r3a/REPORT.md:159-163`):
 
-1. **The snapshot read:** one `BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY` transaction, as #160 reads (`code/lanes-index:1331-1344`). It reads `schema_version`, `register_switch` (with its `generation`, which the commit call sends back, F10), `register_head` (the base `n`), the database clock in whole seconds (`r3b/REPORT.md:220`), `files`, the journal's edits since the writer's cached seq (or every line, when the cache fails its `files.sha256` check), what the verb decides on (`holds`, `stale_claims`, `main_slots` for its repository) and, when it retries a write in doubt, `journal` by `write_id`. A failure here sent nothing that writes: 69.
+1. **The snapshot read:** one `BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY` transaction, as #160 reads (`code/lanes-index:1331-1344`), sent as one request: its statements are joined by psql's `\;` into one simple-protocol Query, and #160's `\echo` marker is sent as `COPY (SELECT E'\x1eLANES-INDEX-NEXT') TO STDOUT`, so the read costs one round trip after the connect (D9). Each statement keeps the row's `statement_timeout`, and the client timer bounds the whole. A client with psql older than 15, which prints only a Query's last result, reads the parts instead as one `COPY` of tagged rows, which one snapshot serves without `BEGIN`. It reads `schema_version`, `register_switch` (with its `generation`, which the commit call sends back, F10), `register_head` (the base `n`), the database clock in whole seconds (`r3b/REPORT.md:220`), `files`, the journal's edits since the writer's cached seq (or every line, when the cache fails its `files.sha256` check), what the verb decides on (`holds`, `stale_claims`, `main_slots` for its repository) and, when it retries a write in doubt, `journal` by `write_id`. A failure here sent nothing that writes: 69.
 2. **The verb** runs unchanged on the scratch copy, outside SQL, and its lines carry the clock read in step 1.
-3. **The commit:** `BEGIN ISOLATION LEVEL SERIALIZABLE; SELECT lanes_register.commit_write(n, write_id, REGISTER_SCHEMA_VERSION, generation, entry); COMMIT;` under `ON_ERROR_STOP`, with `VERBOSITY=verbose` and `SHOW_CONTEXT=never`, so that psql's first line on stderr is `ERROR:  <SQLSTATE>: <message>`. The writer reads every code from that one line, 40001, 55P03, 23505 and the LR codes alike, so it can tell a 40001 from every other exit 3 (`proposal.md:1442-1443`; `clarifications.md:250-252`), and LR009's and LR010's messages come back in the same call (lane 3's choice of lane 4's S2, #165 6711564365). The entry is one `jsonb` literal: the journal fields, the edits, `journal_files`' digests, the structured rows, which name lines by path and `line_no`, and `not_after`, the call's bound (step 9). A write made inside one of lane 4's acts also carries `act`, its base and expectations (step 3b, below). In files mode no entry is made, and `LANES_ACT` and `LANES_EXPECT` are ignored there, as lane 4 has it.
+3. **The commit:** `BEGIN ISOLATION LEVEL SERIALIZABLE; SELECT lanes_register.commit_write(n, write_id, REGISTER_SCHEMA_VERSION, generation, entry); COMMIT;`, sent as one request: the three statements joined by psql's `\;` into one simple-protocol Query, read from stdin, so the call costs one round trip after the connect (D9); an error ends the Query there, and the transaction with it, under `ON_ERROR_STOP`, with `VERBOSITY=verbose` and `SHOW_CONTEXT=never`, so that psql's first line on stderr is `ERROR:  <SQLSTATE>: <message>`. The writer reads every code from that one line, 40001, 55P03, 23505 and the LR codes alike, so it can tell a 40001 from every other exit 3 (`proposal.md:1442-1443`; `clarifications.md:250-252`), and LR009's and LR010's messages come back in the same call (lane 3's choice of lane 4's S2, #165 6711564365). The entry is one `jsonb` literal: the journal fields, the edits, `journal_files`' digests, the structured rows, which name lines by path and `line_no`, and `not_after`, the call's bound (step 9). A write made inside one of lane 4's acts also carries `act`, its base and expectations (step 3b, below). In files mode no entry is made, and `LANES_ACT` and `LANES_EXPECT` are ignored there, as lane 4 has it.
 
 `commit_write` and `switch_to_files` are owned by `lanes_register_owner`, `SECURITY DEFINER`, with `SET search_path = lanes_register, pg_catalog, pg_temp`. Neither holds a verb's rule: R3a's generic `apply_edits` (`r3a/REPORT.md:285`) becomes step 6. The head comes before the journal (`proposal.md:235-239`), and the generation, the version and the switch are read under the head's lock, the generation first, before the write id (V2's S-3). Steps 1 to 5, as §1.3.1 has them; an import's reset, between steps 3 and 4, sets `v_head` to -1, so steps 4 and 5 read `v_head`, not `p_base`:
 
@@ -1428,7 +1442,7 @@ SELECT v_seq, nullif(v_head, -1), p_write_id, e.*, p_entry -> 'act' ->> 'id'  --
 Steps 6 to 9 are §1.3.1's SQL:
 
 6. **The edits:** `journal_edits` as sent, then applied in `ord` order: `create`, `append`, `replace` and `delete` (each checking `old_sha256`, the sha256 of the line's UTF-8 text, at its `line_no`), `rename` and `remove`. A delete shifts the later lines, and their `log_lines` and `object_holds` ordinals, in one `UPDATE` each, which `doc_lines_pos` and `log_lines_pos` check at the statement's end. An edit that does not apply raises LR004. So does an operator entry that edits anything but `lanes/STORE`, or nothing, and any other entry that edits `lanes/STORE` (F2, D24).
-7. **The structured rows:** each row's `raw` must equal its line's text, or LR004; they are upserted by key, each given its line's `line_id`. `superseded_by` is recomputed for every lane on each object touched (#160's rule, `code/lanes-index:1013-1036`), the stored rows first, so that no transient pair of live claims trips `one_live_claim`, whose 23505 is raised again as LR005. Two rules of the register itself raise LR005 on a write: a claim whose `spellings` overlap another lane's live claim's (D19), and a `HOLD` or `LANDING` line over another lane's open taker in `main_slots` for its repository (D18). One repository spelled two ways is one repository: the two lines' `repo_key`s are equal or their `repo_spellings` overlap, as D19 compares an object's `spellings`, and `main_slots` matches a close to its take the same way.
+7. **The structured rows:** each row's `raw` must equal its line's text, or LR004; they are upserted by key, each given its line's `line_id`. `superseded_by` is recomputed for every lane on each object touched (#160's rule, `code/lanes-index:1013-1036`), the stored rows first, so that no transient pair of live claims trips `one_live_claim`, whose 23505 is raised again as LR005. Four rules of the register itself raise LR005 on a write on primary, and each names its rule, in its message and in a DETAIL that is one fixed token, as LR007's is (U7, lane 3's ruling, #165 6722541787): a take, `HOLD` or `LANDING`, whose UTC cannot be read, since Rule 6's 30 minutes are measured from it (U3, the same ruling; `take-no-utc`), while files mode, an import's included, loads such a line as it stands; a claim over another lane's live claim, by `one_live_claim`'s 23505 raised again (`one-live-claim`) or by `spellings` that overlap the other claim's (D19, `claim-spellings`); a `HOLD` or `LANDING` line over another lane's open taker in `main_slots` for its repository (D18, `main-held`); and a `LANDING EXPIRED` that names no open, stale `LANDING` (F13). For F13, the `LANDING` is the holder's newest one for the line's PR that the line would close in `main_slots`, and the refusal names which of three reasons holds: there is none, or it does not carry the line's `repo_key` (lane 3's ruling, #165 6710770304, point 5; `expired-none`); a close follows it, matched to it as `main_slots` matches one (`expired-closed`); or it is not more than 30 minutes old by `clock_timestamp()`, or its UTC cannot be read (`expired-young`). So a `LANDING` posted again counts from the newest, as Rule 6 reads it, and one already closed is never closed again (v3.0, v3.1). One repository spelled two ways is one repository: the two lines' `repo_key`s are equal or their `repo_spellings` overlap, as D19 compares an object's `spellings`, and `main_slots` matches a close to its take the same way.
 8. **The proof:** every edited path has a row in the entry's `files`, and each present one's `encode(sha256(render_file(path)), 'hex')` must not be distinct from it, or LR004; then `files.sha256`, `final_newline` and `last_seq` move. The deferred foreign keys check at COMMIT.
 9. **The bound (F3):** last, just before it returns, `commit_write` raises LR008 unless `clock_timestamp()` is still before the entry's `not_after`. Every commit call carries it, the snapshot's database clock plus the call's client timer plus 2 s, and an entry without it is LR004. Once a commit call of a write was in doubt, the writer makes its one lookup before it ends with any code but 0 (D8, S1): `find_write(id, n, g, lane, verb, a)`, where `n` is the largest `not_after` its calls carried (S2), and `g`, `lane`, `verb` and `a` are the generation, lane, verb and `args_sha256` that its commit calls sent (NIT 1). The function waits until the database clock has passed `n`, then takes the head row's lock and checks the clock again under it, so the wait rests on the server's clock and not on the client's estimate. It then checks as `commit_write` does, in its order: a generation not the switch's is LR007, and an entry of this id for another lane, verb or `args_sha256` is LR007, so it finds only this write's own entry. So an orphaned attempt that had not reached the head row's lock by then can no longer commit after that lookup reports the write absent (lane 4's section, `5f26bf0a`, its ask of lane 1).
    - **Exact complements, on one clock:** step 9 commits only while `clock_timestamp() < not_after`, and `find_write` answers only where `NOT (clock_timestamp() < n)` holds under the head row's lock. An orphan that takes the lock after the lookup has released it reaches step 9 later still, so it raises LR008. One that took the lock first has ended, committed or not, before the lookup reads the journal, which it does at READ COMMITTED, after the lock.
@@ -1523,7 +1537,7 @@ All of it is one transaction, so a failure at any step leaves the journal, the l
 | 55P03 | the head row's lock, not granted within `lock_timeout`, as when an earlier attempt of this write holds it (lane 2, 6708917587) | as 40001 until the deadline; a write any of whose commit calls was in doubt then makes F3's one lookup (below), and exits 75 only where that finds the write absent with the head row free |
 | LR006 | this write is already in the journal, in this generation: an earlier attempt committed after this attempt's snapshot read and before its commit transaction began, and step 1 finds its `write_id` under the head's lock (lane 2, 6708917587), after the generation check. An id minted against another generation is LR007 first, whether or not the journal holds it (S-3) | reads `journal` by `write_id`, exits 0 |
 | LR008 | this attempt reached step 9 past its `not_after`: it wrote nothing, and the write was not in the journal while it held the head's lock | lane 4's: the attempt is absent (F3) |
-| LR005 | a rule of the register: an object is held (`one_live_claim`'s 23505, raised again, or D19), or `main` is held (D18) | exits 2 with the holder or the earlier line, writing nothing (Q12 (a); S1's outcomes) |
+| LR005 | a rule of the register: an object is held (`one_live_claim`'s 23505, raised again, or D19), or `main` is held (D18), or a `LANDING EXPIRED` names no open, stale `LANDING` (F13), or, on primary, a take has no readable UTC (U3). The message names the rule, and the DETAIL is one fixed token: `one-live-claim`, `claim-spellings`, `main-held`, `expired-none`, `expired-closed`, `expired-young` or `take-no-utc` (U7) | exits 2 with the holder or the earlier line, or, for F13 and U3, the server's message, writing nothing; the client tells the rules apart by the DETAIL token alone (Q12 (a); S1's outcomes) |
 | LR009 (new), "expectation changed" | an entry after the act's base, made outside the act, touched a scope the write lists (step 3b; D5, F5) | exits 2 with lane 4's `expectation: <scope> changed at seq <k> by <lane>/<verb>`, writing nothing |
 | LR010 (new), "key not well formed" | a key that a line derives, in step 5a, step 8a or an import's check, is not a scope: its name is empty or holds white space (N2) | exits 2 with the server's message, `key: <path> line <n> derives <key>, which is not a scope (…)`, writing nothing, and never retries; `lanes-index import` exits 2 the same way |
 | LR011 (new), "lookup too early" | the in-doubt lookup's `n` is more than 3 s ahead of the database clock, or the clock had not passed `n` when checked under the head row's lock, as after the clock stepped back (S2) | the lookup proves nothing: exits 3 naming the id, with the server's message, and keeps its pending record (F3's "otherwise 3"); a rerun under the same id looks again |
@@ -1538,6 +1552,8 @@ All of it is one transaction, so a failure at any step leaves the journal, the l
 The writer reads only the SQLSTATE from psql's `ERROR:` line (step 3), never the constraint's name the message may carry, so no signal rests on one. With the head updated before the journal row, a lost race is never a 23505 on `journal_pkey`. Nor does a retry reach `journal_write_id_key`'s 23505: step 1's lookup under the head row's lock finds an earlier attempt that committed before this transaction began, and one that commits while it is open fails this transaction at the lock with SERIALIZABLE's 40001, or with 55P03 once `lock_timeout` passes (lane 2, 6708917587). Either 23505 would be a bug, and is 69. `LANES_NO_FETCH=1` cannot weaken the switch check, because it is read inside the transaction, not fetched (`proposal.md:571-575`). The in-doubt report is exit 3, naming the write id, and a rerun reuses the id (D8; `proposal.md:1725` left the code open).
 
 **Bounds, set when connecting through `options=`** (`clarifications.md:296-302`), are D9's, in the one table under "Roles and credentials" ("The timeouts (D9)"), which now carries this part's `import` row and gives `reconcile` the renderer's values (lane 3's ruling, #165 6578020193). The guard's are measured, and so are the rows for `cutover`, `switch_to_files`, `record_marker` and the commit call of `import --single` and `render --revert` that R2's N1 added (the paragraph under D9's table). The others are the design's, for tests 4 and 9 to confirm, and R1's 14.7 ms per call (`proposal.md:1219-1220`) leaves them wide.
+
+**The connection these bounds need (Q22, a managed cloud PostgreSQL; Brett, 2026-11-08).** Every register connection reaches the server directly, at the primary's own endpoint, or through a session-mode pooler that passes `options=` on. Never through a transaction-mode pooler. The bounds above ride the startup packet's `options=`. PgBouncer, the pooler Azure builds in, refuses a startup parameter it does not track unless it is set to ignore it, and one that ignores it leaves each path on its role's floor (§1.4). On lane 1's PostgreSQL 16.15, REGISTER-WRITER without `options=` cancelled a 6 s statement at the floor's 5 s with 57014. So the lookup's 6000 ms and the 10 s of `cutover` and `rollback` would end at 5 s, and so would an import, which takes about 25 s on today's register. Nothing else here needs a session: each call is one transaction, and the migrations' `SET LOCAL` and `find_write`'s wait stay inside it. The schema takes no advisory lock, temporary table, `LISTEN` or prepared statement. SERIALIZABLE and the retries hold on a managed service as written. A failover is a lost connection, which the in-doubt row covers, and a read replica is never a register URL (§1.4).
 
 ### 1.3.1 `commit_write` in full
 
@@ -1571,7 +1587,7 @@ CREATE FUNCTION commit_write(p_base bigint, p_write_id uuid, p_client integer, p
 --                    object, ref, payload, payload_fields, free_text, written_lane,
 --                    unreadable, unreadable_why}]
 --   register_lines [{path, line_no, raw, kind, slot_role, slot_kind, lane, repo, repo_key,
---                    repo_spellings, pr, tip, utc, utc_ts, session, workstation}]
+--                    repo_spellings, pr, tip, utc, utc_ts, session, for_lane, workstation}]
 --   object_holds   [{object, lane_key, lane, verb, utc_ts, file, ordinal, spellings, exempt}]:
 --                  each lane's last line per object; superseded_by is computed here
 -- A structured row names its line by path and line_no, and its raw is that line's text.
@@ -1602,6 +1618,8 @@ DECLARE
   v_expect text[];                              -- its scopes, lower case, as listed
   v_hit   record;                               -- the entry that changed one (LR009)
   v_mir   mirror_state;                         -- S5: a rollback's divergence gate (LR012)
+  v_take  register_lines;                       -- U3's take, or F13's newest take
+  v_close record;                               -- F13: the close that already closed it
 BEGIN
   IF jsonb_typeof(p_entry -> 'journal') IS DISTINCT FROM 'object' THEN    -- the entry's shape
     RAISE EXCEPTION 'the entry has no journal object' USING ERRCODE = 'LR004'; END IF;
@@ -1918,39 +1936,57 @@ SELECT v_seq, nullif(v_head, -1), p_write_id, e.*, p_entry -> 'act' ->> 'id'  --
   EXCEPTION WHEN unique_violation THEN
     GET STACKED DIAGNOSTICS v_con = CONSTRAINT_NAME, v_det = PG_EXCEPTION_DETAIL;
     IF v_con = 'one_live_claim' THEN
-      RAISE EXCEPTION 'the object is held (one_live_claim): %', v_det USING ERRCODE = 'LR005';
+      RAISE EXCEPTION 'the object is held (one_live_claim): %', v_det
+        USING ERRCODE = 'LR005', DETAIL = 'one-live-claim';
     END IF;
     RAISE;
   END;
   IF v_wmode = 'primary' THEN                   -- the register's own rules bind new writes
+    SELECT * INTO v_take FROM register_lines n    -- U3: Rule 6's 30 minutes are measured from a
+      WHERE n.seq = v_seq AND n.slot_role = 'take' AND n.utc_ts IS NULL LIMIT 1;   -- take's UTC
+    IF FOUND THEN
+      RAISE EXCEPTION 'a % take with no readable UTC (U3): %', v_take.kind, left(v_take.raw, 160)
+        USING ERRCODE = 'LR005', DETAIL = 'take-no-utc'; END IF;
     IF EXISTS (SELECT 1 FROM object_holds n JOIN object_holds o ON o.lane_key <> n.lane_key
                WHERE n.seq = v_seq AND n.verb IN ('CLAIMED', 'TAKEOVER')
                  AND n.superseded_by IS NULL AND NOT n.exempt
                  AND o.verb IN ('CLAIMED', 'TAKEOVER') AND o.superseded_by IS NULL
                  AND n.spellings && o.spellings) THEN
       RAISE EXCEPTION 'a claim''s spellings overlap another lane''s live claim (D19)'
-        USING ERRCODE = 'LR005'; END IF;
+        USING ERRCODE = 'LR005', DETAIL = 'claim-spellings'; END IF;
     IF EXISTS (SELECT 1 FROM register_lines n JOIN main_slots m      -- one repository, however
                  ON m.repo_key = n.repo_key OR m.repo_spellings && n.repo_spellings   -- spelled
                WHERE n.seq = v_seq AND n.slot_role = 'take' AND m.line_id < n.line_id
                  AND lower(m.lane) <> lower(n.lane)) THEN
       RAISE EXCEPTION 'another lane holds main for this repository first (D18)'
-        USING ERRCODE = 'LR005'; END IF;
-    IF EXISTS (SELECT 1 FROM register_lines n                 -- F13: LANDING EXPIRED closes
-               WHERE n.seq = v_seq AND n.kind = 'LANDING EXPIRED'   -- another lane's stale LANDING
-                 AND NOT EXISTS (
-                   SELECT 1 FROM register_lines t
-                   WHERE t.slot_role = 'take' AND t.slot_kind = 'landing'
-                     AND t.repo_key = n.repo_key AND t.pr = n.pr AND t.line_id < n.line_id
-                     AND lower(t.lane) = lower(n.for_lane)
-                     AND clock_timestamp() - t.utc_ts > interval '30 minutes'
-                     AND NOT EXISTS (SELECT 1 FROM register_lines c
-                                     WHERE c.slot_role = 'close' AND c.slot_kind = 'landing'
-                                       AND c.repo_key = t.repo_key AND c.pr = t.pr
-                                       AND c.line_id > t.line_id AND c.line_id <> n.line_id
-                                       AND lower(coalesce(c.for_lane, c.lane)) = lower(t.lane)))) THEN
-      RAISE EXCEPTION 'a LANDING EXPIRED names no stale LANDING (F13)' USING ERRCODE = 'LR005';
-    END IF;
+        USING ERRCODE = 'LR005', DETAIL = 'main-held'; END IF;
+    FOR r IN SELECT * FROM register_lines n               -- F13: a LANDING EXPIRED closes the
+             WHERE n.seq = v_seq AND n.kind = 'LANDING EXPIRED' LOOP   -- holder's stale LANDING
+      SELECT * INTO v_take FROM register_lines t   -- C1: the holder's newest take that it closes,
+        WHERE t.slot_role = 'take' AND t.slot_kind = 'landing'          -- matched as main_slots
+          AND (t.repo_key = r.repo_key OR t.repo_spellings && r.repo_spellings)    -- matches
+          AND t.pr = r.pr AND lower(t.lane) = lower(r.for_lane) AND t.line_id < r.line_id
+        ORDER BY t.line_id DESC LIMIT 1;
+      IF NOT FOUND OR v_take.repo_key IS DISTINCT FROM r.repo_key THEN   -- point 5: repo_key alone
+        RAISE EXCEPTION 'no open LANDING by % for PR #% under repo_key % (F13): there is none, or its newest is keyed %',
+          r.for_lane, r.pr, r.repo_key, coalesce(v_take.repo_key, '-')
+          USING ERRCODE = 'LR005', DETAIL = 'expired-none'; END IF;
+      SELECT c.kind, c.lane INTO v_close FROM register_lines c    -- C2: a close, matched as
+        WHERE c.slot_role = 'close' AND c.slot_kind = 'landing'     -- main_slots matches one
+          AND (c.repo_key = v_take.repo_key OR c.repo_spellings && v_take.repo_spellings)
+          AND c.pr = v_take.pr AND c.line_id > v_take.line_id AND c.line_id <> r.line_id
+          AND lower(coalesce(c.for_lane, c.lane)) = lower(v_take.lane)
+        ORDER BY c.line_id LIMIT 1;
+      IF FOUND THEN
+        RAISE EXCEPTION '%''s LANDING for PR #% under repo_key % is already closed, by a % of % (F13)',
+          v_take.lane, v_take.pr, v_take.repo_key, v_close.kind, v_close.lane
+          USING ERRCODE = 'LR005', DETAIL = 'expired-closed'; END IF;
+      IF NOT coalesce(clock_timestamp() - v_take.utc_ts > interval '30 minutes', false) THEN
+        RAISE EXCEPTION '%''s newest LANDING for PR #% under repo_key % is too young (F13): its age by the database''s clock is %, not more than Rule 6''s 30 minutes',
+          v_take.lane, v_take.pr, v_take.repo_key,
+          coalesce(date_trunc('second', clock_timestamp() - v_take.utc_ts)::text, 'unknown, since its UTC cannot be read')
+          USING ERRCODE = 'LR005', DETAIL = 'expired-young'; END IF;
+    END LOOP;
   END IF;
 
   -- 8. The proof: every touched path is in the entry's files, and renders to its digest.
@@ -2174,12 +2210,12 @@ COMMIT;                                        -- then 1.4's statements after it
 
 ### 1.4 Roles, GRANTs and credentials (clause (b))
 
-Clause (b)'s three roles (`proposal.md:683-693`) log in. A fourth owns the schema and cannot log in, so the three remain "the only ones the register's tools hold" (`proposal.md:609-611`). The bootstrap runs this through Brett's admin connection; each `CREATE ROLE` is guarded by a `pg_roles` check, and the bootstrap prints password-file lines and stores no secret (`proposal.md:607-611`). The `CREATE ROLE`s and the admin's GRANT come first, then migration 1, then the rest; that rest, and the GRANT, can run again.
+Clause (b)'s three roles (`proposal.md:683-693`) are the register's three scopes. Under Brett's "One login per engineer" (#165 6722593397), REGISTER-WRITER and READER are groups that cannot log in, and each engineer, human or AI host, logs in by logins of their own, members of them (the login step, below); the indexer still logs in as itself. A fourth role owns the schema and cannot log in. The bootstrap runs this through Brett's admin connection; each `CREATE ROLE` is guarded by a `pg_roles` check, and the bootstrap stores no secret (`proposal.md:607-611`). The `CREATE ROLE`s and the admin's GRANT come first, then migration 1, then the rest; that rest, and the GRANT, can run again.
 
 ```sql
 CREATE ROLE lanes_register_owner NOLOGIN;      -- owns lanes_register and its functions
-CREATE ROLE lanes_register_writer LOGIN;       -- REGISTER-WRITER
-CREATE ROLE lanes_register_reader LOGIN;       -- READER
+CREATE ROLE lanes_register_writer NOLOGIN;     -- REGISTER-WRITER: a group; each engineer's login joins it
+CREATE ROLE lanes_register_reader NOLOGIN;     -- READER: a group, as the writer's
 CREATE ROLE lanes_indexer LOGIN;               -- Amendment 14's indexer
 GRANT lanes_register_owner, lanes_indexer TO CURRENT_USER   -- PG16 gives a CREATEROLE admin
   WITH INHERIT TRUE, SET TRUE;                 -- ADMIN only: SET for 1.2's AUTHORIZATION and
@@ -2194,6 +2230,9 @@ REVOKE ALL ON ALL TABLES IN SCHEMA lanes_register FROM PUBLIC;
 GRANT SELECT ON ALL TABLES IN SCHEMA lanes_register TO lanes_register_writer, lanes_register_reader;
 ALTER DEFAULT PRIVILEGES FOR ROLE lanes_register_owner IN SCHEMA lanes_register   -- and a later
   GRANT SELECT ON TABLES TO lanes_register_writer, lanes_register_reader;          -- migration's
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA lanes_register TO lanes_register_reader;   -- pg_dump reads
+ALTER DEFAULT PRIVILEGES FOR ROLE lanes_register_owner IN SCHEMA lanes_register   -- doc_lines'
+  GRANT SELECT ON SEQUENCES TO lanes_register_reader;                               -- identity
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA lanes_register FROM PUBLIC;
 ALTER DEFAULT PRIVILEGES FOR ROLE lanes_register_owner         -- global form: a per-schema REVOKE
   REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;                      -- cannot undo PUBLIC's default
@@ -2214,28 +2253,60 @@ GRANT USAGE ON SCHEMA lanes_index TO lanes_register_reader;
 GRANT SELECT ON ALL TABLES IN SCHEMA lanes_index TO lanes_register_reader;   -- any already there
 ALTER DEFAULT PRIVILEGES FOR ROLE lanes_indexer IN SCHEMA lanes_index
   GRANT SELECT ON TABLES TO lanes_register_reader;
+ALTER DEFAULT PRIVILEGES FOR ROLE lanes_indexer IN SCHEMA lanes_index   -- #160 has no sequence;
+  GRANT SELECT ON SEQUENCES TO lanes_register_reader;                   -- a later one, for pg_dump
 
-ALTER ROLE lanes_register_reader SET default_transaction_read_only = on;   -- floors for a client
-ALTER ROLE lanes_register_reader SET lock_timeout = '1000ms';              -- that forgets its own;
-ALTER ROLE lanes_register_reader SET statement_timeout = '1500ms';         -- each path still sets
-ALTER ROLE lanes_register_writer SET lock_timeout = '2000ms';              -- its own (§1.3)
-ALTER ROLE lanes_register_writer SET statement_timeout = '5s';
-ALTER ROLE lanes_register_writer SET idle_in_transaction_session_timeout = '5s';
+-- The floors are each login's own (the login step): a role's settings reach no member.
 ```
 
-The writer's idle-in-transaction bound ends a half-open writer's transaction on the server within 5 s, which bounds the in-doubt retry's wait (the probes waited 1583 ms for one, `clarifications.md:245-248`). Under (A″) no live writer idles inside a transaction. Nor does an operator command: `import`, `cutover`, `rollback` and their records each send one `BEGIN; SELECT …; COMMIT;` script and hold no transaction across git or a render (F23, D24). The bound does not reach the bootstrap, which logs in as Brett's admin role and only sets the owner role.
+The writer's idle-in-transaction bound ends a half-open writer's transaction on the server within 5 s, which bounds the in-doubt retry's wait (the probes waited 1583 ms for one, `clarifications.md:245-248`). Under (A″) no live writer idles inside a transaction. Nor does an operator command: `import`, `cutover`, `rollback` and their records each send one `BEGIN; SELECT …; COMMIT;` script and hold no transaction across git or a render (F23, D24). The bound does not reach the bootstrap, which logs in as Brett's admin role and only sets the owner role. The bound is each writer login's own, set by the login step below.
+
+**On a managed PostgreSQL (Q22).** Brett's admin is the provider's own administrator login, which has `CREATEROLE` and `CREATEDB` and no `SUPERUSER`: RDS's master user (`rds_superuser`), Cloud SQL's `postgres` user (`cloudsqlsuperuser`) or Azure's server admin (`azure_pg_admin`). That is enough for every statement here. PostgreSQL 16 gives such an admin `ADMIN` alone on the roles it creates, which the admin's own `GRANT … WITH INHERIT TRUE, SET TRUE` completes. The four `ALTER ROLE … SET` values are ones any user may set. Nothing reads `pg_authid`, runs `ALTER SYSTEM` or needs an extension. Lane 1 ran V's SQL twice as such an admin on PostgreSQL 16.15, and the catalogs were identical. Two conditions hold it. First, the database is one the admin creates, and so owns. In one it does not own, `REVOKE ALL ON DATABASE` and `GRANT CONNECT` change nothing and only warn (01006, 01007), so the bootstrap refuses it (`operations.md` §2.4). Second, the READER may read the schema's sequences: the block's three lines after the default privileges for tables. Without them the daily `pg_dump`, which runs as READER (`operations.md` §2.2, act 3's step 1), stops at `doc_lines_line_id_seq` with 42501.
+
+**One engineer's logins (Brett: "One login per engineer", #165 6722593397).** Each engineer, human or AI host, has two logins: `lanes_w_<engineer>`, a member of REGISTER-WRITER, and `lanes_r_<engineer>`, a member of READER. The dump job has `lanes_register_dump`, a READER login alone (`operations.md` act 3's step 1). `lanes-index login` (`operations.md` §2.4) makes them through the admin service, after the bootstrap, by the block below; it can run again, and a rerun puts back a lost membership. Each login carries its group's floors itself, because PostgreSQL applies a role's settings only to a session that logs in as that role: on lane 1's PostgreSQL 16.15 a member of a group that held V's floors had none of them, and a login made by this block had all of them. Its password is set as it is made, as a SCRAM verifier computed on the client (`operations.md` §2.4).
+
+```sql
+-- lanes-index login add <engineer>: psql -v w=lanes_w_<engineer> -v r=lanes_r_<engineer>.
+-- The dump job's login is the second half alone, with r=lanes_register_dump. Each CREATE ROLE
+-- is guarded by a pg_roles check, as the bootstrap's are.
+CREATE ROLE :"w" LOGIN;                         -- its password: a SCRAM verifier, set as it is made
+GRANT lanes_register_writer TO :"w";            -- again on a rerun: puts back a lost membership
+ALTER ROLE :"w" SET lock_timeout = '2000ms';    -- the writer's floors, the login's own (§1.3)
+ALTER ROLE :"w" SET statement_timeout = '5s';
+ALTER ROLE :"w" SET idle_in_transaction_session_timeout = '5s';
+CREATE ROLE :"r" LOGIN;
+GRANT lanes_register_reader TO :"r";
+ALTER ROLE :"r" SET default_transaction_read_only = on;   -- the reader's floors
+ALTER ROLE :"r" SET lock_timeout = '1000ms';
+ALTER ROLE :"r" SET statement_timeout = '1500ms';
+
+-- lanes-index login revoke <engineer>: for each of its logins, psql -v login=… -v grp=…
+ALTER ROLE :"login" NOLOGIN;                                  -- 1. no new session (28000)
+REVOKE :"grp" FROM :"login";                                  -- 2. an open session's next statement
+                                                              --    is refused (42501)
+GRANT :"login" TO CURRENT_USER WITH INHERIT TRUE, SET FALSE;  -- 3. its privileges, so the admin may
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity        --    end its sessions (57P01) with no
+  WHERE usename = :'login';                                   --    pg_signal_backend
+REVOKE :"login" FROM CURRENT_USER;
+```
+
+**What a revoked login sees** (lane 1's run). A new connection: FATAL 28000, "role … is not permitted to log in". An open session's next statement, a write or a read: 42501, "permission denied for schema lanes_register", since the schema's privileges came through the group. Its session ended: FATAL 57P01, "terminating connection due to administrator command". A login that keeps LOGIN but loses its membership cannot connect either, since CONNECT came through the group: FATAL 42501, "permission denied for database". Without step 3's grant, PostgreSQL 16 refuses the admin's `pg_terminate_backend` with 42501, and the admin may not grant itself `pg_signal_backend`. Revoking keeps the role, so its name is not reused while the server's logs still name it; a `DROP ROLE` may follow. A rotation is `ALTER ROLE … PASSWORD` with a new verifier; a session already open goes on, since a password is checked only at login (not run on the engine). A database dump holds no login and no membership (lane 1's run: none in the dump); on the same server they stay, and on a new one `--roles-only` makes the groups and the login step each engineer's logins again.
 
 | Role | SQL role | Held by | Where its credential lives |
 |---|---|---|---|
-| REGISTER-WRITER | `lanes_register_writer` | `lanes-edit.sh`'s writes, through `lanes-index register snapshot` and `register commit` (4A, D2); the projection writer's storage-layer entry (S4, `proposal.md:501-506`); the renderer, for its `mirror_state` writes (D16); `lanes-index` import, cutover (with its abort, `switch_to_files`, and `record_marker`), rollback and the two ways out of a divergence; `outage declare`'s database probe (D9; lane 5, #165 6714373660) | `register_url=` and `register_passfile=` in `lanes-index.conf` (`proposal.md:152-156`) |
-| READER | `lanes_register_reader` | the service's one connection (4A); the guard's direct read (Q11 (a)); S3's readers, the listings and the `SessionStart` block; `status`, `reconcile` and the readiness check | `reader_url=` and `reader_passfile=` (`code/lanes-index:64-65`) |
+| REGISTER-WRITER | `lanes_register_writer`, a group that cannot log in; each engineer's `lanes_w_<engineer>` | `lanes-edit.sh`'s writes, through `lanes-index register snapshot` and `register commit` (4A, D2); the projection writer's storage-layer entry (S4, `proposal.md:501-506`); the renderer, for its `mirror_state` writes (D16); `lanes-index` import, cutover (with its abort, `switch_to_files`, and `record_marker`), rollback and the two ways out of a divergence; `outage declare`'s database probe (D9; lane 5, #165 6714373660) | that engineer's `register_url=` and `register_passfile=` in `lanes-index.conf` (`proposal.md:152-156`) |
+| READER | `lanes_register_reader`, a group that cannot log in; each engineer's `lanes_r_<engineer>` | the service's one connection (4A); the guard's direct read (Q11 (a)); S3's readers, the listings and the `SessionStart` block; `status`, `reconcile` and the readiness check | that engineer's `reader_url=` and `reader_passfile=` (`code/lanes-index:64-65`) |
 | indexer | `lanes_indexer` | `lanes-index sync` and `reconcile` of the index half | `url=` and `passfile=` |
+| dump | `lanes_register_dump`, a member of `lanes_register_reader` | the daily `pg_dump` job (`operations.md` act 3's step 1) | a secret in the prod subscription that the job reads (`operations.md` act 3's step 1) |
 | owner | `lanes_register_owner` | nothing: the admin connection takes it by `SET ROLE` | none |
 | admin | Brett's | the bootstrap and its migrations | a libpq service and 0600 `~/.pgpass` of his own, named by `--admin-service`; `psql` receives the service's name only as `PGSERVICE=<service>` in its environment (SVC-2; lane 5, 6579523948); never a password or a connection string in an argument or the environment, never stored by the tools |
 
 - **The file:** `${XDG_CONFIG_HOME:-$HOME/.config}/openRepoTools/lanes-index.conf`, or the file `$LANES_INDEX_CONFIG` names. It is refused when group- or world-readable, inside a git work tree or under `~/.agents/`, or when a URL carries a password (`code/lanes-index:62-68`, `:296-301`); `register_url=` joins that check. `register_label=` **(new)** names the label of the database that `register_url=` reaches, as that database's bootstrap gave it (`--label`, `operations.md` §2.4). It is set in the same edit as `register_url=`, `reader_url=` and their password files (`operations.md` §2.3's re-pointing), and `cutover`, in every form, takes the label it sends from it and from nothing else (`operations.md` §2.3, V2's S-2). Passwords live only in 0600 libpq password files, and an inherited `PGPASSWORD` or `PGPASSFILE` is dropped (`code/lanes-index:1300-1305`). `lanes-index` stays the one parser (`proposal.md:157-160`); R3a's `register_schema=` (default `lanes_register`) names a rehearsal's scratch schema (`r3a/REPORT.md:323`). On benches the file sits on Q23 (a)'s read-only mount (`proposal.md:1837-1839`). No URL or password enters an environment a session inherits (Amendment 14(c); `proposal.md:826-827`).
+- **TLS and the endpoint (Q22).** Each URL, and the admin's own service, carries `sslmode=verify-full` and `sslrootcert=`, since libpq's default, `prefer`, verifies nothing. `sslrootcert=` names the provider's CA file, beside the password files on the host's read-only mount (RDS's bundle, or Cloud SQL's server CA). Or it is `system`, where the chain ends in a public root, as Azure's do (DigiCert Global Root G2, Microsoft RSA Root CA 2017). On Cloud SQL, `verify-full` needs a server CA mode whose certificates carry the instance's DNS name, the shared or customer-managed CA, and a URL by that name. Its default per-instance CA carries the name only for Private Service Connect instances, so elsewhere it allows `verify-ca` alone. Each URL names the primary's own endpoint. Never a read replica, which refuses SERIALIZABLE and whose reads may lag; never a pooler's endpoint or port (§1.3's bounds). A `target_session_attrs=` on `reader_url=` is `primary`, never `read-write`. `read-write` refuses every READER connection, since the role's sessions are read-only by default (lane 1's run: `session is read-only`). `ready`'s check 11 (`operations.md` §2.4) confirms TLS and the primary on each role's connection.
+- **What `verify-full` costs (lane 4's ask (c), #165 6722839180): no round trip over `require`.** The server sends its certificate chain in the same handshake whatever the client's mode, and libpq checks it on the client: the chain up to the root file `sslrootcert=` names, then the server's name against the certificate's names. It fetches nothing to do so: no OCSP response, no missing intermediate, and a CRL only from a local file (`sslcrl=`, `sslcrldir=` or `~/.postgresql/root.crl`), which the register's configuration does not name. On lane 1's PostgreSQL 16.15 under TLS 1.3, in a container with no network and no name lookup, `require` and `verify-full` sent the same bytes per connection (21 segments and 6,143 octets in most of ten connections each, 22 and 6,183 in the rest, with one `verify-full` connection at 23 and 6,299, the same jitter `disable` showed), and 100 connections took the same time (2.74 s against 2.78 s, then 2.56 s against 2.51 s). A chain the server sends incomplete, its leaf without the intermediate, fails `verify-full` at the connect with "SSL error: certificate verify failed", while `require` still connects; a name that does not match fails with "server certificate for "<name>" does not match host name "<host>"". Either is `psql`'s exit 2 before any statement. Putting the intermediate into `sslrootcert=` would mend an incomplete chain, but Microsoft does not support it, since its intermediates rotate unannounced: the remedy is the server's chain, which on Flexible Server is Microsoft's. `require` with a root file at `~/.postgresql/root.crt` acts as `verify-ca` (libpq's SSL page); no register URL relies on that.
+- **One engineer's file (Brett, #165 6722593397).** Each workstation's `lanes-index.conf` names its own engineer's logins, each as the user of its URL: `register_url=postgresql://lanes_w_<engineer>@<server>.postgres.database.azure.com:5432/<database>?sslmode=verify-full&sslrootcert=<file>` and `reader_url=` the same with `lanes_r_<engineer>`. `register_passfile=` and `reader_passfile=` name 0600 files owned by that engineer's account, each holding only its own login's line (libpq ignores a password file that group or others can read). No workstation holds another engineer's line. `url=` and `passfile=` still name the indexer's login.
 - **The renderer holds REGISTER-WRITER** (clause (b), `proposal.md:683-685`; the frame's roles table), because D16 has it record a divergence or a failed pass in `mirror_state`, through `record_mirror_state` and nothing else: the records that clear a divergence, the cutover and the rollback are `lanes-index`'s, as REGISTER-WRITER.
-- **P20, plainly** (`clarifications.md:135-146`): the REGISTER-WRITER secret is readable by every lane process on its host, the same exposure as today's push rights. Function-only writes mean a hand-run write is still journaled, rendered, constrained and proved; they do not prevent one, which Rule 9(e) alone forbids. A holder can also call `commit_write` with a `rollback` entry, which stops every write with 69 until an operator acts; `switch_to_files` now only undoes a cutover not yet confirmed.
+- **P20, plainly** (`clarifications.md:135-146`): the REGISTER-WRITER secret is readable by every lane process on its host, the same exposure as today's push rights. Function-only writes mean a hand-run write is still journaled, rendered, constrained and proved; they do not prevent one, which Rule 9(e) alone forbids. A holder can also call `commit_write` with a `rollback` entry, which stops every write with 69 until an operator acts; `switch_to_files` now only undoes a cutover not yet confirmed. With one login per engineer (Brett, #165 6722593397), the secret on a workstation is its own engineer's, and revoking that engineer's logins ends their reach alone (the revoke, above); the indexer's one login stays shared.
 
 ### 1.5 The version check and forward-only migrations
 
@@ -2320,11 +2391,12 @@ The writer's idle-in-transaction bound ends a half-open writer's transaction on 
 | `apply_edits` | function (now `commit_write`'s step 6) | `r3a/REPORT.md:285` |
 | `commit_write`, `switch_to_files`, `render_file`, `record_mirror_state`, `record_marker`, `find_write` | functions | **(new)**; `switch_to_files` is the cutover's abort (F2), `record_marker` S4's read-back (F12), `find_write(p_write_id, p_not_after, p_generation, p_lane, p_verb, p_args_sha256)` F3's one lookup, which waits on the server's clock past `p_not_after` (S2) and finds only this write's own entry, in this generation, else LR007 (NIT 1) |
 | `lock_head` (under Q7 (A′) only) | function | **(new)** |
-| SQLSTATEs `LR001`, `LR002`, `LR003`, `LR004`, `LR005`, `LR006`, `LR007`, `LR008`, `LR009`, `LR010`, `LR011`, `LR012` | error codes | **(new)**; `LR007` is F10's and F18's, and an act's base from another generation, and the in-doubt lookup's (NIT 1); `LR008` is F3's bound, `not_after`; `LR009`, "expectation changed", is D5's check (step 3b); `LR010`, "key not well formed", is N2's; `LR011`, "lookup too early", is S2's; `LR012`, "mirror diverged", is S5's |
+| SQLSTATEs `LR001`, `LR002`, `LR003`, `LR004`, `LR005`, `LR006`, `LR007`, `LR008`, `LR009`, `LR010`, `LR011`, `LR012` | error codes | **(new)**; `LR007` is F10's and F18's, and an act's base from another generation, and the in-doubt lookup's (NIT 1); `LR008` is F3's bound, `not_after`; `LR009`, "expectation changed", is D5's check (step 3b); `LR010`, "key not well formed", is N2's; `LR011`, "lookup too early", is S2's; `LR012`, "mirror diverged", is S5's; `LR005`'s DETAIL is one fixed token naming the rule that refused (v3.1, §1.3's step 7) |
 | `journal_files.final_newline`, `log_lines_pos`, the six `*_seq` indexes | column, constraint, indexes | **(new)**; lane 1's real-engine run |
 | REGISTER-WRITER, READER, indexer | roles | `proposal.md:683-691` |
 | `lanes_register_writer`, `lanes_register_reader` | roles | `r3a/REPORT.md:172`, `:281` |
 | `lanes_register_owner`, `lanes_indexer` | roles | **(new)** |
+| `lanes_w_<engineer>`, `lanes_r_<engineer>`, `lanes_register_dump` | roles that log in | **(new)**; each engineer's two, Brett's one login per engineer (#165 6722593397), and the dump job's (`operations.md` act 3's step 1) |
 | `REGISTER_SCHEMA_VERSION` | constant | `r3a/REPORT.md:326` |
 | `mode=`, `register_url=`, `register_passfile=` | config keys | `proposal.md:149-156` |
 | `register_label=` | config key | **(new)**; the label of the database `register_url=` reaches, set in the same edit; `cutover`'s one source for its label (S-2; `operations.md` §2.3) |
@@ -2509,7 +2581,7 @@ stays open across the shell code.
 | committed at `n+1` | 0, `committed <seq>` | forks the renderer; exits the verb's code; `claim` prints `register seq <n+1>` (Q19(A)) | the write |
 | the head moved (LR001), 40001, 40P01, or 55P03 (`lock_timeout`) | 75 | a new attempt at once; at the deadline, exit 75, unless a commit of this write was in doubt (below) | nothing |
 | `psql` exit 3 for any other SQLSTATE: the transaction was rolled back | 69, with the SQLSTATE | 69, naming the store and the error | nothing |
-| LR005, a rule of the register (an object held, spelled any way, or `main` held) | 2, with the holder or the earlier line | 2 | nothing |
+| LR005, a rule of the register (an object held, spelled any way, or `main` held), or a `LANDING EXPIRED` that names no open, stale `LANDING` (F13: `expired-none`, `expired-closed` or `expired-young`), or, on primary, a take with no readable UTC (U3: `take-no-utc`); each LR005 names its rule in a DETAIL token, which a caller that branches reads, not the message (lane 1's v3.1; lane 4's E3) | 2, with the holder or the earlier line, or, for F13 and U3, the server's message and its DETAIL token | 2 | nothing |
 | LR006: this write is already in the journal, in this generation (an id minted against another generation is LR007 first) | 0, with its seq | exits 0, as committed | the write, by an earlier attempt |
 | LR007: the id belongs to another write, or to another generation; the generation is checked first, whatever the switch reads (V2's S-3), and the in-doubt lookup, `find_write`, raises both in the same order ("A write in doubt", below). Each LR007 names its check in its `DETAIL:` line, whose whole text is one token: `generation`, `another-write`, or `act-generation` for an act's base (lane 1's v2.8, on lane 4's ask, #165 6715529516); or an act's base was read in another generation (§1.3's step 3b), which for an act is a backstop to the client's check at the snapshot (step 1) | 2, naming the id and what differs | 2 | nothing |
 | LR008: the attempt reached step 9 past its `not_after`, and its transaction rolled back | 75, a lost turn | inside D7's 30 s, a lost turn: a fresh snapshot, then a new attempt under the same write id, as 40001 is; at the deadline, F3's rule ("A write in doubt", below); never 3 or 69 by itself (lane 4, #165 6709038351, as lane 3 ruled in 6710770304) | nothing |
@@ -3184,10 +3256,15 @@ workstation's lanes paused first, as for the freeze, and the outage declared
 (D20), and with `LANES_LANE=<operator lane>`:
 
 1. Take `m`, the mirror's last `Register-Seq` on origin, and `b`, the newest
-   backup's head seq, if there is one.
+   backup's head seq, if there is one: the daily dump's, or the head at the
+   recovery point of the provider's point-in-time restore, which counts as a
+   backup too ("Count both", #165 6722541787).
 2. Run `lanes-index bootstrap --roles-only` against the new database server
    first: roles are cluster objects, and a database backup does not hold them
-   (F18).
+   (F18). A provider's point-in-time restore is instead a new server that
+   carries the roles and their passwords: there step 3 makes the server, step 2
+   then prints `unchanged`, and Brett sets new passwords for the login roles,
+   which step 5's re-pointing writes (`operations.md` §2.3, lane 1's O5).
 3. If `b > m`, restore that backup into a new database; its journal already
    holds `m+1 … b`, and the renderer catches up. Otherwise re-import at
    origin's tip into a new database, with the head set to `m`, so
@@ -3220,9 +3297,19 @@ switch at `primary`, as on a restored backup or on the live database by
 mistake, it refuses a label equal to the switch's (LR004, R2's N4), so a
 restore needs a replacement whose label differs from the lost database's. The
 loss is bounded by the renderer's lag at the moment of loss, which `status`
-shows (P14; the product seat, 6549261651). The database's host, its backups
-and its downtime limit are Brett's (Q22); when the limit is reached, Brett
-chooses between waiting and this path, and the operator lane runs it.
+shows (P14; the product seat, 6549261651). Brett named the database's host, its
+backups and its downtime limit on 2026-11-08 (Q22): Azure Database for
+PostgreSQL Flexible Server, PostgreSQL 16, in opensoft's prod subscription
+(Brett, #165 6722593397); the daily `pg_dump` and the provider's own backups,
+both counted (D22); and "4 hours (Recommended)" (#165 6722025863). When the
+limit is reached, Brett chooses between waiting and this path, and the operator
+lane runs it.
+
+**The link to the server** (lane 5's consequence, #165 6722703424). On primary,
+each prompt's guard needs the workstation's network path to the server. While
+that path is down, the guard answers 2, from the service or the direct read,
+until an outage is declared (SVC-12). On a local database, that happened only
+when the database itself was down.
 
 ## S6: claims, and the order of `HOLD` and `LANDING`
 
@@ -3274,12 +3361,17 @@ from clones at different tips, end with one `CLAIMED` and one exit 2.
   line verbatim with its register seq, so a landing script stops (P9). A lane's
   own `LANDING` after its own `HOLD` is the ordinary sequence and is written.
   "Nothing written" is D18's reading of S6, which says it of the claim loser
-  only; it goes to Brett beside Q17 ("Differences from Amendments 22 and 23").
+  only; Brett accepted it as a reading of S6 (D18, #165 6721583757).
 - **A line in a taking shape that names no repository** (it matches `HOLD — `
   or `LANDING — ` and no repository can be read from it) is refused with 2 on
   primary, since it would look like a hold to readers and order nothing. Lines
   of other shapes are written as free text, as (B) leaves them; refusing those
   too would be (C).
+- **A taking line with no readable UTC** (it matches `HOLD — ` or `LANDING — `
+  and no UTC can be read from it) is refused with 2 on primary, by `append-line`
+  before the lock and by the commit behind it (LR005, DETAIL `take-no-utc`,
+  §1.3's step 7), since Rule 6's 30 minutes are measured from that UTC. Files
+  mode writes such a line as today (U3, lane 3's ruling, #165 6722541787).
 - **Rule 6's thirty minutes stay a duration.** A `LANDING` past the window with
   no `LANDED` still takes `main`, as `RULE6_AWK` still lists it and marks it
   (`:6551–6555`); the later writer's refusal says how far past the window it
@@ -3295,10 +3387,28 @@ from clones at different tips, end with one `CLAIMED` and one exit 2.
   `repo_key` alone, so a `LANDING EXPIRED` that spells the repository another
   way names no stale `LANDING` and fails closed with LR005, writing nothing
   (lane 3's ruling, #165 6710770304, lane 1's point 5); `operations.md` §2.6
-  tells the writer to spell it as the `LANDING` did.
+  tells the writer to spell it as the `LANDING` did. On primary,
+  `LANDING EXPIRED` lines are judged by F13 when they are written, and files
+  mode refuses `--landing-expired` with 2, so an import meets an unjudged one
+  only where it was written by hand into the files, which Rule 9 forbids (U5,
+  lane 3's ruling, #165 6722541787).
+- **The verb** (lane 4's "`LANDING EXPIRED`'s verb") is D18's one verb in a
+  form that composes the line:
+  `append-line --landing-expired <holder> --pr <n> --repo <repo>`, with
+  Brett's word as `--word`, `--word-where` and `--word-utc`. It copies the
+  holder, the PR, the repository's spelling and the UTC from the open
+  `LANDING`, so a misspelling never reaches LR005. It refuses with 2, sending
+  nothing, without the word, off primary, or where that `LANDING` is not open
+  or not past 30 minutes, and on primary `append-line` refuses the kind typed
+  by hand. On primary `who --landing` no longer lists the released `LANDING`;
+  off primary, and after a rollback to files, it lists it as today, marked
+  STALE. Neither the client nor the database can verify the word: the line
+  and its journal entry are the record.
 - **UTC.** The line's UTC is the database's clock at the snapshot, in whole
   seconds (D13). A UTC a caller composed inside `append-line` text, and
-  `log PAUSED --utc`, stay as written.
+  `log PAUSED --utc`, stay as written. So on primary a verb stamps the
+  database's clock, and a caller's UTC, or an imported one, starts Rule 6's 30
+  minutes on that host's clock (U2, lane 3's ruling, #165 6722541787).
 
 ### `rename-lane`, under Q13(a)
 
@@ -3322,8 +3432,22 @@ register already renamed and makes only the move and the stamp.
 `lanes-index`'s known keys (`code/lanes-index:280`) gain `mode`,
 `register_url`, `register_passfile`, and, under Q21(b)(B), `render_key`. The
 bootstrap makes the roles and GRANTs from one admin connection Brett supplies,
-used once and held by nothing, and sets the REGISTER-WRITER role's
-`idle_in_transaction_session_timeout`.
+used once and held by nothing; `lanes-index login` then makes each engineer's
+logins through the same admin service, each with its group's floors, the writer
+login's `idle_in_transaction_session_timeout` among them (§1.4).
+
+**Logins: two per engineer** (Brett, "Two logins each (Recommended)", #165
+6723413756, after "One login per engineer (Recommended)", #165 6722593397).
+REGISTER-WRITER and READER are groups that cannot log in. Each engineer, human
+or AI host, logs in as `lanes_w_<engineer>`, a member of the writer group, and
+as `lanes_r_<engineer>`, a member of the reader group, and each workstation's
+`lanes-index.conf` names only its own engineer's two logins and their password
+files. The dump job logs in as `lanes_register_dump`, a member of READER alone.
+`lanes-index login` makes, rotates and revokes them through Brett's admin
+service, and each login carries its group's floors itself, since a role's
+settings reach no member (§1.4's login step; `operations.md` §2.4). Revoking an
+engineer's logins ends that engineer's reach alone; the indexer keeps one shared
+login.
 
 **The REGISTER-WRITER secret's reach, plainly** (P20). It sits in a 0600 file
 that every lane process on its host can read. Rule 9(e) forbids a hand-run SQL
@@ -3345,34 +3469,41 @@ reads the key on purpose, and the manual says so.
 
 ### The timeouts (D9)
 
-Every connection names one address, since `connect_timeout` applies to each,
-and sets its bounds when it connects (`options=-c lock_timeout=… -c
-statement_timeout=…`; the probes found that form and `PGOPTIONS` both work).
-No register path uses `lanes-index`'s `PGCONNECT_TIMEOUT=5` (`:1306`), and
-only the import keeps its 300 s bound (`:1317`), as its statement timeout.
+Every connection names the primary's own endpoint (lane 1's M5, #165
+6722314667) and sets its bounds when it connects (`options=-c lock_timeout=…
+-c statement_timeout=…`; the probes found that form and `PGOPTIONS` both
+work). libpq applies `connect_timeout`, `c`, to each address the endpoint
+resolves to, so a connect may take `N_a`·`c`, `N_a` being their count. Both
+are each workstation's own configuration values, set from its measurements
+when it joins (the phase plan's "Over a remote database"). A row's client
+timer is `N_a`·`c`, plus its statement bound, plus 1 s for the call's round
+trip and starts, and never below the figure the row gives; a figure at `c` =
+2 or 3 is for one address. No register path uses `lanes-index`'s
+`PGCONNECT_TIMEOUT=5` (`:1306`), and only the import keeps its 300 s bound
+(`:1317`), as its statement timeout.
 
 | Path | `connect_timeout` | `lock_timeout` | `statement_timeout` | Client timer | On expiry |
 |---|---|---|---|---|---|
-| the guard's direct read | 2 s | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s, or to `T0 + 3.65 s` where an unexpired declaration names this database (SVC-8, SVC-12) | 2 |
-| the service's connection, per request | 2 s, in the background only, outside any share (SVC-6) | 150 ms | 180 ms | 200 ms, inside the client's 300 ms wait | `unavailable`, and the client reads directly (SVC-8); `refuse db <cause>` only where the refusal is definitive (SVC-7) |
-| the guard's answer 2 | — | — | — | nothing on the hook's time: the guard records the bind in the session's offer file, starts it as a `setsid` child, `guard-bind`, and exits 2 with "BINDING"; the bind runs with a writer's bounds and D7's deadline, the whole bind, `guard-bind`'s body under one `timeout`, bounded at 490 s by the phase plan's sum (SVC-8; the phase plan's "Answer 2's detached bind") | as a writer's; the guard reports the outcome from the offer file's record, by the phase plan's eleven-case table |
+| the guard's direct read | `c` | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s, or to `T0 + 3.65 s` where an unexpired declaration names this database (SVC-8, SVC-12) | 2, also where a lost SYN, or a whole-file fetch, at a remote RTT reaches the cut (SVC-8) |
+| the service's connection, per request | `c`, in the background only, outside any share (SVC-6) | 150 ms | 180 ms | 200 ms, or the workstation's round trip plus 100 ms where it is over 100 ms (SVC-6), inside the client's wait, the timer plus 100 ms | `unavailable`, and the client reads directly (SVC-8); `refuse db <cause>` only where the refusal is definitive (SVC-7) |
+| the guard's answer 2 | — | — | — | nothing on the hook's time: the guard records the bind in the session's offer file, starts it as a `setsid` child, `guard-bind`, and exits 2 with "BINDING"; the bind runs with a writer's bounds and D7's deadline, the whole bind, `guard-bind`'s body under one `timeout`, bounded by the phase plan's computed sum, `bound_s`: 500 s at `c` = 2 and 530 s at `c` = 3 with one address, and 550 s and 610 s with two (560 s and 620 s with the service) (SVC-8; the phase plan's "Answer 2's detached bind") | as a writer's; the guard reports the outcome from the offer file's record, by the phase plan's eleven-case table |
 | the mode query, `lanes-index mode`, which reads only the configuration (D3) | — | — | — | 2 s | the query is killed, and the verb runs in files mode with a warning naming the timeout (F8); on a SQL estate the marker check then refuses with 69 (lane 3's ruling, #165 6711028142) |
-| a writer's snapshot, and `act-begin`'s (the phase plan's "The acts and their expectations") | 2 s | 2000 ms | 5000 ms | 8 s | a failed read: 69, or in doubt where an earlier commit of the same write was |
-| a writer's commit | 2 s | 2000 ms | 5000 ms | 8 s | in doubt |
-| the in-doubt lookup, `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)` (S2; D8, S1) | 2 s | 2000 ms | 6000 ms: its wait of at most 3 s, then the lock, then 1 s for the lookup | 8 s a try; the tries start within the 10 s reconnect window, which starts when the client's wait ends | 3, naming the id, the pending record kept (D8) |
-| a whole write | — | — | — | 30 s before a new attempt; 10 s to reconnect in doubt; a whole write ends by about 67.5 s (the phase plan's `T_write`) | 75, or 3 |
-| a reader | 2 s | 1000 ms | 3000 ms | 6 s | a failed read (S3's table) |
-| the renderer's reads, and `reconcile` | 2 s | 1000 ms | 10 s | 15 s | the render ends; the lag stays |
-| `status` | 2 s | 1000 ms | 5000 ms | 8 s | 69, with the lag from git where it can read it |
-| `rollback`, each call | 2 s | 5000 ms | 10 s | 15 s | 69; step 1's expiry re-reads the switch; at D7's deadline across its tries, 75, with nothing written (V3's NIT 2) |
-| `import` (lane 1's row, §1.3) | 2 s | 2000 ms | 300 s, #160's `psql` bound (`code/lanes-index:1317`) | 330 s | 69; nothing is swapped in (S5) |
-| a migration | 2 s | its own, retried | — | — | refused; rerun |
-| `cutover`, its transaction: the switch to `primary` and its entry, in every form | 2 s | 5000 ms | 10 s | 15 s; it carries `not_after` (D24) | 69, with the switch unknown: the rerun reads the switch and the journal first, and goes on from its own entry where it finds one (F12) |
-| `switch_to_files`, the cutover's abort, either form | 2 s | 5000 ms | 10 s | 15 s | 69: the rerun reads the switch. At `files`, or back at the restored generation with the head at `b`, the abort is done; otherwise it runs again |
-| `record_marker`, after an operator entry's read-back | 2 s | 5000 ms | 10 s | 15 s | 69: the push stands, and the marker stays `adding` or `removing`, so writes keep refusing; the rerun reads origin back and records it again (F12) |
-| `outage declare`'s database probe (`operations.md` §2.5's refusals): one read, connected as a writer's snapshot is, as REGISTER-WRITER, of the switch's `mode` and `set_seq` and the kind of the journal entry at `set_seq` | 2 s | 2000 ms | 5000 ms | 8 s | on Brett's word, the database does not answer from this host, so the declaration is written; any other end before the read completes counts the same. In the `--rollback` form, 2: a rollback's declaration counts only where a guard reads the switch at `files` (SVC-12's condition 2), so it needs the switch read here. At `primary`, 2. At `files`, the declaration is written only in the `--rollback` form, where the entry at `set_seq` is a `rollback` and `<k>` is `set_seq - 1`, the head before it (§1.3's `set_seq`); otherwise 2 |
-| `import --single <sha>` and `render --revert <sha>`, their commit call | 2 s | 2000 ms | 5000 ms | 8 s | in doubt, as a writer's commit: each goes through S1's commit call (S2's "The two ways out"), `register commit` (the phase plan's interfaces table) |
-| `import --single <sha>` and `render --revert <sha>`, their other database calls: the snapshot read, as a writer's; in doubt, the lookup's row above; the render that follows is the renderer's row | 2 s | 2000 ms | 5000 ms | 8 s | a failed read: 69, or in doubt where an earlier commit call of the same entry was |
+| a writer's snapshot, and `act-begin`'s (the phase plan's "The acts and their expectations") | `c` | 2000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | a failed read: 69, or in doubt where an earlier commit of the same write was |
+| a writer's commit | `c` | 2000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | in doubt |
+| the in-doubt lookup, `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)` (S2; D8, S1) | `c` | 2000 ms | 6000 ms: its wait of at most 3 s, then the lock, then 1 s for the lookup | `N_a`·`c` + 7 s a try, `T_L`: 9 s at `c` = 2, 10 s at `c` = 3; the tries start within the 10 s reconnect window, which starts when the client's wait ends | 3, naming the id, the pending record kept (D8); so too where a failover outlasts the window, and the rerun, once the new primary answers, finds the write or writes it once (the phase plan's "Over a remote database") |
+| a whole write | — | — | — | 30 s before a new attempt; 10 s to reconnect in doubt; a whole write ends by about 62.5 + 3`N_a`·`c` s, the phase plan's `T_write`: 68.5 s at `c` = 2 and 71.5 s at `c` = 3, and 74.5 s and 80.5 s with two addresses | 75, or 3 |
+| a reader | `c` | 1000 ms | 3000 ms | `N_a`·`c` + 4 s: 6 s at `c` = 2, 7 s at `c` = 3 | a failed read (S3's table) |
+| the renderer's reads, and `reconcile` | `c` | 1000 ms | 10 s | the larger of 15 s and `N_a`·`c` + 11 s: 15 s while `N_a`·`c` ≤ 4 s | the render ends; the lag stays |
+| `status` | `c` | 1000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | 69, with the lag from git where it can read it |
+| `rollback`, each call | `c` | 5000 ms | 10 s | the larger of 15 s and `N_a`·`c` + 11 s: 15 s while `N_a`·`c` ≤ 4 s | 69; step 1's expiry re-reads the switch; at D7's deadline across its tries, 75, with nothing written (V3's NIT 2) |
+| `import` (lane 1's row, §1.3) | `c` | 2000 ms | 300 s, #160's `psql` bound (`code/lanes-index:1317`) | 330 s | 69; nothing is swapped in (S5) |
+| a migration | `c` | its own, retried | — | — | refused; rerun |
+| `cutover`, its transaction: the switch to `primary` and its entry, in every form | `c` | 5000 ms | 10 s | the larger of 15 s and `N_a`·`c` + 11 s: 15 s while `N_a`·`c` ≤ 4 s; it carries `not_after` (D24) | 69, with the switch unknown: the rerun reads the switch and the journal first, and goes on from its own entry where it finds one (F12) |
+| `switch_to_files`, the cutover's abort, either form | `c` | 5000 ms | 10 s | the larger of 15 s and `N_a`·`c` + 11 s: 15 s while `N_a`·`c` ≤ 4 s | 69: the rerun reads the switch. At `files`, or back at the restored generation with the head at `b`, the abort is done; otherwise it runs again |
+| `record_marker`, after an operator entry's read-back | `c` | 5000 ms | 10 s | the larger of 15 s and `N_a`·`c` + 11 s: 15 s while `N_a`·`c` ≤ 4 s | 69: the push stands, and the marker stays `adding` or `removing`, so writes keep refusing; the rerun reads origin back and records it again (F12) |
+| `outage declare`'s database probe (`operations.md` §2.5's refusals): one read, connected as a writer's snapshot is, as REGISTER-WRITER, of the switch's `mode` and `set_seq` and the kind of the journal entry at `set_seq` | `c` | 2000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | on Brett's word, the database does not answer from this host, so the declaration is written; any other end before the read completes counts the same. In the `--rollback` form, 2: a rollback's declaration counts only where a guard reads the switch at `files` (SVC-12's condition 2), so it needs the switch read here. At `primary`, 2. At `files`, the declaration is written only in the `--rollback` form, where the entry at `set_seq` is a `rollback` and `<k>` is `set_seq - 1`, the head before it (§1.3's `set_seq`); otherwise 2 |
+| `import --single <sha>` and `render --revert <sha>`, their commit call | `c` | 2000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | in doubt, as a writer's commit: each goes through S1's commit call (S2's "The two ways out"), `register commit` (the phase plan's interfaces table) |
+| `import --single <sha>` and `render --revert <sha>`, their other database calls: the snapshot read, as a writer's; in doubt, the lookup's row above; the render that follows is the renderer's row | `c` | 2000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | a failed read: 69, or in doubt where an earlier commit call of the same entry was |
 
 Lane 1 measured the operator rows on PostgreSQL 16.15, after a 42,001-line
 import, with each row's bounds set, timing each call with its `BEGIN` and
@@ -3540,6 +3671,16 @@ already counts them (item 6 of "Migration and rollout"). On Eagle that is the
 host shell, py-bench and cloud-bench: three services, three READER
 connections.
 
+**Every engineer's workstation, with one login per engineer** (Brett, #165
+6722593397). Each workstation runs its own services the same way, one per
+environment, and each connects with the login its environment's
+configuration names: that engineer's own, a member of the reader role (lane
+1's §1.4). A service never holds another engineer's credential, and SVC-2's
+uid check keeps another user's client off its socket. Each service holds one
+connection, so the server's `max_connections`, which its compute tier sets,
+must hold one per environment of every engineer, beside the direct reads and
+the writers' connections.
+
 Why not one per workstation:
 
 - **The installs differ.** Each bench re-installs its vendored tools at start
@@ -3628,10 +3769,13 @@ from cloud-bench would show it.
   `lanes-index` path (Roles and credentials), and lane 4 changes `:1315`. The
   mapping is fixed: the URL's host to `PGHOST`, port to
   `PGPORT`, database to `PGDATABASE`, user to `PGUSER`, and the query
-  parameters `sslmode`, `sslrootcert`, `sslcert`, `sslkey` and
-  `target_session_attrs` to `PGSSLMODE`, `PGSSLROOTCERT`, `PGSSLCERT`,
-  `PGSSLKEY` and `PGTARGETSESSIONATTRS`; `PGPASSFILE`, `PGCONNECT_TIMEOUT=2`
-  and `PGOPTIONS` are the service's own. A password in the URL, or any other
+  parameters `sslmode`, `sslrootcert`, `sslcert`, `sslkey`,
+  `target_session_attrs` and `connect_timeout` to `PGSSLMODE`,
+  `PGSSLROOTCERT`, `PGSSLCERT`, `PGSSLKEY`, `PGTARGETSESSIONATTRS` and
+  `PGCONNECT_TIMEOUT`. `connect_timeout` is the workstation's `c` (D9); a
+  value under 2 is refused, since libpq reads 1 as 2 and 0 as no limit, and
+  with none it is 2. `PGPASSFILE` and `PGOPTIONS` are the service's own. A
+  password in the URL, or any other
   query parameter, is refused: `serve` exits with the stamp `config-refused`
   (SVC-4), and clients read directly. So the service never connects with a
   parameter the direct read's `-d <url>` would apply and it would not. The
@@ -3791,13 +3935,37 @@ primary ones.
 - One long-lived `psql` child with the READER credential, started in the
   background at the service's first request and restarted lazily after any
   failure: `psql -X -q -A -t -v ON_ERROR_STOP=0 -v VERBOSITY=sqlstate`, its
-  connection in its environment (SVC-2), `PGCONNECT_TIMEOUT=2`, one address,
-  and the server bounds in `PGOPTIONS`. No driver, and `dependencies = []`
+  connection in its environment (SVC-2), `PGCONNECT_TIMEOUT` at `c` for each
+  of the endpoint's `N_a` addresses (D9),
+  and the server bounds in `PGOPTIONS`, so it connects to the server's port
+  5432 directly, never through a transaction-mode pooler such as Flexible
+  Server's built-in PgBouncer, which refuses or drops them (lane 1's M1). No
+  driver, and `dependencies = []`
   stays (the spec's third requirement).
 - **One request at a time on it.** The service handles connections
   concurrently but sends one query at a time; each query ends with an `\echo`
   of a per-request marker, and the service reads `psql`'s output until it.
-- **The per-request timer** is 200 ms. On expiry the service sends `SIGINT`
+- **One round trip per request.** The request's statements, from `BEGIN
+  ISOLATION LEVEL REPEATABLE READ READ ONLY` to `COMMIT`, are joined with
+  psql's `\;`, so `psql` sends them as one query. The query asks for the
+  journal entries after the seq of the images the service holds, so no
+  statement waits for another's answer. Against an emulated link one query
+  took 27, 56, 106 and 156 ms at round-trip times of 20, 50, 100 and 150 ms;
+  the five statements sent one by one took 107, 257, 506 and 757 ms, past the
+  200 ms timer from about 40 ms (lane 5's netem run).
+- **An idle connection is checked.** While no request comes, the service
+  sends `SELECT 1` on the held connection every 60 s, under the same timer;
+  a failure restarts `psql` in the background, as above. So a connection that
+  a NAT or the provider's load balancer dropped while idle is found between
+  prompts, not by a prompt's request.
+- **The per-request timer** is 200 ms, or, where the workstation's round
+  trip to the server is over 100 ms, that round trip plus 100 ms. One query
+  costs one round trip and a few milliseconds (above), so a fixed 200 ms
+  would answer `unavailable slow` to every request from a workstation more
+  than about 190 ms away. The round trip is `register_rtt_ms=` in
+  `lanes-index.conf`, the median of ten `SELECT 1` round trips on one
+  connection, written when the workstation joins, as `c` and `N_a` are (D9);
+  with none, or 0, the timer is 200 ms. On expiry the service sends `SIGINT`
   to `psql`, which cancels the query, answers `unavailable slow`, and, if
   `psql` has not printed the marker within 100 ms more, kills it; the next
   request starts a new one in the background and is answered `unavailable`
@@ -3830,9 +3998,15 @@ journal entries or whole files it needs. Then:
 
 - if the images it holds in memory have the digests at `n`, it answers them;
 - otherwise it brings them to `n` with the journal entries read in that
-  transaction, by the same function the writers' snapshot uses, checks them
-  against the digests, and takes a file whole from that transaction on any
-  mismatch;
+  transaction, by the same function the writers' snapshot uses, and checks
+  them against the digests. On any mismatch it takes the file from the
+  per-environment image cache where the cache holds it at the digest at `n`;
+  otherwise it answers `unavailable`, so the client reads directly, and
+  fetches the file whole in the background, in a transaction of its own,
+  never on a request's timer. Across an emulated link a whole 2,590,927-byte
+  `lanes/LANES.md` took 175, 417, 818 and 1,219 ms on a held connection idle
+  for 10 s, at round-trip times of 20, 50, 100 and 150 ms, against 27 ms
+  locally (lane 5's netem run);
 - it writes what it fetched to the per-environment image cache that S1's
   snapshot reads, so the cache is one cache, as D17 asks: a file is replaced by
   write and rename, and the cache's seq only moves forward, under a short
@@ -3961,9 +4135,9 @@ the interfaces section now says the same (question 1).
 |---|---|---|
 | Fixed parts, before the prefetch | measured about 0.25 s warm, about 0.6 s with a cold record walk (parts 1–3) | not bounded; spent first |
 | The prefetch's `lanes-index` start | about 72 ms | spent once; it is also D3's mode question |
-| The wait for the service | 300 ms, connect and answer together | the client's socket timer; a service that accepts and never answers costs 300 ms (probe B6: 348 ms of process wall for a 300 ms deadline) |
-| The service's own work | 200 ms | its per-request timer, inside the client's 300 ms, so it answers `unavailable` before the client gives up |
-| The direct read | `T0 + 3.75 s − now`, with `connect_timeout` 2 s, `lock_timeout` 1000 ms, `statement_timeout` 1500 ms | the timeouts table's guard row, which the frame had at "4 s, cut to what the hook has left"; this section cuts earlier, to the parse's start line, to leave the parse and the print their time, and the row now says so (question 7). The timer is never above 3.75 s |
+| The wait for the service | 300 ms, or the service's timer plus 100 ms where SVC-6 raises it, connect and answer together | the client's socket timer; a service that accepts and never answers costs that wait (probe B6: 348 ms of process wall for a 300 ms deadline) |
+| The service's own work | 200 ms, or the workstation's round trip plus 100 ms where it is over 100 ms (SVC-6) | its per-request timer, inside the client's wait, so it answers `unavailable` before the client gives up |
+| The direct read | `T0 + 3.75 s − now`, with `connect_timeout` `c` (D9), `lock_timeout` 1000 ms, `statement_timeout` 1500 ms | the timeouts table's guard row, which the frame had at "4 s, cut to what the hook has left"; this section cuts earlier, to the parse's start line, to leave the parse and the print their time, and the row now says so (question 7). The timer is never above 3.75 s |
 | **The parse's start line** | `T0 + 3.75 s` | a read, through the service or direct, that completes after it is a refusal: the client exits as "too late to verify", and the guard refuses 2 without parsing |
 | The parses and the decision | a reserve of 0.5 s | measured on the real register (2,590,927 bytes): 92.9 ms median, 156.6 ms p95, 99.2 ms cold (lane 2's `MEASURE.md`, (14)), so the reserve holds with 0.34 s to spare at p95 |
 | Printing the refusal and exiting | 0.15 s | reserved |
@@ -3973,9 +4147,10 @@ until `T0 + 4.25 s`, and the guard exits by `T0 + 4.4 s`. **The worst case where
 nothing answers:** about 0.6 s of fixed parts with a cold walk, 0.07 s of
 `lanes-index` start and 0.3 s waiting for the service bring `now` to about
 `T0 + 1.0 s`; the direct read's timer is then about 2.75 s. A database whose
-connect never completes gives 2 at its 2 s `connect_timeout`, about
-`T0 + 3.0 s`; one that goes silent after connecting gives 2 when the timer
-expires, about `T0 + 3.75 s`; either refusal is printed by about
+connect never completes gives 2 at its `connect_timeout`, `c` (D9), or when
+the timer expires, whichever is first: about `T0 + 3.0 s` at `c` = 2, and
+`T0 + 3.75 s` above it; one that goes silent after connecting gives 2 when
+the timer expires, about `T0 + 3.75 s`; either refusal is printed by about
 `T0 + 3.9 s`. A connect that completes at 2 s and a statement that runs to
 its 1.5 s bound would end at about `T0 + 4.5 s`, which the timer cuts: in this
 case that database answers 2, not 0, by design. **The late success** that the
@@ -3988,6 +4163,41 @@ SVC-7 records, not taken). Lane 2 has measured it on the real register,
 2,590,927 bytes: 92.9 ms median, 156.6 ms p95 and 99.2 ms cold, so the 0.5 s
 reserve stays and the start line stays at `T0 + 3.75 s` (lane 3's ruling,
 #165 6579459518; `MEASURE.md`, (14)).
+
+**Over a remote database** (Q22; the phase plan's "Over a remote database"),
+lane 5's netem run (#165 6722703424) puts the direct read's connect at about
+1.1 s at 150 ms of RTT, inside `c`, and a whole-file fetch after it ends at
+about `T0 + 3.5 s` from the worst case's `T0 + 1.0 s`: 0.25 s inside the
+start line. A lost SYN adds about 1 s to the connect. Under a 2 s
+`connect_timeout` that connect is always cut, and the guard answers 2; under
+`c`, 3 s at 150 ms, the read still ends by about `T0 + 3.3 s` where no whole
+file is fetched, and where one is it would end at about `T0 + 4.5 s`, past
+the line, so the guard answers 2. Answering 2 refuses that prompt: it is not
+sent, and the person sends it again. The connect, the query and a whole-file
+fetch are about 16 round trips, so a direct read that must fetch a whole file
+meets the line at about 165 ms of RTT, and past it only the service's answer
+comes in time (SVC-9). The direct read takes `c` rather than 2 s because the
+timer, not the connect bound, keeps the hook's budget: the read never ends
+after `T0 + 3.75 s`, whatever `c` or the endpoint's address count.
+
+**A whole file is never lost to the line** (lane 4's STOP, #165 6722839180).
+The direct read fetches a whole file in a detached child, started as
+`guard-bind` is (`setsid`, with the hook's descriptors closed), bounded at
+`N_a`·`c` + 15 s, which writes it to the per-environment image cache. The
+read waits for it only to its own timer, and uses what it fetched where the
+digests at the read's `n` match. So a fetch the line cuts goes on and fills
+the cache, and the next prompt reads only the journal entries since. A
+workstation fills its cache when it joins, so a guard read needs a whole file
+only after the cache is lost or the files diverge; through the service, the
+fetch is already off the request's timer (SVC-7). With the cache filled, a
+direct read is about eight round trips and the entries. Where no service is
+configured it meets the line to about 375 ms of RTT; where a configured
+service is silent, its wait, SVC-6's timer plus 100 ms, comes first, and the
+line holds to about 310 ms. A lost SYN brings those to about 250 ms and
+200 ms (lane 4, #165 6722936190). Past them a workstation runs the service,
+with SVC-6's timer. Between about 60 ms, where the guard without the service
+passes Brett's 1 s (SVC-9), and about 310 ms, the service is a choice for
+speed, not for correctness.
 
 **Under a declared outage** (lane 5's change, #165 6579523948, which lane 3
 accepted). Where an unexpired declaration names this database, the client
@@ -4050,8 +4260,8 @@ with "BINDING", and the bind runs detached,** with a writer's bounds and D7's
 30 s deadline, none of it on the hook's time. **The form is the phase plan's**
 ("Answer 2's detached bind"; lane 3's acceptance, #165 6708889286): the guard
 rewrites the session's offer file to `mode=binding`, starts `lanes-edit.sh
-guard-bind` as a `setsid` child with the hook's descriptors closed, bounded at
-490 s over its whole body, prints "BINDING" and exits 2. The offer file is the bind's record, and
+guard-bind` as a `setsid` child with the hook's descriptors closed, bounded
+over its whole body by the phase plan's computed `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, prints "BINDING" and exits 2. The offer file is the bind's record, and
 the bind counts as live only while its pid is live with the start time the
 record holds (`pid_start_of`). While it runs, and once when it ends, the guard
 answers each prompt of that session from the record by an eleven-case table:
@@ -4098,14 +4308,25 @@ the same start, a `psql` start and connect, the head and digest query, the
 image cache, and the same parses. The service removes the `psql` start, the
 connect and the query: R1 measured one write at 14.7 ms through a new `psql`
 process against 0.97 ms in a session; a read is not measured, and a connect
-over TCP adds more. It does not remove parts 1 to 3, or the parses. That is
-the honest size of Q29's question: on this host the direct guard on primary
-should land near half a second warm, an order of magnitude inside its 5 s,
-and the service saves tens of milliseconds of it. **Q29's figure,** as lane 2
-assembled it on the real register (`MEASURE.md`, (14)): about 0.42 to 0.47 s
-warm for the guard on primary through the prefetch, against about 0.55 to
-0.60 s in files mode today (0.9 to 1.0 s with a cold record walk). The figure
-that decides is test 10's, on the fixture.
+over TCP adds more.
+It does not remove parts 1 to 3, or the parses. **Against the Azure server**
+(Q22: Azure Database for PostgreSQL Flexible Server) it removes most of the
+read. A new `psql` with TLS and SCRAM, connecting and sending one query, took
+about eight round trips here: 83 ms at a round-trip time of 0, and 239, 491,
+882 and 1,283 ms at 20, 50, 100 and 150 ms. The service's request, one query
+on its held connection, took one (SVC-6; lane 5's netem run). Lane 2's local
+figures are floors (#165 6722518182): the direct guard is about 0.46 to 0.51 s
+on a Unix socket, against about 0.55 to 0.60 s in files mode today (0.9 to 1.0
+s with a cold record walk). Against the server it is about 0.65 to 0.70 s at
+20 ms, 0.90 to 0.95 s at 50 ms and 1.30 to 1.35 s at 100 ms, with 1 s more
+after a lost SYN; through the service it is about 0.44 to 0.49 s at 20 ms and
+0.57 to 0.62 s at 150 ms. So the guard without the service passes Brett's 1 s
+(Q29) above a round-trip time of about 57 to 63 ms. **Q29's figure** is taken
+at act 3, from Eagle and Raven against the server, with TLS as lane 1's texts
+set it: the guard without the service, warm, as lane 2's act 3 rows take it. A
+workstation that joins later, more than about 60 ms from the server's region,
+is past 1 s without the service, so it records its own figure as it joins.
+Test 10's figure, on the fixture, is a floor, and decides nothing for Q29.
 
 **Under the interfaces section's form, where the service decides,** or under
 keyed answers (SVC-7's last paragraph): the parses would leave the guard, and
@@ -4140,7 +4361,11 @@ The probes' toy service answered a warm request in about 3 to 5 ms (3.8 ms
 median in `run/b2.out`; 4.5 ms in the check's re-run, `run/check-b2-rerun.out`)
 and a 1.35 MB answer in 2.35 ms; the real service adds one transaction on a
 held connection, about a millisecond by R1's session figure. The 50 ms should
-hold with room. The spec's sixteenth requirement, which read "the
+hold with room on the fixture, where the database is local. Against the
+Azure server the service's answer is one round trip more, about 27 to 156 ms
+at round-trip times of 20 to 150 ms (SVC-6), so over 50 ms above about 40 ms;
+act 3 records it against the server beside Q29's figure (lane 2's act 3 rows,
+#165 6722518182). The spec's sixteenth requirement, which read "the
 service-backed guard SHALL answer in under 50 ms", now reads "the service
 SHALL answer the guard's read in under 50 ms", with the whole hook recorded
 beside it; the whole guard's figure is Q29's (question 6).
@@ -4491,11 +4716,13 @@ written before these rulings, so a row may still read "lane 3" or "open":
   every such tail must be safe to run twice; since commit N, at most once
   (lane 4's "The tail, once"), and S1's "A write in doubt" lists each verb's
   tail. Lane 2 adds a test per tail after the review.
-- **Row 37:** the bind's 490 s bound over the child's whole body (R2's S6),
-  with `LANES_GIT_TIMEOUT=45` in the child, accepted as arithmetic: 368 +
-  2`v` + 6`N_r` s, 474 s at `v` = 2 and `N_r` = 17, under the body's 480 s,
-  counting the two waits for the lane checkout's mutex and the rerun's wait
-  after a kill (V2's NIT 2); phase 1's tests measure the child's bind against it.
+- **Row 37:** the bind's bound over the child's whole body (R2's S6), computed
+  by `guard-bind` from its steps' timers: 200 + 2`D` + 3`S` + 3`C` + 3`R` +
+  3`T_L` + 2·max(`v`, 2 s) + (`N_r` + 1)(`T_r` + `w_s`), plus one read and the
+  10 s of `-k`, rounded up to 10 s: 500 s at `c` = 2 and 530 s at `c` = 3 with
+  one address, with or without the service, and 550 s and 610 s with two; with
+  `LANES_GIT_TIMEOUT=45` in the child, accepted as arithmetic; phase 1's tests
+  measure the child's bind against it.
 - **Rows 18, 22 and 40** are Brett's, and go to him with the spec PR (the
   differences table for Brett).
 - **`start-record`'s exits** follow lane 4's corrected table, which agrees with
@@ -4528,10 +4755,10 @@ the claim files, `<d>.take.<k>` (Q9); the `owed` value of the done mark's `tail`
 `args_sha256` (C1);
 `register snapshot --at` (N1), `journal --not-after` (N2), `journal --generation`,
 `--lane`, `--verb` and `--args-sha256` (Q1) and `guard-bind --body`
-(N13); and the renderer's 64-seq batch and 16-pass cap. As lane 3's ruling on v1
+(N13); `append-line --landing-expired` and its `--pr`, `--repo`, `--word`, `--word-where` and `--word-utc`, and `RULE6_PRIMARY`, `rule6_primary_on` and `RULE6_EXPIRED_AWK` (F13); and the renderer's 64-seq batch and 16-pass cap. As lane 3's ruling on v1
 has it for every new object
 (#165 6578020193), each is accepted as new and unproven, and needs a test in
-lane 2's plan (AT-F6 for the bind; tests 3, 4, 5, 6 and 9 for the rest) before
+lane 2's plan (AT-F6 for the bind; AT-F13 for `--landing-expired`; tests 3, 4, 5, 6 and 9 for the rest) before
 it counts as proven.
 
 Lane openRepoTools-4's section (#165 comment 6576888068). It settles, for each of the seam split's three phases, the functions, files and call sites that change, and the interface each phase leaves for the next. It answers the claims marked [L4-a] to [L4-c] in S1 and [L4-1] to [L4-5] in S2, and the items the frame review routed to lane 4.
@@ -4689,7 +4916,7 @@ The lifecycle scripts:
 #### Question 11: `code/lanes-index:1315`
 
 - **Phase 1's first PR,** because every new register subcommand reuses `_run`. `_run` (`:1310–1317`) is the only `psql` spawn: `_query_many` (`:1345`), `open_write` (`:1386`) and `apply` (`:1484`) all go through it.
-- **The change:** drop `"-d", self.url`; `_env` (`:1299–1308`) maps the URL as SVC-2 fixes it (`design.md:2603–2615`), host, port, database, user and the five SSL and target parameters to `PG*` variables; `load_config` refuses any other query parameter, so the direct read and the service connect identically. Every connection goes through the environment, the admin connection too, as `PGSERVICE=<service>` (lane 1's `bootstrap --admin-service`); `_env` drops the inherited `PGPASSWORD` and `PGPASSFILE`, as today (`:1304`), and also `PGSERVICEFILE` and `PGSYSCONFDIR`, so no inherited variable points libpq at another file (lane 5's 6579523948, accepted by lane 3 in 6579562840). On register paths `PGCONNECT_TIMEOUT` is set, not `setdefault` (`:1306`), so an inherited value cannot lengthen the bound, and the 300 s cap (`:1317`) becomes each path's client timer; the index paths keep 5 s and 300 s. It is cost-neutral ([L4-c]).
+- **The change:** drop `"-d", self.url`; `_env` (`:1299–1308`) maps the URL as SVC-2 fixes it (`design.md:2603–2615`), host, port, database, user and the five SSL and target parameters to `PG*` variables; `load_config` refuses any other query parameter, so the direct read and the service connect identically. Every connection goes through the environment, the admin connection too, as `PGSERVICE=<service>` (lane 1's `bootstrap --admin-service`); `_env` drops the inherited `PGPASSWORD` and `PGPASSFILE`, as today (`:1304`), and also `PGSERVICEFILE` and `PGSYSCONFDIR`, so no inherited variable points libpq at another file (lane 5's 6579523948, accepted by lane 3 in 6579562840). On register paths `PGCONNECT_TIMEOUT` is set to `c` ("Over a remote database", below), not `setdefault` (`:1306`), so an inherited value cannot lengthen the bound, and the 300 s cap (`:1317`) becomes each path's client timer; the index paths keep 5 s and 300 s. It is cost-neutral ([L4-c]).
 - **Tests that read the argument list:** `FAKE_PSQL` takes the URL from `-d` (`tests/test_lanes_index.py:1061`) and must rebuild it from `PGHOST`, `PGPORT`, `PGDATABASE` and `PGUSER`; the role assertions on `c["url"]` at `:1163`, `:1178` (in the test at `:1140`) and `:1247` (in the test at `:1214`) keep working through it; the lexer test at `:1132` passes `-d` itself; `tests/test_lane_worktrees.py:1846`'s `-d` is `update-ref -d`. New assertion: no argument contains the URL, and no `-d` appears.
 
 #### Phase 1 under the other options
@@ -4721,8 +4948,8 @@ The primary branch sits at the dispatcher's write guard (`:15103`), which names 
 3. **The child stops at the seam.** The commit seam's primary branch writes the change set and the message, writes `ready`, and waits on fd 5. Fd 5 is a FIFO in the attempt's directory that the child opens read-write, so the open cannot block. The child holds no database session while it waits; `register commit` is the parent's own `psql` child.
    - **It waits in turns** of `read -t 1 -u 5`, since bash 3.2's `read -t` takes whole seconds. After a turn with no message it tests its parent with `pid_start_of` against `parent.pid`. It waits on while the parent lives, up to a cap.
    - **The cap is `2 × (D + 30 s)`, 120 s at D7's 30 s** (`LANES_REGISTER_SEAM_CAP_S` for tests). That is nearly twice a write's worst case ("The in-doubt rule", below).
-     - A child normally waits for its own commit call: the call's client timer, 8 s with the connect inside it (D9's commit row; the timer is `subprocess.run`'s `timeout` on the whole `psql`, `code/lanes-index:1314–1317`). Add one `lanes-index` start, about 0.11 s ([L4-c]), and the parent's work before `committed`, the renderer's fork and the record's rewrite, a few ms. That is about 8.2 s.
-     - A child kept after a call in doubt waits for the rest of the write, at most `T_write`, about 68 s.
+     - A child normally waits for its own commit call: the call's client timer, `C`, `N_a`·`c` + 6 s with the connect inside it (D9's commit row; the timer is `subprocess.run`'s `timeout` on the whole `psql`, `code/lanes-index:1314–1317`). Add one `lanes-index` start, about 0.11 s ([L4-c]), and the parent's work before `committed`, the renderer's fork and the record's rewrite, a few ms. That is about `N_a`·`c` + 6.2 s.
+     - A child kept after a call in doubt waits for the rest of the write, at most `T_write`: 68.5 s at `c` = 2, and 71.5 s at `c` = 3. The cap holds while `T_write` stays under 120 s, that is for `N_a`·`c` up to 19.
      - A live parent never meets the cap. It bounds only a parent that is stuck.
    - **On a message** it writes `seam.out` in its directory, once, with noclobber: `tail` before it acts on `committed`, `none` before it acts on `abandon`.
    - **With its parent gone, or at the cap,** it writes `seam.out` as `none` and writes one line to fd 4: "attempt `<k>` of write `<id>` stopped waiting at the seam (`<why>`); nothing after the seam ran". It then exits 75 without its tail.
@@ -4818,6 +5045,51 @@ Two lines that read HEAD's sha after the write print `register seq <n>` instead 
 
 **The rule: one run, one journal entry.** A second reach in one run exits 2: "a second register write in one run; the first committed at seq `<s>`; nothing more was sent." No verb is split and the design names no merged message, because D5 and S2 give one entry and one mirror commit per write with its own message "exactly as today", a merged message would invent text, a split would create a partial state between two entries, and `rename-lane`'s second act is a git commit, not an entry.
 
+#### `LANDING EXPIRED`'s verb: `append-line --landing-expired` (F13)
+
+Brett adopted the release on 2026-11-08 ("Adopt, on my word (Recommended)", #165 6721583757). D18 keeps `append-line` the one verb, so a form of it composes the line, and nothing else writes the kind on primary:
+
+```sh
+LANES_LANE=<writer> LANES_SESSION=<uuid> lanes-edit.sh append-line --landing-expired <holder> \
+  --pr <n> --repo <owner/repo> --word '<quote>' --word-where '<where>' --word-utc <UTC>
+```
+
+```text
+LANDING EXPIRED — lane <writer>, session <uuid>@<ws>, <UTC>, for lane <holder>: PR #<n> into <repo> main, its LANDING of <landing UTC>, <m> min past Rule 6's 30; on Brett's word (<where>, <word UTC>): "<quote>"
+```
+
+- **The fields.** `lane <writer>` comes first, so the classifier, `lane_from_text` (`:1582`) and the commit message (`LANES(<writer>@<ws>): append line — …`) all name the writer. `<UTC>` is D13's (`utc_now` answers the snapshot's database time) and is the line's first UTC. `for lane <holder>` is `register_lines.for_lane`. Brett's quote is last, so a `lane`, `PR #`, `into … main`, UTC or `session` inside it is never the classifier's first match (`code/lanes-index:683–713`).
+- **Copied, not typed.** In the file at `n`, the form finds the holder's open `LANDING` as `who_landing` pairs it on primary (`RULE6_AWK` with `RULE6_EXPIRED_AWK`, below, and `repos.tsv`'s aliases), picked out by `--pr` and `--repo`, and copies that line's lane, PR, repository token and UTC byte for byte, not `RULE6_AWK`'s aliased form (`:6526`). Where the holder posted that `LANDING` more than once, the form copies the newest post: `RULE6_AWK` dates the `LANDING` by it (`:6530–6533`), and so does F13's check (lane 1's, §1.3.1). The line's `repo_key` and `for_lane` are then the `LANDING`'s, so the misspelling LR005 of `operations.md` §2.6 cannot come from the form, and a renamed holder still matches.
+- **Refused with 2, nothing sent.** Before the lock, as the newline refusal is (`:15336`): `--word`, `--word-where` or `--word-utc` missing or empty, `--word-utc` not a UTC, a newline in any argument, `LANES_LANE` or `LANES_SESSION` unset, or any mode but primary (the mode query's fall to files mode included, F8). On each attempt's snapshot, as the verbs' other pre-checks are (`CP_AFTER_REBASE`, above): no open `LANDING` of the holder for that PR and repository, or one 30 minutes old or less. The age is `utc_now` less the `LANDING`'s UTC, not `older_than_minutes` (`:4293`), which reads the host's clock; the window is 30, not `LANES_LANDING_MINUTES`, since F13's check fixes it. A `LANDED` committed after the snapshot fails the commit's head check (LR001), and the next attempt finds no open `LANDING`.
+- **The kind typed by hand.** On primary, `append-line` refuses with 2, before the lock, a text that the grown `REGISTER_KIND_RE` reads as `LANDING EXPIRED`, as it refuses managed vocabulary (`:15342`), and names the form. Off primary that text is written as today, and `RULE6_AWK` ignores it.
+- **A take with no UTC** (lane 3's ruling, #165 6722541787). On primary, `append-line` refuses with 2, before the lock, a text that the one classifier reads as a take, a `HOLD` or a `LANDING` (not `HOLD (refresh)`, `HOLD (run id)` or `QUEUED-HOLD`, which take nothing), whose UTC it cannot read into `utc_ts`, a UTC-shaped stamp that does not parse included, and names the rule, as S6 refuses a taking line that names no repository. Such a take could never be stale, so no `LANDING EXPIRED` could release it. The client sends a take's `utc_ts` as the classifier reads it, NULL where it cannot, and never fills one in. Off primary the text is written as today. The transaction's own refusal stands behind this one: LR005 with DETAIL `take-no-utc`, in §1.3's step 7 (lane 1's v3.1).
+- **The word is not verified.** Neither the client nor the database can check that Brett gave it: the line and its journal entry are the record. `--word-utc` is the word's time, not the write's, so a rerun with the same arguments keeps its digest; the caveat in "The pending record" (below) does not apply.
+- **What it prints.** On success, after the seam, since only then is the seq known (as `claim`'s `register seq <n>`, Q19(A)): `register seq <s>: released lane <holder>'s LANDING of <UTC> (PR #<n> into <repo> main), <m> min past Rule 6's 30`, and exit 0. On LR005 from F13's check (lane 1's, §1.3.1): exit 2, and stderr names LR005, its DETAIL token and its message, and says nothing was written. A caller that branches reads the token, never the message (lane 1's v3.1). As the form copied the `LANDING`'s fields, each token here is a finding for D18's agreement tests: `expired-none`, the `LANDING` is keyed another way, each writer by its own `repos.tsv` (lane 3's ruling, #165 6722541787), or the file's pairing found a different newest take; `expired-closed`, `main_slots` counts a close that the file's pairing missed, such as a `LANDED` under an overlapping key; `expired-young`, the form and the commit dated different posts, or the UTC cannot be read. In doubt: exit 3 and the rerun with `LANES_WRITE_ID` and `LANES_WRITE_GENERATION`, printed once as "The in-doubt rule" (below) prints it. The form makes no side effect outside the register, so F14's table gains no row.
+- **`who --landing` on primary: the reader scripts gate on.** `who_landing` (`:6590`) runs `RULE6_AWK` over `register_text`, and a script gates on its answer (`:6622–6623`). Unchanged, it would keep listing a released `LANDING`, marked STALE, and the release would take effect in the database only, where `main` is then free if no other take on it is open. One flag fixes that on primary:
+  - **The flag, `RULE6_PRIMARY`.** A shell variable, never exported, set empty at file scope beside `RULE6_AWK` (`:6512`), so an inherited value never counts. One helper, `rule6_primary_on`, sets it to 1 and appends `RULE6_EXPIRED_AWK` to `RULE6_AWK`, once.
+  - **Where it is set.** In the main shell, where the dispatcher's one mode answer is primary: `reg_open`'s for a reader, the write guard's for a writing verb, both at `:15131–15141`, before the arm. Also in an attempt's child, where `LANES_REGISTER_SCRATCH` is honoured, since the child asks no mode and its file at `n` is primary's. Not in `register_text_checked`: it runs inside `who_landing`'s pipeline, where a variable set is lost, which is why `reg_open` runs in the main shell. There is no second mode query. `who_landing`'s call (`:6610`) stays as it is, and so does the hygiene test that pins it (`tests/test_repo_hygiene.py:4408–4409`).
+  - **The branch, `RULE6_EXPIRED_AWK`:**
+
+    ```awk
+    /^LANDING EXPIRED — / {
+      line = $0
+      if (!match(line, /for lane [A-Za-z0-9._-]+/)) next
+      lane = substr(line, RSTART + 9, RLENGTH - 9)
+      pr = ""; repo = ""
+      if (match(line, /PR #[0-9]+/))                      pr   = substr(line, RSTART + 4, RLENGTH - 4)
+      if (match(line, /into [A-Za-z0-9\/._-]+ main/))     repo = canon(substr(line, RSTART + 5, RLENGTH - 10))
+      if (pr == "" || repo == "") next
+      k = lane "\037" pr "\037" tolower(repo)
+      if ((k in ST) && ST[k] == "LANDING") { ST[k] = "EXPIRED"; O[k] = NR }
+      next
+    }
+    ```
+
+  - **How it pairs.** As `LANDED` pairs: by lane and PR, with the repository through the same alias table (`canon`). The lane is the `for lane` name, compared exactly, as `LANDED`'s lane is. Unlike `LANDED`, it closes only the holder's open `LANDING` for that PR and that repository: it never falls back to the group's latest `LANDING`, and it prints no `UNPAIRED` row, since F13's check names one `LANDING` by `repo_key`. A line it cannot pair closes nothing, so the reader errs toward blocked. It does not test the window; F13's check did that at the commit. A later `LANDING` by the holder on that PR and repository opens again, as after `LANDED`. `who_landing` lists only `LANDING` rows, so an `EXPIRED` row is not printed.
+- **Files mode, and a rollback.** Off primary, `RULE6_PRIMARY` is empty and `RULE6_AWK` is byte-identical to today's. Files mode, `index` mode and an unconfigured workstation therefore read Rule 6 exactly as today; a mode answer of files, F8's fall included, sets nothing. Plain `append-line` is unchanged, and the form exits 2: "the release of a stale `LANDING` exists only on `mode=primary`; nothing was written". The one new behaviour is that an `append-line` whose first argument is `--landing-expired` exits 2 where today it would append that word as a line. That is a new form, not a change to one in use, so answer A (#165 6721370130) gains no row and Brett is asked nothing. The release exists only on primary: after a rollback to files the program is today's again, so `who --landing` lists a released `LANDING` again, marked STALE, and a script that gates on it blocks again, as today.
+- **Imported history.** D18's agreement tests run the primary program (`RULE6_AWK` with `RULE6_EXPIRED_AWK`) against `main_slots`, and any difference is a finding before the cutover, as for every kind. The register holds no `LANDING EXPIRED` today, and the form refuses off primary. A line can therefore reach an import only from primary (a re-import after a rollback, where F13 judged it) or typed by hand in files mode. The import does not run F13's check, so a typed line would release a `LANDING` that F13 never judged, and both readers would agree on it. One check stays for that case, in the test, and it is lane 2's (AT-F13 (j)): each imported `LANDING EXPIRED` must meet F13's condition by its own UTC and its `LANDING`'s (the holder, the PR and `repo_key` equal, more than 30 minutes apart, no close between) and must carry the form's word clause, or it is a finding before the cutover. The import changes nothing for this kind except a line with no `for lane`, which is lane 1's.
+- **No caller.** No script calls the form, so F9's and Q9's lists gain nothing.
+
 #### Output, and the side effects that run once (F14)
 
 Each attempt's stdout and stderr go to two files; only the deciding attempt's are replayed, each whole to its own descriptor, stdout first. The order between the two streams is lost, which shows only on a terminal. Output after the seam streams live, so `request-handoff`'s poll still shows progress. Every arm's side effects outside the register sit after the seam, so they run once, after COMMIT, by construction:
@@ -4909,8 +5181,8 @@ The age is short because a record exists only after a kill or a 3, and its rerun
   - the deadline's 75.
 
   Each waits for the lookup, at the deadline or before it.
-- **The lookup is lane 1's v2.8 `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)`.** It is made by `lanes-index journal --write-id <id> --not-after <n>`, at READ COMMITTED, in a transaction it rolls back. It passes the write's generation, lane, verb and `args_sha256` with `--generation <g> --lane <lane> --verb <verb> --args-sha256 <h>`. `find_write` raises LR007 in `commit_write`'s order: another generation first, then an entry of another write. The LR007's DETAIL token names which check refused it, `generation` or `another-write` (lane 1's v2.8), and the record's fate follows that name. The client makes no read of its own to decide it. `<n>` is the largest `not_after` among the record's `call` lines.
-  1. **The client waits first,** on its own estimate: the last snapshot's database clock plus `SECONDS` since. It calls once that estimate puts `<n>` at most 2 s ahead. A run with no snapshot clock calls at once.
+- **The lookup is lane 1's v2.8 `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)`.** It is made by `lanes-index journal --write-id <id> --not-after <n>`, at READ COMMITTED, in a transaction it rolls back, sent as one request ("Over a remote database", below). It passes the write's generation, lane, verb and `args_sha256` with `--generation <g> --lane <lane> --verb <verb> --args-sha256 <h>`. `find_write` raises LR007 in `commit_write`'s order: another generation first, then an entry of another write. The LR007's DETAIL token names which check refused it, `generation` or `another-write` (lane 1's v2.8), and the record's fate follows that name. The client makes no read of its own to decide it. `<n>` is the largest `not_after` among the record's `call` lines.
+  1. **The client waits first,** on its own estimate: the last snapshot's database clock plus `SECONDS` since that snapshot call ended. It calls once that estimate puts `<n>` at most 2 s ahead. A run with no snapshot clock calls at once. Counted from the call's end, not its start, the estimate is never ahead of the database by more than `SECONDS`' grain, however long the call's connect took, so the server's 3 s covers it (LR011); over a remote path it lags by the call's tail, which only lengthens this wait.
   2. **The server waits for the rest,** on its own clock, holding no lock, for at most 3 s.
   3. **The server takes the head row's lock** under the 2000 ms `lock_timeout`. It checks again under the lock that the clock has passed `<n>`, the exact complement of step 9's test, and returns the write's seq, or NULL, after `commit_write`'s generation and other-write checks (LR007).
 - **Its outcomes,** as S1 has them:
@@ -4919,14 +5191,14 @@ The age is short because a record exists only after a kill or a 3, and its rerun
     - **`another-write`, another write's entry:** the record is removed. The id is taken, so no call of this write can commit under it (`LANES_WRITE_ID` misused across commands; V2's NIT 1).
     - **`generation`, another generation:** the record is kept. The run prints the refusal of a plain rerun that meets such a record ("The pending record", above): the effect check, the steps that may be owed, and `LANES_WRITE_ID=new`. Later reruns refuse the same way until the person settles it.
   - **absent, with the lock held:** the code the last attempt earned, whether 75, 69, 2 or the verb's own, with that attempt's output; the record is removed;
-  - **no try that starts within the window takes the lock, or the lookup is refused with LR011:** 3, naming the id, with the lookup and the printed rerun; the record is kept. A try fails to take the lock by ending in 55P03, in a failed connect, or with no answer within its 8 s timer. Each of these is tried again while a new try can start within the window, so only the last decides.
+  - **no try that starts within the window takes the lock, or the lookup is refused with LR011:** 3, naming the id, with the lookup and the printed rerun; the record is kept. A try fails to take the lock by ending in 55P03, in a failed connect, or with no answer within its timer, `T_L`. Each of these is tried again while a new try can start within the window, so only the last decides.
 - **LR011, "lookup too early,"** is v2.6's refusal. It covers an `<n>` that is missing or more than 3 s ahead, and a check that fails under the lock, as after the clock stepped back. It proves nothing, so it is 3, and a rerun under the same id looks again.
 - **The window starts when the client's own wait ends.**
   - That is at once where `<n>` is already at most 2 s ahead, as after a commit call that ran to its timer. Otherwise it is at most `C + 2 s` after the last snapshot's end.
-  - Every try starts inside its 10 s, and each runs to its own 8 s timer, which covers the 2 s connect, the server's wait, the lock and the lookup (D9's lookup row).
+  - Every try starts inside its 10 s, and each runs to its own timer, `T_L`, which covers the connect, the server's wait, the lock, the lookup and the call's round trip (D9's lookup row).
   - **A try that ends without an answer is made again,** at least 1 s after the last, while a new try can still start inside the window. That covers:
     - a failed connect;
-    - a try cut by its 8 s timer;
+    - a try cut by its timer, `T_L`;
     - a 55P03. The head row's holder may be this write's own orphan, and the role's 5 s bounds end it within the window (D9).
   - **LR011 and LR007 are answers, and are not tried again:** LR011 is 3, and LR007 is 2.
   - **The last try, ended without the lock,** gives the third outcome, 3. The worst case does not change: every try starts within `R` and ends within `T_L`.
@@ -4943,10 +5215,11 @@ The age is short because a record exists only after a kill or a 3, and its rerun
 - **LR008 is never 3 or 69 by itself.** It is the database saying "not committed": a lost turn, whose `call` line is dropped. Inside D7's 30 s the loop goes on, a fresh snapshot then a new attempt under the same write id, as for 40001.
 - **What it adds to a write's worst case.** The terms:
   - `D`: D7's 30 s, plus 1 s for `SECONDS`' grain;
-  - `S` and `C`: the snapshot's and the commit's client timers, 8 s each, each with the connect inside (D9);
+  - `c` and `N_a`: the register calls' `connect_timeout`, `max(2 s, ⌈t_c + 1 s⌉)`, where `t_c` is the workstation's median cold connect, measured when it joins by act 3's steps, and the number of addresses the endpoint resolves to, since libpq applies `c` to each ("Over a remote database"): `c` is 2 s on a LAN, and 2 to 4 s over Q22's managed host at 20 to 300 ms of RTT; a figure given at `c` = 2 or 3 is for `N_a` = 1;
+  - `S` and `C`: the snapshot's and the commit's client timers, `N_a`·`c` + 6 s each (8 s at `c` = 2), each holding the connect, its 5 s statement bound, and 1 s for the call's round trip and starts (D9);
   - `v`: the verb's run to `ready`;
   - `R`: the window, 10 s;
-  - `T_L`: the lookup's client timer, 8 s;
+  - `T_L`: the lookup's client timer, `N_a`·`c` + 7 s (9 s at `c` = 2): the connect, its 6 s statement bound and the same 1 s;
   - `p`: three `lanes-index` starts and the scratch tree, about 0.5 s ([L4-c]).
 
   The derivation:
@@ -4956,9 +5229,9 @@ The age is short because a record exists only after a kill or a 3, and its rerun
 
   `T_write ≤ (D + 1) + S + C + max(v, 2 s) + R + T_L + p`
 
-  - **The figure:** 31 + 8 + 8 + 2 + 10 + 8 + 0.5 = **67.5 s** for any `v` up to 2 s, and 65.5 s plus `v` above it.
-  - **After the run's last call,** the lookup adds at most `R + T_L + max(0, 2 s − v)`, 18 to 20 s. With the database reachable, its first try answers within about 5 s of the window's start.
-  - **`F₀`, the bind child's lookup before a rerun** ("Answer 2's detached bind"). Its `<n>` has almost always passed, so it waits for nothing and takes at most `R + T_L` = 18 s, plus one `lanes-index` start, about 0.1 s. After a `kill <p>` or the bound's stop followed quickly by a `2`, the kept `<n>` can still lie ahead. The child then first waits on its own clock from the record's `ended_utc`, at most `C` + 2 s, so `F₀` is at most 28 s.
+  - **The figure:** 31 + 2(`N_a`·`c` + 6) + 2 + 10 + (`N_a`·`c` + 7) + 0.5 = **62.5 + 3`N_a`·`c` s** for any `v` up to 2 s: **68.5 s** at `c` = 2 and **71.5 s** at `c` = 3, with one address, and 74.5 s and 80.5 s with two. Above 2 s, it is 60.5 + 3`N_a`·`c` s plus `v`.
+  - **After the run's last call,** the lookup adds at most `R + T_L + max(0, 2 s − v)`, `N_a`·`c` + 17 to `N_a`·`c` + 19 s (19 to 21 s at `c` = 2). With the database reachable, its first try answers within about 5 s of the window's start.
+  - **`F₀`, the bind child's lookup before a rerun** ("Answer 2's detached bind"). Its `<n>` has almost always passed, so it waits for nothing and takes at most `R + T_L` = `N_a`·`c` + 17 s, plus one `lanes-index` start, about 0.1 s. After a `kill <p>` or the bound's stop followed quickly by a `2`, the kept `<n>` can still lie ahead. The child then first waits on its own clock from the record's `ended_utc`, at most `C` + 2 s, so `F₀` is at most 2`N_a`·`c` + 25 s: 29 s at `c` = 2, and 31 s at `c` = 3, with one address (33 s and 37 s with two).
   - **Not in the figure:** the tail's own run, and a replay's one snapshot and one verb run (`S + v` more; "The tail, once"). They come after the write's end, as today.
 - **Answer 2's writes** run in the detached bind (ruling 16) and take this rule as every writer does. The bind child makes the same lookup before a rerun ("Answer 2's detached bind", below).
 
@@ -5090,7 +5363,7 @@ Lane 2 measured the bind (6579356984): 10.47 s median in files mode at `2a057a6d
 | `LANES_NO_FETCH`, `LANES_ACT`, `LANES_EXPECT`, `LANES_WRITE_ID`, `LANE_START_HANDOFF_ANSWER` | unset | the bind is a write act (D12); it takes its own `act-begin` base and its own write id; `LANES_ACT` is set from the record's `act` for the one `set-row-state "$from"` call only. Set to `yes`, `LANE_START_HANDOFF_ANSWER` would let `lane-start` ask the holder to hand off and wait up to 300 s (`code/lane-start:2461–2464`, `:781`). Unset, with stdin on `/dev/null`, `lane-start` refuses with 2 instead (`:2465–2471`, `:2479–2488`), so W8 never runs inside the bound |
 | `LANES_GIT_TIMEOUT` | 45 | today's default is 60 (`lane-start:4234`); 45 bounds the stamp's pull and push |
 
-**It survives the hook.** The hook normally exits about 4.5 s inside `GUARD_TIMEOUT` (it reaches `guard_answer` at about `T0 + 0.43 s`, lane 2), and the child must outlive it whether it exits or is timed out. PP-D's probes, at load 10 to 19: a pid kill, both forms survive (P4); a group `SIGKILL` (P1, P2) and a group `SIGHUP` (P2), `index_nudge`'s `( … & )` form dies and the `setsid` form survives.
+**It survives the hook.** The hook exits by `T0 + 4.4 s` (SVC-8's budget). Against a local database that is at about `T0 + 0.5 s`, since it reaches `guard_answer` at about `T0 + 0.43 s` (lane 2). Against a remote one it is later, by its own register read; answer 2 adds no database call to the hook. The child must outlive the hook whether it exits or is timed out. PP-D's probes, at load 10 to 19: a pid kill, both forms survive (P4); a group `SIGKILL` (P1, P2) and a group `SIGHUP` (P2), `index_nudge`'s `( … & )` form dies and the `setsid` form survives.
 
 **Claude Code's own hook runner, probed** (`runs-165/HOOKPROBE-report.md`: Claude Code 2.1.319, `claude -p` with a project-only `UserPromptSubmit` hook, 5 runs). Each hook runs under an `sh` that is its own session leader. At a 3 s timeout Claude Code sent SIGTERM to the hook's whole process group at 2.98 s: a `( … & )` child, already orphaned to pid 1 but in that group, was killed, and a `setsid` child completed (R1, R1b). On a normal exit it killed nothing, and both forms outlived `claude` itself by about 8 s (R2). It did not wait on pipes a child inherited (R3: `claude` exited at 4.20 s, the child 7.5 s later). So the `setsid` child outlives a hook that Claude Code times out and one that exits. Not shown: an escalation to SIGKILL, which cannot reach a `setsid` child either. The facts row (`design.md:3204`) narrows to that escalation alone.
 
@@ -5102,36 +5375,40 @@ The record is the offer file itself, `$CLAUDE_CONFIG_DIR/lanes/offers/<session u
 |---|---|
 | `mode` | `binding`, `bound`, `bind-failed`, or `name-drift` once the offer is restored |
 | `from`, `to`, `session`, `uuid`, `window`, `pane` | the offer's identity, as today's file has it (`:10965–10973`) |
-| `bind`; `started_utc`, `bound_s`, `bounded`, `deadline_epoch` | the attempt, 1 to 3; the start; the bound, 490 s (`LANES_BIND_BOUND_S` for tests); `yes` where `timeout` exists, else `no`; the start plus `bound_s` plus 5 s, the 5 s being for the outer to write the outcome after `timeout`'s `KILL` |
+| `bind`; `started_utc`, `bound_s`, `bounded`, `deadline_epoch` | the attempt, 1 to 3; the start; the bound, computed at the start by the sum below: 500 s at `c` = 2 and 530 s at `c` = 3 (`LANES_BIND_BOUND_S` for tests); `yes` where `timeout` exists, else `no`; the start plus `bound_s` plus 5 s, the 5 s being for the outer to write the outcome after `timeout`'s `KILL` |
 | `pid`, `pidstart`; `host`, `container` | the child; `LANES_WORKSTATION` (else the hostname) and `LANES_CONTAINER` |
 | `out`; `act`, `write_id`, `generation`, `not_after`, `write_lane`, `args_sha256` | the attempt's output file; phase 2 only, `act` being the guard's base `<act-id>@<n>:<generation>`, from the `n` and `generation` of the prefetch that made the offer. The other five are copied by the outer when it writes an outcome other than 0, or by the guard at the stale row where the outer left none ("What the guard answers"). It copies them from `start-record`'s pending record, the newest whose `verb` is `start-record` and whose `session` is this transcript's uuid: its `write_id`, `generation`, `lane` (as `write_lane`) and `args_sha256`, and the largest `not_after` among its `call` lines. They are copied, never derived from `to`, because `start-record` writes `lane-start`'s canonical lane. Where that record holds no `call` line, or there is none, the outer copies nothing: no call of the write can have been sent ("The pending record") |
 | `rc`, `why`, `note=` lines, `ended_utc` | the outcome, with one `note=` per act still owed and its command |
 
 **Liveness:** the pid is live and its start time equals `pidstart` (Linux: field 22 of `/proc/<pid>/stat`, after the last `)`; macOS: `ps -o lstart=`). One helper, `pid_start_of`, serves this record and F10's pending record. It does not copy `lock_steal_if_dead`'s pid-only test (`:1286–1296`), under which a reused pid looks live until the 10-minute age (`:1311–1321`). P5: 200 checks take 1.42 s, about 7 ms each; a reused pid and a dead pid both read as not live.
 
-**The bound is 490 s of wall time** from `started_utc`, over the child's whole body: `timeout -k 10 480` around the body, and `deadline_epoch` for the guard. It is arithmetic, not a measurement. It is the sum, below, of each step's own bound on primary in phase 2, with 6 s to spare, one read call. So it never stops a child whose every step stays inside its own bound. What it stops is what no step bounds: a local hang, and `git` where `timeout` is missing.
+**The bound is `bound_s` of wall time** from `started_utc`, over the child's whole body: `timeout -k 10 "$(( bound_s - 10 ))"` around the body, and `deadline_epoch` for the guard. `guard-bind` computes `bound_s` at the start from the same timers its steps use (the sum, below): 500 s at `c` = 2 and 530 s at `c` = 3 with one address, with or without the service, `c` being the register calls' connect bound per address ("Over a remote database"). It is arithmetic, not a measurement: the sum of each step's own bound on primary in phase 2, with one read's bound to spare. So it never stops a child whose every step stays inside its own bound. What it stops is what no step bounds: a local hang, and `git` where `timeout` is missing.
 
 | Term | Bound | Source |
 |---|---|---|
 | `H′`, the healthy bind | 12 s | lane 2's 11.51 s p95 on primary, "about 12 s with the costs it leaves out" (6579356984) |
-| `F₀`, the rerun's lookup, attempts 2 and 3 | `w₀` + `R` + `T_L` = 28 s | "Reruns", below. `w₀`, at most `C` + 2 s = 10 s, is the child's wait for a kept `not_after` that has not yet passed, after a `kill <p>` or the bound's stop answered quickly by a `2`. Then come the tries, which start within the 10 s window, each under its 8 s timer (phase 2's "The in-doubt rule") |
-| `act-begin`'s snapshot | 8 s | D9's "a writer's snapshot" |
-| the reads, `N_r` × 6 s | 102 s at `N_r` = 17 | D9's "a reader"; each `lanes-edit.sh` read process makes one `register read` |
+| `F₀`, the rerun's lookup, attempts 2 and 3 | `w₀` + `R` + `T_L` = 2`N_a`·`c` + 25 s: 29 s at `c` = 2, 31 s at `c` = 3 | "Reruns", below. `w₀`, at most `C` + 2 s, is the child's wait for a kept `not_after` that has not yet passed, after a `kill <p>` or the bound's stop answered quickly by a `2`. Then come the tries, which start within the 10 s window, each under its timer, `T_L` (phase 2's "The in-doubt rule") |
+| `act-begin`'s snapshot | `S` = `N_a`·`c` + 6 s | D9's "a writer's snapshot" |
+| the reads, `N_r` × (`T_r` + `w_s`) | `T_r` = `N_a`·`c` + 4 s: 102 s at `c` = 2 and 119 s at `c` = 3, with `N_r` = 17, and `N_r`·`w_s` more with the service, 5.1 s at `w_s` = 0.3 s | D9's "a reader"; each `lanes-edit.sh` read process makes one `register read`, which asks the service's socket first where it runs (SVC-3), at most `w_s` (SVC-8) |
 | W8, the holder's `PAUSED` writes | 0 | not reachable from the child (the variables, above) |
 | `start-record` | `M` + `W` | below |
 | `start-record`'s tail, its wait for the lane checkout's mutex | 20 s | `lane_state_follow`'s `lock_try 20` (`:13834`): 20 tries, 1 s apart (`:1308–1332`). Under the flag the tail takes the lane checkout's mutex, not the scratch tree's (the flag's table). `W` leaves the tail out (phase 2's "The in-doubt rule") |
 | the stamp's `publish-handoff`, its wait for the lane checkout's mutex | 60 s | `code/lane-start:4395` runs `publish-handoff`, which calls `acquire_lock` (`:18105`), 60 tries, then exit 4 (`:1334–1337`) |
 | the stamp's pull and push | 2 × (45 + 5) = 100 s | `hs_git_net` (`code/lane-start:4233–4246`): pull `:4422`, push `:4442`; `LANES_GIT_TIMEOUT=45` |
-| `guard_bound_check`'s read | 6 s | the post-bind refill (`:11064–11065`), one `register read`; `row_of_lane` of the lane left (`:11180`) reads the refilled cache |
+| `guard_bound_check`'s read | `T_r` + `w_s` | the post-bind refill (`:11064–11065`), one `register read`; `row_of_lane` of the lane left (`:11180`) reads the refilled cache |
 | `set-row-state` on the lane left | `M` + `W` | below; its arm has no tail (`lane_state_follow` is called only at `:6179` and `:12949`) |
 
 - **`M`, the mode query,** is 2 s (D9). Each writer process asks it once, at the write guard.
-- **`W`, one register write's worst case,** is phase 2's `T_write` ("The in-doubt rule"), less its `p`, the `lanes-index` starts, which `H′` holds: `W` = 65 s + `max(v, 2 s)`.
+- **`W`, one register write's worst case,** is phase 2's `T_write` ("The in-doubt rule"), less its `p`, the `lanes-index` starts, which `H′` holds: `W` = 60 + 3`N_a`·`c` s + `max(v, 2 s)`.
   - `v` is the verb's run from the snapshot to `ready`. It has no timer. It takes about 1 s healthy, and is counted as 2 s.
-  - So `W` = 67 s with `v` = 2 s.
-- **The sum:** 12 + 28 + 8 + 6`N_r` + 2(2 + 65 + `v`) + 20 + 60 + 100 + 6 = **368 + 2`v` + 6`N_r`**, for `v` of at least 2 s.
-  - That is 474 s with `v` = 2 and `N_r` = 17: 6 s under the body's 480 s, which is one more read, before a healthy child could meet it.
-  - The 10 s of `-k` makes 490 s.
+  - So `W` = 68 s at `c` = 2 and 71 s at `c` = 3, with `v` = 2 s.
+- **The sum, in phase 2's terms** ("The in-doubt rule"; "Over a remote database"): `B` = 200 + 2`D` + 3`S` + 3`C` + 3`R` + 3`T_L` + 2·max(`v`, 2 s) + (`N_r` + 1)(`T_r` + `w_s`).
+  - The 200 s is `H′`'s 12, `w₀`'s 2, the two `M`s' 4, `D`'s two 1 s grains, the two mutex waits' 80 and the stamp's git, 100. `w_s` is the client's wait for the service (SVC-8): where the service runs, 0.3 s, or the service's timer plus 100 ms where SVC-6 raises that timer for a workstation more than 100 ms from the server (lane 5's text 10, #165 6722889137); else 0.
+  - With `S` = `C` = `N_a`·`c` + 6, `T_L` = `N_a`·`c` + 7, `T_r` = `N_a`·`c` + 4, `D` = 30, `R` = 10, `v` = 2 and `N_r` = 17, it is `B` = 423 + 27`N_a`·`c` + 18`w_s`: 477 s at `c` = 2 (482.4 s with the service at `w_s` = 0.3 s), and 504 s at `c` = 3 (509.4 s at `w_s` = 0.3 s; up to 512.5 s where SVC-6 raises the service's timer, to about 270 ms of RTT).
+  - `guard-bind` computes `bound_s` from the constants its steps use: `B`, plus one read's `T_r` + `w_s` to spare, plus the 10 s of `-k`, rounded up to 10 s. That is 500 s at `c` = 2 and 530 s at `c` = 3, with or without the service.
+  - The body's `timeout` is `bound_s` − 10: 490 s or 520 s. That leaves 13 s (7.6 s with the service at `w_s` = 0.3 s) or 16 s (10.6 s) above `B`, at least one read in each case, also where SVC-6 raises the service's timer.
+  - At `c` = 2 the bound moves from 490 s to 500 s because `T_L` rises from 8 s to 9 s, and `B` counts it three times.
+  - With two addresses (`N_a` = 2), `B` is 531 s at `c` = 2 (536.4 s with the service) and 585 s at `c` = 3 (590.4 s), and `bound_s` is 550 s and 610 s, or 560 s and 620 s with the service, each at least one read above `B`.
 - **Both mutex waits are counted whole.** Each is a step with its own bound in the code, as the register calls' timers are. A render under Q27(b) makes them likelier, not longer. The loops' own few milliseconds per try fall inside the margin, below.
 - **Not in the sum:** a lane under a pending or starting supervised restart (`ri_active`, `code/lane-start:3259–3260`). Its stamp first runs `set-restart-intent` (`:4381`) under the same mutex (`:18282`), up to 60 s more. A bind stopped there ends as the bound's stop does: `rc` 124, with `write_id` kept.
 - **The found rerun is shorter than the absent one.** It reruns `start-record`'s `cmdline` for the tail: `M`, a snapshot, a replay's snapshot and verb, and the tail, about 40 s, against the absent rerun's `M` + `W` + 20 s. The sum takes the absent one.
@@ -5139,16 +5416,20 @@ The record is the offer file itself, `$CLAUDE_CONFIG_DIR/lanes/offers/<session u
   - `H′` holds the processes' starts, their parses and two SQL writes at 52.5 ms each. It holds no git.
   - Each timer is counted whole on top of `H′`, which overstates the sum by under 3 s.
   - The stamp's 100 s is not in lane 2's figure, which leaves out git.
-- **Each call's timer already includes its connect, the lookup's too.** `lanes-index`'s timer is `subprocess.run`'s `timeout` over the whole `psql` run (`code/lanes-index:1310–1317`). So D9's 2 s connect is inside each 8 s, and none is counted on its own.
+- **Each call's timer already includes its connect, the lookup's too.** `lanes-index`'s timer is `subprocess.run`'s `timeout` over the whole `psql` run (`code/lanes-index:1310–1317`). So D9's connect bound, `N_a`·`c`, is inside each timer, and none is counted on its own.
+- **Over a remote database** (Q22; "Over a remote database", below), the sum's terms follow `c` and `N_a`, and none is a measured latency. What grows is the healthy bind.
+  - With one request per call, each of its about 23 database calls (`N_r` ≈ 17 reads, `act-begin`, two snapshots, two commits, and `guard_bound_check`'s read) costs about `t_c` + 1 RTT on top of `H′`.
+  - Two or three refetches of the 2.6 MB register cost about 8 RTTs each.
+  - So the bind takes about 12 s + 23(`t_c` + RTT) + 20 RTT: with `t_c` as lane 5's netem run gives it (#165 6722703424), about 18 s at 20 ms of RTT, about 44 s at 150 ms, and about 75 s at 300 ms. Each is far inside `bound_s`.
 - **The commit call and the lookup's wait overlap.**
-  - `not_after` is the last snapshot's database clock plus 10 s. So the client's wait for it ends by that snapshot's end plus 10 s: at most 2 s after a commit call that ran its 8 s, and not at all after one where `v` is 2 s or more. `W` counts that once, as `max(v, 2 s)`.
-  - The server's own wait, at most 3 s, is inside the lookup's 8 s timer (lane 1's v2.6).
+  - `not_after` is the last snapshot's database clock plus `C` + 2 s. So the client's wait for it ends by that snapshot's end plus `C` + 2 s: at most 2 s after a commit call that ran its `C`, and not at all after one where `v` is 2 s or more. `W` counts that once, as `max(v, 2 s)`.
+  - The server's own wait, at most 3 s, is inside the lookup's timer, `T_L` (lane 1's v2.6).
 - **In files mode, and so in all of phase 1, the sum is not a bound.**
   - Each write may wait 60 s for the lock (`lock_try`, `:1308–1309`).
   - It fetches under `git_net` (`:6222`).
   - It may run its push loop six times, each time a pull and a push, 3 s apart (`:2383–2500`).
   - A timed-out git call ends the write with 3 at once (`git_timeout_die`, `:2034–2046`). So the likely worst case is 160 s per write. If every call fails just inside its 45 s, it is 728 s.
-  - In files mode the 490 s is a judgment: about 47 times lane 2's 10.47 s median.
+  - In files mode the `bound_s`, 500 s at `c` = 2, is a judgment: about 48 times lane 2's 10.47 s median.
 
 **How it ends.**
 - **On success** the record ends `mode=bound`, `rc=0`, with a `note=` for each act still owed: the stamp not written or not pushed (`lane-start:4419–4460`), the cell not ending on this uuid, or the lane left not marked.
@@ -5162,7 +5443,7 @@ The check is a branch of its own at the offer site (`:10648–10659`), after 18(
 
 | Case | Exit | Record after | Text, in short |
 |---|---|---|---|
-| the answer `2` itself | 2 | `binding` | "BINDING: this window is now named `<to>` … detached (pid `<p>`, bounded at `<bound_s>` s) … send your work again in about 15 s" |
+| the answer `2` itself | 2 | `binding` | "BINDING: this window is now named `<to>` … detached (pid `<p>`, bounded at `<bound_s>` s) … send your work again in a minute or so; until it ends, each prompt is answered BINDING IN PROGRESS" |
 | same session; child live, inside the bound | 2 | unchanged | "BINDING IN PROGRESS: … it ends by `<deadline utc>` at the latest. Your prompt was NOT sent; send it again in a few seconds"; where the record says `bounded=no`, the text leaves out "at the latest" |
 | same session; child live past `deadline_epoch` | 2 | unchanged | "THE BIND HAS RUN PAST ITS `<bound_s>` s BOUND and is still running (pid `<p>`, started `<utc>`)". Where `bounded=no`: "this host has no `timeout`, so nothing stops it; it is most likely in a `git` call". Where `bounded=yes`: "its `timeout` has not ended it; it is likely stuck on the disk or the network". Then: "Waiting costs nothing, and the next prompt reads its outcome. `kill <p>` stops it, at a cost. If it is inside a register write, that write is left in doubt. On primary the record keeps its write id, and the next `2` looks it up before it binds again. In files mode a commit it made may stay local until the next write from that checkout pushes it, a push it started may still land, and the next writer takes over its lock at once. Your prompt was NOT sent." |
 | another session wanting the same lane | its own table | its own record | it never sees this record. If it answers `2`, on primary `start-record`'s `bind:<to>` expectation refuses whichever bind commits second, with 2; in files mode, `lane-start`'s re-read at `:2614` |
@@ -5228,7 +5509,7 @@ Folding the lane left into the verb (`--leave <from> <line>`) would make answer 
 - **Phase 3:** nothing.
 - **Under Q7(A′)** `start-record` runs once in the held session and the lookup becomes the lock wait; **under "(A″) with 69"** the busy `rc` is 69. **Under Q27(b)** the bound does not change. The stamp's 60 s wait and the tail's 20 s wait for the lane checkout's mutex are already in the sum (`acquire_lock`, `:1334–1337`; `lock_try`, `:1308–1332`). A render makes them likelier, not longer.
 
-**AT-F6, for lane 2:** (1) answer `2` exits 2 with "BINDING" before `T0 + 1 s` while a stub `lane-start` sleeps 15 s, and a runner reading the hook's pipes sees EOF at once; (2) the child survives a group `SIGKILL` and `SIGHUP` and the record ends `bound`; (3) a prompt mid-bind gets "BINDING IN PROGRESS", is not passed, and the record is unchanged; (4) after `bound`, one "MOVED" with the notes, the record removed, the next prompt 0; (5) after a stub failure, the why, the rename back, the offer kept, attempt 2 on the next `2`, choice 2 withdrawn after the third failure; (6) an outer killed with `-9` gives "BINDING IN PROGRESS" while a process of its session is left, then "no outcome" once none is; an altered `pidstart` reads as dead, with no session test; (7) a stub body past a short `LANES_BIND_BOUND_S` ends `rc=124`, or `137` where it ignores `TERM`; the outer writes the outcome, and no process of the body's group is left; a stub `set-row-state` that runs slowly after `lane-start` ends is still inside the bound; (8) two sessions answer `2` for one lane on the primary fixture: one `start-record` commits, the other is refused 2 by `bind:<L>`; (9) the bind is one register commit plus one handoff commit in files mode, one journal entry on primary, and a row change injected after `act-begin` refuses 2 and writes nothing; (10) an injected `psql` exit 2 gives `rc=3` with the id, and at the next `2` found writes no second `RESUMED` and absent binds anew; (11) a rerun after a failed stamp push writes no register line and exactly one stamp; (12) a fake tmux sees the child's untargeted calls with `TMUX_PANE` set and stdin on `/dev/null`; (13) a stub `lane-start` sees `LANES_NO_FETCH`, `LANES_ACT` and `LANES_EXPECT` unset and `TMUX`, `TMUX_PANE` set; (14) the hook string and `GUARD_TIMEOUT` are byte for byte unchanged; (15) `kill <p>` mid-bind ends the record with the signal's code and "what it wrote is not known"; (16) with `timeout` hidden from `PATH`, the record says `bounded=no`; a child past `deadline_epoch` gets the past-the-bound text with its cost; and `kill <p>` stops the body's process group, the outer's trap runs once, and the outer writes the outcome; (17) a counting `LANES_EDIT` stub sees at most `N_r` read calls on the `--bind` resume path, and the test fails where `N_r` must grow; (18) a bind killed mid-commit and answered `2` at once waits until `ended_utc` + `C` before its lookup, gets no LR011, and finds or binds anew; (19) on the primary fixture, with the window's name spelled differently from the lane's canonical name, the child's lookup sends the five values copied from `start-record`'s pending record, and `start-record` as the verb, and a found entry writes no second `RESUMED`; an injected LR007 `another-write` ends `rc=2`, and the next `2` binds anew; an injected LR007 `generation` ends `rc=2` with the effect check and the copies kept, and a `2` after the pending record is replaced binds anew; (20) with the outer killed with `-9` while a stub body's `start-record` pending record holds a `call` line, the stale row copies the five values once the session is empty, and the next `2` looks the write up before it binds.
+**AT-F6, for lane 2:** (1) answer `2` exits 2 with "BINDING" within 0.1 s after the guard's register read returns, and so before `T0 + 1 s` against a local fixture, while a stub `lane-start` sleeps 15 s, and a runner reading the hook's pipes sees EOF at once; (2) the child survives a group `SIGKILL` and `SIGHUP` and the record ends `bound`; (3) a prompt mid-bind gets "BINDING IN PROGRESS", is not passed, and the record is unchanged; (4) after `bound`, one "MOVED" with the notes, the record removed, the next prompt 0; (5) after a stub failure, the why, the rename back, the offer kept, attempt 2 on the next `2`, choice 2 withdrawn after the third failure; (6) an outer killed with `-9` gives "BINDING IN PROGRESS" while a process of its session is left, then "no outcome" once none is; an altered `pidstart` reads as dead, with no session test; (7) a stub body past a short `LANES_BIND_BOUND_S` ends `rc=124`, or `137` where it ignores `TERM`; the outer writes the outcome, and no process of the body's group is left; a stub `set-row-state` that runs slowly after `lane-start` ends is still inside the bound; (8) two sessions answer `2` for one lane on the primary fixture: one `start-record` commits, the other is refused 2 by `bind:<L>`; (9) the bind is one register commit plus one handoff commit in files mode, one journal entry on primary, and a row change injected after `act-begin` refuses 2 and writes nothing; (10) an injected `psql` exit 2 gives `rc=3` with the id, and at the next `2` found writes no second `RESUMED` and absent binds anew; (11) a rerun after a failed stamp push writes no register line and exactly one stamp; (12) a fake tmux sees the child's untargeted calls with `TMUX_PANE` set and stdin on `/dev/null`; (13) a stub `lane-start` sees `LANES_NO_FETCH`, `LANES_ACT` and `LANES_EXPECT` unset and `TMUX`, `TMUX_PANE` set; (14) the hook string and `GUARD_TIMEOUT` are byte for byte unchanged; (15) `kill <p>` mid-bind ends the record with the signal's code and "what it wrote is not known"; (16) with `timeout` hidden from `PATH`, the record says `bounded=no`; a child past `deadline_epoch` gets the past-the-bound text with its cost; and `kill <p>` stops the body's process group, the outer's trap runs once, and the outer writes the outcome; (17) a counting `LANES_EDIT` stub sees at most `N_r` read calls on the `--bind` resume path, and the test fails where `N_r` must grow; (18) a bind killed mid-commit and answered `2` at once waits until `ended_utc` + `C` before its lookup, gets no LR011, and finds or binds anew; (19) on the primary fixture, with the window's name spelled differently from the lane's canonical name, the child's lookup sends the five values copied from `start-record`'s pending record, and `start-record` as the verb, and a found entry writes no second `RESUMED`; an injected LR007 `another-write` ends `rc=2`, and the next `2` binds anew; an injected LR007 `generation` ends `rc=2` with the effect check and the copies kept, and a `2` after the pending record is replaced binds anew; (20) with the outer killed with `-9` while a stub body's `start-record` pending record holds a `call` line, the stale row copies the five values once the session is empty, and the next `2` looks the write up before it binds; (21) against the primary fixture with 75 ms added each way and TLS on, through the delayed loopback lane 3 picks for lane 2's question 3 (#165 6722518182), and with `connect_timeout=3` and one address in the configuration, `guard-bind` records `bound_s` 530, the bind ends `bound` inside it with no step at its timer, and answer 2 still exits within 0.1 s after the guard's read; (22) `bound_s` is 500 at `c` = 2 and 530 at `c` = 3 with one address, with the service's socket configured or not, and 550 and 610 with two addresses (560 and 620 with the socket), and `LANES_BIND_BOUND_S` overrides it.
 
 **Evidence.** PP-D's probes, in `runs-165/sandbox-PP-D/`, 2026-11-02 about 14:30Z, Linux on py-bench, load 10 to 19, no lane tool, tmux or register touched: P1 `timeout -s KILL 1` on the parent, `nudge` form "done: NONE", `setsid` form done; P2 a group `KILL` and a group `HUP`, `nudge` NONE both times, `setsid` done both times; P3 the runner saw EOF after 3.03 s with the hook's stdio inherited, 0.04 s for both other forms; P4 a pid kill, both done; P5 live 200 of 200, reused 0, dead 0.
 
@@ -5529,13 +5810,63 @@ Under Q27(b), the renderer takes the lane checkout's write lock and S3's rows an
 
 **Where the time goes.** A Python start is about 20 ms of interpreter, +24 to 49 ms of stdlib imports, about 40 ms compiling the 2,695-line script on every start (in-process `compile()` 30.3 ms, about 11 µs a line, so every 1,000 lines the `register` subcommands add cost about 11 ms per start), and 2 to 5 ms for `load_config()` and the store (one `git rev-parse` probe, `code/lanes-index:262`). The verb's bash is mostly setup: about 20 forks before the dispatcher, and the 3,835-line `case` (`:15143` to `:18977`) parsed before any arm runs.
 
-**The conflict window.** From the snapshot's read to the commit's `UPDATE` it is the tail of call 1 plus the scratch tree, the verb, Python start 2 and `psql` start 2: **at least 410 ms** in the script form, not R1's 14.7 ms, as the frame's risk and ADV-C7 say. At one write per 18 s on average, a 0.41 s window is crossed about 2.3% of the time (arithmetic, not a measurement). In a burst of ten there are 55 verb runs and 110 Python starts, about 28 CPU-seconds; the last writer's 10 attempts take about 6 s, inside D7's 30 s. Test 4 measures bursts.
+**The conflict window.** From the snapshot's read to the commit's `UPDATE` it is the tail of call 1 plus the scratch tree, the verb, Python start 2 and `psql` start 2: **at least 410 ms** in the script form, not R1's 14.7 ms, as the frame's risk and ADV-C7 say. At one write per 18 s on average, a 0.41 s window is crossed about 2.3% of the time (arithmetic, not a measurement). In a burst of ten there are 55 verb runs and 110 Python starts, about 28 CPU-seconds; the last writer's 10 attempts take about 6 s, inside D7's 30 s, on the measuring host; over a remote database, see "Over a remote database", below. Test 4 measures bursts.
 
 **The named-pipe alternative.** One `lanes-index` per attempt over two FIFOs: `mkfifo` of two is 1.4 ms; a warm bash-to-Python round trip 177 µs (p90 237, n=300). Whole attempts, interleaved, N=30, `psql` excluded: 575 (644) and 582 (633) ms with two starts, against 472 (580) and 471 (507) with one server, a paired saving of 105 and 114 ms. Its total is about 427 ms by parts (500 measured whole with `psql`), 20% under 535, and about 413 ms if it also kept its `psql` connection between the calls, which (A″) excludes (`design.md:1686–1689`). The conflict window drops to about 300 ms (−27%), probably the better reason to adopt it. Its robustness costs: `printf x > fifo` with no reader hangs (probed: `timeout 2` exited 124; `exec 3<>fifo` did not hang), so every bash-side open must be read-write; bash 3.2 has no `coproc`, so the writer keeps a cleanup trap; and an orphaned server needs its own idle and lifetime cap.
 
 **Recommendations.** Do not adopt the pipe pair in phase 1; the frame lists it as deferrable (`design.md:3521–3522`). Decide at phase 2 from tests 9 and 4. A cheaper first step is trimming the Python share (lazy imports on the `register` path; a cached module, about −38 ms a start), an install-layout decision (`INSTALLABLES`, `code/openRepoTools:1292`, and the pip package). Build the scratch tree from images. Beside these: on primary there is also one Python start per write for the mode query (D3) and one detached renderer start after COMMIT, so one process per write would save more than one per attempt (about 2.3 s for the tenth writer of a burst). Under (A′) or (C), an attempt is about 0.43 s and a burst of ten runs 10 verbs, not 55, with a stuck verb blocking everyone; under (A) with six attempts, about 3.6 s; under (B), about 125 ms of Python and `psql` (arithmetic from the table). Lane 5's "about 72 ms" for the prefetch's start (`design.md:2934`, `:3034`) agrees with this floor.
 
-**What test 9 records,** per attempt, beside files mode: Python start to `main`'s first line, the snapshot call, the scratch tree ready, the verb's exit, and the commit call, with the host's load average and the Python version.
+#### Over a remote database (Q22: a managed cloud PostgreSQL)
+
+Brett named the host on 2026-11-08: "A separate server", then "Managed cloud Postgres" (#165 6722025863), and then the provider: Azure Database for PostgreSQL Flexible Server, version 16, in opensoft's prod subscription (#165 6722593397). Many engineers, human and AI, each on their own workstation, write to the one register; act 3 configures Eagle and Raven, and each further workstation joins by the same steps. Each `psql` call is a new process and a new connection, made directly to the primary's own endpoint or through a session-mode pooler that passes `options=` on, never a transaction-mode one (lane 1's M1, #165 6722314667). So each call pays the path's round trip (RTT) several times. The figures below are arithmetic from public protocol facts and lane 5's emulated-link measurements (#165 6722703424), at RTTs of 20, 150 and 300 ms, and assume nothing of the provider; act 3 measures them on each workstation as it joins.
+
+- **One connect is 6 or 7 RTTs:** TCP's handshake (1); PostgreSQL's `SSLRequest` (1, since PostgreSQL 16's libpq has no direct TLS negotiation); TLS (1 for TLS 1.3, or 2 where the server answers the client's key shares with a HelloRetryRequest, and 2 for TLS 1.2); the startup message (1); and SCRAM-SHA-256's exchange (2). Lane 5 measured seven, under TLS 1.3 with a HelloRetryRequest: OpenSSL 3.5's default key shares met PostgreSQL 16's `ssl_ecdh_curve` of `prime256v1`, and a client that offered P-256 first saved that round trip (lane 5's netem run, #165 6722703424). Act 3 measures which. `sslmode=require` and `verify-full` cost the same round trips. So `t_c` is about 0.08 s plus seven RTTs, from lane 5's slope and its local share at an RTT of 0, about 40 ms of which is Debian's Perl wrapper for `psql`: about 0.22 s at 20 ms, 1.13 s at 150 ms and 2.18 s at 300 ms, plus a DNS lookup unless cached. A lost SYN adds about 1 s, TCP's initial retransmission timeout: about 2.1 s at 150 ms, past a 2 s `connect_timeout`.
+- **Each request is one RTT more.** `_run` feeds `psql` a script on stdin, and `psql` sends each statement and waits for its answer (`code/lanes-index:1310–1344`). So a snapshot is about 11 requests, and a commit and a lookup about 4 each: 1.65 s and 0.6 s on top of the connect at 150 ms.
+- **One request per call.** Phase 1's `register` subcommands send each call's statements as one request, one Query each: the snapshot as #160's statements joined with `psql`'s `\;`, its `\echo` marker sent as a `COPY` of it, so that the output is byte-identical and #160's parse is unchanged (psql 15 or later); the commit as `BEGIN ISOLATION LEVEL SERIALIZABLE \; SELECT lanes_register.commit_write(…) \; COMMIT;`; and the lookup as `BEGIN \; SELECT lanes_register.find_write(…) \; ROLLBACK;`. On lane 1's engine run the snapshot went from 13 Queries to 1, and the commit from 3 to 1 (#165 6723003325). So a call costs `t_c` + 1 RTT. Lane 5 measured the slope: one round trip for each statement sent alone, and one for five statements joined with `\;` (B1 against B2, lane 5's netem run). Since PostgreSQL 13, `statement_timeout` applies to each statement of such a request, so D9's bounds keep their meaning. A request that arrives late is still refused at step 9 by its `not_after` (LR008), as an orphan is.
+- **`c` and `N_a`, the connect bound.** `c` is `max(2, ⌈t_c + 1 s⌉)`, where `t_c` is the median of the workstation's cold connects and the 1 s is one lost SYN. libpq takes `connect_timeout` in whole seconds, with 2 as its minimum. So `c` is 2 while `t_c` is at most 1 s, below about 130 ms of RTT; 3 for `t_c` up to 2 s, to about 270 ms; and 4 up to 3 s, to about 410 ms. libpq applies it to each address the endpoint's name resolves to, in turn, so a connect may take `N_a`·`c`, `N_a` being that count, and every timer counts it so; a figure given at `c` = 2 or 3 is for one address. `c` and `N_a` are each workstation's own configuration values, written from its own measurements when it joins: `c` as the URLs' `connect_timeout=` (SVC-2), default 2, and `N_a` as `register_addresses=` in `lanes-index.conf`, default 1. The service's timer reads the round trip, `register_rtt_ms=`, beside them (SVC-6). `PGCONNECT_TIMEOUT` is set to `c`; every register timer derives from both, and so do `T_write` and `bound_s`, which `guard-bind` computes from the configuration ("Answer 2's detached bind"). `ready` compares the live count with `N_a` on each run. A count that has grown since only lets a call meet its timer on a silent address, which is a failed read or a call in doubt, as any cut call is, and never a second write.
+- **The timers.** Each register call's client timer is `N_a`·`c`, plus its statement bound, plus 1 s for the call's round trip and its two process starts, and never below today's value (D9). So `S` = `C` = `N_a`·`c` + 6 s, and `T_L` = `N_a`·`c` + 7 s; at `c` = 2 only `T_L` moves, from 8 s to 9 s. `T_write` is 62.5 + 3`N_a`·`c` s ("The in-doubt rule"), and the seam's cap, 120 s, holds.
+- **Unchanged:**
+  - `R`, 10 s: it is time for the database to come back, not a count of tries;
+  - the client's wait to 2 s ahead, LR011's 3 s and its grain, since the estimate counts from the snapshot call's end;
+  - `not_after`, which grows with `C`, and inside which a healthy commit at 150 ms reaches step 9 within about 3.5 s;
+  - the retries and the answers;
+  - the role's 5 s bounds, which are the server's;
+  - `M`, which reads only the configuration.
+
+**The figures by RTT** (arithmetic, with `t_c` as lane 5's netem run gives it, 0.08 s + 7 RTT, and one address; each workstation's own are measured when it joins). With one request per call an attempt is about 0.55 s + 2(`t_c` + RTT), and the conflict window is 0.41 s + `t_c` + RTT.
+
+| RTT | `t_c` | `c` | `S` = `C` | `T_L` | `T_write` | `bound_s` | An attempt | The conflict window |
+|---|---|---|---|---|---|---|---|---|
+| 20 ms | 0.22 s | 2 | 8 s | 9 s | 68.5 s | 500 s | 1.03 s | 0.65 s |
+| 150 ms | 1.13 s | 3 | 9 s | 10 s | 71.5 s | 530 s | 3.11 s | 1.69 s |
+| 300 ms | 2.18 s | 4 | 10 s | 11 s | 74.5 s | 550 s, or 560 s with the service | 5.51 s | 2.89 s |
+
+A client that offers P-256 first saves one RTT per connect, 0.30 s an attempt at 150 ms. Lane 2's 0.55 s and `t_c`'s 0.08 s both hold `psql`'s start, so each attempt is overstated by up to about 0.1 s. With two addresses, `T_write` is 74.5 s at `c` = 2 and 80.5 s at `c` = 3, `F₀` is 33 s and 37 s, and `bound_s` is 550 s and 610 s, or 560 s and 620 s with the service.
+
+- **An attempt, and a burst.**
+  - With one request per call, an attempt takes the table's figure, against about 5.1 s at 150 ms with today's requests.
+  - In a burst of ten, the last writer's ten attempts take about 10 s at 20 ms; about 31 s at 150 ms, at D7's 30 s (about 28 s where the client offers P-256 first, and 51 s with today's requests); and about 55 s at 300 ms, past it.
+  - A writer past D7 exits 75, "register busy": nothing was written, and a retry in seconds is safe.
+  - So one request per call is what keeps a burst of ten near D7 at 150 ms; act 3's test 4 decides whether its last writer passes it.
+- **Contention, and 75s** (arithmetic, not a measurement). The head row serialises every commit.
+  - A write meets a conflict with a chance of about the register's whole write rate times the conflict window: with `N` engineers each writing once per `T` seconds, about `N` × window ÷ `T`. At one write per 18 s on average ("The conflict window", above), that is about 4% at 20 ms, 9% at 150 ms and 16% at 300 ms, and twice the writers give twice that. A conflict costs one more attempt, not a 75.
+  - A writer exits 75 only after losing every attempt that fits in D7's 30 s: about 30 s ÷ the attempt time, so about nine at 150 ms and about five at 300 ms.
+  - So 75s come from bursts and from far workstations, not from the average rate.
+- **D7 stays 30 s** (lane 2's question 10, #165 6722518182; lane 3's ask, #165 6722593397). A 75 writes nothing, and a retry in seconds is safe. Act 3's test 4 runs the burst of ten at each joining workstation's own RTT, and decides: where it gives 75s, lane 4 proposes to lane 3 a D7 per workstation, `max(30 s, 10 × that workstation's attempt p95)`, with `T_write` and `bound_s` recomputed. No figure here moves before then.
+- **A failover** drops every connection, and each call reads it as a lost connection (lane 1's M1).
+  - A snapshot or a read that it cuts fails as any failed read does.
+  - A write whose commit call was in flight is in doubt. The lookup's tries start within `R`, 10 s, so a failover that outlasts `R` ends the write with 3, the pending record kept and the rerun printed ("The in-doubt rule"). The rerun, once the new primary answers, finds the write or writes it once.
+  - `R` stays 10 s. A failover longer than `R` costs a rerun, never a second write, while a longer `R` would lengthen `T_write`, `F₀` and the bind's bound for every write. This design assumes no failover's length.
+- **What act 3 measures,** on Eagle and on Raven before act 4, and on each further workstation as it joins, before it writes, against the provider, with the register's `PG*` variables as `_env` sets them:
+  - the endpoint's addresses, `getent ahosts <host>`: their count is `N_a`;
+  - the TLS version, `psql -Atc "select version from pg_stat_ssl where pid = pg_backend_pid()"`;
+  - `psql`'s version, `psql --version`: 15 or later, since the snapshot's one-request form needs it;
+  - the RTT: one session with `\timing on`, then 20 runs of `select 1`; take the median;
+  - `t_c`: 50 cold runs, each `/usr/bin/time -f %e psql -Xqc 'select 1'` under `PGSSLMODE=verify-full PGCONNECT_TIMEOUT=10`, 1 s apart; take the median, which sets `c`, and the p95. Then 50 more back to back, warm;
+  - where libpq cuts the connect: `psql "host=<host> hostaddr=192.0.2.1 connect_timeout=<c>" -c 'select 1'`, timed, against an address that drops SYNs;
+  - test 9's per-call figures and test 4's burst of ten, and one run with an empty state directory, since a cache miss fetches the files whole.
+
+**What test 9 records,** per attempt, beside files mode: Python start to `main`'s first line, the snapshot call, the scratch tree ready, the verb's exit, and the commit call, with the host's load average and the Python version; at act 3, against the named provider, also the path's RTT and each call's connect, warm and cold, on Eagle and Raven, and on each workstation that joins ("Over a remote database").
 
 ### The renderer prototype: [L4-1] to [L4-5], and F29
 
@@ -5621,7 +5952,7 @@ Every item in "What lane 4's phase plan must confirm for S1" (`design.md:1823–
 | 26 | Question 11: `code/lanes-index:1315` | `:3557–3559`, `:3293–3296` | Phase 1, "Question 11" | The URL moves to `PG*` variables in `_env`; every connection, the admin's too, goes through the environment; phase 1's first PR |
 | 27 | `find_write` in the in-doubt lookup | `:3559–3560` | Phase 2, "The in-doubt rule"; "Answer 2's detached bind", reruns | Yes, v2.6's form, at every non-0 end after a doubt: found, 0 and the tail once; absent with the lock held, the code the last attempt earned; otherwise (55P03, LR011, or no answer) 3 |
 | 28 | The generation in the printed rerun | `:3560` | Phase 2, "The pending record" | `LANES_WRITE_GENERATION=<generation>` beside `LANES_WRITE_ID`; `commit_write` refuses another generation with LR007 |
-| 29 | How the detached bind runs, and what the guard answers meanwhile | `:3560–3562`; 6579459518 | "Answer 2's detached bind" | `guard-bind` in a `setsid` child with the hook's descriptors closed, recorded in the offer file and bounded at 490 s over its whole body; the guard answers 2 from an eleven-case table, "BINDING IN PROGRESS" while it runs |
+| 29 | How the detached bind runs, and what the guard answers meanwhile | `:3560–3562`; 6579459518 | "Answer 2's detached bind" | `guard-bind` in a `setsid` child with the hook's descriptors closed, recorded in the offer file and bounded over its whole body by its computed `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3; the guard answers 2 from an eleven-case table, "BINDING IN PROGRESS" while it runs |
 | 30 | `lane-start`'s bind as one verb, one transaction carrying F5's expectations, or the reason it cannot | `:3562–3564`; 6579459518 | "Answer 2's detached bind", "The bind as one verb" | `start-record`, one transaction with the union of W2, W6 and W7; the stamp, the sidecar and the lane left stay outside, each for a stated reason |
 | 31 | The final-trailer mechanics | `:3564–3566` | The prototype, "F29" | `lanes-index` composes the message: `Register-Seq: <k>` appended to a final trailer block, or as a new last paragraph; no `interpret-trailers` |
 | 32 | The `flock`'s proof | `:3566–3567` | Phase 3, "The render lock"; the prototype, [L4-4] | After a SIGKILL, `flock` let the next render push seqs 2..4; the `mkdir` mutex left the mirror at seq 1 with the head at 4 |
@@ -5678,7 +6009,7 @@ Every row below waits on the decision it names.
 | 34 | A finding in today's code: answer 2 runs `lane-start --no-launch --bind`, about 10.47 s in files mode (6579356984), inside the hook's 5 s; at 5 s Claude Code SIGTERMs the hook's whole group, so the bind and its `( … & )` children, such as `index_nudge`'s, die part way through, which is more than the prompt passing | the hook probe's R1, R1b; it is evidence for lane 2's inference | **a lane-tools finding for lane 3**; the phase-1 detached form is the fix, placed first; a transcript showing `hook_cancelled` stays lane 3's check |
 | 35 | A finding in today's code: after a failed bind, "answer `2` again" cannot be taken, because `code/lanes-edit.sh:11155` renames before `:11171` and `:11108` then drops the offer | the code at `2a057a6d` | **a lane-tools finding for lane 3**; the rename back fixes it |
 | 36 | "MOVED" is shown once, consuming one prompt, rather than a silent pass that needs the record's end before `T0` and a fresh read; at most 3 binds per offer | a failed bind spends the person's yes | lane 3 |
-| 37 | The bind's bound is 490 s over the child's whole body (`lane-start`, the `set-row-state` on the lane left and `guard_bound_check`'s read) under one `timeout -k 10 480`, with `LANES_GIT_TIMEOUT=45` in the child | arithmetic, not measured: 368 + 2`v` + 6`N_r` s, 474 s at `v` = 2 and `N_r` = 17, counting the two waits for the lane checkout's mutex and the rerun's wait after a kill (R2's S6; V2's NIT 2) | lane 3 |
+| 37 | The bind's bound is `bound_s` over the child's whole body (`lane-start`, the `set-row-state` on the lane left and `guard_bound_check`'s read) under one `timeout -k 10 "$(( bound_s - 10 ))"`, with `LANES_GIT_TIMEOUT=45` in the child; `guard-bind` computes it from its steps' timers: 500 s at `c` = 2 and 530 s at `c` = 3, with or without the service | arithmetic, not measured: 200 + 2`D` + 3`S` + 3`C` + 3`R` + 3`T_L` + 2·max(`v`, 2 s) + (`N_r` + 1)(`T_r` + `w_s`), that is 423 + 27`N_a`·`c` + 18`w_s` s, plus one read and the 10 s of `-k` (R2's S6; V2's NIT 2; Q22's remote database) | lane 3 |
 | 38 | Whether `--leave <from>` joins `start-record`, making answer 2 one transaction | not proposed: each verb keeps its expectations to one lane | lane 3 |
 | 39 | The detached bind in phase 1, as its first guard PR and the lane-tools fix (row 34) | it touches no write seam; today's bind is cut down by the hook's timeout | lane 3 |
 | 40 | macOS without `setsid`: python3's `os.setsid`, else `nohup` alone, which does not survive a group kill | `setsid` is not on macOS | Brett |
@@ -5880,6 +6211,14 @@ The runbook is `operations.md`, summarised below. In order:
    covered, and the check says so.
 7. **Act 3** (Brett's): Eagle and Raven configured on `mode=index` with the
    three roles (Q20(B)); the database on the host he names (Q22).
+
+   **Every engineer's workstation, human or AI host** (Brett, #165 6722593397).
+   The register serves every engineer who writes it, not Eagle and Raven alone.
+   Act 3 configures Eagle and Raven first, and each later workstation joins by
+   the same steps: its own two logins (§1.4's login step); its own `c`,
+   `register_addresses=` and `register_rtt_ms=`, measured as it joins (D9; the
+   phase plan's "Over a remote database"); its own Q29 figure, recorded as it
+   joins (SVC-9); and its own services, one per environment (SVC-1).
 8. **Act 4** (Brett's word, his window): after slices 2a, 2b and 3 (Q28(i)) and
    a rehearsal on a scratch schema with an outage drilled (ADV-C10), and with
    P10's notice posted on each project's coordination issue before the window.
@@ -5946,11 +6285,33 @@ scope and D8's exit 3 for a write in doubt, both from the review of commit J
 themselves, against S2's renderer. He took each as recommended, as a recorded
 departure, on 2026-11-08 (#165 comment 6721370130).
 
-**Values Brett names later:** Q29's time limit for the guard; Q22's database
-host, its backups and how long it may be down; Q28's two dates, one for slices
-1a and 1b and one for the other four; the expiry of any outage he declares.
-Lane 3 puts the first three to him with the spec PR (#165 6710653292). Lane 4's
-rows 18, 22 and 40 are answered (#165 6721583757).
+**Values Brett named on 2026-11-08.** Q22's host: Azure Database for PostgreSQL
+Flexible Server, PostgreSQL 16, in opensoft's prod subscription (Brett, #165
+6722593397), after "A separate server" and "Managed cloud Postgres" (#165
+6722025863). Its region is expected to be Central US, where opensoft's prod
+platform runs (Opensoft-Tenant's `infra/aks-platform/prod.bicepparam` has
+`location = 'centralus'`), and act 3 confirms it when it creates the server.
+Access is public, with one firewall rule per workstation address, and the
+setting that allows access from any Azure service stays off; the connection is
+TLS `verify-full`, with `require_secure_transport` on; Microsoft Entra ID is an
+option only, unused (§1.4; Brett, #165 6723413756). The server's compute tier
+sets `max_connections`, which must hold one service connection per environment
+of every engineer, beside the direct reads and the writers (SVC-1; lane 5, #165
+6722703424). Q22's backups: the daily `pg_dump` of both schemas, by a scheduled
+job in the prod subscription, into a storage container there with soft delete
+and 30-day retention ("Dump both", #165 6722541787; "Job + storage in prod sub",
+#165 6722593397), and the provider's automated backups and point-in-time
+restore, which count as a restore source ("Count both", #165 6722541787); if the
+subscription is lost, the GitHub mirror is the copy outside Azure ("Accept;
+mirror is the copy", #165 6723413756; D22). Q22's downtime limit: "4 hours
+(Recommended)" (#165 6722025863). Q29's limit: "1 s (Recommended)" (#165
+6722025863), judged on the warm p95 of the guard without the service, with the
+cold walk recorded beside it and not judged against the limit (lane 3's ruling
+on lane 2's question 2, as lane 5 suggests, #165 6722703424). Q28's two dates:
+"Confirm both (Recommended)" (Brett, #198 6722244541): slices 1a and 1b as draft
+PRs by 2026-11-10, ready by 2026-11-12, and the other four open by 2026-11-12,
+ready by 2026-11-17. **Still his to name later:** the expiry of any outage he
+declares. Lane 4's rows 18, 22 and 40 are answered (#165 6721583757).
 
 **Facts still to find:** whether the organisation's GitHub plan supports a push
 ruleset with a deploy-key bypass, and whether it can name the render set
@@ -5958,8 +6319,21 @@ exactly (Q21(b), D23), which nobody has checked yet and on which his Q21(b)
 answer rests; for the deploy key's push (the phase plan's row 2, under
 Q21(b)), whether every environment has git 2.32 or later, which
 `GIT_CONFIG_GLOBAL` needs, and whether `ready` can prove the key's write
-right (`git push --dry-run` over SSH); whether Eagle and Raven install by
-pipx or `./setup.sh`, and whether v1.2.0 carries #165 alone (Q24).
+right (`git push --dry-run` over SSH); whether Eagle and Raven install by pipx
+or `./setup.sh` (Q24). Whether v1.2.0 carries #165 alone is answered: it carries
+#165 and T017's five fixes, on Brett's split of the release (#165 6721648587 and
+6721870837).
+
+**A dead holder's `HOLD` (U6):** no verb writes `HOLD EXPIRED` today, in files
+mode or in the register (lane 1, #165 6722618324). Releasing a dead holder's
+`HOLD` is outside Brett's ruling on `LANDING`s, and #165 keeps parity with files
+mode. Lane 3 routes it as its own issue after #165 (lane 3's ruling, #165
+6722541787).
+
+**The link to the server** (S5; lane 5, #165 6722703424): on primary, each
+prompt's guard needs the workstation's network path to the server, and while
+that path is down it answers 2 until an outage is declared (SVC-12). Routed to
+Brett on 2026-11-08.
 
 **Deferrable within the design:** the per-call process cost, which changes no
 spec: [L4-c] puts an attempt at about 0.55 to 0.61 s, inside every frame
@@ -6000,8 +6374,10 @@ as `test-plan.md` (commit J2); its routed tests are below.
   step 8a's `objects:` key is lower-cased, through `entry_new_keys`; and a
   key a line derives that is not a scope is a new code, LR010, a 2, at a
   write and at an import, whose cost at import lane 3 accepted (option (a),
-  #165 6711924759; `operations.md` §2.2, act 4's step 6). The
-  stale-`LANDING` release waits on Brett (F13). **Answered by lane 1's
+  #165 6711924759; `operations.md` §2.2, act 4's step 6). Brett adopted the
+  stale-`LANDING` release, F13, on 2026-11-08 (#165 6721583757), with its verb,
+  lane 4's `append-line --landing-expired`, and lane 1's v3.1 refusals, folded
+  in commit W. **Answered by lane 1's
   v2.6** (#165 6714645316, folded above), the points the review of commit J
   routed to it: `find_write(p_write_id, p_not_after)`, which waits on the
   server's own clock and checks it again under the head row's lock, with

@@ -929,9 +929,10 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 10. The guard through the service: byte-identical answers (stdout, stderr less
     the fallback line, and the exit code), the fallback line, no credential in
     any environment a session inherits, and the service's answer to the
-    guard's read under 50 ms, recorded in the PR body (Q10), with the whole
-    guard's figure, which is Q29's, and today's direct guard beside it (P5;
-    design SVC-10); and the hook inside its
+    guard's read under 50 ms on the suite's fixture register, recorded in
+    the PR body (Q10), with today's direct guard beside it, and the whole
+    guard's figure, which is Q29's, taken at act 3 against the named
+    provider (P5; design SVC-10); and the hook inside its
     5 s against a database that does not answer (the architecture seat's
     concern 1, ADV-C4).
 11. A lane's day on `mode=primary` (the product seat's P6), on the local cluster
@@ -1111,9 +1112,10 @@ product seat narrows it: act 4 waits for 2a, 2b and 3, and the renderer's
 merge need not wait for 2a and 2b under the private-index form (S2, whichever
 way Q27 is read). R3's (a′) (Q6) lets #311 trail; under (i), act 4 waits for
 #311 all the same. Q28's
-owner is answered too, (a): lane openRepoShape-2 re-homes them. Only its two
-dates stay open, one for 1a and 1b and one for the other four, Brett's to
-name.
+owner is answered too, (a): lane openRepoShape-2 re-homes them. Brett named its
+two dates with "Confirm both (Recommended)" (#198 6722244541): 1a and 1b as
+draft PRs by 2026-11-10, ready for his word by 2026-11-12, and the other four
+open by 2026-11-12, ready by 2026-11-17.
 
 R3 completes this order, as a proposal (Q24 and Q25 carry its questions):
 
@@ -1198,12 +1200,13 @@ answers from the mirror, labelled, only during an outage he declares, and a
 rollback's start declares one too, which narrows Amendment 22; Q28 (i) and (a),
 the cutover waits for Amendment 23's six act-2 PRs, which lane openRepoShape-2
 re-homes; and Q29 (a), the service is built last, and the cutover waits for it
-only if the guard, measured without it, is slower than a limit he names. **Still
-his to name later:** Q29's time limit; Q22's database host, its backups and how
-long it may be down; and Q28's two dates, one for 1a and 1b and one for the
-other four. Q21(b) also rests on whether the org's GitHub plan supports such a
-ruleset, which nobody has checked yet. Lane 3 puts these to him with the spec
-PR.
+only if the guard, measured without it, is slower than a limit he names. **Named
+on 2026-11-08:** Q29's time limit, "1 s (Recommended)"; Q22's database host, its
+backups and how long it may be down (Q22, below); and Q28's two dates, "Confirm
+both (Recommended)": 1a and 1b ready by 2026-11-12, the other four by 2026-11-17
+(#165 6722025863, 6722593397 and 6723413756; #198 6722244541). Q21(b) also rests
+on whether the org's GitHub plan supports such a ruleset, which nobody has
+checked yet.
 
 1. **The test strategy: answered.** Brett Heap, in lane 3's session at
    2026-10-31T19:32:08Z, verbatim: "1A and 2A" (#165 comment 6548141614), on
@@ -1964,6 +1967,17 @@ PR.
     "the rollback waits for it" never ends, and the recovery loses every write
     the mirror had not yet rendered, which exists only in SQL. The renderer's
     lag, which `status` shows, bounds that loss (the product seat, 6549261651).
+    **Answered, Brett's, on 2026-11-08:** a managed cloud PostgreSQL, "A
+    separate server" then "Managed cloud Postgres" (#165 6722025863): Azure
+    Database for PostgreSQL Flexible Server, version 16, in opensoft's prod
+    subscription (#165 6722593397), with public access, one firewall rule per
+    workstation address, and TLS `verify-full` (#165 6723413756). Its backups
+    are the daily `pg_dump` of both schemas, by a job in that subscription, and
+    the provider's own backups and point-in-time restore, with the git mirror as
+    the copy outside Azure (#165 6722541787, 6722593397 and 6723413756), and its
+    downtime limit is "4 hours (Recommended)" (#165 6722025863). Raven stays
+    configured with Eagle, (a), and the scope is every engineer's workstation,
+    human or AI host, each joining by act 3's steps (#165 6722593397).
 23. **The configuration and password file on benches (R3's question 11, from
     R3c 6; for Brett).** `~/.config/openRepoTools` is not a bench mount, and the
     file must stay out of git trees and `~/.agents/` (Amendment 14(c)). Options:
@@ -1984,6 +1998,11 @@ PR.
     and the one-liner as a stopgap, with Brett's approval to file and merge the
     workBenches work, and one v1.2.0 with an rc1 rehearsal. Under 1A the bench
     images gain `psql`, once they are rebuilt, which stays his act.
+    **Answered, Brett's, on 2026-11-08:** v1.2.0 carries #165 and T017's five
+    fixes, #290, #291, #295, #301 and #302, and the other issues milestoned
+    v1.2.0 move to v1.2.1: "set 1.2.0 for 165 alone, 1.2.1 for the rest", then
+    "let T017 ride in 1.2.0, retitle #343" (#165 6721648587 and 6721870837).
+    Whether Eagle and Raven use pipx or `./setup.sh` stays open.
 25. **The landing's mechanics (R3c's questions 1, 2 and 9; for Brett).**
     - (a) The merge method per leg: (i) a merge commit on both legs, as spec #1,
       #3 and #4 and code #1 were merged; (ii) a squash with an explicit body;

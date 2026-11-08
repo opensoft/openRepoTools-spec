@@ -843,7 +843,7 @@ Once a rollback has run to its end and the database is back, a `mode=primary` wr
 - **THEN** the test fails
 
 ### Requirement: The operator's bootstrap is idempotent and holds no secret
-This change SHALL build a `lanes-index` bootstrap that makes the register's schema, the three roles and their GRANTs from one admin connection that Brett supplies, prints the password-file lines for him to place, and stores no secret. The admin connection SHALL be used once and held by nothing, and SHALL be named as a libpq service with its own password file: an argument that carries a connection string SHALL be refused with 2. A roles-only form SHALL make only the roles, for a restore, since roles are cluster objects that a database backup does not hold. The command names are the design's.
+This change SHALL build a `lanes-index` bootstrap that makes the register's schema, the three roles and their GRANTs from one admin connection that Brett supplies, prints the password-file line of each login it creates for him to place, and stores no secret. Each engineer's two logins, a writer login and a reader login, and the dump job's login SHALL be made, their passwords rotated and their logins revoked by a separate operator command, `lanes-index login`, through the same admin service, which SHALL print each new password-file line once, store no secret, and set on each login its group's floors, since a role's settings reach no member. The admin connection SHALL be used once and held by nothing, and SHALL be named as a libpq service with its own password file: an argument that carries a connection string SHALL be refused with 2. A roles-only form SHALL make only the roles, for a restore, since roles are cluster objects that a database backup does not hold. The command names are the design's.
 
 #### Scenario: Run twice
 - **WHEN** the bootstrap runs twice against the same database
@@ -851,14 +851,19 @@ This change SHALL build a `lanes-index` bootstrap that makes the register's sche
 
 #### Scenario: No secret is stored
 - **WHEN** the bootstrap completes
-- **THEN** it has printed the password-file lines and written no secret to any file
+- **THEN** it has printed the password-file line of each login it created and written no secret to any file
 
 #### Scenario: A connection string as an argument
 - **WHEN** the bootstrap is given a connection string in an argument
 - **THEN** it refuses with 2 and makes nothing
 
+#### Scenario: An engineer's logins (real engine)
+- **WHEN** `lanes-index login add` runs for an engineer, and later `lanes-index login revoke` for the same engineer
+- **THEN** after the first, that engineer's writer login and reader login exist, each a member of its group and carrying its group's floors, and their password-file lines were printed once
+- **AND** after the second, a new connection by either login is refused, and an open session's next statement is refused
+
 ### Requirement: The readiness check proves an environment before the cutover
-This change SHALL build a readiness check, run in each environment that writes the register (the bench containers, the host shells, Raven's install and the Codex lane's tools), that verifies the installed tools' digests against the release, that `psql` is present, that the configuration is readable and says `mode=index` before the cutover, that each role connects and is refused outside its scope, that the installed `lanes-index` no longer carries the refusal of `mode=primary`, and that the tools' schema version lies inside the database's window; with `primary` expected, it SHALL also verify that the switch is `primary` with the marker `present` and that `lanes/STORE` names this database. A pass in every environment SHALL be a precondition of act 4. The check is a check at one moment: a container started after it SHALL NOT be covered, and the check SHALL say so.
+This change SHALL build a readiness check, run in each environment that writes the register (the bench containers, the host shells, Raven's install and the Codex lane's tools), that verifies the installed tools' digests against the release, that `psql` is present, that the configuration is readable and says `mode=index` before the cutover, that each of the workstation's logins connects, carries its group's floors itself, as the login step sets them, and is refused outside its scope, that the installed `lanes-index` no longer carries the refusal of `mode=primary`, and that the tools' schema version lies inside the database's window; with `primary` expected, it SHALL also verify that the switch is `primary` with the marker `present` and that `lanes/STORE` names this database. A pass in every environment SHALL be a precondition of act 4. The check is a check at one moment: a container started after it SHALL NOT be covered, and the check SHALL say so.
 
 #### Scenario: A stale digest
 - **WHEN** the installed tools' digests differ from the release
@@ -909,7 +914,7 @@ Rule 1's race SHALL be decided by the register's commit order: of two claimants 
 - **THEN** one `CLAIMED` exists and the other claim exits 2
 
 ### Requirement: `HOLD` and `LANDING` are ordered by commit sequence
-Amendment 10's `HOLD` and `LANDING` lines on one repository's `main` SHALL be ordered by commit sequence: the earlier commit wins, and the later writer's transaction SHALL report the earlier line to it before it acts. The later writer's verb SHALL exit non-zero, with a code the design names that is neither 0 nor 69, and SHALL print the earlier line, so that a landing script that sees the exit does not merge second. The line SHALL still come before the act that moves `main`. Recognising which lines take and release `main` SHALL be done inside the transaction, by `append-line` or by a verb of the design's choosing. The repository SHALL be compared by a canonical key, so that one repository spelled two ways is one `main`. On `mode=primary` a line in a taking shape, one that matches `HOLD — ` or `LANDING — `, from which no repository can be read SHALL be refused with 2, writing nothing, since it would look like a hold to readers and order nothing.
+Amendment 10's `HOLD` and `LANDING` lines on one repository's `main` SHALL be ordered by commit sequence: the earlier commit wins, and the later writer's transaction SHALL report the earlier line to it before it acts. The later writer's verb SHALL exit non-zero, with a code the design names that is neither 0 nor 69, and SHALL print the earlier line, so that a landing script that sees the exit does not merge second. The line SHALL still come before the act that moves `main`. Recognising which lines take and release `main` SHALL be done inside the transaction, by `append-line` or by a verb of the design's choosing. The repository SHALL be compared by a canonical key, so that one repository spelled two ways is one `main`. On `mode=primary` a line in a taking shape, one that matches `HOLD — ` or `LANDING — `, from which no repository can be read SHALL be refused with 2, writing nothing, since it would look like a hold to readers and order nothing. On `mode=primary` a taking line, `HOLD` or `LANDING`, whose UTC cannot be read SHALL likewise be refused with 2, writing nothing, and the refusal SHALL name the rule, since Rule 6's 30 minutes are measured from that UTC and such a line could never be released as stale; files mode, an import's included, SHALL load such a line as it stands.
 
 #### Scenario: Two `HOLD`s (agreement test 4)
 - **WHEN** two lanes write a `HOLD` for one repository
@@ -927,8 +932,16 @@ Amendment 10's `HOLD` and `LANDING` lines on one repository's `main` SHALL be or
 - **WHEN** a lane on a `mode=primary` workstation writes a line that matches `HOLD — ` and from which no repository can be read
 - **THEN** the write exits 2 and nothing is written
 
+#### Scenario: A taking line with no readable UTC
+- **WHEN** a lane on a `mode=primary` workstation writes a line that matches `HOLD — ` or `LANDING — ` and from which no UTC can be read
+- **THEN** the write exits 2, the refusal names the rule, and nothing is written
+
+#### Scenario: An imported taking line with no readable UTC
+- **WHEN** an import loads, from the files, a `HOLD` or `LANDING` line from which no UTC can be read
+- **THEN** the line loads as it stands, and the import is not refused for it
+
 ### Requirement: Which lines take and release `main`
-`HOLD` and `LANDING` SHALL take `main`. `HOLD RELEASED`, `HOLD WITHDRAWN` and `HOLD EXPIRED` SHALL release a `HOLD`. The `(refresh)` and `(run id)` lines SHALL continue the original. Only `LANDED` SHALL release a `LANDING`.
+`HOLD` and `LANDING` SHALL take `main`. `HOLD RELEASED`, `HOLD WITHDRAWN` and `HOLD EXPIRED` SHALL release a `HOLD`. The `(refresh)` and `(run id)` lines SHALL continue the original. A `LANDING` SHALL be released only by its own lane's `LANDED`, or by a `LANDING EXPIRED` that names it once it is stale, as the requirement "A `LANDING EXPIRED` releases one stale `LANDING`, or writes nothing" sets out; a stale `LANDING` that no such line releases SHALL still take `main`.
 
 > Brett's answer to Q17: option (B), #165 6710653292.
 
@@ -940,12 +953,85 @@ Amendment 10's `HOLD` and `LANDING` lines on one repository's `main` SHALL be or
 - **WHEN** a `HOLD (refresh)` line follows a `HOLD`
 - **THEN** it continues the original hold and does not take `main` a second time
 
-#### Scenario: A `LANDING` stays until `LANDED`
-- **WHEN** a `LANDING` is open and no `LANDED` has followed
+#### Scenario: A `LANDING` stays until it is released
+- **WHEN** a `LANDING` is open: neither its lane's `LANDED` nor a `LANDING EXPIRED` that the commit accepted for it has followed, however long ago it was written
 - **THEN** `main` stays taken
 
+### Requirement: A `LANDING EXPIRED` releases one stale `LANDING`, or writes nothing
+On `mode=primary` the transaction that commits a `LANDING EXPIRED` line SHALL decide what the line releases, inside that transaction (F13's check, in `commit_write`'s step 7). Any lane MAY write the line, the holder included: it is written only on Brett's word, by the verb that the requirement on `append-line --landing-expired` sets out, and no check that verb makes first SHALL replace this one. The line SHALL name one `LANDING`: by its holder, the line's first `for lane <name>` (`for_lane`), compared in any case; by its repository's `repo_key` alone, not by D18's spellings, so the line spells the repository as that `LANDING` did; and by its PR. The `LANDING` it names SHALL be the newest of the holder's `LANDING`s before it, for that PR, that the line would close, matched as `main_slots` matches a close to its take (equal `repo_key`s or overlapping spellings), and SHALL carry the line's `repo_key`: a `LANDING` posted again for one PR is one landing, as Rule 6 reads it, and its 30 minutes run from the newest. That `LANDING` SHALL be stale only where, in the transaction that commits the `LANDING EXPIRED`, the database's clock is more than 30 minutes past the UTC that the `LANDING` line carries: strictly more, so one exactly 30 minutes old is not stale. The clock that reads the age SHALL be the database's, never a host's. Where a verb wrote the `LANDING` on `mode=primary` and stamped its UTC, as `log LANDING` does, that UTC is the database's clock at the writer's snapshot, in whole seconds, so both times are the database's; a UTC that a caller composed inside `append-line` text, or that a `LANDING` imported from the files carries, stays as written and the 30 minutes run from it; and a `LANDING` whose UTC cannot be read is never stale. On `mode=primary` such a `LANDING` is refused when it is written, so one can come only from the files. Staleness alone SHALL release nothing: a stale `LANDING` still takes `main` until a line releases it. A `LANDING EXPIRED` that the commit accepts SHALL close the `LANDING` it names, with the holder's earlier `LANDING`s for that PR into that repository, as the holder's `LANDED` would close them, and SHALL close nothing else: no `HOLD`, no other lane's line, and no `LANDING` for another PR or repository. It SHALL NOT be a `LANDED`: it records no merge and says nothing about whether one happened, and `main` is then free for that repository only where no other take on it is open. A `LANDING` already closed, by its holder's `LANDED` or by an accepted `LANDING EXPIRED`, matched to it as `main_slots` matches a close, SHALL NOT be closed again. Where the line names no `LANDING` that is open and stale, the commit SHALL refuse the line with LR005, and the refusal SHALL name which of three reasons holds. The first is that there is none: the holder has no `LANDING` before the line for that PR that the line would close, as where the line names another lane or another PR, or the newest one has a `repo_key` that is not the line's, as where the line spells the repository another way. The second is that it is already closed. The third is that it is too young: 30 minutes old or less, or its UTC cannot be read. The writer SHALL exit 2 with the server's message, writing nothing: the journal, the line store, the head row and the mirror are unchanged. A line in the `LANDING EXPIRED` shape from which the holder, the PR or the repository cannot be read SHALL be a line of no kind, which takes and releases nothing.
+
+> Brett's ruling on the stale `LANDING`: "Adopt, on my word (Recommended)", #165 6721583757. Lane 3's ruling that the refusal names its reason (U7): #165 6722541787.
+
+#### Scenario: A stale `LANDING` released (real engine)
+- **WHEN** lane B's newest `LANDING` for PR 7 into repository R is open and, at the commit, more than 30 minutes old by the database's clock, and a `LANDING EXPIRED` that names lane B, PR 7 and R as lane B's `LANDING` spelled it commits on `mode=primary`
+- **THEN** lane B's `LANDING` is closed as lane B's `LANDED` would close it, and no `LANDED` is written
+- **AND** nothing else is closed: lane B's open `HOLD` on R, if it has one, every other lane's line, and lane B's `LANDING`s for other PRs or repositories stay as they were
+- **AND** where no other take on R is open, `main` is free for R, and a later `LANDING` by lane C is not refused for lane B's
+
+#### Scenario: A `LANDING` not yet stale
+- **WHEN** the `LANDING` the line names is, at the commit, 30 minutes old or less by the database's clock, exactly 30 included, or carries no UTC that can be read, as only a `LANDING` loaded from the files can
+- **THEN** the commit refuses the line with LR005 and names the `LANDING` as too young, the writer exits 2, and the journal, the line store, the head row and the mirror are unchanged
+- **AND** that `LANDING` still takes `main`
+
+#### Scenario: The database's clock decides
+- **WHEN** the writing host's clock reads the `LANDING` as more than 30 minutes old and the database's clock, at the commit, does not
+- **THEN** the commit refuses the line with LR005, names the `LANDING` as too young, and nothing is written
+
+#### Scenario: A `LANDING` posted again
+- **WHEN** lane B wrote `LANDING` twice for PR 7 into R, under one spelling or under two that D18 counts as one repository, the first more than 30 minutes before the commit and the second 30 minutes or less before it, with no close after either
+- **THEN** the commit refuses the line with LR005, names the newest `LANDING` as too young, and nothing is written, since the 30 minutes run from the newest
+
+#### Scenario: A `LANDING` already closed
+- **WHEN** the `LANDING` the line names was followed by lane B's `LANDED`, under its spelling or another that D18 counts as one repository, or by a `LANDING EXPIRED` that the commit accepted
+- **THEN** the commit refuses the new line with LR005 and names the `LANDING` as already closed, the writer exits 2, and nothing is written
+
+#### Scenario: The repository spelled another way
+- **WHEN** the line spells R so that its `repo_key` is not that of lane B's `LANDING`, though D18's spellings would count the two as one repository
+- **THEN** the commit refuses the line with LR005, gives as its reason that there is no such `LANDING` under the line's `repo_key`, and nothing is written, and lane B's `LANDING` still takes `main`
+
+#### Scenario: The wrong lane or PR
+- **WHEN** the line names a lane that has no open `LANDING` for that PR and `repo_key`, or names lane B with a PR that lane B's open `LANDING` does not carry
+- **THEN** the commit refuses the line with LR005, gives as its reason that there is no such `LANDING`, and nothing is written
+
+#### Scenario: A line in the shape that names no holder
+- **WHEN** an import loads a line in the `LANDING EXPIRED` shape from which the holder, the PR or the repository cannot be read
+- **THEN** it loads as a line of no kind, releases nothing, and the import is not refused for it
+
+### Requirement: A stale `LANDING` is released by `append-line --landing-expired`, on Brett's word
+On `mode=primary` a `LANDING EXPIRED` line SHALL be written only by `append-line --landing-expired`, which composes it, and `append-line` SHALL refuse with 2, writing nothing, a text of its own that `lanes-index`'s classifier reads as `LANDING EXPIRED`. The form SHALL require Brett's word as a verbatim quote, where he gave it and when, and SHALL refuse with 2 before the lock when any of the three is missing or empty. It SHALL copy the holder's lane, the PR, the repository's spelling and the UTC from the holder's open `LANDING` as the register reads at the attempt's snapshot, and SHALL refuse with 2, sending nothing, where that `LANDING` is not open or is not past Rule 6's 30 minutes. The form's own checks SHALL NOT replace the commit's F13 check, which decides what the line releases. On success the verb SHALL print, once, the register seq, the `LANDING` it released and how far past the window it was. On `mode=primary`, `who --landing` SHALL NOT list a `LANDING` that a committed `LANDING EXPIRED` released. Off `mode=primary` the form SHALL exit 2 and write nothing, files mode's Rule 6 SHALL be unchanged, and `who --landing` SHALL list such a `LANDING` as today, so that after a rollback to files it lists again, marked STALE. Neither the client nor the database can verify the word, and the design SHALL claim no check of it: the line and its journal entry are the record.
+
+> Brett's ruling on the stale `LANDING`: "Adopt, on my word (Recommended)", #165 6721583757.
+
+#### Scenario: A release on Brett's word (real engine)
+- **WHEN** lane B's `LANDING` for a PR into one repository's `main` has stood more than 30 minutes with no `LANDED`, and lane A, on a `mode=primary` workstation, runs `append-line --landing-expired` naming lane B, the PR and the repository, with Brett's quote and where and when he gave it
+- **THEN** one `LANDING EXPIRED` line is committed that names lane A as its writer and lane B as the holder, spells the repository as lane B's `LANDING` did, and carries the quote, the place and the time
+- **AND** lane B's `LANDING` no longer takes `main`, which is free for that repository where no other take on it is open, and the verb exits 0 and prints the seq, lane B's `LANDING` and the minutes past the window
+- **AND** `who --landing <repo>` no longer lists lane B's `LANDING`, and prints none open where it was the only one
+
+#### Scenario: No word, no write
+- **WHEN** `append-line --landing-expired` runs without the quote, the place or the time of Brett's word, or with one of them empty
+- **THEN** it exits 2 before the lock, and nothing is sent to the database
+
+#### Scenario: The kind typed by hand
+- **WHEN** a lane on a `mode=primary` workstation runs `append-line` with a text that begins `LANDING EXPIRED — `
+- **THEN** it exits 2, nothing is written, and stderr names `append-line --landing-expired`
+
+#### Scenario: Nothing stale to release
+- **WHEN** at the attempt's snapshot the holder has no open `LANDING` for that PR and repository, or it is 30 minutes old or less
+- **THEN** the form exits 2 and sends nothing
+- **AND** where the commit's F13 check refuses the line instead (real engine), the verb exits 2, prints LR005 and its reason, and nothing is written
+
+#### Scenario: A release in doubt
+- **WHEN** the commit of a `LANDING EXPIRED` ends in doubt
+- **THEN** the verb exits 3 and prints the rerun with `LANES_WRITE_ID` and `LANES_WRITE_GENERATION` once, and that rerun, with the same arguments, leaves at most one `LANDING EXPIRED` for that `LANDING`
+
+#### Scenario: Files mode
+- **WHEN** `append-line --landing-expired` runs on a workstation in files mode
+- **THEN** it exits 2 and writes nothing, and `who --landing` lists the holder's `LANDING` exactly as before
+- **AND** after a rollback to files, `who --landing` lists a `LANDING` that a `LANDING EXPIRED` released on primary, marked STALE, as today
+
 ### Requirement: The three roles
-A REGISTER-WRITER role, scoped to the register's tables, the journal and the switch, SHALL be held by `lanes-edit.sh` and its renderer on every writing workstation through its own credential pair. The indexer role SHALL keep the ledger half's derived tables and SHALL NOT write the register's; the register-writer SHALL NOT write the ledger half's. A READER role SHALL serve the hooks and the listings.
+A REGISTER-WRITER role, scoped to the register's tables, the journal and the switch, SHALL be held by `lanes-edit.sh` and its renderer on every writing workstation through the writer login of that workstation's engineer, a member of the role, and that login's own credential pair; REGISTER-WRITER and READER SHALL be groups that cannot log in. The indexer role SHALL keep the ledger half's derived tables and SHALL NOT write the register's; the register-writer SHALL NOT write the ledger half's. A READER role SHALL serve the hooks and the listings.
 
 #### Scenario: Each role outside its scope (real engine)
 - **WHEN** each role attempts a write outside its scope

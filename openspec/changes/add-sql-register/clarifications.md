@@ -459,7 +459,10 @@ block set apart go as lane 3 recommended:
   only bypass is the renderer's identity, in place before the cutover where
   the org's plan supports it. The design's D23 has the ruleset name the render
   set and `lanes/STORE`.
-- **Q22 (a):** Raven is configured along with Eagle, as act 3 says.
+- **Q22 (a):** Raven is configured along with Eagle, as act 3 says. Brett has
+  since widened the scope to every engineer's workstation, human or AI host: act
+  3 configures Eagle and Raven first, and each later workstation joins by the
+  same steps (#165 6722593397).
 - **Q26 (a′):** the guard answers from the mirror, labelled as such, but only
   during an outage he declares, and the declaration is also made at a
   rollback's start. Outside one, (b) holds. This narrows Amendment 22.
@@ -472,12 +475,36 @@ block set apart go as lane 3 recommended:
 The question also named the three refinements made since the block was
 written: the declaration at a rollback's start, the 75, and the measurement.
 
+### Named on 2026-11-08
+
+Brett named the values left for him in dialogs in lane openRepoTools-3's session
+and in lane openRepoTools-1's:
+
+- **Q22, the host:** "A separate server", then "Managed cloud Postgres" (#165
+  6722025863), then "Azure Flexible Server (Recommended)": Azure Database for
+  PostgreSQL Flexible Server, version 16, in opensoft's prod subscription, which
+  act 3 creates there (#165 6722593397). Its access is "Public + firewall
+  (Recommended)", with one firewall rule per workstation address and the setting
+  that allows access from any Azure service off, and its logins are "Two logins
+  each (Recommended)" (#165 6723413756).
+- **Q22, the backups:** "Daily pg_dump + mirror (Recommended)" (#165
+  6722025863); "Count both (Recommended)" and "Dump both (Recommended)" (#165
+  6722541787), so the provider's backups and point-in-time restore are a restore
+  source and the dump takes `lanes_register` and `lanes_index`; "Job + storage
+  in prod sub (Recommended)" (#165 6722593397); and "Accept; mirror is the copy
+  (Recommended)" (#165 6723413756).
+- **Q22, the downtime limit:** "4 hours (Recommended)" (#165 6722025863).
+- **Q29, the time limit:** "1 s (Recommended)" (#165 6722025863). Lane 3 rules
+  that it is judged on the warm p95 of the guard without the service, with the
+  cold walk recorded beside it and not judged against the limit.
+- **Q28, the two dates:** "Confirm both (Recommended)": #282 (1a) and #307 (1b)
+  as draft PRs by 2026-11-10 and ready by 2026-11-12; #312, #316, #311 and #308
+  open by 2026-11-12 and ready by 2026-11-17 (#198 6722244541).
+
 ### Still Brett's to name later
 
-- Q29's time limit;
-- Q22's database host, its backups and how long it may be down;
-- Q28's two dates, one for slices 1a and 1b and one for the other four.
+- the expiry of any outage he declares.
 
 Q21(b) also rests on whether the org's GitHub plan supports such a ruleset,
-which nobody has checked yet. Lane 3 puts these to him with the spec PR, and
-tells lane openRepoShape-2 about Q28 once the dates are named.
+which nobody has checked yet. Lane 3 told lane openRepoShape-2 the Q28 dates,
+with T017's landing order, on #198 (6722244541).
