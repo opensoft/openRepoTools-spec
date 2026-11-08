@@ -6032,26 +6032,26 @@ Every row below waits on the decision it names.
 
 ## The test plan
 
-Lane openRepoTools-2's section, the test plan, folded in place of the
-placeholder by lane 3's writer in commit J2. Its sources are lane 2's plan,
-`/workspace/projects/.openrepotools-private-prep/work-20261022/lane2-165-testplan-1102/delta-rounds-1107/test-plan-v3e.md`
-(sha256 `50df314505715fe068552bd7e417e5a3a5686c420f3b8062ed4efa54f8d7bb90`,
-4,866 lines), and its summary for this section,
-`/workspace/projects/.openrepotools-private-prep/work-20261022/lane2-165-testplan-1102/delta-rounds-1107/design-summary-v3e.md`
-(sha256 `ac528e2f0475bcbb8a302e73baacffb7a2387d54d8dca293d361b3132b26fa6c`, 43
-lines), both delivered by lane 2's #165 comment 6721479518. The plan is
+Lane openRepoTools-2's section, the test plan. Commit J2 folded it in place of
+the placeholder, from lane 2's v3e (#165 comment 6721479518); commit J3, by lane
+3's writer, replaces that plan and this summary with v3f. J3's sources are lane
+2's plan,
+`/workspace/projects/.openrepotools-private-prep/work-20261108/lane2-165-v3f/DELIVERY/test-plan-v3f.md`
+(sha256 `8702b70a799001f17e38245292fc3863eb756049e623d6903374f7d93c0cc0f8`,
+9,145 lines), and its summary for this section,
+`/workspace/projects/.openrepotools-private-prep/work-20261108/lane2-165-v3f/DELIVERY/design-summary-v3f.md`
+(sha256 `3d0bb54e51c07a1b5064c7e5971a6aba4a4e7c8c4488957318fa91f00d72ef1b`, 76
+lines), both delivered by lane 2's #165 comment 6725343426. The plan is
 `test-plan.md` beside this file, copied byte for byte: its sha256 is its
-source's, `50df314505715fe068552bd7e417e5a3a5686c420f3b8062ed4efa54f8d7bb90`.
+source's, `8702b70a799001f17e38245292fc3863eb756049e623d6903374f7d93c0cc0f8`.
 From the next paragraph to the end of this section the text is the summary's
-lines 3 to 43, byte for byte; its line 1 is this heading. Lane 2 pinned the
-plan's coverage table at commit I (`2be70f5a`), before commits J to U; its pass
-after lane 3's review re-pins the table and adds the tests that the item "Lane
-2, the test plan" in "Routed to the section writers by the frame review" names,
-against the commit the review leaves (6721479518).
+lines 3 to 76, byte for byte; its line 1 is this heading. Lane 2 keyed v3f to
+commit W (`bb08d080`), J3's parent, and pinned the plan's coverage tables to it.
 
 The full plan is `test-plan.md`, beside this file (lane openRepoTools-2). It
 adds no requirement: each test checks one that the proposal, this design,
-`operations.md` or the delta specs state.
+`operations.md` or the delta specs state, as they stand at lane 3's commit W,
+`bb08d080`.
 
 - **Three kinds of test.**
   - **Real-engine (RE):** the real `psql` against the suite's own disposable
@@ -6069,13 +6069,21 @@ adds no requirement: each test checks one that the proposal, this design,
   0700 `/tmp/orpg-*` directory (about 0.9 s), a template built by the
   bootstrap with `--no-passwords`, and one database per test cloned from it
   (about 80 ms). A `stoppable_cluster` serves the tests that stop the
-  database. The binaries are PostgreSQL 16, found by `PG_BIN`, then
+  database, and a second cluster, with TLS and SCRAM on 127.0.0.1, serves the
+  timed connect (M12). A counting run records each path's connections and
+  queries (M13). The binaries are PostgreSQL 16, found by `PG_BIN`, then
   `pg_config`, then the Debian path.
 - **CI's refusal.** `OPENREPOTOOLS_REQUIRE_PG=1`, set in `tests.yml`'s `env:`
   and by the root, independent of `OPENREPOTOOLS_COMPOSED`, makes a missing
-  engine a usage error (pytest exit 4) in every job that has the binaries.
-  Elsewhere the RE tests skip loudly, naming `PG_BIN` and `postgresql-16`. A
-  job moved to a runner without the binaries loses the variable.
+  engine a usage error (pytest exit 4) in every `tests.yml` job, each
+  expected to carry the binaries. Elsewhere the RE tests skip loudly, naming
+  `PG_BIN` and `postgresql-16`. A job moved to a runner without the binaries
+  loses the variable.
+- **Times.** CI asserts a time in three ways only. The guard's 4.5 s is
+  asserted as stated. Every other upper bound the design states, such as
+  D9's timers, `bound_s` and D7's 30 s, is asserted at twice its value, and
+  the measured time and its margin are recorded in the test's output. Lower
+  bounds and orderings are asserted as stated. Every other time is recorded.
 - **What it covers.** Agreement tests 1 to 14; the council's R, C5, P3, P8, C8
   and C10; the frame's D8, D9, D19, D20 and D22; the schema's objects
   (AT-SET, AT-MIR, AT-SPL, AT-LR5, AT-VER, AT-LR4), with v2.3's restore form,
@@ -6083,13 +6091,37 @@ adds no requirement: each test checks one that the proposal, this design,
   attempts of one write meet as LR006, 40001 or 55P03, never as 23505; and
   the frame review's findings, with the detached bind, `start-record`,
   `act-begin`, the renderer's bounds, and today's two answer-2 defects as
-  regression tests. The probes' cases are tests, and each measured figure is
-  recorded in the PR body and the step summary, never a CI threshold.
-- **Coverage.** All 83 requirements of the two delta specs at lane 3's
-  commit I, `2be70f5a` (65 and 18), have a row: 13 changed between
-  `1c45123a` and `21f0191c`, and 11 since then, one of them added. 75 have
-  tests; eight have none or a partial one, five of them documentation or
-  Brett's decision.
+  regression tests. Since v3e it also covers the in-doubt rule (one lookup
+  after `not_after`, a write ended by about 68.5 s, an exit 3 about 18 s
+  after the snapshot) and "The tail, once" (AT-D8, AT-F3, AT-F34); the act's
+  refusals (AT-F5); LR011 and LR012 and the rollback's retries (AT-8, AT-F1);
+  the bind's seam and bounds (AT-F6, AT-F14); a `Register-Seq` above the
+  head, which stops the renderer; lane 1's v2.4 to v2.8 objects at the engine
+  (AT-LR007, AT-LR009, AT-LR010, AT-LR011 and AT-LRLABEL); the release of a
+  stale `LANDING`, its engine half and its verb (AT-LR5's F13 cases and
+  AT-F13); the managed PostgreSQL's bootstrap, two logins for each engineer,
+  dump and restore (AT-LRMPG); the remote database's one-request calls,
+  timers and connect bound (AT-D9c, AT-D9's guard row, AT-10 and AT-F6's cases 21
+  and 22); and the shared database over a
+  managed cloud link (§5.6, M12 and M13, with lane 5's netem run). The
+  probes' cases are tests, and each measured figure
+  is recorded in the PR body and the step summary, never a CI threshold; M5b,
+  M6, M9, M10's parse and M11 each have a test that records them.
+  Where the managed cloud PostgreSQL's link changes a timer or a healthy
+  call's time, the figures are lane 4's (comment 6722143023). The plan names
+  512 tests: v3e's 306, eleven of them renamed or dropped, and 217 added.
+- **Coverage.** All 88 requirements of the two delta specs at lane 3's
+  commit W, `bb08d080` (69 and 19), have a row: 13 changed between
+  `1c45123a` and `21f0191c`, 11 between that and commit I (one added), 18
+  between I and V (three of them added and one renamed), and 9 since (two
+  of them added). 79 have tests; nine have none or a partial one, six of
+  them documentation or Brett's decision.
+- **Open points.** Section 7 of the plan lists 43. The ones that stay open
+  ask lane 3 which text holds: the timing rule's twofold margin (34), a
+  takeover whose snapshot fails (36), the lookup timer's 8 s or 9 s (37), a
+  69 with no generation (38), `timeout` and a grandchild, the lookup's
+  tries, the admin service's database on a restore, a claim with no record
+  and a pooler (39 to 43).
 
 ## Risks / Trade-offs
 
