@@ -346,8 +346,8 @@ the section that carries it.
   migration it does not have. The DDL is lane 1's, in "The schema" below. This departs
   from Amendment 22's "Everything Amendment 14 built is reused", whose table
   makes #160's schema "the register's own tables"; #160's schema stays for the
-  ledger half, and the register gets one of its own. It is listed for Brett
-  below.
+  ledger half, and the register gets one of its own. Brett accepted it on
+  2026-11-08 (#165 comment 6721583757).
 - **D2. One database client: `lanes-index register …` subcommands.** The write
   path calls `lanes-index register snapshot` and `lanes-index register commit`;
   readers call `lanes-index register read`, the guard once a prompt with
@@ -433,12 +433,12 @@ the section that carries it.
   listed act can carry its expectations under three conditions: `lane-start`
   re-reads the row at `code/lane-start:2614` after a handoff wait, the handoff
   skill's step 4 re-derives the lane's identity, and `lane-end`'s gate
-  inherits `LANES_ACT`. Each condition refused narrows S3, and the three go to
-  Brett beside this difference from R2 (below). The journal's side is lane
-  1's v2.4 (lane 4's row 20; lane 3's rulings, #165 6710770304 and
-  6711233420): `journal.act_id`, set only on a write, from the entry's `act`
-  key, and each entry's touched keys, derived inside `commit_write` and stored
-  in `journal_scopes` (§1.2; §1.3's "The act").
+  inherits `LANES_ACT`. Each condition refused would narrow S3; Brett accepted
+  the three as requirements, with this difference from R2, on 2026-11-08 (#165
+  comment 6721583757). The journal's side is lane 1's v2.4 (lane 4's row 20;
+  lane 3's rulings, #165 6710770304 and 6711233420): `journal.act_id`, set only
+  on a write, from the entry's `act` key, and each entry's touched keys, derived
+  inside `commit_write` and stored in `journal_scopes` (§1.2; §1.3's "The act").
 - **D6. The head row is updated before the journal row is inserted.** The probes
   found the reverse order turns every lost race into a 23505 on the seq key.
   Retrying that 23505 as a 40001 would also work, but would read every
@@ -568,17 +568,17 @@ the section that carries it.
   is a reading of Amendment 22's S6, not its text: S6 says the claim loser
   "writes nothing", but of `HOLD` and `LANDING` it says only that the later
   writer's transaction "reports the earlier line to it before it acts", and a
-  line Amendment 10 would have recorded is now not written. It goes to Brett
-  beside Q17 (below) (S6). The comparison is by a canonical repository key,
-  held as D19 holds an object's spellings (lane 3's ruling, #165
-  6579459518). Lane 1's v2.3 adds `register_lines.repo_spellings` (§1.2):
-  two lines name one repository where their `repo_key`s are equal or their
-  `repo_spellings` overlap, in step 7's check and in `main_slots`' matching of
-  a close to its take, so a `HOLD` or `LANDING` under the other spelling is
-  LR005 in either order. Lane 3 accepted that pairing of closes by spellings
-  (#165 6710770304, lane 1's point 3), with agreement tests against files
-  mode's Rule 6 pairing (`RULE6_AWK`) on the imported history, which lane 2's
-  plan has; a difference found there is a finding before the cutover.
+  line Amendment 10 would have recorded is now not written. Brett accepted this
+  reading on 2026-11-08 (#165 comment 6721583757) (S6). The comparison is by a
+  canonical repository key, held as D19 holds an object's spellings (lane 3's
+  ruling, #165 6579459518). Lane 1's v2.3 adds `register_lines.repo_spellings`
+  (§1.2): two lines name one repository where their `repo_key`s are equal or
+  their `repo_spellings` overlap, in step 7's check and in `main_slots`'
+  matching of a close to its take, so a `HOLD` or `LANDING` under the other
+  spelling is LR005 in either order. Lane 3 accepted that pairing of closes by
+  spellings (#165 6710770304, lane 1's point 3), with agreement tests against
+  files mode's Rule 6 pairing (`RULE6_AWK`) on the imported history, which lane
+  2's plan has; a difference found there is a finding before the cutover.
 - **D19. A claim's spellings are checked in the transaction** (ADV-C10). Each live
   claim records its spelling, its canonical key and the aliases its writer's
   `repos.tsv` mapped to that key, and the commit refuses a claim whose set of
@@ -661,7 +661,7 @@ the section that carries it.
 - **D25. `lanes-index cutover` is a command of its own** (R3's split of Q4), not a
   step of `import`. The name is the design's, not one Amendment 22 ratified: its
   S5 has the import refuse the cutover and the cutover follow, with no command
-  named. It is listed for Brett below (S5).
+  named. Brett accepted it on 2026-11-08 (#165 comment 6721583757) (S5).
 
 ### Differences from Amendments 22 and 23, for Brett
 
@@ -673,22 +673,22 @@ puts it to him.
 
 | Item | Against | Status |
 |---|---|---|
-| D5: one transaction per verb, with one composite verb, `start-record`, for `lane-start`'s bind; R2 recommended one per act, and lane 4's phase plan withdraws that (its row 21); and its S3 consequence, that an act's earlier deciding reads sit outside its writes' transactions, kept by expectations (`act-begin` and six scopes), which every listed act can carry under the three conditions in the next row | Amendment 22's S1 and S3; R2, R2C | not yet routed |
-| D5's three conditions (the phase plan's row 22): every act carries its expectations only under three conditions: `lane-start` re-reads at `code/lane-start:2614`; the skill's step 4 re-derives the identity; `lane-end`'s gate inherits `LANES_ACT`. Each refused condition narrows S3: without the first, the reads before a handoff wait are unchecked across it; without the second, step 1's reads are | Amendment 22's S3 | not yet routed; goes beside D5's row |
-| `rename-lane` on primary (the phase plan's row 18): its handoff move and stamp become its after-COMMIT tail, its stamp checks before the seam, since the scratch tree has no handoff file; so Amendment 16's "one commit, refused or whole" becomes a transaction plus a git commit | Amendment 16 | not yet routed; goes beside Q13 |
-| macOS without `setsid` (the phase plan's row 40): the detached bind falls back to python3's `os.setsid`, else `nohup` alone, which does not survive a group kill; `setsid` is not on macOS, and python3 always exists on primary, so the gap is a macOS host without python3 | Amendment 12 Addendum 1's choice 2, on macOS | not yet routed |
-| Q21(b)'s scope: Brett's answer (#165 6710653292), as the round-2 file words it, puts the push ruleset on `lanes/**`, while D23, `operations.md` and the sql-register delta's gate requirement put it on the render set and `lanes/STORE`, leaving `lanes/repos.tsv`, `lanes/log/README.md` and the other git files under `lanes/` ungated (Q18(A)); the question is which scope he meant | Brett's Q21(b) answer, under D23 | not yet routed; goes with rows 18, 22 and 40 |
+| D5: one transaction per verb, with one composite verb, `start-record`, for `lane-start`'s bind; R2 recommended one per act, and lane 4's phase plan withdraws that (its row 21); and its S3 consequence, that an act's earlier deciding reads sit outside its writes' transactions, kept by expectations (`act-begin` and six scopes), which every listed act can carry under the three conditions in the next row | Amendment 22's S1 and S3; R2, R2C | answered: D5, 6721583757: per verb accepted |
+| D5's three conditions (the phase plan's row 22): every act carries its expectations only under three conditions: `lane-start` re-reads at `code/lane-start:2614`; the skill's step 4 re-derives the identity; `lane-end`'s gate inherits `LANES_ACT`. Each refused condition narrows S3: without the first, the reads before a handoff wait are unchecked across it; without the second, step 1's reads are | Amendment 22's S3 | answered: D5's conditions, 6721583757: all three accepted as requirements |
+| `rename-lane` on primary (the phase plan's row 18): its handoff move and stamp become its after-COMMIT tail, its stamp checks before the seam, since the scratch tree has no handoff file; so Amendment 16's "one commit, refused or whole" becomes a transaction plus a git commit | Amendment 16 | answered: row 18, 6721583757: accepted |
+| macOS without `setsid` (the phase plan's row 40): the detached bind falls back to python3's `os.setsid`, else `nohup` alone, which does not survive a group kill; `setsid` is not on macOS, and python3 always exists on primary, so the gap is a macOS host without python3 | Amendment 12 Addendum 1's choice 2, on macOS | answered: row 40, 6721583757: the gap accepted |
+| Q21(b)'s scope: Brett's answer (#165 6710653292), as the round-2 file words it, puts the push ruleset on `lanes/**`, while D23, `operations.md` and the sql-register delta's gate requirement put it on the render set and `lanes/STORE`, leaving `lanes/repos.tsv`, `lanes/log/README.md` and the other git files under `lanes/` ungated (Q18(A)); the question is which scope he meant | Brett's Q21(b) answer, under D23 | answered: Q21(b)'s scope, 6721583757: the render set and lanes/STORE, as D23 has it |
 | Facts for Q21(b)(B)'s deploy key (the phase plan's row 2): the push goes to an explicit SSH URL in an isolated environment, not `git push origin`, since a deploy key is SSH-only and `insteadOf` and agent keys could defeat it; `GIT_CONFIG_GLOBAL` needs git 2.32 or later in every environment; whether `ready` can prove the key's write right (`git push --dry-run` over SSH) is open | Amendment 22's S2, under D23 | answered: Q21(b), 6710653292; the facts are still to find ("Open questions") |
 | A fact for Q7's (A″) (the phase plan's row 27): whether a `psql` connection may be kept between an attempt's two calls under (A″), which saves about 13.7 ms an attempt and which (A″) excludes, since no session stays open across the shell code | Q7(A″); the Goals | answered: Q7, 6710653292: (A″), which excludes it |
 | D7: "register busy" exits 75, not 69 | Amendment 22's S1 | answered: Q7, 6710653292: 75, its own code |
 | Q4(b)(iii) and D22: a rollback needs the database; a database lost for good is the disaster path | Amendment 22's S5 | answered: Q4(b), 6710653292 |
 | Q26(a′) and D20: the guard answers from the mirror in a declared outage, under SVC-12's three conditions; and a rollback's start declares one, marked as from a rollback, the rollback being Brett's act (`operations.md` §2.5) | Amendment 22's S3 | answered: Q26, 6710653292 |
 | Q27(a): "takes S3's checks" read as S3's fetch for the private-index renderer | Amendment 23, "Relation to Amendment 22" | answered: Q27, 6710653292 |
-| D18: the later `HOLD` or `LANDING` writer writes nothing | a reading of Amendment 22's S6 | not yet routed; goes beside Q17 |
-| D1: the register in a schema of its own, not #160's | Amendment 22, "Everything Amendment 14 built is reused" | not yet routed |
-| D25: `lanes-index cutover` as a command of its own | Amendment 22's S5 and its ratified names | not yet routed |
-| A release for a stale `LANDING` (S6): lane 1's v2 carries it as the line kind `LANDING EXPIRED`, `register_lines.for_lane` and LR005 (§1.2, §1.3.1), tested on the engine and inert until a verb writes it | Amendment 10 and Rule 6, under Q17(B) | not yet routed: an open point for Brett |
-| A stray landing during a rollback: the rollback refuses while a divergence is recorded, at its start, after a fresh fetch right before its transaction, and inside that transaction (LR012). So only a stray that lands after that check, once the rollback's entry has set the switch to `files`, has no journalled way out, since S2's two ways out each need `primary` (lane 1's v2; narrowed by its v2.6, R2's S5) | Amendment 22's S5, under Q4(b)(iii) | not yet routed: an open point for Brett |
+| D18: the later `HOLD` or `LANDING` writer writes nothing | a reading of Amendment 22's S6 | answered: D18, 6721583757: accepted as a reading of S6 |
+| D1: the register in a schema of its own, not #160's | Amendment 22, "Everything Amendment 14 built is reused" | answered: D1, 6721583757: accepted |
+| D25: `lanes-index cutover` as a command of its own | Amendment 22's S5 and its ratified names | answered: D25, 6721583757: accepted |
+| A release for a stale `LANDING` (S6): lane 1's v2 carries it as the line kind `LANDING EXPIRED`, `register_lines.for_lane` and LR005 (§1.2, §1.3.1), tested on the engine and inert until a verb writes it | Amendment 10 and Rule 6, under Q17(B) | answered: 6721583757: adopted, on Brett's word |
+| A stray landing during a rollback: the rollback refuses while a divergence is recorded, at its start, after a fresh fetch right before its transaction, and inside that transaction (LR012). So only a stray that lands after that check, once the rollback's entry has set the switch to `files`, has no journalled way out, since S2's two ways out each need `primary` (lane 1's v2; narrowed by its v2.6, R2's S5) | Amendment 22's S5, under Q4(b)(iii) | answered: 6721583757: the gap accepted as S5's remaining gap |
 | Files mode changes, against Amendment 22's scope, "a workstation with `mode=index`, or with no configuration, runs exactly as today": the guard's answer 2 runs its bind detached, and `lane-start`'s bind is one write, `start-record`, in every mode, which lane 3 ruled (#165 6710770304) and Brett was not asked; and `wip init` refuses wherever any file under `lanes/` exists, in every mode, the delta's third exception, which is his Q14(a) | Amendment 22's scope | answered: A, 6721370130: both accepted as recorded departures |
 | D8's exit 3: a write in doubt that cannot settle exits 3, naming its write id, and may have been written, where S1 has an unreachable database refuse with 69 and write "nothing anywhere"; Q16 was not in round 2 | Amendment 22's S1 | answered: B, 6721370130: exit 3 accepted |
 | Q18(A): the renderer renders the render set only, and a commit under `lanes/` outside it, such as `lanes/repos.tsv`, is part of the tip, where S2 has "a commit under `lanes/` that the renderer did not make" stop the renderer; the round-2 file calls (B) "as Amendment 22 literally reads" | Amendment 22's S2 | answered: Q18, 6710653292 |
@@ -2315,7 +2315,7 @@ The writer's idle-in-transaction bound ends a half-open writer's transaction on 
 | `register_lines`, `slot_role`, `register_lines_slots` | table, column, index | `r3a/REPORT.md:261-268` |
 | `slot_kind`, `for_lane` | columns | **(new)**; `for_lane` is F13's |
 | `repo_spellings` | column | **(new)**; D18's, as `spellings` is D19's (lane 3's ruling, 6579459518, point 5) |
-| `LANDING EXPIRED` | line kind | **(new)**; F13, if Brett takes it |
+| `LANDING EXPIRED` | line kind | **(new)**; F13, adopted by Brett (#165 6721583757) |
 | `main_slots` | view | `r3a/REPORT.md:270-278` |
 | `apply_edits` | function (now `commit_write`'s step 6) | `r3a/REPORT.md:285` |
 | `commit_write`, `switch_to_files`, `render_file`, `record_mirror_state`, `record_marker`, `find_write` | functions | **(new)**; `switch_to_files` is the cutover's abort (F2), `record_marker` S4's read-back (F12), `find_write(p_write_id, p_not_after, p_generation, p_lane, p_verb, p_args_sha256)` F3's one lookup, which waits on the server's clock past `p_not_after` (S2) and finds only this write's own entry, in this generation, else LR007 (NIT 1) |
@@ -3284,18 +3284,18 @@ from clones at different tips, end with one `CLAIMED` and one exit 2.
   no `LANDED` still takes `main`, as `RULE6_AWK` still lists it and marks it
   (`:6551–6555`); the later writer's refusal says how far past the window it
   is.
-- **A stale `LANDING` needs a release (open, for Brett).** Under Q17(B) only the
-  holder's own `LANDED` releases a `LANDING`, and D18 refuses every other lane,
-  so a lander that died between the two blocks that repository's `main` with no
-  way out. The recommendation: a `LANDING EXPIRED` line, naming the holder,
-  which any lane may write after Rule 6's window on Brett's word, and which
-  releases the `LANDING` it names; tested like the other kinds. Until he
-  answers, a person writes the holder's `LANDED` only where the landing did
-  happen, never a false one. The `LANDING` it names is found by `repo_key`
-  alone, so a `LANDING EXPIRED` that spells the repository another way names
-  no stale `LANDING` and fails closed with LR005, writing nothing (lane 3's
-  ruling, #165 6710770304, lane 1's point 5); `operations.md` §2.6 tells the
-  writer to spell it as the `LANDING` did.
+- **A stale `LANDING` needs a release (adopted by Brett on 2026-11-08, #165
+  comment 6721583757).** Under Q17(B) only the holder's own `LANDED` releases a
+  `LANDING`, and D18 refuses every other lane, so a lander that died between the
+  two blocks that repository's `main` with no way out. The release: a
+  `LANDING EXPIRED` line, naming the holder, which any lane may write after Rule
+  6's window on Brett's word, and which releases the `LANDING` it names; tested
+  like the other kinds. A person still writes the holder's `LANDED` only where
+  the landing did happen, never a false one. The `LANDING` it names is found by
+  `repo_key` alone, so a `LANDING EXPIRED` that spells the repository another
+  way names no stale `LANDING` and fails closed with LR005, writing nothing
+  (lane 3's ruling, #165 6710770304, lane 1's point 5); `operations.md` §2.6
+  tells the writer to spell it as the `LANDING` did.
 - **UTC.** The line's UTC is the database's clock at the snapshot, in whole
   seconds (D13). A UTC a caller composed inside `append-line` text, and
   `log PAUSED --utc`, stay as written.
@@ -5930,30 +5930,27 @@ comment 6710653292; `clarifications.md`).
 Brett confirmed "1A 2A 3A 4A", are RULED: he confirmed all four on 2026-11-07
 (#165 comment 6710653292).
 
-**Not yet routed to Brett:** the items so marked under "Differences from
-Amendments 22 and 23, for Brett": D5's per-verb transactions, with
-`start-record` as its one composite verb, and D5's three conditions, each of
-which, refused, narrows S3; `rename-lane`'s after-COMMIT tail against
-Amendment 16's one commit, beside Q13; macOS without `setsid`; D18 as a reading of
-S6, beside Q17; D1's schema of its own; D25's `lanes-index cutover`; and a
-release for a stale `LANDING`, for which the recommendation is a
-`LANDING EXPIRED` line naming the holder, which any lane may write after Rule
-6's window on his word, tested (S6; lane 1's v2 carries it, §1.2); a
-stray landing during a rollback after its last divergence check, which has
-no journalled way out (narrowed by lane 1's v2.6, R2's S5); and
-Q21(b)'s scope, `lanes/**` as the round-2 file words his answer, or the
-render set and `lanes/STORE` as D23 has it. Three more rows, put to Brett as A,
-B and C, are answered: files mode's changes against Amendment 22's scope and
-D8's exit 3 for a write in doubt, both from the review of commit J (R1's S1),
-and D24's two operator seqs, which `cutover` and `rollback` push themselves,
-against S2's renderer. He took each as recommended, as a recorded departure, on
-2026-11-08 (#165 comment 6721370130).
+**Answered on 2026-11-08, each as recommended (#165 comment 6721583757):** the
+ten items that were not yet routed under "Differences from Amendments 22 and 23,
+for Brett": D5's per-verb transactions, with `start-record` as its one composite
+verb; D5's three conditions, now requirements; `rename-lane`'s after-COMMIT tail
+against Amendment 16's one commit; macOS without `setsid`; D18 as a reading of
+S6; D1's schema of its own; D25's `lanes-index cutover`; a release for a stale
+`LANDING`, adopted as a `LANDING EXPIRED` line naming the holder, which a lane
+writes after Rule 6's window only on his word; a stray landing during a rollback
+after its last divergence check, accepted as S5's remaining gap; and Q21(b)'s
+scope, the render set and `lanes/STORE`, as D23 has it. Three more rows, put to
+Brett as A, B and C, are answered: files mode's changes against Amendment 22's
+scope and D8's exit 3 for a write in doubt, both from the review of commit J
+(R1's S1), and D24's two operator seqs, which `cutover` and `rollback` push
+themselves, against S2's renderer. He took each as recommended, as a recorded
+departure, on 2026-11-08 (#165 comment 6721370130).
 
 **Values Brett names later:** Q29's time limit for the guard; Q22's database
 host, its backups and how long it may be down; Q28's two dates, one for slices
 1a and 1b and one for the other four; the expiry of any outage he declares.
-Lane 3 puts the first three to him with the spec PR (#165 6710653292). Lane
-4's rows 18, 22 and 40 go to him with it too (#165 6710770304).
+Lane 3 puts the first three to him with the spec PR (#165 6710653292). Lane 4's
+rows 18, 22 and 40 are answered (#165 6721583757).
 
 **Facts still to find:** whether the organisation's GitHub plan supports a push
 ruleset with a deploy-key bypass, and whether it can name the render set
@@ -5978,8 +5975,8 @@ Lane 3's independent review of this frame (`REVIEW-frame-20261102.md`, sha256
 in later. Lane 5's section, lane 1's (the schema above, and
 `operations.md`) and lane 4's phase plan are folded; they settle their own
 points, and route the ones below marked with lane 5's question numbers,
-"from lane 1's v2" or "from the phase plan". The placeholder for lane 2 is
-left as it was.
+"from lane 1's v2" or "from the phase plan". Lane 2's test plan is folded too,
+as `test-plan.md` (commit J2); its routed tests are below.
 
 - **Lane 1, the schema and the operations:** its section v2, folded above and
   in `operations.md`, takes up the points this list routed to it (the

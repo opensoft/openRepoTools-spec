@@ -492,7 +492,7 @@ The 0.1 s, from the cap at `T0 + 3.65 s` to the mirror path's start by `T0 + 3.7
 - the claim comment's seq (Q19);
 - the claim loser's 2 instead of 7 (Q12);
 - the later `HOLD` or `LANDING` writer's code (S6);
-- where Brett takes F13's `LANDING EXPIRED`, that the line spells the repository as the `LANDING` it closes did: the stale `LANDING` is found by `repo_key` alone, so one spelled another way names none and fails closed with LR005, exit 2, writing nothing (lane 3's ruling, #165 6710770304, lane 1's point 5; `design.md` S6).
+- now that Brett has taken F13's `LANDING EXPIRED` (#165 6721583757), that the line spells the repository as the `LANDING` it closes did: the stale `LANDING` is found by `repo_key` alone, so one spelled another way names none and fails closed with LR005, exit 2, writing nothing (lane 3's ruling, #165 6710770304, lane 1's point 5; `design.md` S6).
 
 **The channels.**
 

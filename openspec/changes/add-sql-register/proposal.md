@@ -1191,15 +1191,15 @@ disaster procedure, which narrows Amendment 22; Q7 (A″), an optimistic head
 row bounded by a deadline, with "register busy" on its own exit code, 75;
 Q21(b) (B), a push ruleset on `lanes/**` whose only bypass is the renderer's
 identity, in place before the cutover where the org's plan supports it (as
-the question names it; the design's D23 has the ruleset name the render set
-and `lanes/STORE`); Q22
-(a), Raven configured along with Eagle; Q26 (a′), the guard answers from the
-mirror, labelled, only during an outage he declares, and a rollback's start
-declares one too, which narrows Amendment 22; Q28 (i) and (a), the cutover
-waits for Amendment 23's six act-2 PRs, which lane openRepoShape-2 re-homes;
-and Q29 (a), the service is built last, and the cutover waits for it only if
-the guard, measured without it, is slower than a limit he names. **Still his
-to name later:** Q29's time limit; Q22's database host, its backups and how
+the question names it; the design's D23 has the ruleset name the render set and
+`lanes/STORE`, the scope Brett confirmed on 2026-11-08, #165 comment
+6721583757); Q22 (a), Raven configured along with Eagle; Q26 (a′), the guard
+answers from the mirror, labelled, only during an outage he declares, and a
+rollback's start declares one too, which narrows Amendment 22; Q28 (i) and (a),
+the cutover waits for Amendment 23's six act-2 PRs, which lane openRepoShape-2
+re-homes; and Q29 (a), the service is built last, and the cutover waits for it
+only if the guard, measured without it, is slower than a limit he names. **Still
+his to name later:** Q29's time limit; Q22's database host, its backups and how
 long it may be down; and Q28's two dates, one for 1a and 1b and one for the
 other four. Q21(b) also rests on whether the org's GitHub plan supports such a
 ruleset, which nobody has checked yet. Lane 3 puts these to him with the spec
