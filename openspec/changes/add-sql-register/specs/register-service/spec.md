@@ -121,7 +121,7 @@ A service that accepts a connection and never answers SHALL be treated as unavai
 - **THEN** the hook prints the fallback line, exits as the direct read does, and finishes inside its 5 s
 
 ### Requirement: The 5 s is one budget, spent once
-The client's wait for the service, the fallback's own reads and every database access on the guard's path SHALL each get a share, and the shares SHALL add up to less than `GUARD_TIMEOUT`, with room to print the refusal. Every connection on that path, the service's and the fallback's, SHALL set its own connect timeout, `statement_timeout` and `lock_timeout`, each within its share, except the service's connect, which SHALL run only in the background, outside any share, so that no request waits for it; none SHALL use `lanes-index`'s default `PGCONNECT_TIMEOUT=5` or the 300 s it allows a `psql` run. In every mode, answer 2's writes SHALL run nowhere on the hook's time: the guard SHALL record the bind in the session's offer file, SHALL start the bind as a child in a session of its own, which outlives the hook whether the hook exits or is timed out, and SHALL exit 2 with "BINDING". The offer file SHALL be the bind's record, and the bind SHALL count as live only while its pid is live with the start time the record holds. While the bind runs, the guard SHALL refuse each prompt of that session with 2 ("BINDING IN PROGRESS") and pass none; once the bind ends, the guard SHALL report its outcome once, from the record. After a failed bind the window SHALL be renamed back and the offer kept, so that answer 2 can be given again, at most three times per offer. A database that does not answer SHALL be a 2 inside the hook and never a kill. A guard's client whose elapsed time from the hook's start is at or above the direct read's cap when it starts SHALL exit as "too late to verify", and the guard SHALL refuse with 2, even with the database healthy, since a hook that late has no time for a read to finish and a killed hook fails open; the cap's value is the design's.
+The client's wait for the service, the fallback's own reads and every database access on the guard's path SHALL each get a share, and the shares SHALL add up to less than `GUARD_TIMEOUT`, with room to print the refusal. Every connection on that path, the service's and the fallback's, SHALL set its own connect timeout, `statement_timeout` and `lock_timeout`, each within its share, except the service's connect, which SHALL run only in the background, outside any share, so that no request waits for it; none SHALL use `lanes-index`'s default `PGCONNECT_TIMEOUT=5` or the 300 s it allows a `psql` run. In every mode, answer 2's writes SHALL run nowhere on the hook's time: the guard SHALL record the bind in the session's offer file, SHALL start the bind as a child in a session of its own, which outlives the hook whether the hook exits or is timed out, and SHALL exit 2 with "BINDING". The offer file SHALL be the bind's record, and the bind SHALL count as live only while its pid is live with the start time the record holds. While the bind runs, the guard SHALL refuse each prompt of that session with 2 ("BINDING IN PROGRESS") and pass none; once the bind ends, the guard SHALL report its outcome once, from the record. After a failed bind the window SHALL be renamed back and the offer kept, so that answer 2 can be given again, at most three times per offer. A database that does not answer SHALL be a 2 inside the hook and never a kill. A guard's client whose elapsed time from the hook's start is at or above the direct read's cap when it starts SHALL exit as "too late to verify", and the guard SHALL refuse with 2, even with the database healthy, since a hook that late has no time for a read to finish and a killed hook fails open; the cap's value is the design's. Under an unexpired declaration that names this workstation's database, a direct read left less than its floor of 0.5 s before that cap when it would start SHALL NOT start: the client SHALL exit as "too late to verify", and the guard SHALL refuse with 2.
 
 #### Scenario: A database address whose connect never completes (agreement test 10)
 - **WHEN** the database address is one whose connect never completes, with the service up and with it down
@@ -156,7 +156,7 @@ The client's wait for the service, the fallback's own reads and every database a
 - **THEN** the guard reports once that the bind left no outcome and keeps the offer, and the next answer `2` first looks up whether the earlier bind's write committed
 
 #### Scenario: A guard that starts too late
-- **WHEN** the database is healthy and the guard's client starts with an elapsed time from the hook's start at or above the direct read's cap
+- **WHEN** the database is healthy and the guard's client starts with an elapsed time from the hook's start at or above the direct read's cap, or, under an unexpired declaration that names this workstation's database, its direct read would start with less than 0.5 s before that cap
 - **THEN** the client exits as "too late to verify" and the guard refuses with 2 inside its 5 s
 
 ### Requirement: The hook's environment carries no credential
@@ -181,7 +181,7 @@ On `mode=primary`, before an outage is declared and outside one, the guard SHALL
 - **THEN** it runs with no lane session and no guard
 
 ### Requirement: A declared outage lets the guard answer from the mirror
-During an outage Brett Heap declares on his word, when he knows that no workstation can still write, or that a rollback's start declares on his act, and until the expiry he names or the rollback's end, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. A declaration on Brett Heap's word SHALL record the mirror's `Register-Seq` when it is declared. A rollback's start SHALL write the declaration, marked as from a rollback, wherever its configuration directory is writable, and SHALL record in it the head its transaction found, the seq before the rollback's own entry, not the mirror's; the declaration the rollback prints for other hosts SHALL carry that seq too. The guard's client, and never the service, SHALL check three conditions in this order, offline, and the guard SHALL answer from the mirror only when all three hold: its database read failed, or found the switch at `files`, as at a rollback's start; a declaration is present, unexpired, and names this workstation's database; and the mirror it reads carries a `Register-Seq` at least as high as the declaration records. The client SHALL read the mirror's `Register-Seq` by a lookup bounded to the 200 most recent first-parent commits of the ref it reads, and SHALL refuse with 2 where none of them carries one. Where its database read failed and either other condition fails, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
+During an outage Brett Heap declares on his word, when he knows that no workstation can still write, or that a rollback's start declares on his act, and until the expiry he names or the rollback's end, the guard SHALL answer from the mirror, labelled `read: mirror`, while every write and every other deciding read still refuses. A declaration on Brett Heap's word SHALL record the mirror's `Register-Seq` when it is declared. A rollback's start SHALL write the declaration, marked as from a rollback, wherever its configuration directory is writable, and SHALL record in it the head its transaction found, the seq before the rollback's own entry, not the mirror's; the declaration the rollback prints for other hosts SHALL carry that seq too. The guard's client, and never the service, SHALL check three conditions in this order, offline, and the guard SHALL answer from the mirror only when all three hold: its database read failed, or found the switch at `files`, as at a rollback's start; a declaration is present, unexpired, and names this workstation's database, where a declaration marked as from a rollback carries no expiry, counts as unexpired until it is cleared, and SHALL count only where the guard's own database read found the switch at `files`; and the mirror it reads carries a `Register-Seq` at least as high as the declaration records. The client SHALL read the mirror's `Register-Seq` by a lookup bounded to the 200 most recent first-parent commits of the ref it reads, and SHALL refuse with 2 where none of them carries one. Where its database read failed and either other condition fails, the guard SHALL refuse with 2. Each guard SHALL be able to read the declaration. The declaration SHALL NOT be a row in the database that is down; where it lives is the design's. `lanes-index status` SHALL report a declaration still in place while the database answers.
 
 > Brett's answer to Q26: option (a′), #165 6710653292.
 > Brett's answer to Q4(b): option (iii), #165 6710653292; a rollback's start declares the outage (design D20).
@@ -227,9 +227,35 @@ During an outage Brett Heap declares on his word, when he knows that no workstat
 - **THEN** the guard refuses with 2, telling the person that the mirror there is behind the declared outage's seq, to fetch it once origin carries that seq or wait for the outage to end
 - **AND** it does not answer from that mirror
 
+#### Scenario: A rollback's declaration once the switch is primary again
+- **WHEN** a declaration marked as from a rollback is still present, a cutover has set the switch to `primary`, and the guard's database read fails
+- **THEN** the guard refuses with 2
+- **AND** it does not answer from the mirror
+
+#### Scenario: A rollback's declaration in a partition
+- **WHEN** a rollback has set the switch to `files`, its declaration is present, and the guard's database read fails without reading the switch
+- **THEN** the guard refuses with 2
+- **AND** it does not answer from the mirror
+
 #### Scenario: The declaration does not need the database
 - **WHEN** an outage is declared while the database is down
 - **THEN** each guard can read the declaration without the database
+
+### Requirement: `outage declare` during a rollback records the rollback's head
+While `lanes-index outage declare`'s database probe reads the switch at `files` after a rollback, a declaration on Brett Heap's word SHALL be refused with 2, writing nothing, and the refusal SHALL print the `outage declare --rollback --mirror-seq <k>` command to run instead, with `k` as `set_seq - 1`, so that no declaration made during a rollback records the mirror's `Register-Seq`. The `--rollback` form SHALL require `--mirror-seq <k>`, and SHALL be refused with 2 unless the journal entry at the switch's `set_seq` is a `rollback` and `<k>` is `set_seq - 1`, the head before that entry. Where its probe cannot read the switch, the `--rollback` form SHALL be refused with 2, and SHALL write no declaration.
+
+#### Scenario: Brett's word during a rollback
+- **WHEN** `outage declare` runs on Brett's word while its probe reads the switch at `files` after a rollback
+- **THEN** it refuses with 2 and writes no declaration
+- **AND** it prints `outage declare --rollback --mirror-seq <k>`, with `k` as `set_seq - 1`, to run instead
+
+#### Scenario: A wrong `<k>`
+- **WHEN** `outage declare --rollback --mirror-seq <k>` runs while its probe reads the switch at `files` after a rollback, with `<k>` other than `set_seq - 1`
+- **THEN** it refuses with 2 and writes no declaration
+
+#### Scenario: A rollback's declaration where the switch cannot be read
+- **WHEN** `outage declare --rollback --mirror-seq <k>` runs where its probe cannot read the switch
+- **THEN** it refuses with 2 and writes no declaration
 
 ### Requirement: The service answers the guard's read fast, and the cost is recorded
 The service SHALL answer the guard's read in under 50 ms on the suite's fixture register, measured as Q10 settles, from the client's connect to the last byte of a digest-checked answer. The PR body SHALL record that figure with the whole guard's wall time, through the service and through the direct read, and today's direct guard recorded beside it; the whole guard's figure is Q29's. Before the client's form is settled, the design SHALL measure today's guard in four parts: reaching the guard arm, tmux, the scan of the session records, and the register read, and SHALL say which parts the service removes.
