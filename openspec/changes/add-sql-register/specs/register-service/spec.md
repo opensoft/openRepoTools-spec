@@ -152,8 +152,12 @@ The client's wait for the service, the fallback's own reads and every database a
 - **THEN** the guard reports the failure's reason, the window is renamed back, the offer is kept, and a further answer `2` starts the next attempt, up to the third
 
 #### Scenario: A bind that left no outcome
-- **WHEN** the record says the bind is running on this host and container, and its pid is dead or now belongs to another process
-- **THEN** the guard reports once that the bind left no outcome and keeps the offer, and the next answer `2` first looks up whether the earlier bind's write committed
+- **WHEN** the record says the bind is running on this host and container, and its pid now belongs to another process, or is dead with no process of the bind's session left
+- **THEN** the guard reports once that the bind left no outcome and keeps the offer, and the next answer `2` first looks up whether the earlier bind's write committed, where a call of it may have been sent
+
+#### Scenario: A bind whose outer died
+- **WHEN** the record's pid is dead but a process of the bind's session is still running
+- **THEN** the guard answers as for a bind in progress, and no second bind starts
 
 #### Scenario: A guard that starts too late
 - **WHEN** the database is healthy and the guard's client starts with an elapsed time from the hook's start at or above the direct read's cap, or, under an unexpired declaration that names this workstation's database, its direct read would start with less than 0.5 s before that cap
@@ -256,6 +260,10 @@ While `lanes-index outage declare`'s database probe reads the switch at `files` 
 #### Scenario: A rollback's declaration where the switch cannot be read
 - **WHEN** `outage declare --rollback --mirror-seq <k>` runs where its probe cannot read the switch
 - **THEN** it refuses with 2 and writes no declaration
+
+#### Scenario: A declaration while the switch is at `primary`
+- **WHEN** `outage declare` runs, in either form, where its probe reads the switch at `primary`
+- **THEN** it is refused with 2 and writes no declaration
 
 ### Requirement: The service answers the guard's read fast, and the cost is recorded
 The service SHALL answer the guard's read in under 50 ms on the suite's fixture register, measured as Q10 settles, from the client's connect to the last byte of a digest-checked answer. The PR body SHALL record that figure with the whole guard's wall time, through the service and through the direct read, and today's direct guard recorded beside it; the whole guard's figure is Q29's. Before the client's form is settled, the design SHALL measure today's guard in four parts: reaching the guard arm, tmux, the scan of the session records, and the register read, and SHALL say which parts the service removes.
