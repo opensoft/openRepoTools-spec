@@ -4015,7 +4015,7 @@ answers each prompt of that session from the record by an eleven-case table:
 failure's why after it fails, with the window renamed back and the offer kept
 for at most three attempts. That a `setsid` child outlives the hook is now
 shown on Claude Code 2.1.319 (the facts table below), and lane 2's AT-F6 takes
-the phase plan's seventeen cases. **The bind as one verb:** `lane-start`'s
+the phase plan's nineteen cases. **The bind as one verb:** `lane-start`'s
 three register writes become `start-record`, one transaction carrying the
 union of their expectations (D5). The Rule 3 stamp cannot join it, since it is
 no register file (Q18(A)) and Amendment 23 keeps it a git commit everywhere, so
@@ -4478,8 +4478,12 @@ The four points lane 3's rulings on v2.4 gave lane 4 to confirm (#165
 `RENDER_GIT_HALF`; `not_after`; `LANES_READ_MIRROR`; the `.logpath.<lane>`
 sidecar; the image cache's `register-images/` layout; `LANES_REGISTER_SEAM_CAP_S`
 (N4), `LANES_BIND_BOUND_S` (N15) and `seam.out` (N4); `parent.pid` (N4), the call directory's `snapshot`, `files` and `preimages` (N8); the pending record's `call`
-lines and `tail` key (N8); the bind record's `bound_s` and `bounded` (N15);
-`register snapshot --at` (N1), `journal --not-after` (N2) and `guard-bind --body`
+lines and `tail` key (N8); the done mark, `<state>/register-done/<write_id>` (Q8);
+the claim files, `<d>.take.<k>` (Q9); the `owed` value of the done mark's `tail`
+(Q19); the bind record's `bound_s` and `bounded` (N15), and its `write_lane` and
+`args_sha256` (C1);
+`register snapshot --at` (N1), `journal --not-after` (N2), `journal --generation`,
+`--lane`, `--verb` and `--args-sha256` (Q1) and `guard-bind --body`
 (N13); and the renderer's 64-seq batch and 16-pass cap. As lane 3's ruling on v1
 has it for every new object
 (#165 6578020193), each is accepted as new and unproven, and needs a test in
@@ -5055,7 +5059,7 @@ The record is the offer file itself, `$CLAUDE_CONFIG_DIR/lanes/offers/<session u
 | `from`, `to`, `session`, `uuid`, `window`, `pane` | the offer's identity, as today's file has it (`:10965–10973`) |
 | `bind`; `started_utc`, `bound_s`, `bounded`, `deadline_epoch` | the attempt, 1 to 3; the start; the bound, 490 s (`LANES_BIND_BOUND_S` for tests); `yes` where `timeout` exists, else `no`; the start plus `bound_s` plus 5 s, the 5 s being for the outer to write the outcome after `timeout`'s `KILL` |
 | `pid`, `pidstart`; `host`, `container` | the child; `LANES_WORKSTATION` (else the hostname) and `LANES_CONTAINER` |
-| `out`; `act`, `write_id`, `generation`, `not_after` | the attempt's output file; phase 2 only, `act` being the guard's base `<act-id>@<n>:<generation>`, from the `n` and `generation` of the prefetch that made the offer |
+| `out`; `act`, `write_id`, `generation`, `not_after`, `write_lane`, `args_sha256` | the attempt's output file; phase 2 only, `act` being the guard's base `<act-id>@<n>:<generation>`, from the `n` and `generation` of the prefetch that made the offer. The other five are copied by the outer when it writes an outcome other than 0. It copies them from `start-record`'s pending record, the newest whose `verb` is `start-record` and whose `session` is this transcript's uuid: its `write_id`, `generation`, `lane` (as `write_lane`) and `args_sha256`, and the largest `not_after` among its `call` lines. They are copied, never derived from `to`, because `start-record` writes `lane-start`'s canonical lane. Where that record holds no `call` line, or there is none, the outer copies nothing: no call of the write can have been sent ("The pending record") |
 | `rc`, `why`, `note=` lines, `ended_utc` | the outcome, with one `note=` per act still owed and its command |
 
 **Liveness:** the pid is live and its start time equals `pidstart` (Linux: field 22 of `/proc/<pid>/stat`, after the last `)`; macOS: `ps -o lstart=`). One helper, `pid_start_of`, serves this record and F10's pending record. It does not copy `lock_steal_if_dead`'s pid-only test (`:1286–1296`), under which a reused pid looks live until the 10-minute age (`:1311–1321`). P5: 200 checks take 1.42 s, about 7 ms each; a reused pid and a dead pid both read as not live.
@@ -5127,14 +5131,15 @@ The check is a branch of its own at the offer site (`:10648–10659`), after 18(
 
 **A finding in today's code, fixed by the rename back.** After a failed bind the window keeps `<to>`'s name (`:11155` renames before `:11171` runs), so at the next prompt `guard_answer`'s identity test (`:11108`) drops the "KEPT" offer and "answer `2` again" (`:11173`) cannot be taken; the table then refuses with `lane-start --no-launch <to>`, which vetoes: the #70 loop again.
 
-**Reruns.** Phase 1: the bind becomes idempotent in `lane-start`. In `--bind` mode, where the binding read (`:2437`, fields at `:2448`) names this window with `b_sess` the bound uuid and the cell's last id is that uuid (`:2132–2133`), it writes no register line again, and writes the Rule 3 stamp only where the handoff has no `RESUMED by <uuid> (lane <L>)` line. Phase 2, on primary, the child makes F3's lookup before a rerun: `find_write(<write_id>, <not_after>)` on the recorded pair (lane 1's v2.6; phase 2's "The in-doubt rule"). By the next `2` the record's `not_after` has almost always passed, so neither side waits. Where it has not, as after a `kill <p>` or the bound's stop followed quickly by a `2`, the child has no snapshot clock to estimate with. So it waits on its own clock until the record's `ended_utc` plus `C`, 8 s, then calls. The record's `not_after` is at most `C` + 2 s after the stopped run's last snapshot, and that snapshot came before `ended_utc`. Both times are this host's, so their offset from the database's clock cancels. The `not_after` is then at most 2 s ahead, 3 s with `date`'s 1 s grain, and the server waits for the rest within its 3 s. Without this wait the child would call at once and get LR011, a 3, which spends one of the offer's three attempts. The wait, `w₀`, is at most `C` + 2 s:
+**Reruns.** Phase 1: the bind becomes idempotent in `lane-start`. In `--bind` mode, where the binding read (`:2437`, fields at `:2448`) names this window with `b_sess` the bound uuid and the cell's last id is that uuid (`:2132–2133`), it writes no register line again, and writes the Rule 3 stamp only where the handoff has no `RESUMED by <uuid> (lane <L>)` line. Phase 2, on primary, the child makes F3's lookup before a rerun: `find_write(<write_id>, <not_after>, <generation>, <write_lane>, start-record, <args_sha256>)` on the record's copies (lane 1's v2.8; phase 2's "The in-doubt rule"). A record with no `write_id` makes no lookup, and neither does one whose `write_id` no pending record still holds; each drops its copies and binds anew. By the next `2` the record's `not_after` has almost always passed, so neither side waits. Where it has not, as after a `kill <p>` or the bound's stop followed quickly by a `2`, the child has no snapshot clock to estimate with. So it waits on its own clock until the record's `ended_utc` plus `C`, 8 s, then calls. The record's `not_after` is at most `C` + 2 s after the stopped run's last snapshot, and that snapshot came before `ended_utc`. Both times are this host's, so their offset from the database's clock cancels. The `not_after` is then at most 2 s ahead, 3 s with `date`'s 1 s grain, and the server waits for the rest within its 3 s. Without this wait the child would call at once and get LR011, a 3, which spends one of the offer's three attempts. The wait, `w₀`, is at most `C` + 2 s:
 
 | The lookup | The rerun |
 |---|---|
 | found | rewrites nothing in the register. `start-record`'s pending record, kept by its 3, still owes the tail: the child runs that record's `cmdline` under its `write_id`, generation, lane and session, which finds the entry and runs `lane_state_follow` once ("The tail, once") |
 | absent, with the head row's lock granted | binds anew, under a new id |
-| otherwise (55P03, LR011, or no answer) | `bind-failed`, `rc=3`, again |
-| the record's `generation` is another database's | no lookup: the old database's transactions cannot commit into the new one, so it binds anew |
+| no try that starts within the window takes the lock, or the lookup is refused with LR011 | `bind-failed`, `rc=3`, again; the copies are kept |
+| LR007, `another-write`: the journal holds the id for another lane, verb or arguments | `bind-failed`, `rc=2`, with the server's message. Under this id the write cannot commit, so the record drops `write_id`, `generation`, `not_after`, `write_lane` and `args_sha256`, as a pending record is removed on this token, and the next `2` binds anew. Only a misused id can cause it, which the bind never makes: `start-record` mints its own with `LANES_WRITE_ID` unset (the variables, above) |
+| LR007, `generation`: the write was made against another database, whatever the switch reads | `bind-failed`, `rc=2`, with the refusal a plain rerun gives for a record of another generation ("The pending record"). The write may already be in this database; its effect check here is `lanes-edit.sh binding <to>`. The copies are kept, as the pending record is on this token, so a later `2` refuses the same way until that record is settled or replaced with `LANES_WRITE_ID=new` |
 
 #### The bind as one verb: `start-record`
 
@@ -5174,11 +5179,11 @@ Folding the lane left into the verb (`--leave <from> <line>`) would make answer 
 #### Phases, and AT-F6
 
 - **Phase 1:** in the guard, `mode=binding`, `guard-bind`, the fork, the case table, the rename back on failure, and `pid_start_of`; in `lane-start`, the idempotent-bind read rule, a small separate PR re-cited at each landing, since 2a and 2b also edit it. None touches a write seam. It also fixes today's files mode: today a 10.47 s bind runs inside the 5 s hook, and at the timeout Claude Code SIGTERMs the hook's whole process group (the hook probe's R1, R1b), so the bind and any `( … & )` child it forked, such as `index_nudge`'s, die part way through, which is more than the prompt passing. So it is placed first: phase 1's first guard PR, and the fix for lane 3's lane-tools issue (differences row 34). A transcript showing `hook_cancelled` stays lane 3's check.
-- **Phase 2:** `start-record` in both modes, `lane-start`'s arms on it and its union expectation, and the child's lookup, v2.6's `find_write(<write_id>, <not_after>)`, with `act`, `write_id`, `generation` and `not_after` in the record. The verb calls the commit seam, which 1b renames.
+- **Phase 2:** `start-record` in both modes, `lane-start`'s arms on it and its union expectation, and the child's lookup, v2.8's `find_write` with the record's six values, with `act`, `write_id`, `generation`, `not_after`, `write_lane` and `args_sha256` in the record. The verb calls the commit seam, which 1b renames.
 - **Phase 3:** nothing.
 - **Under Q7(A′)** `start-record` runs once in the held session and the lookup becomes the lock wait; **under "(A″) with 69"** the busy `rc` is 69. **Under Q27(b)** the bound does not change. The stamp's 60 s wait and the tail's 20 s wait for the lane checkout's mutex are already in the sum (`acquire_lock`, `:1334–1337`; `lock_try`, `:1308–1332`). A render makes them likelier, not longer.
 
-**AT-F6, for lane 2:** (1) answer `2` exits 2 with "BINDING" before `T0 + 1 s` while a stub `lane-start` sleeps 15 s, and a runner reading the hook's pipes sees EOF at once; (2) the child survives a group `SIGKILL` and `SIGHUP` and the record ends `bound`; (3) a prompt mid-bind gets "BINDING IN PROGRESS", is not passed, and the record is unchanged; (4) after `bound`, one "MOVED" with the notes, the record removed, the next prompt 0; (5) after a stub failure, the why, the rename back, the offer kept, attempt 2 on the next `2`, choice 2 withdrawn after the third failure; (6) a child killed with `-9` gives "no outcome", and an altered `pidstart` reads as dead; (7) a stub body past a short `LANES_BIND_BOUND_S` ends `rc=124`, or `137` where it ignores `TERM`; the outer writes the outcome, and no process of the body's group is left; a stub `set-row-state` that runs slowly after `lane-start` ends is still inside the bound; (8) two sessions answer `2` for one lane on the primary fixture: one `start-record` commits, the other is refused 2 by `bind:<L>`; (9) the bind is one register commit plus one handoff commit in files mode, one journal entry on primary, and a row change injected after `act-begin` refuses 2 and writes nothing; (10) an injected `psql` exit 2 gives `rc=3` with the id, and at the next `2` found writes no second `RESUMED` and absent binds anew; (11) a rerun after a failed stamp push writes no register line and exactly one stamp; (12) a fake tmux sees the child's untargeted calls with `TMUX_PANE` set and stdin on `/dev/null`; (13) a stub `lane-start` sees `LANES_NO_FETCH`, `LANES_ACT` and `LANES_EXPECT` unset and `TMUX`, `TMUX_PANE` set; (14) the hook string and `GUARD_TIMEOUT` are byte for byte unchanged; (15) `kill <p>` mid-bind ends the record with the signal's code and "what it wrote is not known"; (16) with `timeout` hidden from `PATH`, the record says `bounded=no`; a child past `deadline_epoch` gets the past-the-bound text with its cost; and `kill <p>` stops the body's process group, the outer's trap runs once, and the outer writes the outcome; (17) a counting `LANES_EDIT` stub sees at most `N_r` read calls on the `--bind` resume path, and the test fails where `N_r` must grow; (18) a bind killed mid-commit and answered `2` at once waits until `ended_utc` + `C` before its lookup, gets no LR011, and finds or binds anew.
+**AT-F6, for lane 2:** (1) answer `2` exits 2 with "BINDING" before `T0 + 1 s` while a stub `lane-start` sleeps 15 s, and a runner reading the hook's pipes sees EOF at once; (2) the child survives a group `SIGKILL` and `SIGHUP` and the record ends `bound`; (3) a prompt mid-bind gets "BINDING IN PROGRESS", is not passed, and the record is unchanged; (4) after `bound`, one "MOVED" with the notes, the record removed, the next prompt 0; (5) after a stub failure, the why, the rename back, the offer kept, attempt 2 on the next `2`, choice 2 withdrawn after the third failure; (6) a child killed with `-9` gives "no outcome", and an altered `pidstart` reads as dead; (7) a stub body past a short `LANES_BIND_BOUND_S` ends `rc=124`, or `137` where it ignores `TERM`; the outer writes the outcome, and no process of the body's group is left; a stub `set-row-state` that runs slowly after `lane-start` ends is still inside the bound; (8) two sessions answer `2` for one lane on the primary fixture: one `start-record` commits, the other is refused 2 by `bind:<L>`; (9) the bind is one register commit plus one handoff commit in files mode, one journal entry on primary, and a row change injected after `act-begin` refuses 2 and writes nothing; (10) an injected `psql` exit 2 gives `rc=3` with the id, and at the next `2` found writes no second `RESUMED` and absent binds anew; (11) a rerun after a failed stamp push writes no register line and exactly one stamp; (12) a fake tmux sees the child's untargeted calls with `TMUX_PANE` set and stdin on `/dev/null`; (13) a stub `lane-start` sees `LANES_NO_FETCH`, `LANES_ACT` and `LANES_EXPECT` unset and `TMUX`, `TMUX_PANE` set; (14) the hook string and `GUARD_TIMEOUT` are byte for byte unchanged; (15) `kill <p>` mid-bind ends the record with the signal's code and "what it wrote is not known"; (16) with `timeout` hidden from `PATH`, the record says `bounded=no`; a child past `deadline_epoch` gets the past-the-bound text with its cost; and `kill <p>` stops the body's process group, the outer's trap runs once, and the outer writes the outcome; (17) a counting `LANES_EDIT` stub sees at most `N_r` read calls on the `--bind` resume path, and the test fails where `N_r` must grow; (18) a bind killed mid-commit and answered `2` at once waits until `ended_utc` + `C` before its lookup, gets no LR011, and finds or binds anew; (19) on the primary fixture, with the window's name spelled differently from the lane's canonical name, the child's lookup sends the six values copied from `start-record`'s pending record, and a found entry writes no second `RESUMED`; an injected LR007 `another-write` ends `rc=2`, and the next `2` binds anew; an injected LR007 `generation` ends `rc=2` with the effect check and the copies kept, and a `2` after the pending record is replaced binds anew.
 
 **Evidence.** PP-D's probes, in `runs-165/sandbox-PP-D/`, 2026-11-02 about 14:30Z, Linux on py-bench, load 10 to 19, no lane tool, tmux or register touched: P1 `timeout -s KILL 1` on the parent, `nudge` form "done: NONE", `setsid` form done; P2 a group `KILL` and a group `HUP`, `nudge` NONE both times, `setsid` done both times; P3 the runner saw EOF after 3.03 s with the hook's stdio inherited, 0.04 s for both other forms; P4 a pid kill, both done; P5 live 200 of 200, reused 0, dead 0.
 
@@ -5678,7 +5683,8 @@ Every row below waits on the decision it names.
   mid-transaction blocks every writer → `idle_in_transaction_session_timeout` on
   the role, `lock_timeout` on each commit, retries until the deadline, and 75,
   never a hang. Once any commit call of a write was in doubt, the writer ends
-  with no code but 0 until it has made F3's lookup, `find_write(<id>, <n>)`:
+  with no code but 0 until it has made F3's lookup,
+  `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)`:
   it waits until the database clock has passed `<n>`, the largest
   `not_after` its commit calls carried, takes the head row's lock in a try
   that starts within the reconnect window, checks the clock again under it,
@@ -6013,15 +6019,17 @@ left as it was.
   from verifier V2's review of commit O: the record's doubt from its `call`
   lines (S-1); the one order (S-3); one owner and the done mark (S-5);
   `find_write`'s arguments and LR007's token (NIT 1); the TERM trap (NIT 5);
-  the retried tries (NIT 6); and the 490 s bound (NIT 2). **For the commit
-  after Q** (lane 4, #165 6715732898, as lane 3 ruled): the bind child's
-  lookup in "Answer 2's detached bind", `find_write(<write_id>, <not_after>)`
-  on the recorded pair, which under v2.8 also needs the lane, the verb and
-  `args_sha256`, which the bind's record does not hold; that lookup's table,
-  which has no LR007 row and keeps the old window words; and phase 2's line in
-  "Phases, and AT-F6", which names v2.6's
-  `find_write(<write_id>, <not_after>)`. Lane 4's writer is drafting their
-  texts.
+  the retried tries (NIT 6); and the 490 s bound (NIT 2). **Answered by lane
+  4's addendum to its texts for commit Q** (#165 6715788696, folded above by
+  commit R), the points commit Q routed to it (#165 6715732898, as lane 3
+  ruled): the bind child's lookup in "Answer 2's detached bind", which under
+  v2.8 also needs the lane, the verb and `args_sha256`, so the bind's record
+  now holds `write_lane` and `args_sha256`, copied from `start-record`'s
+  pending record, and the lookup sends all six values (C1, C2); that lookup's
+  table, with a row for each of LR007's two tokens, `another-write` and
+  `generation`, and the window's words (C3); phase 2's line in "Phases, and
+  AT-F6", which now names v2.8's `find_write` (C4); and AT-F6's item (19) for
+  lane 2, the lookup with the six copied values (C5).
 - **Lane 2, the test plan:** a test for each MUST as folded (a write in doubt at
   the deadline; a diverged rollback, and a failed seq-1 push; the ruleset, then
   a files-mode write after the rollback; a declared outage with the service and
@@ -6039,7 +6047,7 @@ left as it was.
   abort of a restore-form cutover (D24). From the follow-ups of 11-02:
   AT-F7 and AT-F11 test the bounded `Register-Seq` lookup, including no
   trailer within 200, which refuses 2 (#165 6579627366); and AT-F8 takes 78.
-  From the phase plan: AT-F6's seventeen cases for the detached bind and
+  From the phase plan: AT-F6's nineteen cases for the detached bind and
   `start-record` ("Answer 2's detached bind"); what test 9 records per attempt
   ([L4-c]); tests 5 and 6 as the agreement form of [L4-1], [L4-2], [L4-4] and
   [L4-5]; the renderer's bounded lookup of `m`, with no trailer found; and a

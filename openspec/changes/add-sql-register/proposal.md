@@ -157,8 +157,10 @@ test that checks it; the agreement tests are listed together at the end.
   `passfile`, `reader_url`, `reader_passfile`, `sqlite` and `schema` today
   (`code/lanes-index:280`), and refuses any other key with exit 2 (`:289`). It
   gains `mode=` (`index`, the default when absent and today's behaviour, or
-  `primary`) and the REGISTER-WRITER's own pair, for example `register_url=` and
-  `register_passfile=`: today there are two roles, `url=` ("the WRITER role —
+  `primary`), the REGISTER-WRITER's own pair, for example `register_url=` and
+  `register_passfile=`, and `register_label=` (the database's label, set by the
+  re-pointing in the same edit as the URLs, which `cutover` takes as its
+  entry's label): today there are two roles, `url=` ("the WRITER role —
   sync and reconcile", `docs/README-lanes.md:3752`) and `reader_url=`
   (`code/lanes-index:1280–1295`), and under clause (b) the indexer's `url=` must
   not write the register's tables. `lanes-index` stays the one parser:
