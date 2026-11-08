@@ -158,9 +158,9 @@ test that checks it; the agreement tests are listed together at the end.
   (`code/lanes-index:280`), and refuses any other key with exit 2 (`:289`). It
   gains `mode=` (`index`, the default when absent and today's behaviour, or
   `primary`), the REGISTER-WRITER's own pair, for example `register_url=` and
-  `register_passfile=`, and `register_label=` (the database's label, which act
-  3's step 3 sets first, when it configures each host; `cutover` takes it as
-  its entry's label and as `lanes/STORE`'s `database=`, and the re-pointing
+  `register_passfile=`, and `register_label=` (the database's label, which
+  act 3's step 3 sets first, when it configures each host; `cutover` takes it
+  as its entry's label and as `lanes/STORE`'s `database=`, and the re-pointing
   changes it, in the same edit as the URLs, only for a replacement): today
   there are two roles, `url=` ("the WRITER role —
   sync and reconcile", `docs/README-lanes.md:3752`) and `reader_url=`
