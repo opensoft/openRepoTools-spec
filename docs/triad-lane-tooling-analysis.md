@@ -710,3 +710,14 @@ landing.
     `.claude/worktrees` already causes in this checkout's directory, where on 2026-10-11
     six other lanes' trees went into lane 1's inventory that way. Option (b), recording
     every paired tree as the running lane's, is not taken.
+
+*Updated 2026-11-08, in the follow-up to lane 2's NIT 6 on opensoft/openRepoTools-spec#6: the
+line numbers of the October 4 mapping.* Lines 34, 98, 99, 150, 425 and 441 of this record
+cite `adoption-plan.yaml:N`, and lines 118 and 120–130, in section 3's table, cite its lines
+325 to 336 as bare `(:N)`. Each number is a line of
+`openspec/changes/migrate-to-triad/adoption-plan.yaml` at `593250d` (375 lines, blob `f9d26fbe`,
+the same bytes as `ff6f6a7`'s, the commit this record says it read), and each holds there. The
+path holds a later plan now: at `9f8b21a`, run C's plan (445 lines, blob `8b360179`), where the
+same numbers name other lines. Read them with
+`git show 593250d:openspec/changes/migrate-to-triad/adoption-plan.yaml | cat -n`.
+No line above was changed.
