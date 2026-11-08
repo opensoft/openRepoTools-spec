@@ -133,22 +133,28 @@ the fourth beside files mode (P5).
   `lanes-index` refusing `mode=primary` until the renderer's git half is
   installed.
 - Where `lanes/STORE` is absent and no configuration says `mode=primary`,
-  nothing changes but the configuration read, the marker check, the
-  guard's answer 2, whose bind runs detached in every mode to fix two defects
-  ("Known defects in today's code"; opensoft/openRepoTools#347), and
-  `lane-start`'s bind, whose three register writes become one, `start-record`,
-  with one commit and push in files mode (D5). Lane 3 confirmed both
-  exceptions (#165 6710770304).
+  nothing changes but the configuration read, the marker check and three
+  exceptions: the guard's answer 2, whose bind runs detached in every mode to
+  fix two defects ("Known defects in today's code";
+  opensoft/openRepoTools#347); `lane-start`'s bind, whose three register
+  writes become one, `start-record`, with one commit and push in files mode
+  (D5); and `openRepoTools wip init`'s refusal wherever any file under
+  `lanes/` exists, in every mode (Q14(a)), as `specs/sql-register/spec.md`'s
+  "Nothing changes where the marker is absent" has it. Lane 3 confirmed the
+  first two (#165 6710770304), and the third is Brett's answer to Q14 (#165
+  6710653292).
 
 **Non-Goals:**
 
 - Several verbs in one transaction (the design's own decision D5).
 - A database driver, or the register's rules as PL/pgSQL (Q7's (B)).
 - The register service as a write path or as the renderer's home.
-- Building Amendment 23's act 2, or changing files mode beyond the marker check,
-  the guard's detached answer 2 ("Known defects in today's code";
-  opensoft/openRepoTools#347) and `start-record` (D5), the two exceptions lane
-  3 confirmed (#165 6710770304).
+- Building Amendment 23's act 2, or changing files mode beyond the marker check
+  and the three exceptions: the guard's detached answer 2 ("Known defects in
+  today's code"; opensoft/openRepoTools#347), `start-record` (D5), and
+  `wip init`'s refusal wherever any file under `lanes/` exists (Q14(a)). Lane
+  3 confirmed the first two (#165 6710770304); the third is Brett's answer to
+  Q14 (#165 6710653292).
 - Moving handoffs into SQL, or replacing `git log` as the audit trail.
 - A cache that answers a deciding read on its own.
 - `tasks.md` and the Speckit handoff, which follow this file.
@@ -465,21 +471,23 @@ the section that carries it.
   its write id committed runs the verb's after-COMMIT tail, which S1's "A write
   in doubt" lists per verb (lane 4's row 24, as lane 3 ruled). **Once any
   commit call of a write was in doubt, the writer ends with no code but 0
-  until it has made F3's lookup:** it waits until the database clock has
-  passed the largest `not_after` its commit calls carried (§1.3's step 9,
-  LR008); it takes the head row's lock within the 10 s reconnect window; and
-  it looks its write id up, through `find_write` (§1.3.1). Found, it exits 0
-  and runs the verb's after-COMMIT tail; absent, with the lock held, it exits
-  the code its last attempt earned, whether 75 ("register busy"), 69, 2 or
-  the verb's own; and with the lock not held within the window, it exits 3,
-  naming the write id, the record kept. "Register busy" is never exited
-  without that lookup. The register's own refusals exit 2, and 69 is for an
-  unreachable database and any other refusal (S1; the review of commit J,
-  R1's S3 to S5 and R2's S1, as lane 3 ruled).
+  until it has made F3's lookup:** within the 10 s reconnect window it calls
+  `find_write(<id>, <n>)` (§1.3.1), `<n>` being the largest `not_after` its
+  commit calls carried (§1.3's step 9, LR008). The function waits until the
+  database clock has passed `<n>`, takes the head row's lock, checks the clock
+  again under it, and looks the write id up (R2's S2). Found, it exits 0 and
+  runs the verb's after-COMMIT tail; absent, with the lock held, it exits the
+  code its last attempt earned, whether 75 ("register busy"), 69, 2 or the
+  verb's own; and with the lock not held within the window, or the lookup
+  refused (LR011), it exits 3, naming the write id, the record kept. "Register
+  busy" is never exited without that lookup. The register's own refusals exit
+  2, and 69 is for an unreachable database and any other refusal (S1; the
+  review of commit J, R1's S3 to S5 and R2's S1, as lane 3 ruled).
 - **D9. The timeouts** in "Roles and credentials", with
   `idle_in_transaction_session_timeout` set on the REGISTER-WRITER role so that
   an orphaned transaction cannot hold the head row for long. Only the guard's
-  figures are measured; the rest are the design's, for lane 2's tests to
+  figures are measured, with lane 1's timings of the operator calls under
+  their bounds (R2's N1); the rest are the design's, for lane 2's tests to
   confirm.
 - **D10. Exit codes on primary (Q9).** A refused direct write (the hand-edit
   `commit`, the captures, `add-row`'s compensating commit, the branch-wide
@@ -578,10 +586,13 @@ the section that carries it.
   mirror only where SVC-12's three conditions hold: its database read failed,
   an unexpired declaration names this database, and the tip it reads carries a
   `Register-Seq` of at least `m` (Q26's (a′); S3). **A rollback's start
-  declares one too,** marked as from a rollback: the rollback is Brett's act,
-  so the declaration is his, as Q26(a′) requires, and a guard's read that
-  finds the switch at `files` counts as failed (lane 3's ruling, #165
-  6578020193; `operations.md` §2.5). It goes to Brett under Q26.
+  declares one too,** marked as from a rollback, with `mirror-seq=<k>`, the
+  head its transaction found, not the mirror's `m` (R2's M1), so
+  `outage declare --rollback` requires `--mirror-seq <k>`; it carries no
+  expiry, and needs none before the rollback's end clears it. The rollback is
+  Brett's act, so the declaration is his, as Q26(a′) requires, and a guard's
+  read that finds the switch at `files` counts as failed (lane 3's ruling,
+  #165 6578020193; `operations.md` §2.5). It goes to Brett under Q26.
 - **D21. `lanes/STORE`'s fields:** `store=primary`, `database=<label>`,
   `import=<sha>`, `lanes-tree=<tree id>` and `utc=<UTC>`, in a commit carrying
   the cutover's entry's `Register-Seq` (D24) (S5).
@@ -670,14 +681,15 @@ puts it to him.
 | D1: the register in a schema of its own, not #160's | Amendment 22, "Everything Amendment 14 built is reused" | not yet routed |
 | D25: `lanes-index cutover` as a command of its own | Amendment 22's S5 and its ratified names | not yet routed |
 | A release for a stale `LANDING` (S6): lane 1's v2 carries it as the line kind `LANDING EXPIRED`, `register_lines.for_lane` and LR005 (§1.2, §1.3.1), tested on the engine and inert until a verb writes it | Amendment 10 and Rule 6, under Q17(B) | not yet routed: an open point for Brett |
-| A stray landing during a rollback: once the rollback's entry sets the switch to `files`, S2's two ways out, each a journal entry that needs `primary`, cannot run, so a stray commit that lands on the rendered paths before the marker's removal has no journalled way out (lane 1's v2) | Amendment 22's S5, under Q4(b)(iii) | not yet routed: an open point for Brett |
+| A stray landing during a rollback: the rollback refuses while a divergence is recorded, at its start, after a fresh fetch right before its transaction, and inside that transaction (LR012). So only a stray that lands after that check, once the rollback's entry has set the switch to `files`, has no journalled way out, since S2's two ways out each need `primary` (lane 1's v2; narrowed by its v2.6, R2's S5) | Amendment 22's S5, under Q4(b)(iii) | not yet routed: an open point for Brett |
 | Files mode changes, against Amendment 22's scope, "a workstation with `mode=index`, or with no configuration, runs exactly as today": the guard's answer 2 runs its bind detached, and `lane-start`'s bind is one write, `start-record`, in every mode, which lane 3 ruled (#165 6710770304) and Brett was not asked; and `wip init` refuses wherever any file under `lanes/` exists, in every mode, the delta's third exception, which is his Q14(a) | Amendment 22's scope | for Brett: not yet answered |
 | D8's exit 3: a write in doubt that cannot settle exits 3, naming its write id, and may have been written, where S1 has an unreachable database refuse with 69 and write "nothing anywhere"; Q16 was not in round 2 | Amendment 22's S1 | for Brett: not yet answered |
 | Q18(A): the renderer renders the render set only, and a commit under `lanes/` outside it, such as `lanes/repos.tsv`, is part of the tip, where S2 has "a commit under `lanes/` that the renderer did not make" stop the renderer; the round-2 file calls (B) "as Amendment 22 literally reads" | Amendment 22's S2 | answered: Q18, 6710653292 |
 | Q19(A): on primary `claim` prints "register seq `<n>`", where Amendment 7's claim "prints the log commit's sha" | Amendment 7 | answered: Q19, 6710653292 |
 | Q20(B), round 1's 3A: `mode=primary` is written at the cutover, and act 3 leaves `mode=index`, where act 3 has Eagle and Raven configured together with `mode=primary` | Amendment 22's act 3 | answered: Q20, 6710653292 |
 | 2A narrows S3: `lane-handoff`'s and the skill's naming reads come from the mirror (S3's table), and at four `lane-start` reads (`:1262`, `:1271`, `:3079`, `:3430`) a 69 stays a note | Amendment 22's S3 | answered: Q8, 6710653292 |
-| Q21(a)(A): on a workstation not yet flipped, acts and the guard refuse while the listings and `SessionStart` read the mirror; and D24's two operator seqs, which `cutover` and `rollback` push themselves, where S2 has "the RENDERER, which commits … every sequence the mirror lacks" | Amendment 22's S2 and S3 | answered: Q21(a), 6710653292 |
+| Q21(a)(A): on a workstation not yet flipped, acts and the guard refuse while the listings and `SessionStart` read the mirror | Amendment 22's S3 | answered: Q21(a), 6710653292 |
+| D24's two operator seqs, which `cutover` and `rollback` push themselves, where S2 has "the RENDERER, which commits … every sequence the mirror lacks". Q18(A) settles only that the marker is register seq 1 (`lanes/STORE` is `Register-Seq` 1), and round 1's 1A lists "rollback's push" among the phases without asking about the departure (lane 3's split of the row, commit M) | Amendment 22's S2 | for Brett: not yet answered |
 
 ## Architecture overview
 
@@ -848,6 +860,31 @@ took those options (R1's N4); the signals paragraph's busy code, now Brett's
 answer to Q7 (R1's S2); and §1.3's "One gap stays", where S1's client check
 exits 2 first and LR004 is the backstop (commit J's writer's item 3).
 
+**Lane 1's v2.6** (#165 comment 6714645316) is folded on top by commit M,
+from `/workspace/projects/.openrepotools-private-prep/work-20261102/165-section-v26/`:
+`fix-v2.6.diff` (sha256
+`299f0db5fbec8b2ecb774f87e140377f7fb90fe596c5040002ff4e81e540aa4f`, 12 hunks,
+from v2.5), which rebuilds `section-lane1-v2.6.md` (sha256
+`a3e28a4bcf61376a794da5aa1be4bfc9f7e71d927f6cb1c0207a8151dfc33d8b`, 1,915
+lines), with `renames-v2.6.md` (sha256
+`19e025013bbaf206de7e6970c398b5d546041c1854c6e27ac04a554826ae8d48`) and
+`texts-for-lane3-v2.6.md` (sha256
+`b95659017379d1fc3d922f882bf251cd9d11bfa3c307c5a5cc4a98af17729ce6`), nine
+texts for places outside lane 1's section. Ten hunks are in this part and two
+in `operations.md` §2.3. Six applied here by `patch` at fuzz 0. Hunks 2 to 4
+went in by hand, since commits J and L changed their context, with "(2.3)"
+reading "(`operations.md` §2.3)". Hunk 5's bounds rows and its measurements
+reach D9's table through lane 1's text 4, since commit J moved §1.3's table
+there. v2.6 carries R2's S2, `find_write(p_write_id, p_not_after)`, which
+waits on the server's clock and checks it again under the head row's lock,
+with a new code, LR011, "lookup too early"; R2's S5, a `rollback` entry
+refused while `mirror_state` records a divergence, with a new code, LR012,
+"mirror diverged"; R2's N4, the after-loss cutover's label, as lane 3 ruled
+(lane 1's option (a)); R2's N6, in `mirror_state`'s comment; and R2's N1, the
+operator calls' bounds, measured. The signals table's in-doubt row now states
+S1's rule: once a commit call was in doubt, the writer ends with no code but
+0 until it has made the lookup.
+
 - **Basis:** the proposal at `0607526d`. A citation of `proposal.md`, `clarifications.md` or `council-review.md` is to the frozen copy, sha256 `b284a0eb2078fd24a48e833685b0073e881fdbe1625a1019d81a55a4aadaa340`, `636fb45369f825dd7f3d763bdb8d8bcb475ef4d76a3f7cf23203b907713ac2ff` and `9fa18c5ed76d88d4f25b3f8eaa37626ad0511985061f9e0649ff49d13c0fce62`.
 - **Round 1, held as provisional when lane 1 wrote this, and RULED since** (Brett's confirmation of 2026-11-07, #165 6710653292): Q6 = 1A (the split by seam), Q8 = 2A, Q20 = 3A (`mode=primary` written at act 4), and Q2(a) and (b) = 4A.
 - **Round 2, the recommended options, which Brett took** (#165 6710653292): Q4(a) (i), Q4(b) (iii), Q7 (A″), Q21(b) (B), Q22 (a), Q26 (a′), Q28 (i) and Q29 (a). Where a part turns on one of them, it says what changes under each other option.
@@ -862,9 +899,12 @@ and LR008, and v2.4's `journal.act_id` with `journal_act_id_check` and
 `journal_act_id_write`, `journal_scopes` with `journal_scopes_seq`,
 `line_scopes`, `doc_line_scopes`, the entry's `act` key, the scope `*` and
 LR009, and v2.5's `entry_new_keys`, `scope_fault`, `scope_checked`, the
-normalized `archive:` key and LR010. Lane 1's v2, v2.3, v2.4 and v2.5 runs on
-PostgreSQL 16.15 exercised them (`renames.md`, `renames-v2.3.md`,
-`renames-v2.4.md`, `renames-v2.5.md`); each still needs a real-engine
+normalized `archive:` key and LR010, and v2.6's LR011, LR012 and
+`find_write`'s second argument, `p_not_after`. Lane 1's v2, v2.3, v2.4, v2.5
+and v2.6 runs on PostgreSQL 16.15 exercised them (`renames.md`,
+`renames-v2.3.md`, `renames-v2.4.md`, `renames-v2.5.md`,
+`renames-v2.6.md`), all but LR011 from the check under the lock, which needs
+the server's clock to step back; each still needs a real-engine
 test in lane 2's plan before it counts as proven.
 
 This part gives the SQL register's tables as PostgreSQL 16 DDL, the roles and their GRANTs, the version check with forward-only migrations, and what the schema itself holds of S1's transaction under Q7 (A″). It starts from R3a's sketch (`r3a/REPORT.md:156-283`) and reconciles it with the proposal at `0607526d`, the council's folds (`council-review.md`, `clarifications.md`) and the code at `2a057a6d`, cited as the proposal cites it (`code/<file>:<line>`). It assumes round 1 as answered provisionally, since RULED (#165 6710653292) (4A: each `lanes-edit.sh` write opens its own transaction with its own REGISTER-WRITER credential, and the service keeps one connection for reads) and round 2's recommended options; §1.6 says what changes under the others. Other sections of `design.md` hold the rest: the runbook is part 2's, in `operations.md`, the write path's call sites and the renderer are lane 4's, and the service is lane 5's.
@@ -936,7 +976,9 @@ CREATE TABLE register_head (                   -- S1, S2, S6: its row lock order
 
 CREATE TABLE mirror_state (                    -- D16: what the renderer reports; it never gates alone
   id             smallint    PRIMARY KEY DEFAULT 1 CHECK (id = 1),
-  diverged_sha   text        CHECK (diverged_sha ~ '^[0-9a-f]{40}$'),   -- a stray commit stopped the renderer
+  diverged_sha   text        CHECK (diverged_sha ~ '^[0-9a-f]{40}$'),   -- a stray commit stopped the renderer,
+                                               -- or a last Register-Seq above the head (N6); a rollback
+                                               -- entry is refused while it is set (S5, LR012)
   found_utc      timestamptz,
   found_by_ws    text        CHECK (found_by_ws <> ''),
   last_error     text,                         -- the last failed pass, for status
@@ -1307,7 +1349,10 @@ Steps 6 to 9 are §1.3.1's SQL:
 6. **The edits:** `journal_edits` as sent, then applied in `ord` order: `create`, `append`, `replace` and `delete` (each checking `old_sha256`, the sha256 of the line's UTF-8 text, at its `line_no`), `rename` and `remove`. A delete shifts the later lines, and their `log_lines` and `object_holds` ordinals, in one `UPDATE` each, which `doc_lines_pos` and `log_lines_pos` check at the statement's end. An edit that does not apply raises LR004. So does an operator entry that edits anything but `lanes/STORE`, or nothing, and any other entry that edits `lanes/STORE` (F2, D24).
 7. **The structured rows:** each row's `raw` must equal its line's text, or LR004; they are upserted by key, each given its line's `line_id`. `superseded_by` is recomputed for every lane on each object touched (#160's rule, `code/lanes-index:1013-1036`), the stored rows first, so that no transient pair of live claims trips `one_live_claim`, whose 23505 is raised again as LR005. Two rules of the register itself raise LR005 on a write: a claim whose `spellings` overlap another lane's live claim's (D19), and a `HOLD` or `LANDING` line over another lane's open taker in `main_slots` for its repository (D18). One repository spelled two ways is one repository: the two lines' `repo_key`s are equal or their `repo_spellings` overlap, as D19 compares an object's `spellings`, and `main_slots` matches a close to its take the same way.
 8. **The proof:** every edited path has a row in the entry's `files`, and each present one's `encode(sha256(render_file(path)), 'hex')` must not be distinct from it, or LR004; then `files.sha256`, `final_newline` and `last_seq` move. The deferred foreign keys check at COMMIT.
-9. **The bound (F3):** last, just before it returns, `commit_write` raises LR008 unless `clock_timestamp()` is still before the entry's `not_after`. Every commit call carries it, the snapshot's database clock plus the call's client timer plus 2 s, and an entry without it is LR004. A writer whose commit call is in doubt waits at the deadline until the database clock passes the largest `not_after` its calls carried, then makes its one lookup. So an orphaned attempt that had not reached the head row's lock by then can no longer commit after that lookup reports the write absent (lane 4's section, `5f26bf0a`, its ask of lane 1).
+9. **The bound (F3):** last, just before it returns, `commit_write` raises LR008 unless `clock_timestamp()` is still before the entry's `not_after`. Every commit call carries it, the snapshot's database clock plus the call's client timer plus 2 s, and an entry without it is LR004. Once a commit call of a write was in doubt, the writer makes its one lookup before it ends with any code but 0 (D8, S1): `find_write(id, n)`, where `n` is the largest `not_after` its calls carried (S2). The function waits until the database clock has passed `n`, then takes the head row's lock and checks the clock again under it, so the wait rests on the server's clock and not on the client's estimate. So an orphaned attempt that had not reached the head row's lock by then can no longer commit after that lookup reports the write absent (lane 4's section, `5f26bf0a`, its ask of lane 1).
+   - **Exact complements, on one clock:** step 9 commits only while `clock_timestamp() < not_after`, and `find_write` answers only where `NOT (clock_timestamp() < n)` holds under the head row's lock. An orphan that takes the lock after the lookup has released it reaches step 9 later still, so it raises LR008. One that took the lock first has ended, committed or not, before the lookup reads the journal, which it does at READ COMMITTED, after the lock.
+   - **The wait:** before the lock, never while holding it, and at most 3 s: the lookup call's `statement_timeout`, 6000 ms, less its `lock_timeout`, 2000 ms, and 1 s for the lookup itself (the bounds table). A call whose `n` is further ahead is refused at once with LR011 **(new)**, and so is one whose check under the lock fails, as when the clock stepped back. The client makes the call once its own estimate, the snapshot's clock plus `SECONDS` since, puts `n` at most 2 s ahead, so the bound covers that estimate's 1 s grain; a call ended by its 8 s timer leaves at most 2 s.
+   - **The residual:** a server clock that steps back between the lookup's check and an orphan's step 9 still lets that orphan commit after the lookup has reported the write absent.
 
 **The act (D5, F5; lane 4's row 20).** Lane 4's acts take a base with `lanes-edit.sh act-begin`, which prints `<act-id>@<head seq>:<generation>` on primary (lane 4's form, #165 6711545001), and list the scopes each write rests on in `LANES_EXPECT` (lane 4's section, "The acts and their expectations"). The schema keeps what the check needs, and `commit_write` runs the check inside the commit's transaction, where no client can skip it.
 
@@ -1377,10 +1422,17 @@ All of it is one transaction, so a failure at any step leaves the journal, the l
 |---|---|---|
 | `write` | `primary`, `present` | the verb's edits; `written_mode` and `mode` are `primary` |
 | `import` | `files`, `absent` | With only its root in the journal, it deletes every journal and data row (head to -1) and takes seq 0 (under `--after-loss`, D22 and `operations.md` §2.3, the baseline seq `m` that the entry names in `root_seq`: the head moves from -1 to `m`, the chain's one root sits at `m`, and a `root_seq` on a journal that is not empty is LR004), so each re-import before a confirmed cutover replaces the root (`proposal.md:1259-1261`; `switch_to_files` deletes an aborted cutover's entry); otherwise it clears the data tables and takes the next seq, so a seq never repeats in the mirror's history and a later cutover never reuses a `Register-Seq` that `main` carries. Every line is a `create` or `append` edit, so the journal alone renders any seq from the import on. It never loads `lanes/STORE`, which is not a rendered path (F2). Sets `exempt`. |
-| `cutover` (operator, D24) | `files`, `absent`; leaves `primary`, `adding` | base must be the latest import's seq; sets the switch's fields from it (`import_seq`, `import_commit`, `import_tree`) and `set_seq` to its own seq, 1 or `m+1` after a loss; creates `lanes/STORE`'s lines, D21's fields: `store=primary`, `database=` the label, `import=` the commit, `lanes-tree=` the tree id and `utc=`. Its after-loss form, `lanes-index cutover --import <M> --after-loss` (`after_loss` in the entry; lane 3's F18 ruling), is this same entry at `m+1`, not a third operator entry; it also sets `database_label` from the entry and a new `generation`. After a restore, whose switch reads `primary`, `present`, it starts from there, with the head as its base, records in `restore_prior` what it replaces, for its abort, and replaces `lanes/STORE`'s lines whole (`operations.md` §2.3; lane 3's ruling, 6579459518, point 1) |
+| `cutover` (operator, D24) | `files`, `absent`; leaves `primary`, `adding` | base must be the latest import's seq; sets the switch's fields from it (`import_seq`, `import_commit`, `import_tree`) and `set_seq` to its own seq, 1 or `m+1` after a loss; creates `lanes/STORE`'s lines, D21's fields: `store=primary`, `database=` the label, `import=` the commit, `lanes-tree=` the tree id and `utc=`. Its after-loss form, `lanes-index cutover --import <M> --after-loss` (`after_loss` in the entry; lane 3's F18 ruling), is this same entry at `m+1`, not a third operator entry; it also sets `database_label` from the entry and a new `generation`. After a restore, whose switch reads `primary`, `present`, it starts from there, with the head as its base, records in `restore_prior` what it replaces, for its abort, and replaces `lanes/STORE`'s lines whole (`operations.md` §2.3; lane 3's ruling, 6579459518, point 1). **N4:** an after-loss cutover with no `database_label` is LR004 in either form. One that meets the switch at `primary` is LR004 unless the entry's `database_label` `IS DISTINCT FROM` the switch's: the restore form, and either form run by mistake against the live database, which is at `primary`, `present` with its own label. Neither form can find a NULL label in the switch, whose column is NOT NULL (§1.2), a restored backup's included. After a re-import the switch is at `files` and holds the replacement's own label, which its bootstrap wrote and the entry names, so the label is not compared there. `lanes-index cutover` exits 2 with the message, writing nothing |
 | `stray-import` | `primary`, `present` | the stray commit's edits as one entry, `written_mode` `files` |
 | `stray-revert` | `primary`, `present` | no line edits; `journal_files` names the paths the renderer restores. A rollback refuses to start while a divergence is recorded (F1), so a revert is never needed at `files` |
-| `rollback` (operator, D24) | `primary`, `present`; leaves `files`, `removing` | removes `lanes/STORE`; the journal's last seq, written in the transaction that sets the switch to `files`, with `set_seq` its own seq (F1) |
+| `rollback` (operator, D24) | `primary`, `present`; leaves `files`, `removing` | removes `lanes/STORE`; the journal's last seq, written in the transaction that sets the switch to `files`, with `set_seq` its own seq (F1); refused with LR012 **(new)** while `mirror_state` records a divergence, which it reads `FOR SHARE` under the head row's lock (S5) |
+
+**The rollback's divergence gate (S5).**
+
+- **The refusal:** in step 3a of a `rollback` entry, under the head row's lock, `commit_write` reads `mirror_state` `FOR SHARE` and refuses with LR012 while `diverged_sha` is set. `lanes-index rollback` prints the refusal with `diverged at <sha>` and S2's two ways out, exits 2 and changes nothing, as its check before it starts does (`operations.md` §2.3).
+- **`record_mirror_state`'s lock:** its `UPDATE` takes the row's `FOR NO KEY UPDATE` lock, which conflicts with `FOR SHARE`, and that is enough. It reads nothing before it writes, since each right-hand side reads the row it has locked, so an explicit `SELECT … FOR UPDATE` would add only a lock it already takes. It waits for a rollback that holds `FOR SHARE` to end, and a rollback that reaches the row while its `UPDATE` is open waits for it.
+- **The lock order:** `commit_write` takes the head row, then `mirror_state`: a rollback's `FOR SHARE`, or a stray entry's `UPDATE`. `record_mirror_state` takes `mirror_state` alone, in a transaction of its own. `switch_to_files`, `record_marker` and `find_write` take the head row alone. No function holds `mirror_state` and then waits for the head row, so no two of them can wait on each other in a cycle.
+- **Under SERIALIZABLE:** where `record_mirror_state` commits a divergence after the rollback's snapshot, whether the rollback is waiting on the row or has not reached it, the `FOR SHARE` raises 40001. `rollback` treats a 40001 or 40P01 as a writer does: it runs its checks again and makes the call again (`operations.md` §2.3). The divergence is committed by then, so the retry is refused with 2, by its check or by LR012.
 
 **The signals a writer gets.** The retry loop is the writer's; the schema fixes what each signal means. The busy code is 75 (D7), sysexits' `EX_TEMPFAIL`, the product seat's suggestion (`clarifications.md:360-373`; `proposal.md:1706-1708`); Brett's answer to Q7 gives "register busy" this code of its own, so "(A″) with 69" is not taken (#165 6710653292). The deadline is 30 s (D7), lane 2's example (`proposal.md:1470-1471`), and needs no pause between tries: with no cap, the probes' k-th writer committed on its k-th attempt (`clarifications.md:323-327`). Tests 4 and 9 confirm both.
 
@@ -1393,16 +1445,18 @@ All of it is one transaction, so a failure at any step leaves the journal, the l
 | LR005 | a rule of the register: an object is held (`one_live_claim`'s 23505, raised again, or D19), or `main` is held (D18) | exits 2 with the holder or the earlier line, writing nothing (Q12 (a); S1's outcomes) |
 | LR009 (new), "expectation changed" | an entry after the act's base, made outside the act, touched a scope the write lists (step 3b; D5, F5) | exits 2 with lane 4's `expectation: <scope> changed at seq <k> by <lane>/<verb>`, writing nothing |
 | LR010 (new), "key not well formed" | a key that a line derives, in step 5a, step 8a or an import's check, is not a scope: its name is empty or holds white space (N2) | exits 2 with the server's message, `key: <path> line <n> derives <key>, which is not a scope (…)`, writing nothing, and never retries; `lanes-index import` exits 2 the same way |
+| LR011 (new), "lookup too early" | the in-doubt lookup's `n` is more than 3 s ahead of the database clock, or the clock had not passed `n` when checked under the head row's lock, as after the clock stepped back (S2) | the lookup proves nothing: exits 3 naming the id, with the server's message, and keeps its pending record (F3's "otherwise 3"); a rerun under the same id looks again |
+| LR012 (new), "mirror diverged" | a `rollback` entry while `mirror_state` records a divergence, read `FOR SHARE` under the head row's lock (S5) | `lanes-index rollback` exits 2 with `diverged at <sha>` and S2's two ways out, as its check before it starts does (`operations.md` §2.3), writing nothing |
 | LR002 | the switch, or its marker, is not what the kind needs (the kinds table) | 69, with S1's text (`proposal.md:169-171`) |
 | LR003 | the client is outside the schema's window (§1.5) | 69 |
 | LR007 | the write id belongs to another write: minted against another generation of the register (F10, F18), or in the journal for another lane, verb or arguments (F10). In step 3b, an act whose base was read in another generation | exits 2, naming the id and what differs: check the mirror for the write before running it again without `LANES_WRITE_ID`; nothing written. For an act, exits 2 naming it, and the act runs again |
 | LR004 | the edits do not apply, or the proof differs | reloads every line once and retries; then 69 |
 | any other SQLSTATE | the database refused the transaction | 69, naming the store and the error (`proposal.md:213-217`) |
-| `psql` exit 2, or 124 from the client timer, on the commit call | the outcome is unknown | in doubt: reconnects, reads `journal` by `write_id` (`proposal.md:253-267`), and retries under the same id (D8). At the deadline, once the database clock has passed the largest `not_after` its calls carried (step 9), it makes one lookup (F3), `find_write` in a transaction it rolls back, within the 10 s reconnect window: found is 0; absent, with the head row's lock granted, is 75; otherwise, 55P03 or no answer, it exits 3 naming the id and keeps its pending record |
+| `psql` exit 2, or 124 from the client timer, on the commit call | the outcome is unknown | in doubt: reconnects, reads `journal` by `write_id` (`proposal.md:253-267`), and retries under the same id (D8). From then on it ends with no code but 0 until it has made one lookup (F3; D8, S1), `find_write(id, n)` with `n` the largest `not_after` its calls carried, at READ COMMITTED in a transaction it rolls back, within the 10 s reconnect window; the function waits until the database clock has passed `n` and checks it again under the head row's lock (step 9; S2): found is 0, and the verb's after-COMMIT tail runs; absent, with the head row's lock granted, is the code its last attempt earned (75, 69, 2 or the verb's own); otherwise, 55P03, LR011 or no answer, it exits 3 naming the id and keeps its pending record |
 
 The writer reads only the SQLSTATE from psql's `ERROR:` line (step 3), never the constraint's name the message may carry, so no signal rests on one. With the head updated before the journal row, a lost race is never a 23505 on `journal_pkey`. Nor does a retry reach `journal_write_id_key`'s 23505: step 1's lookup under the head row's lock finds an earlier attempt that committed before this transaction began, and one that commits while it is open fails this transaction at the lock with SERIALIZABLE's 40001, or with 55P03 once `lock_timeout` passes (lane 2, 6708917587). Either 23505 would be a bug, and is 69. `LANES_NO_FETCH=1` cannot weaken the switch check, because it is read inside the transaction, not fetched (`proposal.md:571-575`). The in-doubt report is exit 3, naming the write id, and a rerun reuses the id (D8; `proposal.md:1725` left the code open).
 
-**Bounds, set when connecting through `options=`** (`clarifications.md:296-302`), are D9's, in the one table under "Roles and credentials" ("The timeouts (D9)"), which now carries this part's `import` row and gives `reconcile` the renderer's values (lane 3's ruling, #165 6578020193). Only the guard's are measured; the others are the design's, for tests 4 and 9 to confirm, and R1's 14.7 ms per call (`proposal.md:1219-1220`) leaves them wide.
+**Bounds, set when connecting through `options=`** (`clarifications.md:296-302`), are D9's, in the one table under "Roles and credentials" ("The timeouts (D9)"), which now carries this part's `import` row and gives `reconcile` the renderer's values (lane 3's ruling, #165 6578020193). The guard's are measured, and so are the rows for `cutover`, `switch_to_files`, `record_marker` and the commit call of `import --single` and `render --revert` that R2's N1 added (the paragraph under D9's table). The others are the design's, for tests 4 and 9 to confirm, and R1's 14.7 ms per call (`proposal.md:1219-1220`) leaves them wide.
 
 ### 1.3.1 `commit_write` in full
 
@@ -1466,6 +1520,7 @@ DECLARE
   v_act   jsonb := p_entry -> 'act';            -- D5, F5: the act, or NULL (step 3b)
   v_expect text[];                              -- its scopes, lower case, as listed
   v_hit   record;                               -- the entry that changed one (LR009)
+  v_mir   mirror_state;                         -- S5: a rollback's divergence gate (LR012)
 BEGIN
   IF jsonb_typeof(p_entry -> 'journal') IS DISTINCT FROM 'object' THEN    -- the entry's shape
     RAISE EXCEPTION 'the entry has no journal object' USING ERRCODE = 'LR004'; END IF;
@@ -1550,12 +1605,24 @@ IF p_generation IS DISTINCT FROM v_sw.generation THEN       -- F10, F18: an id f
   IF p_entry ? 'root_seq' AND (v_kind <> 'import' OR v_head <> -1) THEN
     RAISE EXCEPTION 'root_seq % on a journal that is not empty', p_entry ->> 'root_seq'
       USING ERRCODE = 'LR004'; END IF;
+  IF v_kind = 'cutover' AND v_after_loss                 -- N4: an after-loss form names its database
+     AND p_entry -> 'switch' ->> 'database_label' IS NULL THEN
+    RAISE EXCEPTION 'an after-loss cutover with no database_label (N4)' USING ERRCODE = 'LR004'; END IF;
+  IF v_kind = 'rollback' THEN             -- S5: never over a recorded divergence (F1); FOR SHARE, so
+    SELECT * INTO v_mir FROM mirror_state WHERE id = 1 FOR SHARE;   -- record_mirror_state's UPDATE
+    IF v_mir.diverged_sha IS NOT NULL THEN                          -- waits, or this read waits for it
+      RAISE EXCEPTION 'rollback refused: diverged at %, found % by %; resolve it first with import --single or render --revert (F1, S5)',
+        v_mir.diverged_sha, v_mir.found_utc, v_mir.found_by_ws USING ERRCODE = 'LR012'; END IF;
+  END IF;
   IF v_kind = 'cutover' AND NOT (v_after_loss AND v_sw.mode = 'primary') THEN
     SELECT * INTO v_imp FROM journal WHERE kind = 'import' ORDER BY seq DESC LIMIT 1;
     IF v_imp.seq IS DISTINCT FROM p_base THEN
       RAISE EXCEPTION 'cutover base %, but the latest import is %', p_base, v_imp.seq
         USING ERRCODE = 'LR004'; END IF;
   ELSIF v_kind = 'cutover' THEN           -- the restore form: what it replaces, for its abort
+    IF NOT (p_entry -> 'switch' ->> 'database_label' IS DISTINCT FROM v_sw.database_label) THEN
+      RAISE EXCEPTION 'after-loss cutover: database % is the switch''s own label, not a replacement''s (N4)',
+        v_sw.database_label USING ERRCODE = 'LR004'; END IF;     -- N4: the live database, by mistake
     v_prior := jsonb_build_object('switch', to_jsonb(v_sw),
       'file', (SELECT to_jsonb(f) FROM files f WHERE f.path = 'lanes/STORE'),
       'lines', (SELECT jsonb_agg(to_jsonb(d) ORDER BY d.line_no) FROM doc_lines d
@@ -1947,20 +2014,39 @@ BEGIN
   RETURN v_new;
 END $f$;
 
-CREATE FUNCTION find_write(p_write_id uuid)
+CREATE FUNCTION find_write(p_write_id uuid, p_not_after timestamptz)
   RETURNS bigint LANGUAGE plpgsql SECURITY DEFINER
   SET search_path = lanes_register, pg_catalog, pg_temp AS $f$
--- F3's one lookup at the deadline: the head row's lock under the caller's lock_timeout (55P03
--- while a transaction of the write may still be open), then the write's seq, or NULL if it is
--- absent. The writer has no UPDATE, so it cannot take that lock itself; the caller rolls back.
+-- F3's one lookup (S2; D8, S1), at READ COMMITTED in a transaction the caller rolls back.
+-- p_not_after is the largest not_after the write's commit calls carried. It waits, holding no
+-- lock, until the server's clock has passed p_not_after, at most 3 s (the call's statement_timeout
+-- less its lock_timeout and 1 s); then it takes the head row's lock under the caller's
+-- lock_timeout (55P03 while a transaction of the write may still be open), checks the clock again
+-- under it, the exact complement of commit_write's step 9, and returns the write's seq, or NULL if
+-- it is absent. The writer has no UPDATE, so it cannot take that lock itself.
+DECLARE
+  v_wait interval := p_not_after - clock_timestamp();
 BEGIN
+  IF p_not_after IS NULL THEN
+    RAISE EXCEPTION 'lookup of write %: no not_after', p_write_id USING ERRCODE = 'LR011'; END IF;
+  IF v_wait > interval '3 seconds' THEN                 -- LR011: further ahead than the wait's bound
+    RAISE EXCEPTION 'lookup of write %: not_after % is % ahead of the database clock, past the 3 s wait',
+      p_write_id, p_not_after, v_wait USING ERRCODE = 'LR011'; END IF;
+  IF v_wait > interval '0' THEN                         -- the wait, on the server's clock, before the lock
+    PERFORM pg_sleep(extract(epoch FROM v_wait) + 0.001); END IF;
   PERFORM 1 FROM register_head WHERE id = 1 FOR UPDATE;
+  IF clock_timestamp() < p_not_after THEN               -- step 9 commits only while this holds
+    RAISE EXCEPTION 'lookup of write %: the database clock % has not passed not_after % under the head row''s lock',
+      p_write_id, clock_timestamp(), p_not_after USING ERRCODE = 'LR011'; END IF;
   RETURN (SELECT seq FROM journal WHERE write_id = p_write_id);
 END $f$;
 
 CREATE FUNCTION record_mirror_state(p_ws text, p_diverged_sha text, p_error text)
   RETURNS void LANGUAGE plpgsql SECURITY DEFINER
   SET search_path = lanes_register, pg_catalog, pg_temp AS $f$
+-- S5: its UPDATE takes the row's FOR NO KEY UPDATE lock, which conflicts with a rollback's FOR
+-- SHARE, so it waits for that rollback to end, and a rollback that reaches the row after it waits
+-- for it. It reads nothing before it writes and takes no other lock, so no explicit lock is needed.
 BEGIN
   UPDATE mirror_state SET                      -- each right-hand side reads the old row
     found_utc   = CASE WHEN diverged_sha IS NOT NULL OR p_diverged_sha IS NULL THEN found_utc
@@ -2017,7 +2103,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE lanes_register_owner         -- global form: a
 GRANT EXECUTE ON FUNCTION lanes_register.commit_write(bigint, uuid, integer, uuid, jsonb),
                           lanes_register.switch_to_files(integer, bigint, text, text),
                           lanes_register.record_marker(integer, bigint, text, text),
-                          lanes_register.find_write(uuid),
+                          lanes_register.find_write(uuid, timestamptz),
                           lanes_register.record_mirror_state(text, text, text)
   TO lanes_register_writer;                    -- no INSERT, UPDATE, DELETE or DDL anywhere
 GRANT EXECUTE ON FUNCTION lanes_register.render_file(text)
@@ -2044,7 +2130,7 @@ The writer's idle-in-transaction bound ends a half-open writer's transaction on 
 
 | Role | SQL role | Held by | Where its credential lives |
 |---|---|---|---|
-| REGISTER-WRITER | `lanes_register_writer` | `lanes-edit.sh`'s writes, through `lanes-index register snapshot` and `register commit` (4A, D2); the projection writer's storage-layer entry (S4, `proposal.md:501-506`); the renderer, for its `mirror_state` writes (D16); `lanes-index` import, cutover (with its abort, `switch_to_files`, and `record_marker`), rollback and the two ways out of a divergence | `register_url=` and `register_passfile=` in `lanes-index.conf` (`proposal.md:152-156`) |
+| REGISTER-WRITER | `lanes_register_writer` | `lanes-edit.sh`'s writes, through `lanes-index register snapshot` and `register commit` (4A, D2); the projection writer's storage-layer entry (S4, `proposal.md:501-506`); the renderer, for its `mirror_state` writes (D16); `lanes-index` import, cutover (with its abort, `switch_to_files`, and `record_marker`), rollback and the two ways out of a divergence; `outage declare`'s database probe (D9; lane 5, #165 6714373660) | `register_url=` and `register_passfile=` in `lanes-index.conf` (`proposal.md:152-156`) |
 | READER | `lanes_register_reader` | the service's one connection (4A); the guard's direct read (Q11 (a)); S3's readers, the listings and the `SessionStart` block; `status`, `reconcile` and the readiness check | `reader_url=` and `reader_passfile=` (`code/lanes-index:64-65`) |
 | indexer | `lanes_indexer` | `lanes-index sync` and `reconcile` of the index half | `url=` and `passfile=` |
 | owner | `lanes_register_owner` | nothing: the admin connection takes it by `SET ROLE` | none |
@@ -2135,9 +2221,9 @@ The writer's idle-in-transaction bound ends a half-open writer's transaction on 
 | `LANDING EXPIRED` | line kind | **(new)**; F13, if Brett takes it |
 | `main_slots` | view | `r3a/REPORT.md:270-278` |
 | `apply_edits` | function (now `commit_write`'s step 6) | `r3a/REPORT.md:285` |
-| `commit_write`, `switch_to_files`, `render_file`, `record_mirror_state`, `record_marker`, `find_write` | functions | **(new)**; `switch_to_files` is the cutover's abort (F2), `record_marker` S4's read-back (F12), `find_write` F3's one lookup |
+| `commit_write`, `switch_to_files`, `render_file`, `record_mirror_state`, `record_marker`, `find_write` | functions | **(new)**; `switch_to_files` is the cutover's abort (F2), `record_marker` S4's read-back (F12), `find_write(p_write_id, p_not_after)` F3's one lookup, which waits on the server's clock past `p_not_after` (S2) |
 | `lock_head` (under Q7 (A′) only) | function | **(new)** |
-| SQLSTATEs `LR001`, `LR002`, `LR003`, `LR004`, `LR005`, `LR006`, `LR007`, `LR008`, `LR009`, `LR010` | error codes | **(new)**; `LR007` is F10's and F18's, and an act's base from another generation; `LR008` is F3's bound, `not_after`; `LR009`, "expectation changed", is D5's check (step 3b); `LR010`, "key not well formed", is N2's |
+| SQLSTATEs `LR001`, `LR002`, `LR003`, `LR004`, `LR005`, `LR006`, `LR007`, `LR008`, `LR009`, `LR010`, `LR011`, `LR012` | error codes | **(new)**; `LR007` is F10's and F18's, and an act's base from another generation; `LR008` is F3's bound, `not_after`; `LR009`, "expectation changed", is D5's check (step 3b); `LR010`, "key not well formed", is N2's; `LR011`, "lookup too early", is S2's; `LR012`, "mirror diverged", is S5's |
 | `journal_files.final_newline`, `log_lines_pos`, the six `*_seq` indexes | column, constraint, indexes | **(new)**; lane 1's real-engine run |
 | REGISTER-WRITER, READER, indexer | roles | `proposal.md:683-691` |
 | `lanes_register_writer`, `lanes_register_reader` | roles | `r3a/REPORT.md:172`, `:281` |
@@ -2333,6 +2419,8 @@ stays open across the shell code.
 | LR008: the attempt reached step 9 past its `not_after`, and its transaction rolled back | 75, a lost turn | inside D7's 30 s, a lost turn: a fresh snapshot, then a new attempt under the same write id, as 40001 is; at the deadline, F3's rule ("A write in doubt", below); never 3 or 69 by itself (lane 4, #165 6709038351, as lane 3 ruled in 6710770304) | nothing |
 | LR009, "expectation changed": an entry after the act's base, made outside the act, touched a scope the write lists in `LANES_EXPECT` (§1.3's step 3b; D5) | 2, with lane 4's `expectation: <scope> changed at seq <k> by <lane>/<verb>`, the server's message, from the same `ERROR:` line as the code (step 3) | 2 (lane 1's v2.4; lane 3's rulings, #165 6710840240, 6711233420 and 6711564365) | nothing |
 | LR010, "key not well formed": a key that a line of the write derives, on its old side or its new, is not a scope: its name is empty or holds white space (§1.3's "The act", steps 5a and 8a) | 2, with the server's `key: <path> line <n> derives <key>, which is not a scope (…)`, from the same `ERROR:` line; never retried, since the same line derives the same key | 2 (lane 1's v2.5; lane 3's ruling, #165 6711924759) | nothing |
+| LR011, "lookup too early": the in-doubt lookup's `<n>` is missing, or more than 3 s ahead of the database clock, or the clock had not passed `<n>` when `find_write` checked it under the head row's lock, as after the clock stepped back (§1.3.1; R2's S2) | — (raised by the lookup, not by a commit call) | 3, naming the write id, with the server's message; the pending record kept, and a rerun under the same id looks again (lane 1's v2.6) | unknown |
+| LR012, "mirror diverged": a `rollback` entry while `mirror_state` records a divergence, read `FOR SHARE` under the head row's lock (§1.3; R2's S5) | — (raised only by `lanes-index rollback`'s entry, which exits 2 with `diverged at <sha>` and S2's two ways out, writing nothing) | — (no write of `lanes-edit.sh` makes a `rollback` entry) | nothing |
 | LR002: the switch, or its marker, is not what a write needs | 69, Amendment 22's text | 69 | nothing |
 | LR003: the client is outside the schema's window | 69, naming both numbers | 69 | nothing |
 | LR004: the edits do not apply, or the proof differs; or the write's act is malformed, or its base is past the head (§1.3), which for an act is a backstop: the client refuses both with 2 first (step 1) | 69 after one reload and retry | 69 | nothing |
@@ -2422,19 +2510,25 @@ a new id, which is ADV-C3's second `CLAIMED`. **So once any commit call of a
 write was in doubt, the writer ends with no code but 0 until it has made
 F3's lookup,** all within the 10 s reconnect window:
 
-1. **It waits until the database clock has passed the largest `not_after`
-   its commit calls carried.** Every commit call carries `not_after`, the
-   snapshot's database clock plus the call's client timer plus 2 s, on every
-   kind of entry, the operator entries' included (lane 3's ruling, #165
-   6710770304, lane 1's point 4), and `commit_write` raises LR008 past it
-   (§1.3's step 9), so an orphaned attempt that had not reached the head
-   row's lock can no longer commit after the lookup reports the write absent;
-   lane 4's row 15 is closed by lane 1's v2.3.
-2. **It takes the head row's lock within the reconnect window,** through
-   `find_write(<id>)` (§1.3.1), in a transaction it rolls back, under the
-   caller's `lock_timeout` (the writer has no UPDATE, so its own `FOR UPDATE`
-   would get 42501). Holding the lock proves no transaction of this write is
-   still open.
+1. **It calls `find_write(<id>, <n>)`** (§1.3.1), where `<n>` is the largest
+   `not_after` its commit calls carried, at READ COMMITTED, in a transaction
+   it rolls back. The function waits, holding no lock, until the database's
+   own clock has passed `<n>` (R2's S2). Every commit call carries
+   `not_after`, the snapshot's database clock plus the call's client timer
+   plus 2 s, on every kind of entry, the operator entries' included (lane 3's
+   ruling, #165 6710770304, lane 1's point 4). `commit_write` raises LR008
+   past it (§1.3's step 9), so an orphaned attempt that had not reached the
+   head row's lock can no longer commit after the lookup reports the write
+   absent. Lane 4's row 15 is closed by lane 1's v2.3, and its v2.6 puts the
+   wait on the server's clock. The wait is at most 3 s: the writer calls once
+   its own estimate, the snapshot's clock plus `SECONDS` since, puts `<n>` at
+   most 2 s ahead, and a `<n>` further ahead is refused with LR011.
+2. **It takes the head row's lock within the reconnect window,** inside
+   `find_write`, under the caller's `lock_timeout`. The writer has no UPDATE,
+   so its own `FOR UPDATE` would get 42501. Under the lock the function checks
+   that the clock has passed `<n>`, the exact complement of step 9's test, and
+   refuses with LR011 where it has not, as after the clock stepped back.
+   Holding the lock proves no transaction of this write is still open.
 3. **It looks its write id up:** `find_write` returns the write's seq, or
    NULL.
 
@@ -2444,8 +2538,8 @@ Its outcomes:
   that finds its write (above);
 - **absent, with the lock held:** the code its last attempt earned, whether
   75 ("register busy"), 69, 2 or the verb's own;
-- **the lock not held within the window** (55P03, or no answer): 3, naming
-  the write id, the pending record kept.
+- **the lock not held within the window, or the lookup refused** (55P03,
+  LR011, or no answer): 3, naming the write id, the pending record kept.
 
 "Register busy" is never exited without that lookup. The register's own
 refusals exit 2 (LR005, LR007, LR009 and LR010; the outcomes table), and 69
@@ -2552,20 +2646,26 @@ ships for phase 3").
   taking the first non-empty value, never `--grep`, the whole walk bounded by
   `LANES_GIT_TIMEOUT`. Where the time runs out, or the whole line carries no
   `Register-Seq`, the pass renders and pushes nothing, records why with the
-  mirror state (D16), and the renderer ends; `status` shows it. Check for a
-  divergence (below); read the journal entries after `m`; take the target
-  `t = min(h, m + 64, o − 1)`, where `h` is the journal's head and `o` the
-  first operator entry after `m`, known by `journal.operator`, so a pass
+  mirror state (D16), and the renderer ends; `status` shows it. A commit that
+  a `stray-import` or `stray-revert` entry names in `git_commit` is resolved:
+  its `Register-Seq`, if it carries one, does not count when the pass finds
+  `m`. Read the journal's head `h`. Where `m` is above `h`, a `Register-Seq`
+  copied or forged past the head (R2's N6), the pass records a divergence at
+  `R`, the commit carrying `m`, through `record_mirror_state`; it renders and
+  pushes nothing, and the renderer ends. `status` shows `diverged at <R>`.
+  Check for a divergence (below); read the journal entries after `m`; take the
+  target `t = min(h, m + 64, o − 1)`, where `h` is the journal's head and `o`
+  the first operator entry after `m`, known by `journal.operator`, so a pass
   renders at most 64 seqs; and for each seq `k` from `m + 1` to `t` in order,
-  build the images at `k`, then the commit: a private index (`GIT_INDEX_FILE` in
-  the checkout's git directory), `read-tree` of the parent, the changed blobs
-  written with `hash-object -w` and staged with `update-index`, `write-tree`,
-  and `commit-tree --no-gpg-sign -p <parent>`, with the entry's message and
-  `Register-Seq: <k>` in its final trailer block (D15), its author and committer
-  and both dates set to the entry's commit UTC, in UTF-8. The first parent is
-  `origin/main`'s tip; each later commit's parent is the one before it. Where
-  the next seq the mirror lacks is an operator entry, `t ≤ m`: the pass renders
-  nothing past it, since its command owns it (F2).
+  build the images at `k`, then the commit: a private index (`GIT_INDEX_FILE`
+  in the checkout's git directory), `read-tree` of the parent, the changed
+  blobs written with `hash-object -w` and staged with `update-index`,
+  `write-tree`, and `commit-tree --no-gpg-sign -p <parent>`, with the entry's
+  message and `Register-Seq: <k>` in its final trailer block (D15), its author
+  and committer and both dates set to the entry's commit UTC, in UTF-8. The
+  first parent is `origin/main`'s tip; each later commit's parent is the one
+  before it. Where the next seq the mirror lacks is an operator entry,
+  `t ≤ m`: the pass renders nothing past it, since its command owns it (F2).
 - **A fetch that fails** ends the pass with nothing pushed: SQL stays true, the
   failure is recorded with the mirror state (D16) where the database can be
   written, `status` shows the lag, and the next render catches up.
@@ -2632,7 +2732,9 @@ commit stops the renderer: it renders nothing over it, records `diverged at
 <sha>` in the database (D16), and `status` prints it. Commits outside the
 render set (handoffs, `lanes/STORE`, `lanes/repos.tsv`) are part of the tip. A
 mirror whose render set at `m` differs from the images at `m` is reported the
-same way. `reconcile` re-renders what is missing and imports nothing.
+same way. So is a last `Register-Seq` above the journal's head, recorded at
+the commit that carries it (R2's N6). `reconcile` re-renders what is missing
+and imports nothing.
 
 ### The two ways out of a divergence
 
@@ -2651,6 +2753,15 @@ diverged mirror (S5):
 Either records the stray sha as resolved, which clears `diverged at`, and the
 renderer then renders every seq after `m` onto `origin/main`'s tip, leaving a
 tree byte-identical to a full render. [L4-5]
+
+For a `Register-Seq` above the head at `R` (R2's N6), `render --revert <R>` is
+the way out. Its entry takes `h+1` and names `R`, so the next pass does not
+count `R`'s trailer: it finds `m` at the last render commit before `R`,
+renders on up to `h+1` on top of `R`, and from then on `m` is the revert's own
+seq. `import --single <R>` would clear it the same way, but it loads `R`'s
+render-set edits as a write, and a copied or forged trailer gives no reason to
+keep them. Neither verb needs a change: the pass's rule that a resolved
+stray's trailer does not count is what lets either finish.
 
 ### The in-place form, if the prototype fails the private-index form
 
@@ -2805,8 +2916,9 @@ their own fetch.
   and seq `k+1`, the rollback's own entry, is never rendered. A guard whose
   ref carries a `Register-Seq` below `k` refuses with 2 and SVC-12's text for
   a mirror behind the declaration's seq, which tells the person to fetch it
-  or wait for the database, so no guard answers from a mirror that lacks a
-  write SQL committed (R2's M1). The rollback is Brett's act, so the declaration is
+  once origin carries that seq, or wait for the outage to end, so no guard
+  answers from a mirror that lacks a write SQL committed (R2's M1). The
+  rollback is Brett's act, so the declaration is
   his, as Q26(a′) requires. A
   guard's read that finds the switch at `files` counts as failed (condition
   1); otherwise the guard would refuse every prompt while the rollback still
@@ -2919,9 +3031,17 @@ no password-file path.
 `lanes-index rollback`, on Brett's word, with `LANES_LANE=<operator lane>`,
 from a shell or a `CLAUDE_NO_LANE=1` session:
 
-0. **It refuses to start while `status` shows `diverged at`** (the frame review's
-   F1). S2's two ways out resolve the divergence first; each goes through S1's
-   commit call, so each runs only while the switch is `primary`.
+0. **It refuses to start while `status` shows `diverged at`** (the frame
+   review's F1). S2's two ways out resolve the divergence first; each goes
+   through S1's commit call, so each runs only while the switch is `primary`.
+   Right before step 1 it fetches `origin main` again and checks it for a
+   divergence as the renderer recognises one, a last `Register-Seq` above the
+   head included (R2's N6). It records one it finds with `record_mirror_state`
+   and refuses with 2. Inside step 1's transaction, `commit_write` refuses a
+   `rollback` entry while `mirror_state.diverged_sha` is set, reading the row
+   `FOR SHARE` (LR012, §1.3), so a divergence being recorded at that moment
+   refuses it too (R2's S5). A 40001 on that call sends the rollback back to
+   this check.
 1. In one short transaction taking the head row, set the switch to `files`,
    move the head from `k` to `k+1`, and write seq `k+1`, the operator entry
    removing `lanes/STORE` (D24), leaving the marker `removing`; its start
@@ -2985,9 +3105,11 @@ workstation's lanes paused first, as for the freeze, and the outage declared
 7. Clear the declaration; the lanes resume; the notice names the seqs lost
    after `m` (or `b`), so each lane checks its last writes against the mirror.
 
-`operations.md` §2.3 details these steps, including the marker's `database=`
-where the new database's label differs, which the after-loss cutover's entry
-rewrites. The
+`operations.md` §2.3 details these steps, including the marker's `database=`,
+which the after-loss cutover's entry rewrites. Where that cutover meets the
+switch at `primary`, as on a restored backup or on the live database by
+mistake, it refuses a label equal to the switch's (LR004, R2's N4), so a
+restore needs a replacement whose label differs from the lost database's. The
 loss is bounded by the renderer's lag at the moment of loss, which `status`
 shows (P14; the product seat, 6549261651). The database's host, its backups
 and its downtime limit are Brett's (Q22); when the limit is reached, Brett
@@ -3084,7 +3206,7 @@ register already renamed and makes only the move and the stamp.
 
 | Role | Configuration keys | Held by | Scope |
 |---|---|---|---|
-| REGISTER-WRITER | `register_url=`, `register_passfile=` | `lanes-edit.sh`'s writes, through `lanes-index register commit` and `snapshot`; the renderer; `import`, `cutover` and `rollback` | the register's tables, the journal, the switch, the mirror state |
+| REGISTER-WRITER | `register_url=`, `register_passfile=` | `lanes-edit.sh`'s writes, through `lanes-index register commit` and `snapshot`; the renderer; `import`, `cutover` and `rollback`; `outage declare`'s database probe (D9) | the register's tables, the journal, the switch, the mirror state |
 | READER | `reader_url=`, `reader_passfile=` | the guard's direct read (Q11(a)), every reader (D17), the service, `status` | SELECT on both halves |
 | indexer | `url=`, `passfile=` | `lanes-index sync` and `reconcile` for the ledger half | the ledger half's derived tables only |
 
@@ -3128,6 +3250,7 @@ only the import keeps its 300 s bound (`:1317`), as its statement timeout.
 | the mode query, `lanes-index mode`, which reads only the configuration (D3) | — | — | — | 2 s | the query is killed, and the verb runs in files mode with a warning naming the timeout (F8); on a SQL estate the marker check then refuses with 69 (lane 3's ruling, #165 6711028142) |
 | a writer's snapshot | 2 s | 2000 ms | 5000 ms | 8 s | a failed read: 69, or in doubt where an earlier commit of the same write was |
 | a writer's commit | 2 s | 2000 ms | 5000 ms | 8 s | in doubt |
+| the in-doubt lookup, `find_write(<id>, <n>)` (S2; D8, S1) | 2 s | 2000 ms | 6000 ms: its wait of at most 3 s, then the lock, then 1 s for the lookup | 8 s, inside the 10 s reconnect window | 3, naming the id, the pending record kept (D8) |
 | a whole write | — | — | — | 30 s before a new attempt; 10 s to reconnect in doubt | 75, or 3 |
 | a reader | 2 s | 1000 ms | 3000 ms | 6 s | a failed read (S3's table) |
 | the renderer's reads, and `reconcile` | 2 s | 1000 ms | 10 s | 15 s | the render ends; the lag stays |
@@ -3135,23 +3258,37 @@ only the import keeps its 300 s bound (`:1317`), as its statement timeout.
 | `rollback`, each call | 2 s | 5000 ms | 10 s | 15 s | 69; step 1's expiry re-reads the switch |
 | `import` (lane 1's row, §1.3) | 2 s | 2000 ms | 300 s, #160's `psql` bound (`code/lanes-index:1317`) | 330 s | 69; nothing is swapped in (S5) |
 | a migration | 2 s | its own, retried | — | — | refused; rerun |
-| `cutover`, its transaction: the switch to `primary` and its entry, in every form | routed | routed | routed | routed; it carries `not_after`, so it runs under a client timer (D24) | routed |
-| `switch_to_files`, the cutover's abort | routed | routed | routed | routed | routed |
-| `record_marker`, after an operator entry's read-back | routed | routed | routed | routed | routed |
-| `outage declare`'s database probe (`operations.md` §2.5's first refusal) | routed | routed | routed | routed | routed |
+| `cutover`, its transaction: the switch to `primary` and its entry, in every form | 2 s | 5000 ms | 10 s | 15 s; it carries `not_after` (D24) | 69, with the switch unknown: the rerun reads the switch and the journal first, and goes on from its own entry where it finds one (F12) |
+| `switch_to_files`, the cutover's abort, either form | 2 s | 5000 ms | 10 s | 15 s | 69: the rerun reads the switch. At `files`, or back at the restored generation with the head at `b`, the abort is done; otherwise it runs again |
+| `record_marker`, after an operator entry's read-back | 2 s | 5000 ms | 10 s | 15 s | 69: the push stands, and the marker stays `adding` or `removing`, so writes keep refusing; the rerun reads origin back and records it again (F12) |
+| `outage declare`'s database probe (`operations.md` §2.5's first refusal): one read of the switch, connected as a writer's snapshot is, as REGISTER-WRITER | 2 s | 2000 ms | 5000 ms | 8 s | the database does not answer from this host, so the declaration is written; any other end before the switch is read counts the same. A switch read at `primary` refuses 2, and one read at `files` writes the declaration (a rollback's start) |
 | `import --single <sha>` and `render --revert <sha>`, their commit call | 2 s | 2000 ms | 5000 ms | 8 s | in doubt, as a writer's commit: each goes through S1's commit call (S2's "The two ways out"), `register commit` (the phase plan's interfaces table) |
-| `import --single <sha>` and `render --revert <sha>`, their other database calls | routed | routed | routed | routed | routed |
+| `import --single <sha>` and `render --revert <sha>`, their other database calls: the snapshot read, as a writer's; in doubt, the lookup's row above; the render that follows is the renderer's row | 2 s | 2000 ms | 5000 ms | 8 s | a failed read: 69, or in doubt where an earlier commit call of the same entry was |
 
-A "routed" cell is a bound this design does not state yet: lane 1 owes those
-of `cutover`, `switch_to_files`, `record_marker`, `import --single` and
-`render --revert`, and lane 5 that of `outage declare`'s probe (the routed
-list at the end of this file; R2's N1).
+Lane 1 measured the operator rows on PostgreSQL 16.15, after a 42,001-line
+import, with each row's bounds set, timing each call with its `BEGIN` and
+`COMMIT`. The figures are median and maximum: the first cutover, 6.7 and 29.4
+ms over 6 runs; its abort, 1.9 and 4.8 ms; the restore form's cutover, 2.9 and
+3.5 ms, and its abort, 2.0 and 2.6 ms; and `record_marker`, 0.7 and 1.2 ms.
+Each `statement_timeout` is over 300 times its row's maximum, and the 5000 ms
+`lock_timeout` outlasts a writer's 5000 ms statement on the head row. The
+lookup's row is set by its wait, not measured (lane 1's §1.3). The commit call
+of `import --single` and `render --revert` keeps a writer's commit bounds,
+which lane 1 confirms: a `stray-import` of 3 lines on 3 paths, the 20,000-line
+archive among them, took 22.8 ms median and 25.2 ms at most over 5 runs, a
+`stray-revert` naming the same 3 paths 17.4 and 18.5 ms, and a 200-line
+`stray-import` 181.4 and 184.3 ms over 3 runs, so the 5000 ms bound holds a
+stray of up to about 5,000 lines (lane 1's v2.6, #165 6714645316).
+`outage declare`'s probe takes a writer's snapshot bounds and credential, and
+is not measured: the test plan proves it exits inside them, as for that row
+(lane 5, #165 6714373660).
 
-Only the first row is measured: `connect_timeout=2` exits 2 at 2007 ms, a
-`lock_timeout` of 1000 ms gives 55P03 at about 1011 ms, a `statement_timeout`
-of 1500 ms gives 57014 at 1508 ms, and a 4 s client timer is the only bound on
-a host that goes silent after connecting (`clarifications.md`, ADV-C4). The
-other rows are the design's, and the test plan proves each exits inside its
+Only the first row's expiries are measured: `connect_timeout=2` exits 2 at
+2007 ms, a `lock_timeout` of 1000 ms gives 55P03 at about 1011 ms, a
+`statement_timeout` of 1500 ms gives 57014 at 1508 ms, and a 4 s client timer
+is the only bound on a host that goes silent after connecting
+(`clarifications.md`, ADV-C4). The other rows' bounds are the design's, and
+the test plan proves each exits inside its
 bound. The REGISTER-WRITER role's `idle_in_transaction_session_timeout` is 5 s,
 unmeasured; since it binds every session of the role, no operator command holds
 a transaction across a git act or a render (S5), and DDL and migrations run as
@@ -3729,7 +3866,8 @@ reserve stays and the start line stays at `T0 + 3.75 s` (lane 3's ruling,
 **Under a declared outage** (lane 5's change, #165 6579523948, which lane 3
 accepted). Where an unexpired declaration names this database, the client
 reads it once, at the prefetch, before the direct read; it caps the direct
-read at `T0 + 3.65 s`, 0.1 s earlier, so that a database that accepts the
+read at `T0 + 3.65 s`, 0.1 s earlier, which is then also the clamp's line
+(below), so that a database that accepts the
 connection and then goes silent still leaves the mirror path its start by
 `T0 + 3.75 s`; and the mirror's reads and parse then use the 0.5 s reserve.
 They are today's six register reads, which lane 2 measured at 308 ms median
@@ -3743,9 +3881,14 @@ process). On Linux the client reads that process's start from
 `/proc/<pid>/stat` against `/proc/uptime`. On macOS it reads `ps -o etime= -p
 <pid>` and rounds up to the next whole second, which can only shorten the
 direct read's timer, never lengthen it. **A clamp:** an elapsed time at or
-above the parse's start line, 3.75 s, is a refusal: the client exits as "too
+above the direct read's cap, 3.75 s, or 3.65 s where an unexpired declaration
+names this database, is a refusal: the client exits as "too
 late to verify", and the guard refuses 2, since a hook that late has no time
-for a read to finish, and a killed hook fails open (R2's S4). Only a
+for a read to finish, and a killed hook fails open (R2's S4). Under a
+declaration, a client that starts between 3.65 s and 3.75 s would otherwise
+pass the clamp with no time for its direct read, which would then count as
+failed and open the mirror path while the database may still answer (lane
+5's check of commit L, #165 6714540821). Only a
 negative elapsed time, or one the client cannot read, is treated as unknown,
 as where neither answers, and the client then assumes 1 s has passed. That
 catches a `/proc/uptime` that a container virtualises (lxcfs) differently
@@ -3805,7 +3948,7 @@ two client forms; `unavailable` never leaves the client.
 | text at `n` through the service | 0 | 0, files cached | parses; decides 0 or 2 |
 | the service unavailable, the direct read succeeded | 0 | 0, files cached, `guard: direct (service unavailable)` on stderr | parses; decides 0 or 2 |
 | `refuse db <cause>`, or the direct read failed | 69, as S3's table | 69 | SVC-12's declared-outage check; otherwise 2, naming the store, the cause and the two ways out |
-| a read completed after the parse's start line | — | 2 | 2: "too late in the hook's 5 s to verify the triple" |
+| a read completed after the parse's start line, or an elapsed time at the start at or above the clamp's line, the direct read's cap (3.75 s, or 3.65 s where an unexpired declaration names this database) | — | 2 | 2: "too late in the hook's 5 s to verify the triple" |
 | mode `index` | — (D3 asks first) | 0, `mode index` | today's files-mode guard |
 | Q6(c)'s refusal of `mode=primary` | 78, `EX_CONFIG` (lane 4's code; F8) | 78 | 2 |
 | any other failure of the mode question or the prefetch | — | any other code, or none | files mode with a warning (F8); under `lanes/STORE`, 2 by Q21(a)(A) |
@@ -3912,8 +4055,9 @@ gives, with S3's `read: mirror at <sha12>, …` line and `(declared outage <utc>
 <why>)` in place of the cause. Since condition 1 holds, the mirror path is
 entered only after a database read failed, so the label never stands for "the
 service was down". A mirror below `m` refuses 2: "the mirror here is at seq
-`<k>`, behind the declared outage's seq `<m>`; fetch it, or wait for the
-database". Any other failed condition refuses 2 with S3's outage text. Every
+`<s>`, behind the declared outage's seq `<d>`; fetch it once origin carries
+seq `<d>`, or wait for the outage to end" (lane 5's text, #165 6714540821).
+Any other failed condition refuses 2 with S3's outage text. Every
 write and every other deciding read still refuse with 69, and the service never
 reads the mirror or the declaration, so a service left running through an
 outage cannot carry a declaration past its expiry.
@@ -5149,14 +5293,16 @@ Every row below waits on the decision it names.
   mid-transaction blocks every writer → `idle_in_transaction_session_timeout` on
   the role, `lock_timeout` on each commit, retries until the deadline, and 75,
   never a hang. Once any commit call of a write was in doubt, the writer ends
-  with no code but 0 until it has made F3's lookup: it waits until the
-  database clock has passed the largest `not_after` its commit calls carried,
-  takes the head row's lock within the reconnect window, and looks its write
-  id up. Found, it exits 0 and runs the verb's after-COMMIT tail; absent, with
+  with no code but 0 until it has made F3's lookup, `find_write(<id>, <n>)`:
+  it waits until the database clock has passed `<n>`, the largest
+  `not_after` its commit calls carried, takes the head row's lock within the
+  reconnect window, checks the clock again under it, and looks its write id
+  up. Found, it exits 0 and runs the verb's after-COMMIT tail; absent, with
   the lock held, it exits the code its last attempt earned, whether 75
   ("register busy"), 69, 2 or the verb's own; with the lock not held within
-  the window, it exits 3, naming the write id. "Register busy" is never exited
-  without that lookup, so no exit is a false "nothing was written" (D8; S1).
+  the window, or the lookup refused (LR011), it exits 3, naming the write id.
+  "Register busy" is never exited without that lookup, so no exit is a false
+  "nothing was written" (D8; S1).
 - **[A rollback on a diverged mirror]** S2's two ways out need the switch at
   `primary`, and the rollback's last seq would be journalled after the flip →
   the rollback refuses to start while `status` shows `diverged at`, and writes
@@ -5312,11 +5458,16 @@ S6, beside Q17; D1's schema of its own; D25's `lanes-index cutover`; and a
 release for a stale `LANDING`, for which the recommendation is a
 `LANDING EXPIRED` line naming the holder, which any lane may write after Rule
 6's window on his word, tested (S6; lane 1's v2 carries it, §1.2); a
-stray landing during a rollback, which has no journalled way out; and
+stray landing during a rollback after its last divergence check, which has
+no journalled way out (narrowed by lane 1's v2.6, R2's S5); and
 Q21(b)'s scope, `lanes/**` as the round-2 file words his answer, or the
-render set and `lanes/STORE` as D23 has it. Two more rows read "for Brett:
-not yet answered" (the review of commit J, R1's S1): files mode's changes
-against Amendment 22's scope, and D8's exit 3 for a write in doubt.
+render set and `lanes/STORE` as D23 has it. Three more rows read "for
+Brett: not yet answered": two from the review of commit J (R1's S1), files
+mode's changes against Amendment 22's scope and D8's exit 3 for a write in
+doubt; and D24's two operator seqs, which `cutover` and `rollback` push
+themselves, against S2's renderer that commits every sequence the mirror
+lacks, which commit M splits from Q21(a)(A)'s row, since Q18(A) settles only
+that the marker is register seq 1.
 
 **Values Brett names later:** Q29's time limit for the guard; Q22's database
 host, its backups and how long it may be down; Q28's two dates, one for slices
@@ -5373,17 +5524,22 @@ left as it was.
   key a line derives that is not a scope is a new code, LR010, a 2, at a
   write and at an import, whose cost at import lane 3 accepted (option (a),
   #165 6711924759; `operations.md` §2.2, act 4's step 6). The
-  stale-`LANDING` release waits on Brett (F13). **From the review of commit
-  J, for a v2.6** (lane 3's rulings; R2's report): `find_write(p_write_id,
-  p_not_after)`, checked under the lock on the server's own clock (R2's S2);
-  `commit_write` refusing a `rollback` entry while `mirror_state.diverged_sha`
-  is set, with `record_mirror_state` locking that row, and the rollback's
-  fresh fetch and divergence check right before its step 1 (R2's S5); a
-  `database_label` for the after-loss cutover that differs from the switch's
-  (R2's N4); a renderer `m` above the head recorded as a divergence, and the
-  renderer stopped (R2's N6); and the bounds the timeouts table marks routed
-  for `cutover`, `switch_to_files`, `record_marker`, `import --single` and
-  `render --revert` (R2's N1).
+  stale-`LANDING` release waits on Brett (F13). **Answered by lane 1's
+  v2.6** (#165 6714645316, folded above), the points the review of commit J
+  routed to it: `find_write(p_write_id, p_not_after)`, which waits on the
+  server's own clock and checks it again under the head row's lock, with
+  LR011 (R2's S2); `commit_write` refusing a `rollback` entry with LR012
+  while `mirror_state.diverged_sha` is set, read `FOR SHARE`, whose lock
+  `record_mirror_state`'s `UPDATE` already conflicts with, and the rollback's
+  fresh fetch and divergence check right before its step 1 (R2's S5); the
+  after-loss cutover's label, refused where it is missing in either form and,
+  where the switch is at `primary`, unless it differs from the switch's, as
+  lane 3 ruled, lane 1's option (a), so a restore needs a replacement of
+  another label (R2's N4); a renderer `m` above the head recorded as a
+  divergence, and the renderer stopped (R2's N6); and the bounds of
+  `cutover`, `switch_to_files`, `record_marker`, the lookup and the other
+  calls of `import --single` and `render --revert`, measured where they are
+  operator calls, with their commit call's row confirmed (R2's N1).
 - **Lane 4, the phase plan: answered.** Its section, folded above, answers
   each item this list routed to it, in its "The routed items, answered" (34
   rows), and lane 3 accepted it (#165 6708889286). Each item, answered: the
@@ -5449,7 +5605,17 @@ left as it was.
   after a commit call in doubt waits for F3's lookup; the detached bind's
   bound over the child's whole body, and its sum (R2's S6); a message of its
   own for a pending record whose pid is live (R2's N2); and the child's
-  `read -t` bound at the seam (R2's N5).
+  `read -t` bound at the seam (R2's N5). **From lane 1's v2.6** (#165
+  6714645316), lane 4's own text: the old `find_write(uuid)` signature and
+  the client-side wait still stand at L `:4259`, `:4523`, `:4525`, `:4528`,
+  `:4604`, `:4651`, `:5032`, `:5047`, `:5084` and `:5114` (commit L,
+  `3c759ffd`); `journal --write-id` needs `<n>` beside the id (lane 1's text
+  9). Lane 1's two notes: where the reconnect window starts, since after a
+  commit call that failed fast near the end of the window, the client's wait
+  before its call plus the lookup's 8 s can pass the 10 s window; and the
+  pending record, which carries no `not_after`, where lane 1 reasons, without
+  a test, that a rerun's own calls carry later ones, which cover an older
+  orphan.
 - **Lane 2, the test plan:** a test for each MUST as folded (a write in doubt at
   the deadline; a diverged rollback, and a failed seq-1 push; the ruleset, then
   a files-mode write after the rollback; a declared outage with the service and
@@ -5488,11 +5654,17 @@ left as it was.
   register's own rules (2, not 69); readers under the refusal of
   `mode=primary`; `register-row-local` on primary; a taking line that names
   no repository; a bind refused with another 2; a rollback's declaration
-  with a ref behind its head; and test 4's sequence numbers from 2.
+  with a ref behind its head; and test 4's sequence numbers from 2. From
+  lane 1's v2.6 (#165 6714645316): an import's `not_after` is its 330 s
+  timer plus 2 s, so a test harness that gives an import the default 30 s
+  hits LR008; `renames-v2.6.md` (sha256 `19e02501…`), the signatures, codes,
+  rules and bounds v2.6 adds or changes; and a test each for LR011, a lookup
+  too early, and LR012, a rollback refused over a recorded divergence.
 - **Lane 5, the service: answered.** From lane 1's v2: the libpq service
   form (`bootstrap --admin-service`, `operations.md` §2.4) against SVC-2's
   mapping, and the declared outage's mirror read within SVC-8's budget
   (`operations.md` §2.5), are lane 5's changes, recorded in SVC-2 and SVC-8
-  (#165 6579523948), which lane 3 accepted. **From the review of commit J:**
-  the bound of `outage declare`'s database probe, which the timeouts table
-  marks routed (R2's N1).
+  (#165 6579523948), which lane 3 accepted. **From the review of commit J,
+  answered:** the bound of `outage declare`'s database probe, D9's row, one
+  read of the switch connected as a writer's snapshot is, as REGISTER-WRITER
+  (R2's N1; #165 6714373660).

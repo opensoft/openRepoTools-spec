@@ -490,7 +490,8 @@ test that checks it; the agreement tests are listed together at the end.
   refuse-class at each of them: under Q8(a)(i) and (ii) the launch refuses,
   naming the code and saying that nothing was written and a retry in seconds is
   safe; under Q8(a)(iii), where every refused read is a note, they stay notes
-  (lane 2's SHOULD c; Q9).
+  (lane 2's SHOULD c; Q9). [Answered: Q8(a), 2A (#165 6710653292), R3's
+  option A, so the launch refuses; (iii) is not taken.]
 - Tests: each row of the table, for each reader in it, with the rows Q8
   answers written to its answer, 2A (#165 6710653292); each mirror read prints its line on
   stderr and keeps its exit; a fake `psql` that fails exactly one call, run
@@ -498,7 +499,8 @@ test that checks it; the agreement tests are listed together at the end.
   `lane-start` read arms above (`:1154`, `:1262`, `:1271`, `:1332`,
   `:2184–2186`, `:3079`, `:3430`), one test in which the
   verb exits the busy code and the launch refuses, with the register's rows and
-  log unchanged (and, under Q8(a)(iii), a note and the launch going on); the
+  log unchanged (and, under Q8(a)(iii), a note and the launch going on
+  [answered: 2A took option A, not (iii), #165 6710653292]); the
   guard's refusal on an unreachable database naming the store, the cause and
   both ways out, and `lanes-index status` and `rollback` running with no lane
   session and no guard (P3).

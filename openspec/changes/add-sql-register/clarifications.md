@@ -358,7 +358,7 @@ it; bash 3.2 has no `coproc`. The head row is updated before the journal row is
 inserted, or a 23505 on the seq key is retried (S1). Test 4 must inject a
 window, or it passes trivially at 0 ms: ten writers on distinct objects,
 released together, each with 200 ms between snapshot and COMMIT; all ten commit,
-none exits busy or 69, and the seq runs 1..10 with no gaps. It takes about 2.3 s,
+none exits busy or 69, and the seq runs 1..10 with no gaps [2 to 11 since commit L: writes start at 2 after a first cutover]. It takes about 2.3 s,
 and it must pass under whichever of Q7's options Brett takes.
 
 **The busy code's number.** The product seat (#165 comment 6549202251) suggests

@@ -220,7 +220,7 @@ During an outage Brett Heap declares on his word, when he knows that no workstat
 
 #### Scenario: A ref behind a rollback's head
 - **WHEN** a rollback has set the switch to `files` at head `k`, and the ref a guard reads carries a `Register-Seq` below `k`
-- **THEN** the guard refuses with 2, telling the person that the mirror there is behind the declared outage's seq, to fetch it or wait for the database
+- **THEN** the guard refuses with 2, telling the person that the mirror there is behind the declared outage's seq, to fetch it once origin carries that seq or wait for the outage to end
 - **AND** it does not answer from that mirror
 
 #### Scenario: The declaration does not need the database
