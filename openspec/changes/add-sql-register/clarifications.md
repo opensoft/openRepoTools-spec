@@ -296,18 +296,20 @@ paths); 811–829 (the guard's tests).
   `tcp_user_timeout` all set, it is still 124 at 5002 ms, on loopback. A client
   timer does: `timeout 4` around `psql`, with any failure exiting 2, exits 2 at
   about 4006 ms, and a live database answers in 13 ms.
-**Design impact:** `design.md` takes `connect_timeout=2` with one address, since
-each extra address adds 2 s; `lock_timeout=1000` and `statement_timeout=1500`,
-set when connecting through `options=`; a hard client timer of 4 s around
-`psql`, whose expiry means 2 for the guard and "in doubt" for a writer; and a
-worst case of 2 + 1.5 = 3.5 s, inside the 4 s timer and the 5 s hook. Writers get
-longer limits of their own. Migrations set their own `lock_timeout`, because of
-the queue effect. The same bounds name the readers, the renderer, `status` and
-`rollback` (lane 2's SHOULD g; `rollback` and `status` are the way out of an
-outage). The guard's test needs a TCP port, which the Unix-socket fixture does
-not open; add three cases to the silent listener: a host silent after it has
-connected, a read behind a migration's lock, and a conninfo with several hosts.
-The assertion: the guard exits 2 in under 4.5 s in each.
+  **Design impact:** `design.md` takes `connect_timeout=2` with one address,
+  since each extra address adds 2 s (now each workstation's `c`, 2 s on a LAN,
+  for each of the endpoint's `N_a` addresses, design D9); `lock_timeout=1000`
+  and `statement_timeout=1500`, set when connecting through `options=`; a hard
+  client timer of 4 s around `psql`, whose expiry means 2 for the guard and "in
+  doubt" for a writer; and a worst case of 2 + 1.5 = 3.5 s, inside the 4 s timer
+  and the 5 s hook. Writers get longer limits of their own. Migrations set their
+  own `lock_timeout`, because of the queue effect. The same bounds name the
+  readers, the renderer, `status` and `rollback` (lane 2's SHOULD g; `rollback`
+  and `status` are the way out of an outage). The guard's test needs a TCP port,
+  which the Unix-socket fixture does not open; add three cases to the silent
+  listener: a host silent after it has connected, a read behind a migration's
+  lock, and a conninfo with several hosts. The assertion: the guard exits 2 in
+  under 4.5 s in each.
 
 ### ADV-C7: one contended head row
 
@@ -481,22 +483,44 @@ Brett named the values left for him in dialogs in lane openRepoTools-3's session
 and in lane openRepoTools-1's:
 
 - **Q22, the host:** "A separate server", then "Managed cloud Postgres" (#165
-  6722025863), then "Azure Flexible Server (Recommended)": Azure Database for
-  PostgreSQL Flexible Server, version 16, in opensoft's prod subscription, which
-  act 3 creates there (#165 6722593397). Its access is "Public + firewall
-  (Recommended)", with one firewall rule per workstation address and the setting
-  that allows access from any Azure service off, and its logins are "Two logins
-  each (Recommended)" (#165 6723413756).
+  6722025863), then "Azure Flexible Server (Recommended)" at 14:16Z (#165
+  6722593397), which he moved at 16:17Z to "CNPG in the install": PostgreSQL 16,
+  run by CloudNativePG (CNPG) on the prod AKS cluster
+  (`aks-opensoft-platform-prod-01`, the `workcore1` pool, Central US), as part
+  of the codeXfactory install there, one instance with no HA, created only by
+  that install, "Wait for the install" (#165 6723925474), and built to lane 1's
+  install contract by "A codexFactory lane, now (Recommended)" (#165
+  6723967774). Engineers reach it with no VPN, through a public `LoadBalancer`
+  limited to their addresses, with `externalTrafficPolicy: Local`, and TLS
+  `verify-full` with a certificate from "Install's private CA (Recommended)";
+  its logins are "Two logins each (Recommended)" (#165 6723413756), made,
+  rotated and revoked by "lanes-index login (Recommended)" (#165 6726078173).
+  Its region is the cluster's, Central US.
 - **Q22, the backups:** "Daily pg_dump + mirror (Recommended)" (#165
   6722025863); "Count both (Recommended)" and "Dump both (Recommended)" (#165
-  6722541787), so the provider's backups and point-in-time restore are a restore
-  source and the dump takes `lanes_register` and `lanes_index`; "Job + storage
-  in prod sub (Recommended)" (#165 6722593397); and "Accept; mirror is the copy
-  (Recommended)" (#165 6723413756).
-- **Q22, the downtime limit:** "4 hours (Recommended)" (#165 6722025863).
+  6722541787), so CNPG's Barman Cloud backups, with point-in-time restore, are a
+  restore source beside the dump, which takes `lanes_register` and
+  `lanes_index`; "Job + storage in prod sub (Recommended)" (#165 6722593397);
+  "Accept; mirror is the copy (Recommended)" (#165 6723413756); and "Yes, drill
+  at act 3 (Recommended)" (#165 6726078173). Lane 3 rules that the physical
+  backups are kept 30 days, as the dump is (#165 6726078173).
+- **Q22, the downtime limit:** "4 hours (Recommended)" (#165 6722025863), which
+  stands; with one instance and `enablePDB: false`, lane 3's ruling (#165
+  6726078173), a node drain or a restart is a short outage, during which the
+  guard answers 2.
+- **Q22, a workstation whose link to the server is down:** "Block until link
+  returns (Recommended)" (#165 6723925474): its guard answers 2 until the link
+  returns or an outage is declared.
 - **Q29, the time limit:** "1 s (Recommended)" (#165 6722025863). Lane 3 rules
   that it is judged on the warm p95 of the guard without the service, with the
-  cold walk recorded beside it and not judged against the limit.
+  cold walk recorded beside it and not judged against the limit. From Eagle the
+  guard without the service misses it: lane 5 measured Eagle's round trip to
+  Central US at about 86 ms at best, 205 ms at the median and 456 ms at the p90,
+  so the guard without the service takes about 1.2 to 2.1 s, which misses
+  Brett's 1 s, and about 0.5 to 0.7 s through it (#165 6725361742). So Q29 (a)'s
+  condition is met: the cutover waits for the service, the v1.2.0 tag waits for
+  it too, and it is built beside groups A and B, not last (lane 3's ruling, #165
+  6724332510 and 6726078173).
 - **Q28, the two dates:** "Confirm both (Recommended)": #282 (1a) and #307 (1b)
   as draft PRs by 2026-11-10 and ready by 2026-11-12; #312, #316, #311 and #308
   open by 2026-11-12 and ready by 2026-11-17 (#198 6722244541).

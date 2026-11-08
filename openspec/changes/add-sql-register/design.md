@@ -193,8 +193,8 @@ section it shapes, and what changes under each other option. The eight that
 stand apart from "all as recommended" are marked so. **Answered:** on
 2026-11-07 Brett took every recommendation, the eight included ("Take all
 recommended (Recommended)", #165 comment 6710653292), so each option below is
-his answer; `clarifications.md` records the answers, their times, and the
-values still his to name.
+his answer; `clarifications.md` records the answers, their times, and the values
+he named on 2026-11-08 ("Values Brett named on 2026-11-08", in Open questions).
 
 1. **Q4(a), the freeze (stands apart): (i).** An estate-wide hold, announced
    on each coordination issue and by Brett's prompt to each pane, drained to
@@ -235,10 +235,10 @@ values still his to name.
    the busy outcome exits 69, and the seven `lane-start` read arms and the
    manual read 69 as "busy or unreachable".
 6. **Q11, the guard's credential with the service down: (a).** The guard's
-   direct read holds the READER credential from the 0600 configuration ("Roles
-   and credentials"). Under (b), the fallback refuses 2 whenever the service is
-   down, so the service becomes a precondition of every prompt and Q29's (a) no
-   longer holds.
+   direct read holds its engineer's reader login's credential from the 0600
+   configuration ("Roles and credentials"). Under (b), the fallback refuses 2
+   whenever the service is down, so the service becomes a precondition of every
+   prompt and Q29's (a) no longer holds.
 7. **Q12, the claim loser: (a), exit 2.** S6. Under (b), the loser exits 7, and
    so does the later `HOLD` or `LANDING` writer (D18), so that the two stay
    paired; the manual's "2 instead of 7" line goes.
@@ -283,8 +283,10 @@ values still his to name.
     the whole answer to a stale writer, found by `status`'s `diverged at` and a
     second readiness run (P18).
 15. **Q22, the database and Raven (stands apart): (a).** Raven is configured
-    with Eagle at act 3; the database's host, its backups and its downtime limit
-    are Brett's to name. Under (b), Raven is not a writing workstation, and its
+    with Eagle at act 3, and every engineer's workstation joins by the same
+    steps (#165 6722593397); Brett named the database's host, its backups and
+    its downtime limit on 2026-11-08 ("Values Brett named on 2026-11-08", in
+    Open questions). Under (b), Raven is not a writing workstation, and its
     installed tools refuse under the marker. Under (c), the database runs on
     Eagle and Raven is upgraded but not configured, so the readiness check
     covers it and the marker refuses its writes; the recovery is S5's disaster
@@ -326,13 +328,19 @@ values still his to name.
     skill's commit block keeps its `pull --rebase` (`code/skills/handoff/SKILL.md:449`,
     the proposal's "Impact"), which this change would then have to edit itself.
     Under (b) or (c) for the owner, the schedule moves and the design does not.
-24. **Q29, the cutover and the service (stands apart): (a).** The service is 007's
-    last slice, and act 4 waits for it only if the guard measured without it is
-    over a budget Brett names. Under (b), act 4 waits for the service, and the
-    direct read stays the fallback (Q11(a)). Lane 2's figure (`MEASURE.md`,
-    (14)): the guard on primary is about 0.42 to 0.47 s warm, against about
-    0.55 to 0.60 s in files mode today, both an order of magnitude inside the
-    hook's 5 s (SVC-9).
+24. **Q29, the cutover and the service (stands apart): (a).** Act 4 waits for
+    the service only if the guard measured without it is over Brett's budget, 1
+    s on the warm p95 ("Values Brett named on 2026-11-08", in Open questions),
+    and it is: lane 5 measured Eagle's round trip to Central US at about 86 ms
+    at best, 205 ms at the median and 456 ms at the p90, so the guard without
+    the service takes about 1.2 to 2.1 s, which misses Brett's 1 s, and about
+    0.5 to 0.7 s through it (#165 6725361742). So the cutover and the v1.2.0 tag
+    wait for the service, which is built beside phases 1 and 2, not as 007's
+    last slice (lane 3's ruling, #165 6724332510 and 6726078173). Under (b), act
+    4 waits for the service, and the direct read stays the fallback (Q11(a)).
+    Lane 2's figure (`MEASURE.md`, (14)): the guard on primary is about 0.42 to
+    0.47 s warm, against about 0.55 to 0.60 s in files mode today, both an order
+    of magnitude inside the hook's 5 s (SVC-9).
 
 ### The design's own decisions
 
@@ -369,8 +377,9 @@ the section that carries it.
   with a
   warning, and files mode's mandatory marker check after Amendment 23's S3
   fetch refuses on a SQL estate, so no failure of the query writes files there.
-  A configuration typo on a `mode=index` host, as Eagle and Raven are between
-  acts 3 and 4 (Q20(B)), then stops nothing but what it stops today (S1).
+  A configuration typo on a `mode=index` host, as each workstation act 3
+  configures is between acts 3 and 4 (Q20(B)), then stops nothing but what it
+  stops today (S1).
 - **D4. On primary, the commit seam collects and never commits.** At
   `commit_push` (`commit_publish` after 1b) the primary branch keeps every
   content check the seam makes, then hands the staged change set and the
@@ -477,7 +486,7 @@ the section that carries it.
   until it has made F3's lookup:** it calls `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)` (§1.3.1),
   `<n>` being the largest `not_after` its commit calls carried (§1.3's step 9,
   LR008), its tries starting within the 10 s reconnect window, which starts
-  when its own wait for `<n>` ends, each running to its own 8 s timer (the
+  when its own wait for `<n>` ends, each running to its own timer, `T_L` = `N_a`·`c` + 7 s (9 s at `c` = 2, D9; the
   phase plan's "The in-doubt rule"). The function waits until the
   database clock has passed `<n>`, takes the head row's lock, checks the clock
   again under it, and checks the generation and looks the write id up, finding only this write's own entry, else LR007 (R2's S2; V2's NIT 1). Found, it exits 0 and
@@ -524,17 +533,18 @@ the section that carries it.
   alternative, a placeholder replaced inside SQL at commit, would rewrite verb
   output in SQL, a second copy of the line grammar (S6).
 - **D14. The renderer is the writer's fork, in `lanes-index`, in the
-  private-index form** (Q5): R3's recommendation, and the service is last under
-  Q29(a). The in-place form, with its fence, was the fallback had lane 4's
-  prototype failed the private-index form; the prototype passed, so it is not
-  taken. One render runs at a time per checkout, under an `fcntl.flock` in
-  `SyncLock`'s form, with both halves of its handshake, not a `mkdir` mutex: a
-  renderer killed by SIGKILL leaves a `mkdir` mutex behind, and the checkout
-  then renders nothing. Lane 4's prototype passes [L4-1] to [L4-5] with the
-  `flock` ([L4-3] qualified: at most two renders holds for a burst that
-  arrives within one pass) and fails [L4-4] with the mutex; the phase plan's
-  "The renderer prototype" carries the proof (#165 6579524611, 6708867768)
-  (S2).
+  private-index form** (Q5): R3's recommendation, made while the service was to
+  be last under Q29(a); it stands now that the cutover waits for the service
+  (Q29), since the service never renders ("What the service never does"). The
+  in-place form, with its fence, was the fallback had lane 4's prototype failed
+  the private-index form; the prototype passed, so it is not taken. One render
+  runs at a time per checkout, under an `fcntl.flock` in `SyncLock`'s form, with
+  both halves of its handshake, not a `mkdir` mutex: a renderer killed by
+  SIGKILL leaves a `mkdir` mutex behind, and the checkout then renders nothing.
+  Lane 4's prototype passes [L4-1] to [L4-5] with the `flock` ([L4-3] qualified:
+  at most two renders holds for a burst that arrives within one pass) and fails
+  [L4-4] with the mutex; the phase plan's "The renderer prototype" carries the
+  proof (#165 6579524611, 6708867768) (S2).
 - **D15. A render commit's author and committer are the identity the journal
   recorded** (the writing environment's `user.name` and `user.email` at write
   time), both dated by the journal entry's commit UTC, so that two renderers
@@ -558,9 +568,9 @@ the section that carries it.
   so the row reports and never gates alone (S2).
 - **D17. Every reader reads "the register's text at the journal's head" and runs
   today's parser on it**, through the service where one answers, otherwise
-  directly with the READER credential. This extends Q11(a) from the guard to
-  every reader, as P4's "no second outage mode" asks, and it keeps the readers'
-  logic as unchanged as the writers' (S3).
+  directly with its engineer's reader login (§1.4). This extends Q11(a) from the
+  guard to every reader, as P4's "no second outage mode" asks, and it keeps the
+  readers' logic as unchanged as the writers' (S3).
 - **D18. The later `HOLD` or `LANDING` writer exits 2, writes nothing, and prints
   the earlier line,** paired with Q12: `main` is the object, and it is held. The
   line is classified inside the commit transaction by `lanes-index`'s one
@@ -606,27 +616,34 @@ the section that carries it.
 - **D22. The disaster path re-imports at the mirror's tip by default,** continuing
   the sequence, and restores a backup only where it is newer than the mirror.
   Two backups count (Q22, Brett, 2026-11-08): the daily `pg_dump` of both
-  schemas, which a scheduled job in opensoft's prod subscription writes into a
-  storage container there, with soft delete and 30-day retention ("Dump both",
-  #165 6722541787; "Job + storage in prod sub", #165 6722593397), and the
-  provider's own automated backups and point-in-time restore ("Count both", #165
-  6722541787). If the subscription is lost, the GitHub mirror is the copy
+  schemas, which the install's `CronJob` writes, as `lanes_register_dump`, into
+  a storage container in opensoft's prod subscription, with soft delete and
+  30-day retention ("Dump both", #165 6722541787; "Job + storage in prod sub",
+  #165 6722593397), and CNPG's Barman Cloud backups to blob storage in the prod
+  subscription: base backups, the WAL archive and a daily `ScheduledBackup`,
+  kept 30 days (lane 3's ruling, #165 6726078173), which give point-in-time
+  restore ("Count both", #165 6722541787; "CNPG in the install", #165
+  6723925474). A point-in-time restore's `b` is within `archive_timeout`, 5
+  minutes, of the loss (`operations.md` §2.3's step 6). Act 3 runs a restore
+  drill to a chosen moment (Brett, "Yes, drill at act 3 (Recommended)", #165
+  6726078173). If the subscription is lost, the GitHub mirror is the copy
   outside Azure, and the re-import stays the default route, which loses the
   journal's history, the write ids and #160's index ("Accept; mirror is the
-  copy", #165 6723413756).
-  A generation id, in the switch row and in every pending record, changes with
-  each new database, and a record of another generation is refused, since the
-  ids up to the mirror's seq are lost with the old journal. For a restore from
-  the dump, the bootstrap runs first, as `bootstrap --roles-only`, because roles
-  are cluster objects a database backup does not hold; a provider's
-  point-in-time restore is instead a new server that carries the roles and their
-  passwords, so `--roles-only` prints `unchanged` there, and the admin then sets
-  new passwords for the login roles (`operations.md` §2.3, lane 1's O5). Every
-  host is re-pointed at the new database. The re-import rewrites the marker as
-  the cutover's entry, at
-  `m+1`, so the next write is `m+2` (`b+1` after a restore; D24), and `ready`
-  and `set-mode` check that `lanes/STORE` names this database (lane 3's
-  ruling, #165 6578020193). `operations.md` §2.3 details the steps (S5).
+  copy", #165 6723413756). A generation id, in the switch row and in every
+  pending record, changes with each new database, and a record of another
+  generation is refused, since the ids up to the mirror's seq are lost with the
+  old journal. For a restore from the dump, or a re-import, the bootstrap runs
+  first, as `bootstrap --roles-only`, because roles are cluster objects a
+  database dump does not hold. A CNPG point-in-time restore is instead a new
+  Cluster whose physical restore carries the roles, their verifiers, memberships
+  and per-role settings (lane 1's engine proof, #165 6724409717), so it needs no
+  roles-only bootstrap: `--roles-only` prints `unchanged` there, and
+  `lanes-index login rotate` then gives each login a new password
+  (`operations.md` §2.3's step 6). Every host is re-pointed at the new database.
+  The re-import rewrites the marker as the cutover's entry, at `m+1`, so the
+  next write is `m+2` (`b+1` after a restore; D24), and `ready` and `set-mode`
+  check that `lanes/STORE` names this database (lane 3's ruling, #165
+  6578020193). `operations.md` §2.3 details the steps (S5).
 - **D23. The renderer identity, under Q21(b)(B), is a deploy key** in a 0600 file
   named by `lanes-index.conf`, used only in the push's own environment; the
   ruleset names the render set and `lanes/STORE`. Every push of those paths uses
@@ -720,7 +737,7 @@ puts it to him.
 | `lanes-index` | The one configuration parser and the one database client: `mode`, `register snapshot`, `register commit`, `register read`, `journal`, `render`, `import`, `cutover`, `rollback`, `status`, `reconcile`, `outage`, `serve` (the service, SVC-3), and the operator tools (bootstrap, readiness check, flip) | per subcommand: REGISTER-WRITER, READER, or the bootstrap's one-time admin connection |
 | `lanes-edit.sh` | Every verb, unchanged in its logic, and three new ones from the phase plan: `act-begin`, a read verb that takes an act's base (D5); `start-record`, `lane-start`'s bind as one write (D5); and the internal `guard-bind`, the guard's detached bind (SVC-8); and one new flag, `canon-lane --walk`, which prints the names `canon-lane`'s walk visits, for an act's expectations (D5). Its three write seams: the resolver, which the write path no longer needs and the renderer does; `handle_preexisting`, where the captures refuse; and the commit seam, which hands a change set to the attempt loop (D4). Its readers enter at `register_text_checked` | none of its own: it calls `lanes-index` |
 | The renderer | `lanes-index render`, forked by a writer after its COMMIT, in that lane's checkout; builds one commit per sequence on `origin/main` with a private index and pushes it | REGISTER-WRITER; the renderer identity's key under Q21(b)(B) |
-| `lanes-register`, the `lanes-index serve` subcommand (SVC-3) | The local-socket service, one per environment (SVC-1): one READER connection per process, answering the register's text at `n` for the guard and the other readers, which decide (4A; D17; SVC-7). Last slice (Q29(a)); its internals are lane 5's section | READER |
+| `lanes-register`, the `lanes-index serve` subcommand (SVC-3) | The local-socket service, one per environment (SVC-1): one READER connection per process, answering the register's text at `n` for the guard and the other readers, which decide (4A; D17; SVC-7). Built beside phases 1 and 2, not last (Q29(a); "Migration and rollout (summary)", item 4); its internals are lane 5's section | READER |
 | The guard | `lanes-edit.sh guard`, the hook: the service's client through one `lanes-index register read --for guard --prefetch` a prompt (SVC-8), falling back to a direct read (Q11(a)), and deciding by today's parser | READER, through `lanes-index` |
 | The readers | Read verbs and the lifecycle scripts (`lane-start`, `lane-handoff`, `lane-end`, `lane`, `lane-rename`, the skills, `lane-worktrees`) | READER, through the service or `lanes-index` |
 | PostgreSQL | Schema `lanes_register` (D1) beside `lanes_index` | — |
@@ -758,10 +775,10 @@ expectations, which step 3c checks (D5).
 
 A reader on primary asks for the register's text at the journal's head (D17):
 through the service's socket if it answers within its share, otherwise
-`lanes-index register read` with the READER credential. The answer is the text
-of the files it asks for, proven at head `n` by per-file digests in the same
-request, and today's parser runs on it. With the database unreachable, the
-reader exits as S3's table says.
+`lanes-index register read` with its engineer's reader login (§1.4). The answer
+is the text of the files it asks for, proven at head `n` by per-file digests in
+the same request, and today's parser runs on it. With the database unreachable,
+the reader exits as S3's table says.
 
 ## The schema
 
@@ -916,6 +933,8 @@ lines). It changes text only, and answers lane 4's ask of lane 1 (#165
 that the lookup's tries start within the 10 s reconnect window, which starts
 when the client's own wait for `n` ends, each running to its own 8 s timer,
 and the in-doubt row says the tail runs once. Both applied here as they stand.
+Commit X later replaced that 8 s with D9's `T_L` = `N_a`·`c` + 7 s, 9 s at
+`c` = 2 (open point 37, #165 comment 6726199453).
 Its third hunk, the lookup's bounds row, has no place in this part, since D9's
 table holds that row, and D9's row takes lane 4's words for it, by lane 4's
 ask 4.
@@ -1446,7 +1465,7 @@ Steps 6 to 9 are §1.3.1's SQL:
 8. **The proof:** every edited path has a row in the entry's `files`, and each present one's `encode(sha256(render_file(path)), 'hex')` must not be distinct from it, or LR004; then `files.sha256`, `final_newline` and `last_seq` move. The deferred foreign keys check at COMMIT.
 9. **The bound (F3):** last, just before it returns, `commit_write` raises LR008 unless `clock_timestamp()` is still before the entry's `not_after`. Every commit call carries it, the snapshot's database clock plus the call's client timer plus 2 s, and an entry without it is LR004. Once a commit call of a write was in doubt, the writer makes its one lookup before it ends with any code but 0 (D8, S1): `find_write(id, n, g, lane, verb, a)`, where `n` is the largest `not_after` its calls carried (S2), and `g`, `lane`, `verb` and `a` are the generation, lane, verb and `args_sha256` that its commit calls sent (NIT 1). The function waits until the database clock has passed `n`, then takes the head row's lock and checks the clock again under it, so the wait rests on the server's clock and not on the client's estimate. It then checks as `commit_write` does, in its order: a generation not the switch's is LR007, and an entry of this id for another lane, verb or `args_sha256` is LR007, so it finds only this write's own entry. So an orphaned attempt that had not reached the head row's lock by then can no longer commit after that lookup reports the write absent (lane 4's section, `5f26bf0a`, its ask of lane 1).
    - **Exact complements, on one clock:** step 9 commits only while `clock_timestamp() < not_after`, and `find_write` answers only where `NOT (clock_timestamp() < n)` holds under the head row's lock. An orphan that takes the lock after the lookup has released it reaches step 9 later still, so it raises LR008. One that took the lock first has ended, committed or not, before the lookup reads the journal, which it does at READ COMMITTED, after the lock.
-   - **The wait:** before the lock, never while holding it, and at most 3 s: the lookup call's `statement_timeout`, 6000 ms, less its `lock_timeout`, 2000 ms, and 1 s for the lookup itself (the bounds table). A call whose `n` is further ahead is refused at once with LR011 **(new)**, and so is one whose check under the lock fails, as when the clock stepped back. The client makes the call once its own estimate, the snapshot's clock plus `SECONDS` since, puts `n` at most 2 s ahead, so the bound covers that estimate's 1 s grain. Its tries start within the 10 s reconnect window, which starts when that wait of its own ends, and each runs to its own 8 s timer (lane 4's "The in-doubt rule").
+   - **The wait:** before the lock, never while holding it, and at most 3 s: the lookup call's `statement_timeout`, 6000 ms, less its `lock_timeout`, 2000 ms, and 1 s for the lookup itself (the bounds table). A call whose `n` is further ahead is refused at once with LR011 **(new)**, and so is one whose check under the lock fails, as when the clock stepped back. The client makes the call once its own estimate, the snapshot's clock plus `SECONDS` since, puts `n` at most 2 s ahead, so the bound covers that estimate's 1 s grain. Its tries start within the 10 s reconnect window, which starts when that wait of its own ends, and each runs to its own timer, `T_L` = `N_a`·`c` + 7 s (9 s at `c` = 2, D9; lane 4's "The in-doubt rule").
    - **The residual:** a server clock that steps back between the lookup's check and an orphan's step 9 still lets that orphan commit after the lookup has reported the write absent.
 
 **The act (D5, F5; lane 4's row 20).** Lane 4's acts take a base with `lanes-edit.sh act-begin`, which prints `<act-id>@<head seq>:<generation>` on primary (lane 4's form, #165 6711545001), and list the scopes each write rests on in `LANES_EXPECT` (lane 4's section, "The acts and their expectations"). The schema keeps what the check needs, and `commit_write` runs the check inside the commit's transaction, where no client can skip it.
@@ -1547,13 +1566,13 @@ All of it is one transaction, so a failure at any step leaves the journal, the l
 | LR007 | the write id belongs to another write: minted against another generation of the register (F10, F18), checked first under the head's lock, whatever the switch reads and whether or not the id is in the journal (S-3); or in the journal for another lane, verb or arguments (F10). The in-doubt lookup, `find_write`, raises both, in that order (NIT 1). In step 3b, an act whose base was read in another generation. Each names its check in the error's DETAIL, whose whole text is one fixed token, the same in `commit_write` and `find_write`: `generation`, `another-write` or `act-generation` (lane 4's ask, #165 6715529516). The client tells them apart by that token alone, since a cutover can commit between a read of the switch and the check under the lock | exits 2, naming the id and what differs: check the mirror for the write before running it again without `LANES_WRITE_ID`; nothing written. For an act, exits 2 naming it, and the act runs again |
 | LR004 | the edits do not apply, or the proof differs | reloads every line once and retries; then 69 |
 | any other SQLSTATE | the database refused the transaction | 69, naming the store and the error (`proposal.md:213-217`) |
-| `psql` exit 2, or 124 from the client timer, on the commit call | the outcome is unknown | in doubt: reconnects, reads `journal` by `write_id` (`proposal.md:253-267`), and retries under the same id (D8). From then on it ends with no code but 0 until it has made one lookup (F3; D8, S1), `find_write(id, n, g, lane, verb, a)` with `n` the largest `not_after` its calls carried and the rest as its commit calls sent them (NIT 1), at READ COMMITTED in a transaction it rolls back, its tries starting within the 10 s reconnect window, which starts when its own wait for `n` ends, each running to its own 8 s timer (lane 4's "The in-doubt rule"); the function waits until the database clock has passed `n` and checks it again under the head row's lock (step 9; S2), then checks the generation and the entry as `commit_write` does: found, this write's own entry, is 0, and the verb's after-COMMIT tail runs once (lane 4's "The tail, once"); LR007, another generation or another write's entry, is 2, as the commit's LR007 is (NIT 1): under this id the write cannot commit in this database, and with another generation it may already be there, by a restore or the import (D22), so the lane checks the mirror; its DETAIL token tells lane 4's client whether to keep the pending record (`generation`) or remove it (`another-write`); absent, with the head row's lock granted, is the code its last attempt earned (75, 69, 2 or the verb's own); otherwise, where no try that starts within the window takes the head row's lock, or the lookup is refused with LR011, it exits 3 naming the id and keeps its pending record (lane 4's words, #165 6715610290) |
+| `psql` exit 2, or 124 from the client timer, on the commit call | the outcome is unknown | in doubt: reconnects, reads `journal` by `write_id` (`proposal.md:253-267`), and retries under the same id (D8). From then on it ends with no code but 0 until it has made one lookup (F3; D8, S1), `find_write(id, n, g, lane, verb, a)` with `n` the largest `not_after` its calls carried and the rest as its commit calls sent them (NIT 1), at READ COMMITTED in a transaction it rolls back, its tries starting within the 10 s reconnect window, which starts when its own wait for `n` ends, each running to its own timer, `T_L` = `N_a`·`c` + 7 s (9 s at `c` = 2, D9; lane 4's "The in-doubt rule"); the function waits until the database clock has passed `n` and checks it again under the head row's lock (step 9; S2), then checks the generation and the entry as `commit_write` does: found, this write's own entry, is 0, and the verb's after-COMMIT tail runs once (lane 4's "The tail, once"); LR007, another generation or another write's entry, is 2, as the commit's LR007 is (NIT 1): under this id the write cannot commit in this database, and with another generation it may already be there, by a restore or the import (D22), so the lane checks the mirror; its DETAIL token tells lane 4's client whether to keep the pending record (`generation`) or remove it (`another-write`); absent, with the head row's lock granted, is the code its last attempt earned (75, 69, 2 or the verb's own); otherwise, where no try that starts within the window takes the head row's lock, or the lookup is refused with LR011, it exits 3 naming the id and keeps its pending record (lane 4's words, #165 6715610290) |
 
 The writer reads only the SQLSTATE from psql's `ERROR:` line (step 3), never the constraint's name the message may carry, so no signal rests on one. With the head updated before the journal row, a lost race is never a 23505 on `journal_pkey`. Nor does a retry reach `journal_write_id_key`'s 23505: step 1's lookup under the head row's lock finds an earlier attempt that committed before this transaction began, and one that commits while it is open fails this transaction at the lock with SERIALIZABLE's 40001, or with 55P03 once `lock_timeout` passes (lane 2, 6708917587). Either 23505 would be a bug, and is 69. `LANES_NO_FETCH=1` cannot weaken the switch check, because it is read inside the transaction, not fetched (`proposal.md:571-575`). The in-doubt report is exit 3, naming the write id, and a rerun reuses the id (D8; `proposal.md:1725` left the code open).
 
 **Bounds, set when connecting through `options=`** (`clarifications.md:296-302`), are D9's, in the one table under "Roles and credentials" ("The timeouts (D9)"), which now carries this part's `import` row and gives `reconcile` the renderer's values (lane 3's ruling, #165 6578020193). The guard's are measured, and so are the rows for `cutover`, `switch_to_files`, `record_marker` and the commit call of `import --single` and `render --revert` that R2's N1 added (the paragraph under D9's table). The others are the design's, for tests 4 and 9 to confirm, and R1's 14.7 ms per call (`proposal.md:1219-1220`) leaves them wide.
 
-**The connection these bounds need (Q22, a managed cloud PostgreSQL; Brett, 2026-11-08).** Every register connection reaches the server directly, at the primary's own endpoint, or through a session-mode pooler that passes `options=` on. Never through a transaction-mode pooler. The bounds above ride the startup packet's `options=`. PgBouncer, the pooler Azure builds in, refuses a startup parameter it does not track unless it is set to ignore it, and one that ignores it leaves each path on its role's floor (§1.4). On lane 1's PostgreSQL 16.15, REGISTER-WRITER without `options=` cancelled a 6 s statement at the floor's 5 s with 57014. So the lookup's 6000 ms and the 10 s of `cutover` and `rollback` would end at 5 s, and so would an import, which takes about 25 s on today's register. Nothing else here needs a session: each call is one transaction, and the migrations' `SET LOCAL` and `find_write`'s wait stay inside it. The schema takes no advisory lock, temporary table, `LISTEN` or prepared statement. SERIALIZABLE and the retries hold on a managed service as written. A failover is a lost connection, which the in-doubt row covers, and a read replica is never a register URL (§1.4).
+**The connection these bounds need (Q22, PostgreSQL on CNPG in the codeXfactory prod install; Brett, 2026-11-08, #165 6723925474).** Every register connection reaches the server directly, at the primary's own endpoint, never through a pooler. The bounds above ride the startup packet's `options=`. CNPG's `Pooler` is PgBouncer, and CNPG always lists `options` in its `ignore_startup_parameters`, in either pool mode (CNPG 1.30), so a path through it would run on its login's floor (§1.4). On lane 1's PostgreSQL 16.15, REGISTER-WRITER without `options=` cancelled a 6 s statement at the floor's 5 s with 57014. So the lookup's 6000 ms and the 10 s of `cutover` and `rollback` would end at 5 s, and so would an import, which takes about 25 s on today's register. Nothing else here needs a session: each call is one transaction, and the migrations' `SET LOCAL` and `find_write`'s wait stay inside it. The schema takes no advisory lock, temporary table, `LISTEN` or prepared statement. SERIALIZABLE and the retries hold on it as written. A restart of the one instance is a lost connection, which the in-doubt row covers, and a replica is never a register URL (§1.4).
 
 ### 1.3.1 `commit_write` in full
 
@@ -2210,7 +2229,7 @@ COMMIT;                                        -- then 1.4's statements after it
 
 ### 1.4 Roles, GRANTs and credentials (clause (b))
 
-Clause (b)'s three roles (`proposal.md:683-693`) are the register's three scopes. Under Brett's "One login per engineer" (#165 6722593397), REGISTER-WRITER and READER are groups that cannot log in, and each engineer, human or AI host, logs in by logins of their own, members of them (the login step, below); the indexer still logs in as itself. A fourth role owns the schema and cannot log in. The bootstrap runs this through Brett's admin connection; each `CREATE ROLE` is guarded by a `pg_roles` check, and the bootstrap stores no secret (`proposal.md:607-611`). The `CREATE ROLE`s and the admin's GRANT come first, then migration 1, then the rest; that rest, and the GRANT, can run again.
+Clause (b)'s three roles (`proposal.md:683-693`) are the register's three scopes. Under Brett's "Two logins each (Recommended)" (#165 6723413756), REGISTER-WRITER and READER are groups that cannot log in, and each engineer, human or AI host, logs in by two logins of their own, one a member of each (the login step, below); the indexer still logs in as itself. A fourth role owns the schema and cannot log in. The bootstrap runs this through the database owner's connection, Brett's admin service (below, "On CNPG"); each `CREATE ROLE` is guarded by a `pg_roles` check, and the bootstrap stores no secret (`proposal.md:607-611`). The `CREATE ROLE`s and the admin's GRANT come first, then migration 1, then the rest; that rest, and the GRANT, can run again.
 
 ```sql
 CREATE ROLE lanes_register_owner NOLOGIN;      -- owns lanes_register and its functions
@@ -2261,9 +2280,9 @@ ALTER DEFAULT PRIVILEGES FOR ROLE lanes_indexer IN SCHEMA lanes_index   -- #160 
 
 The writer's idle-in-transaction bound ends a half-open writer's transaction on the server within 5 s, which bounds the in-doubt retry's wait (the probes waited 1583 ms for one, `clarifications.md:245-248`). Under (A″) no live writer idles inside a transaction. Nor does an operator command: `import`, `cutover`, `rollback` and their records each send one `BEGIN; SELECT …; COMMIT;` script and hold no transaction across git or a render (F23, D24). The bound does not reach the bootstrap, which logs in as Brett's admin role and only sets the owner role. The bound is each writer login's own, set by the login step below.
 
-**On a managed PostgreSQL (Q22).** Brett's admin is the provider's own administrator login, which has `CREATEROLE` and `CREATEDB` and no `SUPERUSER`: RDS's master user (`rds_superuser`), Cloud SQL's `postgres` user (`cloudsqlsuperuser`) or Azure's server admin (`azure_pg_admin`). That is enough for every statement here. PostgreSQL 16 gives such an admin `ADMIN` alone on the roles it creates, which the admin's own `GRANT … WITH INHERIT TRUE, SET TRUE` completes. The four `ALTER ROLE … SET` values are ones any user may set. Nothing reads `pg_authid`, runs `ALTER SYSTEM` or needs an extension. Lane 1 ran V's SQL twice as such an admin on PostgreSQL 16.15, and the catalogs were identical. Two conditions hold it. First, the database is one the admin creates, and so owns. In one it does not own, `REVOKE ALL ON DATABASE` and `GRANT CONNECT` change nothing and only warn (01006, 01007), so the bootstrap refuses it (`operations.md` §2.4). Second, the READER may read the schema's sequences: the block's three lines after the default privileges for tables. Without them the daily `pg_dump`, which runs as READER (`operations.md` §2.2, act 3's step 1), stops at `doc_lines_line_id_seq` with 42501.
+**On CNPG (Q22: Brett, "CNPG in the install", #165 6723925474).** The register's database is a CNPG `Cluster` in the codeXfactory prod install (`operations.md` §2.2, "What the codeXfactory prod install provides"), with `enableSuperuserAccess: false`: the `postgres` superuser's password is NULL, so no one logs in as it with a password, and the operator alone uses it, to reconcile the cluster (CNPG 1.30). Brett's admin is the database's owner: `initdb`'s `owner`, which CNPG creates unprivileged, given `LOGIN CREATEROLE CREATEDB` by a `managed.roles` entry of the same name, as the Keycloak database's owner is declared today. It has no `SUPERUSER`, and that is enough for every statement here. PostgreSQL 16 gives such an owner `ADMIN` alone on the roles it creates, which its own `GRANT … WITH INHERIT TRUE, SET TRUE` completes; the `ALTER ROLE … SET` values are ones it may set on roles it made. Nothing reads `pg_authid`, runs `ALTER SYSTEM`, which CNPG disables, or needs an extension. Lane 1 ran this block twice as such an owner on PostgreSQL 16.15, in a database made with it as owner, and the catalogs were identical. Two conditions hold it. First, the owner owns the database, as `initdb`'s `owner` does; in one it does not own, `REVOKE ALL ON DATABASE` and `GRANT CONNECT` change nothing and only warn (01006, 01007), so the bootstrap refuses it (`operations.md` §2.4). Second, the READER may read the schema's sequences: the block's three lines after the default privileges for tables. Without them the daily `pg_dump`, which runs as `lanes_register_dump`, a READER login (`operations.md` §2.2, act 3's step 1), stops at `doc_lines_line_id_seq` with 42501. The owner cannot grant itself `pg_use_reserved_connections` or `pg_signal_backend` (42501 for each, lane 1's run). The first comes from its managed role's `inRoles`, with `reserved_connections`, so that Brett's admin still connects when every other slot is taken: lane 1's run filled a server's ordinary slots, refused the next login with "remaining connection slots are reserved for roles with privileges of the "pg_use_reserved_connections" role", and let the owner in. The revoke below needs neither.
 
-**One engineer's logins (Brett: "One login per engineer", #165 6722593397).** Each engineer, human or AI host, has two logins: `lanes_w_<engineer>`, a member of REGISTER-WRITER, and `lanes_r_<engineer>`, a member of READER. The dump job has `lanes_register_dump`, a READER login alone (`operations.md` act 3's step 1). `lanes-index login` (`operations.md` §2.4) makes them through the admin service, after the bootstrap, by the block below; it can run again, and a rerun puts back a lost membership. Each login carries its group's floors itself, because PostgreSQL applies a role's settings only to a session that logs in as that role: on lane 1's PostgreSQL 16.15 a member of a group that held V's floors had none of them, and a login made by this block had all of them. Its password is set as it is made, as a SCRAM verifier computed on the client (`operations.md` §2.4).
+**One engineer's logins (Brett: "Two logins each (Recommended)", #165 6723413756).** Each engineer, human or AI host, has two logins: `lanes_w_<engineer>`, a member of REGISTER-WRITER, and `lanes_r_<engineer>`, a member of READER. The dump job has `lanes_register_dump`, a READER login alone (`operations.md` act 3's step 1). `lanes-index login` (`operations.md` §2.4) makes them through the admin service, after the bootstrap, by the block below; it can run again, and a rerun puts back a lost membership. CNPG's declared roles do not make them (lane 1's recommendation on lane 3's question, #165 6723925474). CNPG's role fields carry no per-role settings (its `RoleConfiguration`, CNPG 1.30). A role it manages is brought back to its declaration by the operator, memberships with it, so a revoke would wait on a commit and the operator and end no session. And each engineer's password would sit in the prod Key Vault. CNPG leaves alone the roles it does not declare, so these logins and its declared owner live side by side. Each login carries its group's floors itself, because PostgreSQL applies a role's settings only to a session that logs in as that role: on lane 1's PostgreSQL 16.15 a member of a group that held V's floors had none of them, and a login made by this block had all of them. Its password is set as it is made, as a SCRAM verifier computed on the client (`operations.md` §2.4); a physical copy of the cluster carries the verifier, and in lane 1's run the login logged in there with its own password file.
 
 ```sql
 -- lanes-index login add <engineer>: psql -v w=lanes_w_<engineer> -v r=lanes_r_<engineer>.
@@ -2290,23 +2309,23 @@ SELECT pg_terminate_backend(pid) FROM pg_stat_activity        --    end its sess
 REVOKE :"login" FROM CURRENT_USER;
 ```
 
-**What a revoked login sees** (lane 1's run). A new connection: FATAL 28000, "role … is not permitted to log in". An open session's next statement, a write or a read: 42501, "permission denied for schema lanes_register", since the schema's privileges came through the group. Its session ended: FATAL 57P01, "terminating connection due to administrator command". A login that keeps LOGIN but loses its membership cannot connect either, since CONNECT came through the group: FATAL 42501, "permission denied for database". Without step 3's grant, PostgreSQL 16 refuses the admin's `pg_terminate_backend` with 42501, and the admin may not grant itself `pg_signal_backend`. Revoking keeps the role, so its name is not reused while the server's logs still name it; a `DROP ROLE` may follow. A rotation is `ALTER ROLE … PASSWORD` with a new verifier; a session already open goes on, since a password is checked only at login (not run on the engine). A database dump holds no login and no membership (lane 1's run: none in the dump); on the same server they stay, and on a new one `--roles-only` makes the groups and the login step each engineer's logins again.
+**What a revoked login sees** (lane 1's run). A new connection: FATAL 28000, "role … is not permitted to log in". An open session's next statement, a write or a read: 42501, "permission denied for schema lanes_register", since the schema's privileges came through the group. Its session ended: FATAL 57P01, "terminating connection due to administrator command". A login that keeps LOGIN but loses its membership cannot connect either, since CONNECT came through the group: FATAL 42501, "permission denied for database". Without step 3's grant, PostgreSQL 16 refuses the admin's `pg_terminate_backend` with 42501, and the admin may not grant itself `pg_signal_backend`. Revoking keeps the role, so its name is not reused while the server's logs still name it; a `DROP ROLE` may follow. A rotation is `ALTER ROLE … PASSWORD` with a new verifier; a session already open goes on, since a password is checked only at login (not run on the engine). A database dump holds no login, membership, verifier or floor (lane 1's run: none in a dump of both schemas). A physical backup holds them all, since they are the cluster's: in lane 1's run a `pg_basebackup` copy carried every role, verifier, membership and per-role setting unchanged, and its logins logged in with their own password files. So a CNPG point-in-time restore keeps them, and a new Cluster restored from a dump, or re-imported, gets the groups from `--roles-only` and each engineer's logins from the login step again.
 
 | Role | SQL role | Held by | Where its credential lives |
 |---|---|---|---|
 | REGISTER-WRITER | `lanes_register_writer`, a group that cannot log in; each engineer's `lanes_w_<engineer>` | `lanes-edit.sh`'s writes, through `lanes-index register snapshot` and `register commit` (4A, D2); the projection writer's storage-layer entry (S4, `proposal.md:501-506`); the renderer, for its `mirror_state` writes (D16); `lanes-index` import, cutover (with its abort, `switch_to_files`, and `record_marker`), rollback and the two ways out of a divergence; `outage declare`'s database probe (D9; lane 5, #165 6714373660) | that engineer's `register_url=` and `register_passfile=` in `lanes-index.conf` (`proposal.md:152-156`) |
 | READER | `lanes_register_reader`, a group that cannot log in; each engineer's `lanes_r_<engineer>` | the service's one connection (4A); the guard's direct read (Q11 (a)); S3's readers, the listings and the `SessionStart` block; `status`, `reconcile` and the readiness check | that engineer's `reader_url=` and `reader_passfile=` (`code/lanes-index:64-65`) |
 | indexer | `lanes_indexer` | `lanes-index sync` and `reconcile` of the index half | `url=` and `passfile=` |
-| dump | `lanes_register_dump`, a member of `lanes_register_reader` | the daily `pg_dump` job (`operations.md` act 3's step 1) | a secret in the prod subscription that the job reads (`operations.md` act 3's step 1) |
+| dump | `lanes_register_dump`, a member of `lanes_register_reader` | the daily `pg_dump` CronJob (`operations.md` act 3's step 1) | a Key Vault secret in the prod subscription, which the CronJob's own workload identity reads into a 0600 password file of its run (`operations.md` act 3's step 1) |
 | owner | `lanes_register_owner` | nothing: the admin connection takes it by `SET ROLE` | none |
-| admin | Brett's | the bootstrap and its migrations | a libpq service and 0600 `~/.pgpass` of his own, named by `--admin-service`; `psql` receives the service's name only as `PGSERVICE=<service>` in its environment (SVC-2; lane 5, 6579523948); never a password or a connection string in an argument or the environment, never stored by the tools |
+| admin | the database's owner: CNPG's `initdb` owner, with `LOGIN CREATEROLE CREATEDB` from its `managed.roles` entry (above, "On CNPG") | the bootstrap, its migrations and `lanes-index login` | in the cluster, CNPG's basic-auth Secret for the owner, filled from Key Vault as the Keycloak database's is; on Brett's workstation, a libpq service and 0600 `~/.pgpass` of his own, named by `--admin-service`; `psql` receives the service's name only as `PGSERVICE=<service>` in its environment (SVC-2; lane 5, 6579523948); never a password or a connection string in an argument or the environment, never stored by the tools |
 
 - **The file:** `${XDG_CONFIG_HOME:-$HOME/.config}/openRepoTools/lanes-index.conf`, or the file `$LANES_INDEX_CONFIG` names. It is refused when group- or world-readable, inside a git work tree or under `~/.agents/`, or when a URL carries a password (`code/lanes-index:62-68`, `:296-301`); `register_url=` joins that check. `register_label=` **(new)** names the label of the database that `register_url=` reaches, as that database's bootstrap gave it (`--label`, `operations.md` §2.4). It is set in the same edit as `register_url=`, `reader_url=` and their password files (`operations.md` §2.3's re-pointing), and `cutover`, in every form, takes the label it sends from it and from nothing else (`operations.md` §2.3, V2's S-2). Passwords live only in 0600 libpq password files, and an inherited `PGPASSWORD` or `PGPASSFILE` is dropped (`code/lanes-index:1300-1305`). `lanes-index` stays the one parser (`proposal.md:157-160`); R3a's `register_schema=` (default `lanes_register`) names a rehearsal's scratch schema (`r3a/REPORT.md:323`). On benches the file sits on Q23 (a)'s read-only mount (`proposal.md:1837-1839`). No URL or password enters an environment a session inherits (Amendment 14(c); `proposal.md:826-827`).
-- **TLS and the endpoint (Q22).** Each URL, and the admin's own service, carries `sslmode=verify-full` and `sslrootcert=`, since libpq's default, `prefer`, verifies nothing. `sslrootcert=` names the provider's CA file, beside the password files on the host's read-only mount (RDS's bundle, or Cloud SQL's server CA). Or it is `system`, where the chain ends in a public root, as Azure's do (DigiCert Global Root G2, Microsoft RSA Root CA 2017). On Cloud SQL, `verify-full` needs a server CA mode whose certificates carry the instance's DNS name, the shared or customer-managed CA, and a URL by that name. Its default per-instance CA carries the name only for Private Service Connect instances, so elsewhere it allows `verify-ca` alone. Each URL names the primary's own endpoint. Never a read replica, which refuses SERIALIZABLE and whose reads may lag; never a pooler's endpoint or port (§1.3's bounds). A `target_session_attrs=` on `reader_url=` is `primary`, never `read-write`. `read-write` refuses every READER connection, since the role's sessions are read-only by default (lane 1's run: `session is read-only`). `ready`'s check 11 (`operations.md` §2.4) confirms TLS and the primary on each role's connection.
-- **What `verify-full` costs (lane 4's ask (c), #165 6722839180): no round trip over `require`.** The server sends its certificate chain in the same handshake whatever the client's mode, and libpq checks it on the client: the chain up to the root file `sslrootcert=` names, then the server's name against the certificate's names. It fetches nothing to do so: no OCSP response, no missing intermediate, and a CRL only from a local file (`sslcrl=`, `sslcrldir=` or `~/.postgresql/root.crl`), which the register's configuration does not name. On lane 1's PostgreSQL 16.15 under TLS 1.3, in a container with no network and no name lookup, `require` and `verify-full` sent the same bytes per connection (21 segments and 6,143 octets in most of ten connections each, 22 and 6,183 in the rest, with one `verify-full` connection at 23 and 6,299, the same jitter `disable` showed), and 100 connections took the same time (2.74 s against 2.78 s, then 2.56 s against 2.51 s). A chain the server sends incomplete, its leaf without the intermediate, fails `verify-full` at the connect with "SSL error: certificate verify failed", while `require` still connects; a name that does not match fails with "server certificate for "<name>" does not match host name "<host>"". Either is `psql`'s exit 2 before any statement. Putting the intermediate into `sslrootcert=` would mend an incomplete chain, but Microsoft does not support it, since its intermediates rotate unannounced: the remedy is the server's chain, which on Flexible Server is Microsoft's. `require` with a root file at `~/.postgresql/root.crt` acts as `verify-ca` (libpq's SSL page); no register URL relies on that.
-- **One engineer's file (Brett, #165 6722593397).** Each workstation's `lanes-index.conf` names its own engineer's logins, each as the user of its URL: `register_url=postgresql://lanes_w_<engineer>@<server>.postgres.database.azure.com:5432/<database>?sslmode=verify-full&sslrootcert=<file>` and `reader_url=` the same with `lanes_r_<engineer>`. `register_passfile=` and `reader_passfile=` name 0600 files owned by that engineer's account, each holding only its own login's line (libpq ignores a password file that group or others can read). No workstation holds another engineer's line. `url=` and `passfile=` still name the indexer's login.
+- **TLS and the endpoint (Q22; Brett, #165 6723925474).** Each URL, and the admin's own service, names `<endpoint>`, the install's DNS name for the public `LoadBalancer` service in front of the Cluster's primary, port 5432 (`operations.md` §2.2, "What the codeXfactory prod install provides"), and carries `sslmode=verify-full` and `sslrootcert=`, since libpq's default, `prefer`, verifies nothing. The server's certificate is cert-manager's, for that name, and CNPG serves it (`spec.certificates.serverTLSSecret` and `serverCASecret`). `sslrootcert=` names the root of the issuer that signs it, a file beside the password files on the host's read-only mount; never `system` for a private root, which no system store holds (lane 1's run: "certificate verify failed"). Never the `-ro` or `-r` service, which can reach a replica, and a replica refuses SERIALIZABLE and its reads may lag. Never a Pooler: CNPG's PgBouncer drops the startup `options` in either pool mode, since CNPG always lists `options` in its `ignore_startup_parameters` (CNPG 1.30), so a path through it would run on its login's floors alone (§1.3's bounds). A `target_session_attrs=` on `reader_url=` is `primary`, never `read-write`. `read-write` refuses every READER connection, since the role's sessions are read-only by default (lane 1's run: `session is read-only`). `ready`'s check 11 (`operations.md` §2.4) confirms TLS and the primary on each role's connection.
+- **What `verify-full` costs (lane 4's ask (c), #165 6722839180): no round trip over `require`.** The server sends its certificate chain in the same handshake whatever the client's mode, and libpq checks it on the client: the chain up to the root file `sslrootcert=` names, then the server's name against the certificate's names. It fetches nothing to do so: no OCSP response, no missing intermediate, and a CRL only from a local file (`sslcrl=`, `sslcrldir=` or `~/.postgresql/root.crl`), which the register's configuration does not name. On lane 1's PostgreSQL 16.15 under TLS 1.3, in a container with no network and no name lookup, `require` and `verify-full` sent the same bytes per connection (21 segments and 6,143 octets in most of ten connections each, 22 and 6,183 in the rest, with one `verify-full` connection at 23 and 6,299, the same jitter `disable` showed), and 100 connections took the same time (2.74 s against 2.78 s, then 2.56 s against 2.51 s). A chain the server sends incomplete, its leaf without the intermediate, fails `verify-full` at the connect with "SSL error: certificate verify failed", while `require` still connects; a name that does not match fails with "server certificate for "<name>" does not match host name "<host>"". Either is `psql`'s exit 2 before any statement. Putting the intermediate into `sslrootcert=` would mend an incomplete chain until the intermediate is next renewed: the remedy is the server's chain, the leaf and every intermediate in the certificate Secret's `tls.crt` (`operations.md` §2.2's install contract). Lane 1 ran both shapes a cert-manager issuer gives, a root signing the leaf, and a root, an intermediate and the leaf, each with the workstation trusting only the root: each connected under TLS 1.3, and the second, its leaf sent alone, failed. `require` with a root file at `~/.postgresql/root.crt` acts as `verify-ca` (libpq's SSL page); no register URL relies on that.
+- **One engineer's file (Brett, "Two logins each", #165 6723413756).** Each workstation's `lanes-index.conf` names its own engineer's logins, each as the user of its URL: `register_url=postgresql://lanes_w_<engineer>@<endpoint>:5432/<database>?sslmode=verify-full&sslrootcert=<root file>` and `reader_url=` the same with `lanes_r_<engineer>`, where `<endpoint>` is the install's DNS name for the register. `register_passfile=` and `reader_passfile=` name 0600 files owned by that engineer's account, each holding only its own login's line (libpq ignores a password file that group or others can read). No workstation holds another engineer's line. `url=` and `passfile=` still name the indexer's login.
 - **The renderer holds REGISTER-WRITER** (clause (b), `proposal.md:683-685`; the frame's roles table), because D16 has it record a divergence or a failed pass in `mirror_state`, through `record_mirror_state` and nothing else: the records that clear a divergence, the cutover and the rollback are `lanes-index`'s, as REGISTER-WRITER.
-- **P20, plainly** (`clarifications.md:135-146`): the REGISTER-WRITER secret is readable by every lane process on its host, the same exposure as today's push rights. Function-only writes mean a hand-run write is still journaled, rendered, constrained and proved; they do not prevent one, which Rule 9(e) alone forbids. A holder can also call `commit_write` with a `rollback` entry, which stops every write with 69 until an operator acts; `switch_to_files` now only undoes a cutover not yet confirmed. With one login per engineer (Brett, #165 6722593397), the secret on a workstation is its own engineer's, and revoking that engineer's logins ends their reach alone (the revoke, above); the indexer's one login stays shared.
+- **P20, plainly** (`clarifications.md:135-146`): the REGISTER-WRITER secret is readable by every lane process on its host, the same exposure as today's push rights. Function-only writes mean a hand-run write is still journaled, rendered, constrained and proved; they do not prevent one, which Rule 9(e) alone forbids. A holder can also call `commit_write` with a `rollback` entry, which stops every write with 69 until an operator acts; `switch_to_files` now only undoes a cutover not yet confirmed. With two logins per engineer (Brett, "Two logins each", #165 6723413756), the secret on a workstation is its own engineer's, and revoking that engineer's logins ends their reach alone (the revoke, above); the indexer's one login stays shared.
 
 ### 1.5 The version check and forward-only migrations
 
@@ -2396,7 +2415,8 @@ REVOKE :"login" FROM CURRENT_USER;
 | REGISTER-WRITER, READER, indexer | roles | `proposal.md:683-691` |
 | `lanes_register_writer`, `lanes_register_reader` | roles | `r3a/REPORT.md:172`, `:281` |
 | `lanes_register_owner`, `lanes_indexer` | roles | **(new)** |
-| `lanes_w_<engineer>`, `lanes_r_<engineer>`, `lanes_register_dump` | roles that log in | **(new)**; each engineer's two, Brett's one login per engineer (#165 6722593397), and the dump job's (`operations.md` act 3's step 1) |
+| `lanes_w_<engineer>`, `lanes_r_<engineer>`, `lanes_register_dump` | roles that log in | **(new)**; each engineer's two, Brett's "Two logins each" (#165 6723413756), and the dump job's (`operations.md` act 3's step 1) |
+| `pg_use_reserved_connections`, `reserved_connections` | role, parameter | PostgreSQL 16's; the owner's reserved slots (§1.4, "On CNPG") |
 | `REGISTER_SCHEMA_VERSION` | constant | `r3a/REPORT.md:326` |
 | `mode=`, `register_url=`, `register_passfile=` | config keys | `proposal.md:149-156` |
 | `register_label=` | config key | **(new)**; the label of the database `register_url=` reaches, set in the same edit; `cutover`'s one source for its label (S-2; `operations.md` §2.3) |
@@ -2683,7 +2703,8 @@ written" could be false, the pending record would go, and a rerun would mint
 a new id, which is ADV-C3's second `CLAIMED`. **So once any commit call of a
 write was in doubt, the writer ends with no code but 0 until it has made
 F3's lookup,** its tries starting within the 10 s reconnect window, which
-starts when its own wait for `<n>` ends, each running to its own 8 s timer
+starts when its own wait for `<n>` ends, each running to its own timer,
+`T_L` = `N_a`·`c` + 7 s by D9, 9 s at `c` = 2
 (the phase plan's "The in-doubt rule"):
 
 1. **It calls `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)`** (§1.3.1), where `<n>` is the largest `not_after` its commit calls carried, and `<g>`, `<lane>`, `<verb>` and `<a>` are the generation, lane, verb and `args_sha256` those calls sent (lane 1's v2.8, V2's NIT 1), at READ COMMITTED, in a transaction
@@ -2700,7 +2721,8 @@ starts when its own wait for `<n>` ends, each running to its own 8 s timer
    most 2 s ahead, and a `<n>` further ahead is refused with LR011.
 2. **It takes the head row's lock, its tries starting within the 10 s
    reconnect window, which starts when its own wait for `<n>` ends, each
-   running to its own 8 s timer (the phase plan's "The in-doubt rule"),**
+   running to its own timer, `T_L` = `N_a`·`c` + 7 s, 9 s at `c` = 2 (D9; the phase
+   plan's "The in-doubt rule"),**
    inside `find_write`, under the caller's `lock_timeout`. The writer has no UPDATE,
    so its own `FOR UPDATE` would get 42501. Under the lock the function checks
    that the clock has passed `<n>`, the exact complement of step 9's test, and
@@ -3257,14 +3279,18 @@ workstation's lanes paused first, as for the freeze, and the outage declared
 
 1. Take `m`, the mirror's last `Register-Seq` on origin, and `b`, the newest
    backup's head seq, if there is one: the daily dump's, or the head at the
-   recovery point of the provider's point-in-time restore, which counts as a
-   backup too ("Count both", #165 6722541787).
+   recovery point of a CNPG point-in-time restore from its Barman Cloud backups,
+   which counts as a backup too ("Count both", #165 6722541787).
 2. Run `lanes-index bootstrap --roles-only` against the new database server
-   first: roles are cluster objects, and a database backup does not hold them
-   (F18). A provider's point-in-time restore is instead a new server that
-   carries the roles and their passwords: there step 3 makes the server, step 2
-   then prints `unchanged`, and Brett sets new passwords for the login roles,
-   which step 5's re-pointing writes (`operations.md` §2.3, lane 1's O5).
+   first, for a restore from the daily dump or a re-import: roles are cluster
+   objects, and a database dump does not hold them (F18). A CNPG point-in-time
+   restore is instead a new Cluster, recovered from the Barman Cloud backups,
+   and a physical restore carries the roles, their verifiers, memberships and
+   per-role settings (lane 1's engine proof, #165 6724409717), so it needs no
+   roles-only bootstrap: there step 3 makes the Cluster, step 2 then prints
+   `unchanged`, and Brett runs `lanes-index login rotate` for each engineer and
+   the dump job, whose new lines step 5's re-pointing writes (`operations.md`
+   §2.3's step 6).
 3. If `b > m`, restore that backup into a new database; its journal already
    holds `m+1 … b`, and the renderer catches up. Otherwise re-import at
    origin's tip into a new database, with the head set to `m`, so
@@ -3298,18 +3324,23 @@ mistake, it refuses a label equal to the switch's (LR004, R2's N4), so a
 restore needs a replacement whose label differs from the lost database's. The
 loss is bounded by the renderer's lag at the moment of loss, which `status`
 shows (P14; the product seat, 6549261651). Brett named the database's host, its
-backups and its downtime limit on 2026-11-08 (Q22): Azure Database for
-PostgreSQL Flexible Server, PostgreSQL 16, in opensoft's prod subscription
-(Brett, #165 6722593397); the daily `pg_dump` and the provider's own backups,
-both counted (D22); and "4 hours (Recommended)" (#165 6722025863). When the
-limit is reached, Brett chooses between waiting and this path, and the operator
-lane runs it.
+backups and its downtime limit on 2026-11-08 (Q22): PostgreSQL 16, run by
+CloudNativePG (CNPG) on the prod AKS cluster (`aks-opensoft-platform-prod-01`,
+the `workcore1` pool, Central US), as part of the codeXfactory install there,
+one instance with no HA ("CNPG in the install", #165 6723925474; "Values Brett
+named on 2026-11-08", in Open questions); CNPG's Barman Cloud backups, with
+point-in-time restore, and the daily `pg_dump`, both counted (D22); and "4 hours
+(Recommended)" (#165 6722025863). The 4 hours stand. With one instance and
+`enablePDB: false` (lane 3's ruling, #165 6726078173), a node drain or a restart
+is a short outage, during which the guard answers 2. When the limit is reached,
+Brett chooses between waiting and this path, and the operator lane runs it.
 
 **The link to the server** (lane 5's consequence, #165 6722703424). On primary,
 each prompt's guard needs the workstation's network path to the server. While
 that path is down, the guard answers 2, from the service or the direct read,
-until an outage is declared (SVC-12). On a local database, that happened only
-when the database itself was down.
+until an outage is declared (SVC-12). Brett accepted this rule: "Block until
+link returns (Recommended)" (#165 6723925474). On a local database, that
+happened only when the database itself was down.
 
 ## S6: claims, and the order of `HOLD` and `LANDING`
 
@@ -3449,23 +3480,23 @@ settings reach no member (§1.4's login step; `operations.md` §2.4). Revoking a
 engineer's logins ends that engineer's reach alone; the indexer keeps one shared
 login.
 
-**The REGISTER-WRITER secret's reach, plainly** (P20). It sits in a 0600 file
-that every lane process on its host can read. Rule 9(e) forbids a hand-run SQL
-write, and nothing technical prevents one; the exposure is that of today's git
-push rights. Under Q11(a) the READER secret is in the same position. Neither is
-ever in an environment a session inherits: `lanes-index` hands the password
-file to its own `psql` child through `PGPASSFILE` and drops any inherited one
-(`code/lanes-index:1299–1307`), and the renderer identity's key is used only in
-the push's own environment (D23). No `lanes-index` path puts a connection
-string in an argument list, where `/proc` shows it for the process's life:
-each passes it to `psql` through the child's environment, as SVC-2 maps it
-(lane 3's ruling on lane 5's question 11; lane 4 changes the `-d <url>` at
-`code/lanes-index:1315`). **The render key's reach is the same, and matters
-more:** under Q21(b)(B) it is the ruleset's only bypass, and it sits in
-a 0600 file that every lane process on its host can read, so any of them could
-push to the rendered paths past the gate. The gate stops a stale or careless
-writer, which uses the lane's own push rights; it does not stop a process that
-reads the key on purpose, and the manual says so.
+**The REGISTER-WRITER secret's reach, plainly** (P20). Each engineer's writer
+login's password sits in a 0600 file that every lane process on its host can
+read. Rule 9(e) forbids a hand-run SQL write, and nothing technical prevents
+one; the exposure is that of today's git push rights. Under Q11(a) the reader
+login's password is in the same position. Neither is ever in an environment a
+session inherits: `lanes-index` hands the password file to its own `psql` child
+through `PGPASSFILE` and drops any inherited one (`code/lanes-index:1299–1307`),
+and the renderer identity's key is used only in the push's own environment
+(D23). No `lanes-index` path puts a connection string in an argument list, where
+`/proc` shows it for the process's life: each passes it to `psql` through the
+child's environment, as SVC-2 maps it (lane 3's ruling on lane 5's question 11;
+lane 4 changes the `-d <url>` at `code/lanes-index:1315`). **The render key's
+reach is the same, and matters more:** under Q21(b)(B) it is the ruleset's only
+bypass, and it sits in a 0600 file that every lane process on its host can read,
+so any of them could push to the rendered paths past the gate. The gate stops a
+stale or careless writer, which uses the lane's own push rights; it does not
+stop a process that reads the key on purpose, and the manual says so.
 
 ### The timeouts (D9)
 
@@ -3490,7 +3521,7 @@ trip and starts, and never below the figure the row gives; a figure at `c` =
 | the mode query, `lanes-index mode`, which reads only the configuration (D3) | — | — | — | 2 s | the query is killed, and the verb runs in files mode with a warning naming the timeout (F8); on a SQL estate the marker check then refuses with 69 (lane 3's ruling, #165 6711028142) |
 | a writer's snapshot, and `act-begin`'s (the phase plan's "The acts and their expectations") | `c` | 2000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | a failed read: 69, or in doubt where an earlier commit of the same write was |
 | a writer's commit | `c` | 2000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | in doubt |
-| the in-doubt lookup, `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)` (S2; D8, S1) | `c` | 2000 ms | 6000 ms: its wait of at most 3 s, then the lock, then 1 s for the lookup | `N_a`·`c` + 7 s a try, `T_L`: 9 s at `c` = 2, 10 s at `c` = 3; the tries start within the 10 s reconnect window, which starts when the client's wait ends | 3, naming the id, the pending record kept (D8); so too where a failover outlasts the window, and the rerun, once the new primary answers, finds the write or writes it once (the phase plan's "Over a remote database") |
+| the in-doubt lookup, `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)` (S2; D8, S1) | `c` | 2000 ms | 6000 ms: its wait of at most 3 s, then the lock, then 1 s for the lookup | `N_a`·`c` + 7 s a try, `T_L`: 9 s at `c` = 2, 10 s at `c` = 3; the tries start within the 10 s reconnect window, which starts when the client's wait ends | 3, naming the id, the pending record kept (D8); so too where the server is away longer than the window, as in a restart, and the rerun, once it answers again, finds the write or writes it once (the phase plan's "Over a remote database") |
 | a whole write | — | — | — | 30 s before a new attempt; 10 s to reconnect in doubt; a whole write ends by about 62.5 + 3`N_a`·`c` s, the phase plan's `T_write`: 68.5 s at `c` = 2 and 71.5 s at `c` = 3, and 74.5 s and 80.5 s with two addresses | 75, or 3 |
 | a reader | `c` | 1000 ms | 3000 ms | `N_a`·`c` + 4 s: 6 s at `c` = 2, 7 s at `c` = 3 | a failed read (S3's table) |
 | the renderer's reads, and `reconcile` | `c` | 1000 ms | 10 s | the larger of 15 s and `N_a`·`c` + 11 s: 15 s while `N_a`·`c` ≤ 4 s | the render ends; the lag stays |
@@ -3556,7 +3587,7 @@ the rest of the design relies on.
   recorded in the offer file (SVC-8).
 - **The fallback.** A service that is absent, refuses the connection, answers
   `unavailable` or does not answer within its share is unavailable, and the
-  guard reads directly with the READER credential (Q11(a)), printing
+  guard reads directly with its engineer's reader login (Q11(a)), printing
   `guard: direct (service unavailable)` on stderr. It never reads the mirror,
   except during a declared outage, under SVC-12's three conditions (S3).
 - **One budget.** The hook's fixed costs (bash's start and parse to the arm at
@@ -3593,9 +3624,12 @@ the rest of the design relies on.
   renderer is the writer's fork (D14), the nudge does not re-index the
   register on primary (S2), and the client reads the declaration (SVC-6,
   SVC-12).
-- **Without the service.** Under Q29(a) the service is the last slice, so every
-  interface above has a direct path that works before it exists; the cutover
-  waits for it only if the measured direct guard is over Brett's budget.
+- **Without the service.** Every interface above has a direct path that works
+  without the service, the fallback of Q11(a). Under Q29(a) the cutover waits
+  for the service only if the measured direct guard is over Brett's 1 s, and it
+  is: from Eagle that guard takes about 1.2 to 2.1 s (lane 5, #165 6725361742).
+  So the cutover and the v1.2.0 tag wait for the service, which is built beside
+  phases 1 and 2, not last (lane 3's ruling, #165 6724332510 and 6726078173).
 
 ### The register service's internals
 
@@ -3671,15 +3705,16 @@ already counts them (item 6 of "Migration and rollout"). On Eagle that is the
 host shell, py-bench and cloud-bench: three services, three READER
 connections.
 
-**Every engineer's workstation, with one login per engineer** (Brett, #165
-6722593397). Each workstation runs its own services the same way, one per
-environment, and each connects with the login its environment's
-configuration names: that engineer's own, a member of the reader role (lane
-1's §1.4). A service never holds another engineer's credential, and SVC-2's
-uid check keeps another user's client off its socket. Each service holds one
-connection, so the server's `max_connections`, which its compute tier sets,
-must hold one per environment of every engineer, beside the direct reads and
-the writers' connections.
+**Every engineer's workstation, with two logins per engineer** (Brett, #165
+6722593397 and 6723413756). Each workstation runs its own services the same
+way, one per environment, and each connects as its engineer's reader login,
+`lanes_r_<engineer>`, a member of READER, which its environment's
+`lanes-index.conf` names (§1.4). A service never holds another engineer's
+credential, and SVC-2's uid check keeps another user's client off its socket.
+Each service holds one connection, so the server's `max_connections`, which
+the install sets by the formula in its contract (item 8), must hold one per
+environment of every engineer, beside the direct reads and the writers'
+connections.
 
 Why not one per workstation:
 
@@ -3799,7 +3834,7 @@ never wait for or start the service.
 
 - **The service** is a subcommand, `lanes-index serve`, not an eighteenth
   installable (`code/openRepoTools:1292` counts seventeen). `lanes-index`
-  already holds the configuration parser, the READER credential, the `psql`
+  already holds the configuration parser, the reader login (§1.4), the `psql`
   path, the timeouts and the image cache (D2, D17), so the service reuses them
   rather than copying them. It adds nothing to `code/openRepoTools`'s
   `INSTALLABLES`, `code/pyproject.toml`'s `force-include`, the receipt counts
@@ -3886,8 +3921,8 @@ first call and needs nothing else, on Linux and macOS alike:
 6. **The guard never waits for a start.** A guard that finds no service starts
    one and takes the direct read for that prompt (probe B7: the decision in
    3.7 ms, 37 ms of process wall). Waiting for a new service's `psql` to
-   connect could take its 2 s `connect_timeout`, which the budget cannot give.
-   Readers do the same.
+   connect could take its `connect_timeout`, `c` for each of the endpoint's
+   `N_a` addresses (SVC-6), which the budget cannot give. Readers do the same.
 7. **A start that fails is not retried on every prompt.** Only the causes
    that make `serve` exit before it listens are stamped: `path-too-long`,
    `dir-check`, `config-refused` (a refused configuration, a mode other than
@@ -3932,14 +3967,15 @@ primary ones.
 
 #### SVC-6. The connection: one `psql` child on pipes
 
-- One long-lived `psql` child with the READER credential, started in the
+- One long-lived `psql` child, logged in as the reader login, started in the
   background at the service's first request and restarted lazily after any
   failure: `psql -X -q -A -t -v ON_ERROR_STOP=0 -v VERBOSITY=sqlstate`, its
   connection in its environment (SVC-2), `PGCONNECT_TIMEOUT` at `c` for each
   of the endpoint's `N_a` addresses (D9),
-  and the server bounds in `PGOPTIONS`, so it connects to the server's port
-  5432 directly, never through a transaction-mode pooler such as Flexible
-  Server's built-in PgBouncer, which refuses or drops them (lane 1's M1). No
+  and the server bounds in `PGOPTIONS`, so it connects to the primary's port
+  5432 directly, through the install's load balancer, never through a pooler:
+  CNPG's `Pooler` is PgBouncer, which drops `options`, and so the bounds, in
+  either pool mode (lane 1's M1), and the install declares none. No
   driver, and `dependencies = []`
   stays (the spec's third requirement).
 - **One request at a time on it.** The service handles connections
@@ -3955,29 +3991,36 @@ primary ones.
   200 ms timer from about 40 ms (lane 5's netem run).
 - **An idle connection is checked.** While no request comes, the service
   sends `SELECT 1` on the held connection every 60 s, under the same timer;
-  a failure restarts `psql` in the background, as above. So a connection that
-  a NAT or the provider's load balancer dropped while idle is found between
-  prompts, not by a prompt's request.
+  a failure restarts `psql` in the background, as above. So the connection is
+  never idle for the 4 minutes after which the install's load balancer resets
+  a flow (the server's TCP keepalives, every 60 s in lane 1's install
+  contract, keep it open too), and a connection that a NAT dropped, or that a
+  restart of the server ended, is found between prompts, not by a prompt's
+  request.
 - **The per-request timer** is 200 ms, or, where the workstation's round
   trip to the server is over 100 ms, that round trip plus 100 ms. One query
   costs one round trip and a few milliseconds (above), so a fixed 200 ms
   would answer `unavailable slow` to every request from a workstation more
   than about 190 ms away. The round trip is `register_rtt_ms=` in
-  `lanes-index.conf`, the median of ten `SELECT 1` round trips on one
-  connection, written when the workstation joins, as `c` and `N_a` are (D9);
-  with none, or 0, the timer is 200 ms. On expiry the service sends `SIGINT`
+  `lanes-index.conf`, the p90 of act 3's `select 1` round trips in one
+  session, taken while the workstation is at work and written when it joins,
+  as `c` and `N_a` are (D9); with none, or 0, the timer is 200 ms. It is the
+  p90, as `c` is, not the median: on Eagle's loaded path 29% of round trips
+  outlasted a timer set from the median, and each request that does falls
+  back to a direct read of eight round trips (lane 5's O3, #165 6725361742;
+  lane 4, #165 6725453795). On expiry the service sends `SIGINT`
   to `psql`, which cancels the query, answers `unavailable slow`, and, if
   `psql` has not printed the marker within 100 ms more, kills it; the next
   request starts a new one in the background and is answered `unavailable`
   until it connects. A reconnect never runs on a request's time.
 - **The timeouts row** for "the service's connection, per request", which
-  the timeouts table (D9) now carries: `connect_timeout` 2 s, in the
+  the timeouts table (D9) now carries: `connect_timeout` `c`, in the
   background only; `lock_timeout` 150 ms and `statement_timeout` 180 ms, so
   that the server cancels its own query just inside the 200 ms timer; on
   expiry, `unavailable`, and the client reads directly (SVC-8). It replaces
   the frame's 1000 ms and 1500 ms and "on expiry `refuse`, so 2", since a
   share of 300 ms cannot hold a 1.5 s statement (question 4). The spec's
-  twelfth requirement now puts the service's 2 s connect outside any share:
+  twelfth requirement now puts the service's connect outside any share:
   it is never on a request's path, so no share waits for it (question 5).
 - None of this is shown: py-bench has no PostgreSQL binaries until 1A lands,
   so the `psql`-on-pipes framing, the `SIGINT` cancel and the 150, 180, 200
@@ -4146,7 +4189,10 @@ So the last moment a read may finish is `T0 + 3.75 s`, the parses then have
 until `T0 + 4.25 s`, and the guard exits by `T0 + 4.4 s`. **The worst case where
 nothing answers:** about 0.6 s of fixed parts with a cold walk, 0.07 s of
 `lanes-index` start and 0.3 s waiting for the service bring `now` to about
-`T0 + 1.0 s`; the direct read's timer is then about 2.75 s. A database whose
+`T0 + 1.0 s`; the direct read's timer is then about 2.75 s. Where SVC-6
+raises the service's timer, the wait is that timer plus 100 ms: 0.656 s at
+Eagle's p90 round trip of 456 ms (lane 5's O3, #165 6725361742), which
+brings `now` to about `T0 + 1.33 s`, the timer to 2.42 s. A database whose
 connect never completes gives 2 at its `connect_timeout`, `c` (D9), or when
 the timer expires, whichever is first: about `T0 + 3.0 s` at `c` = 2, and
 `T0 + 3.75 s` above it; one that goes silent after connecting gives 2 when
@@ -4176,9 +4222,10 @@ the line, so the guard answers 2. Answering 2 refuses that prompt: it is not
 sent, and the person sends it again. The connect, the query and a whole-file
 fetch are about 16 round trips, so a direct read that must fetch a whole file
 meets the line at about 165 ms of RTT, and past it only the service's answer
-comes in time (SVC-9). The direct read takes `c` rather than 2 s because the
-timer, not the connect bound, keeps the hook's budget: the read never ends
-after `T0 + 3.75 s`, whatever `c` or the endpoint's address count.
+comes in time (SVC-9); the fetch the line cuts still fills the cache (below).
+The direct read takes `c` rather than 2 s because the timer, not the connect
+bound, keeps the hook's budget: the read never ends after `T0 + 3.75 s`,
+whatever `c` or the endpoint's address count.
 
 **A whole file is never lost to the line** (lane 4's STOP, #165 6722839180).
 The direct read fetches a whole file in a detached child, started as
@@ -4194,10 +4241,10 @@ direct read is about eight round trips and the entries. Where no service is
 configured it meets the line to about 375 ms of RTT; where a configured
 service is silent, its wait, SVC-6's timer plus 100 ms, comes first, and the
 line holds to about 310 ms. A lost SYN brings those to about 250 ms and
-200 ms (lane 4, #165 6722936190). Past them a workstation runs the service,
-with SVC-6's timer. Between about 60 ms, where the guard without the service
-passes Brett's 1 s (SVC-9), and about 310 ms, the service is a choice for
-speed, not for correctness.
+200 ms (from lane 4's terms, #165 6722936190). Past them a workstation runs
+the service, with SVC-6's timer. Between about 60 ms, where the guard without
+the service passes Brett's 1 s (SVC-9), and about 310 ms, the service is a
+choice for speed, not for correctness.
 
 **Under a declared outage** (lane 5's change, #165 6579523948, which lane 3
 accepted). Where an unexpired declaration names this database, the client
@@ -4309,9 +4356,11 @@ image cache, and the same parses. The service removes the `psql` start, the
 connect and the query: R1 measured one write at 14.7 ms through a new `psql`
 process against 0.97 ms in a session; a read is not measured, and a connect
 over TCP adds more.
-It does not remove parts 1 to 3, or the parses. **Against the Azure server**
-(Q22: Azure Database for PostgreSQL Flexible Server) it removes most of the
-read. A new `psql` with TLS and SCRAM, connecting and sending one query, took
+It does not remove parts 1 to 3, or the parses. **Against the remote server**
+(Q22: PostgreSQL on the prod AKS cluster) it removes most of the read. Its
+load balancer passes TCP through, so the round trips below hold (lane 4, #165
+6724210587).
+A new `psql` with TLS and SCRAM, connecting and sending one query, took
 about eight round trips here: 83 ms at a round-trip time of 0, and 239, 491,
 882 and 1,283 ms at 20, 50, 100 and 150 ms. The service's request, one query
 on its held connection, took one (SVC-6; lane 5's netem run). Lane 2's local
@@ -4362,7 +4411,7 @@ median in `run/b2.out`; 4.5 ms in the check's re-run, `run/check-b2-rerun.out`)
 and a 1.35 MB answer in 2.35 ms; the real service adds one transaction on a
 held connection, about a millisecond by R1's session figure. The 50 ms should
 hold with room on the fixture, where the database is local. Against the
-Azure server the service's answer is one round trip more, about 27 to 156 ms
+remote server the service's answer is one round trip more, about 27 to 156 ms
 at round-trip times of 20 to 150 ms (SVC-6), so over 50 ms above about 40 ms;
 act 3 records it against the server beside Q29's figure (lane 2's act 3 rows,
 #165 6722518182). The spec's sixteenth requirement, which read "the
@@ -4465,7 +4514,7 @@ The frame review (`REVIEW-frame-20261102.md`, sha256 `0689dde8…`, section
 | Answer 2's writes inside the 5 s, or detached (F6) | SVC-8, "Answer 2's writes": detached, after lane 2's timing, in the phase plan's form |
 | One service per workstation or per container, and the socket's place when `/tmp` is not shared (Q2(c)) | SVC-1 and SVC-2 |
 | Starting with no supervisor | SVC-4 |
-| The `psql` child's timeouts and reconnect | SVC-6: 150, 180 and 200 ms per request, a 2 s connect in the background only, `SIGINT` then kill, a lazy restart |
+| The `psql` child's timeouts and reconnect | SVC-6: 150, 180 and 200 ms per request, a connect at `c` in the background only, `SIGINT` then kill, a lazy restart |
 | A cheap freshness proof for each request | SVC-7: one REPEATABLE READ READ ONLY transaction on the held connection returns the head `n` and the files' digests; images in memory are reused when the digests match, so a request at an unchanged head costs that one query, about a millisecond by R1's session figure |
 | The `SessionStart` block's request (F24) | SVC-12: none; it reads the mirror and only starts the service |
 | The host-local facts (Q2(h)) | SVC-11 |
@@ -4525,7 +4574,8 @@ The frame review (`REVIEW-frame-20261102.md`, sha256 `0689dde8…`, section
   mirror too. Neither asks a socket.
 - **Q22 (b) or (c), Raven not configured:** Raven runs no service, because it
   is not `mode=primary` (SVC-5). Under (c) the database is on Eagle, so the
-  connection is local and the 2 s `connect_timeout` is rarely spent.
+  connection is local and its `connect_timeout`, `c` at 2 s on a LAN (D9), is
+  rarely spent.
 - **Q23 (b) or (c), the configuration's place:** only the path the service
   re-reads, and the declaration's place, change. Under (c) a container started
   before a flip carries no `mode=primary`, so it starts no service until it is
@@ -4772,7 +4822,7 @@ The frame's wording governs (Q6, 1A, `design.md:131–135`; the rollout, `:3429�
 1. **Phase 1, now, on `2a057a6d`.** Everything that does not run through `lanes-edit.sh`'s three write seams: the resolver (`code/lanes-edit.sh:1053–1056`), `handle_preexisting` (`:2701`) and `commit_push` (`:2292`).
 2. **Phase 2, after slices 1a (#282) and 1b (#307) land in the code leg.** The write path: S1's attempt loop at the commit seam, the refusals of direct writes, S6's checks, and the marker check after S3's fetch and in the publish act.
 3. **Phase 3, then.** The renderer's git half, rollback's push, and agreement tests 3, 5 and 6. Its last PR lifts Q6(c)'s refusal.
-4. **The service** (`lanes-index serve`, SVC-3) follows phase 3, as 007's last slice (Q29(a); SVC-5).
+4. **The service** (`lanes-index serve`, SVC-3) is built beside phases 1 and 2, not after phase 3 as 007's last slice: Q29(a)'s condition is met, since from Eagle the guard without the service misses Brett's 1 s (lane 5, #165 6725361742), so the cutover and the v1.2.0 tag wait for it (lane 3's ruling, #165 6724332510 and 6726078173; SVC-5).
 
 | Interface | Phase 1 ships, final | Phase 2 uses | Phase 3 uses |
 |---|---|---|---|
@@ -5215,7 +5265,7 @@ The age is short because a record exists only after a kill or a 3, and its rerun
 - **LR008 is never 3 or 69 by itself.** It is the database saying "not committed": a lost turn, whose `call` line is dropped. Inside D7's 30 s the loop goes on, a fresh snapshot then a new attempt under the same write id, as for 40001.
 - **What it adds to a write's worst case.** The terms:
   - `D`: D7's 30 s, plus 1 s for `SECONDS`' grain;
-  - `c` and `N_a`: the register calls' `connect_timeout`, `max(2 s, ⌈t_c + 1 s⌉)`, where `t_c` is the workstation's median cold connect, measured when it joins by act 3's steps, and the number of addresses the endpoint resolves to, since libpq applies `c` to each ("Over a remote database"): `c` is 2 s on a LAN, and 2 to 4 s over Q22's managed host at 20 to 300 ms of RTT; a figure given at `c` = 2 or 3 is for `N_a` = 1;
+  - `c` and `N_a`: the register calls' `connect_timeout`, `max(2 s, ⌈t_c + 1 s⌉)`, where `t_c` is the p90 of the workstation's cold connects, measured when it joins by act 3's steps, and the number of addresses the endpoint resolves to, since libpq applies `c` to each ("Over a remote database"): `c` is 2 s on a LAN, and 2 to 4 s over Q22's remote server at 20 to 300 ms of RTT; a figure given at `c` = 2 or 3 is for `N_a` = 1;
   - `S` and `C`: the snapshot's and the commit's client timers, `N_a`·`c` + 6 s each (8 s at `c` = 2), each holding the connect, its 5 s statement bound, and 1 s for the call's round trip and starts (D9);
   - `v`: the verb's run to `ready`;
   - `R`: the window, 10 s;
@@ -5404,8 +5454,8 @@ The record is the offer file itself, `$CLAUDE_CONFIG_DIR/lanes/offers/<session u
   - So `W` = 68 s at `c` = 2 and 71 s at `c` = 3, with `v` = 2 s.
 - **The sum, in phase 2's terms** ("The in-doubt rule"; "Over a remote database"): `B` = 200 + 2`D` + 3`S` + 3`C` + 3`R` + 3`T_L` + 2·max(`v`, 2 s) + (`N_r` + 1)(`T_r` + `w_s`).
   - The 200 s is `H′`'s 12, `w₀`'s 2, the two `M`s' 4, `D`'s two 1 s grains, the two mutex waits' 80 and the stamp's git, 100. `w_s` is the client's wait for the service (SVC-8): where the service runs, 0.3 s, or the service's timer plus 100 ms where SVC-6 raises that timer for a workstation more than 100 ms from the server (lane 5's text 10, #165 6722889137); else 0.
-  - With `S` = `C` = `N_a`·`c` + 6, `T_L` = `N_a`·`c` + 7, `T_r` = `N_a`·`c` + 4, `D` = 30, `R` = 10, `v` = 2 and `N_r` = 17, it is `B` = 423 + 27`N_a`·`c` + 18`w_s`: 477 s at `c` = 2 (482.4 s with the service at `w_s` = 0.3 s), and 504 s at `c` = 3 (509.4 s at `w_s` = 0.3 s; up to 512.5 s where SVC-6 raises the service's timer, to about 270 ms of RTT).
-  - `guard-bind` computes `bound_s` from the constants its steps use: `B`, plus one read's `T_r` + `w_s` to spare, plus the 10 s of `-k`, rounded up to 10 s. That is 500 s at `c` = 2 and 530 s at `c` = 3, with or without the service.
+  - With `S` = `C` = `N_a`·`c` + 6, `T_L` = `N_a`·`c` + 7, `T_r` = `N_a`·`c` + 4, `D` = 30, `R` = 10, `v` = 2 and `N_r` = 17, it is `B` = 423 + 27`N_a`·`c` + 18`w_s`: 477 s at `c` = 2 (482.4 s with the service at `w_s` = 0.3 s), and 504 s at `c` = 3 (509.4 s at `w_s` = 0.3 s; up to 512.5 s where SVC-6 raises the service's timer, to a p90 round trip of about 270 ms, where `c` = 3 ends).
+  - `guard-bind` computes `bound_s` from the constants its steps use: `B`, plus one read's `T_r` + `w_s` to spare, plus the 10 s of `-k`, rounded up to 10 s. That is 437 + 28`N_a`·`c` + 19`w_s` s, rounded up to 10 s: 500 s at `c` = 2 and 530 s at `c` = 3, with or without the service. `c` and the service's timer are both set from p90s of the same path (D9; SVC-6), and `c` = 3 means a p90 round trip under about 276 ms, so `w_s` under about 0.48 s; the bound is 540 s only for a p90 between about 274 and 276 ms. At Eagle's p90, 456 ms, `c` = 5 and `w_s` = 0.656 s give 590 s (lane 5's O3, #165 6725361742).
   - The body's `timeout` is `bound_s` − 10: 490 s or 520 s. That leaves 13 s (7.6 s with the service at `w_s` = 0.3 s) or 16 s (10.6 s) above `B`, at least one read in each case, also where SVC-6 raises the service's timer.
   - At `c` = 2 the bound moves from 490 s to 500 s because `T_L` rises from 8 s to 9 s, and `B` counts it three times.
   - With two addresses (`N_a` = 2), `B` is 531 s at `c` = 2 (536.4 s with the service) and 585 s at `c` = 3 (590.4 s), and `bound_s` is 550 s and 610 s, or 560 s and 620 s with the service, each at least one read above `B`.
@@ -5816,14 +5866,14 @@ Under Q27(b), the renderer takes the lane checkout's write lock and S3's rows an
 
 **Recommendations.** Do not adopt the pipe pair in phase 1; the frame lists it as deferrable (`design.md:3521–3522`). Decide at phase 2 from tests 9 and 4. A cheaper first step is trimming the Python share (lazy imports on the `register` path; a cached module, about −38 ms a start), an install-layout decision (`INSTALLABLES`, `code/openRepoTools:1292`, and the pip package). Build the scratch tree from images. Beside these: on primary there is also one Python start per write for the mode query (D3) and one detached renderer start after COMMIT, so one process per write would save more than one per attempt (about 2.3 s for the tenth writer of a burst). Under (A′) or (C), an attempt is about 0.43 s and a burst of ten runs 10 verbs, not 55, with a stuck verb blocking everyone; under (A) with six attempts, about 3.6 s; under (B), about 125 ms of Python and `psql` (arithmetic from the table). Lane 5's "about 72 ms" for the prefetch's start (`design.md:2934`, `:3034`) agrees with this floor.
 
-#### Over a remote database (Q22: a managed cloud PostgreSQL)
+#### Over a remote database (Q22: PostgreSQL on the prod AKS cluster)
 
-Brett named the host on 2026-11-08: "A separate server", then "Managed cloud Postgres" (#165 6722025863), and then the provider: Azure Database for PostgreSQL Flexible Server, version 16, in opensoft's prod subscription (#165 6722593397). Many engineers, human and AI, each on their own workstation, write to the one register; act 3 configures Eagle and Raven, and each further workstation joins by the same steps. Each `psql` call is a new process and a new connection, made directly to the primary's own endpoint or through a session-mode pooler that passes `options=` on, never a transaction-mode one (lane 1's M1, #165 6722314667). So each call pays the path's round trip (RTT) several times. The figures below are arithmetic from public protocol facts and lane 5's emulated-link measurements (#165 6722703424), at RTTs of 20, 150 and 300 ms, and assume nothing of the provider; act 3 measures them on each workstation as it joins.
+Brett named the host on 2026-11-08: "A separate server", then "Managed cloud Postgres" (#165 6722025863), then Azure Database for PostgreSQL Flexible Server (#165 6722593397), and then PostgreSQL run by CNPG on the prod AKS cluster, inside the codeXfactory install, in Central US, with one instance and no standby, reached through a public load balancer limited to engineers' addresses (#165 6723925474). Many engineers, human and AI, each on their own workstation, write to the one register; act 3 configures Eagle and Raven, and each further workstation joins by the same steps. Each `psql` call is a new process and a new connection, made directly to the primary's own endpoint, never through a pooler, since CNPG's PgBouncer drops `options=` in either pool mode (lane 1's M1, #165 6722314667 and 6724409717). So each call pays the path's round trip (RTT) several times. The figures below are arithmetic from public protocol facts and lane 5's emulated-link measurements (#165 6722703424), at RTTs of 20, 150 and 300 ms, and assume nothing of the server's host; act 3 measures them on each workstation as it joins.
 
 - **One connect is 6 or 7 RTTs:** TCP's handshake (1); PostgreSQL's `SSLRequest` (1, since PostgreSQL 16's libpq has no direct TLS negotiation); TLS (1 for TLS 1.3, or 2 where the server answers the client's key shares with a HelloRetryRequest, and 2 for TLS 1.2); the startup message (1); and SCRAM-SHA-256's exchange (2). Lane 5 measured seven, under TLS 1.3 with a HelloRetryRequest: OpenSSL 3.5's default key shares met PostgreSQL 16's `ssl_ecdh_curve` of `prime256v1`, and a client that offered P-256 first saved that round trip (lane 5's netem run, #165 6722703424). Act 3 measures which. `sslmode=require` and `verify-full` cost the same round trips. So `t_c` is about 0.08 s plus seven RTTs, from lane 5's slope and its local share at an RTT of 0, about 40 ms of which is Debian's Perl wrapper for `psql`: about 0.22 s at 20 ms, 1.13 s at 150 ms and 2.18 s at 300 ms, plus a DNS lookup unless cached. A lost SYN adds about 1 s, TCP's initial retransmission timeout: about 2.1 s at 150 ms, past a 2 s `connect_timeout`.
 - **Each request is one RTT more.** `_run` feeds `psql` a script on stdin, and `psql` sends each statement and waits for its answer (`code/lanes-index:1310–1344`). So a snapshot is about 11 requests, and a commit and a lookup about 4 each: 1.65 s and 0.6 s on top of the connect at 150 ms.
 - **One request per call.** Phase 1's `register` subcommands send each call's statements as one request, one Query each: the snapshot as #160's statements joined with `psql`'s `\;`, its `\echo` marker sent as a `COPY` of it, so that the output is byte-identical and #160's parse is unchanged (psql 15 or later); the commit as `BEGIN ISOLATION LEVEL SERIALIZABLE \; SELECT lanes_register.commit_write(…) \; COMMIT;`; and the lookup as `BEGIN \; SELECT lanes_register.find_write(…) \; ROLLBACK;`. On lane 1's engine run the snapshot went from 13 Queries to 1, and the commit from 3 to 1 (#165 6723003325). So a call costs `t_c` + 1 RTT. Lane 5 measured the slope: one round trip for each statement sent alone, and one for five statements joined with `\;` (B1 against B2, lane 5's netem run). Since PostgreSQL 13, `statement_timeout` applies to each statement of such a request, so D9's bounds keep their meaning. A request that arrives late is still refused at step 9 by its `not_after` (LR008), as an orphan is.
-- **`c` and `N_a`, the connect bound.** `c` is `max(2, ⌈t_c + 1 s⌉)`, where `t_c` is the median of the workstation's cold connects and the 1 s is one lost SYN. libpq takes `connect_timeout` in whole seconds, with 2 as its minimum. So `c` is 2 while `t_c` is at most 1 s, below about 130 ms of RTT; 3 for `t_c` up to 2 s, to about 270 ms; and 4 up to 3 s, to about 410 ms. libpq applies it to each address the endpoint's name resolves to, in turn, so a connect may take `N_a`·`c`, `N_a` being that count, and every timer counts it so; a figure given at `c` = 2 or 3 is for one address. `c` and `N_a` are each workstation's own configuration values, written from its own measurements when it joins: `c` as the URLs' `connect_timeout=` (SVC-2), default 2, and `N_a` as `register_addresses=` in `lanes-index.conf`, default 1. The service's timer reads the round trip, `register_rtt_ms=`, beside them (SVC-6). `PGCONNECT_TIMEOUT` is set to `c`; every register timer derives from both, and so do `T_write` and `bound_s`, which `guard-bind` computes from the configuration ("Answer 2's detached bind"). `ready` compares the live count with `N_a` on each run. A count that has grown since only lets a call meet its timer on a silent address, which is a failed read or a call in doubt, as any cut call is, and never a second write.
+- **`c` and `N_a`, the connect bound.** `c` is `max(2, ⌈t_c + 1 s⌉)`, where `t_c` is the p90 of the workstation's cold connects, not their median, which on Eagle's loaded path left about one connect in ten over `c` (lane 5's O3, #165 6725361742), and the 1 s is one lost SYN. libpq takes `connect_timeout` in whole seconds, with 2 as its minimum. So `c` is 2 while `t_c` is at most 1 s, below about 130 ms of RTT; 3 for `t_c` up to 2 s, to about 270 ms; and 4 up to 3 s, to about 410 ms. libpq applies it to each address the endpoint's name resolves to, in turn, so a connect may take `N_a`·`c`, `N_a` being that count, and every timer counts it so; a figure given at `c` = 2 or 3 is for one address. `c` and `N_a` are each workstation's own configuration values, written from its own measurements when it joins: `c` as the URLs' `connect_timeout=` (SVC-2), default 2, and `N_a` as `register_addresses=` in `lanes-index.conf`, default 1. The service's timer reads the round trip, `register_rtt_ms=`, beside them (SVC-6). `PGCONNECT_TIMEOUT` is set to `c`; every register timer derives from both, and so do `T_write` and `bound_s`, which `guard-bind` computes from the configuration ("Answer 2's detached bind"). `ready` compares the live count with `N_a` on each run. A count that has grown since only lets a call meet its timer on a silent address, which is a failed read or a call in doubt, as any cut call is, and never a second write.
 - **The timers.** Each register call's client timer is `N_a`·`c`, plus its statement bound, plus 1 s for the call's round trip and its two process starts, and never below today's value (D9). So `S` = `C` = `N_a`·`c` + 6 s, and `T_L` = `N_a`·`c` + 7 s; at `c` = 2 only `T_L` moves, from 8 s to 9 s. `T_write` is 62.5 + 3`N_a`·`c` s ("The in-doubt rule"), and the seam's cap, 120 s, holds.
 - **Unchanged:**
   - `R`, 10 s: it is time for the database to come back, not a count of tries;
@@ -5853,20 +5903,20 @@ A client that offers P-256 first saves one RTT per connect, 0.30 s an attempt at
   - A writer exits 75 only after losing every attempt that fits in D7's 30 s: about 30 s ÷ the attempt time, so about nine at 150 ms and about five at 300 ms.
   - So 75s come from bursts and from far workstations, not from the average rate.
 - **D7 stays 30 s** (lane 2's question 10, #165 6722518182; lane 3's ask, #165 6722593397). A 75 writes nothing, and a retry in seconds is safe. Act 3's test 4 runs the burst of ten at each joining workstation's own RTT, and decides: where it gives 75s, lane 4 proposes to lane 3 a D7 per workstation, `max(30 s, 10 × that workstation's attempt p95)`, with `T_write` and `bound_s` recomputed. No figure here moves before then.
-- **A failover** drops every connection, and each call reads it as a lost connection (lane 1's M1).
+- **A restart of the server**, such as one in the node's maintenance window (#165 6723925474), drops every connection, and each call reads it as a lost connection (lane 1's M1). With one instance there is no standby to fail over to; where a host has one, a failover is the same case.
   - A snapshot or a read that it cuts fails as any failed read does.
-  - A write whose commit call was in flight is in doubt. The lookup's tries start within `R`, 10 s, so a failover that outlasts `R` ends the write with 3, the pending record kept and the rerun printed ("The in-doubt rule"). The rerun, once the new primary answers, finds the write or writes it once.
-  - `R` stays 10 s. A failover longer than `R` costs a rerun, never a second write, while a longer `R` would lengthen `T_write`, `F₀` and the bind's bound for every write. This design assumes no failover's length.
-- **What act 3 measures,** on Eagle and on Raven before act 4, and on each further workstation as it joins, before it writes, against the provider, with the register's `PG*` variables as `_env` sets them:
+  - A write whose commit call was in flight is in doubt. The lookup's tries start within `R`, 10 s, so a restart that outlasts `R` ends the write with 3, the pending record kept and the rerun printed ("The in-doubt rule"). The rerun, once the server answers again, finds the write or writes it once.
+  - `R` stays 10 s. A restart longer than `R` costs a rerun, never a second write, while a longer `R` would lengthen `T_write`, `F₀` and the bind's bound for every write. This design assumes no restart's length.
+- **What act 3 measures,** on Eagle and on Raven before act 4, and on each further workstation as it joins, before it writes, against the server, with the register's `PG*` variables as `_env` sets them:
   - the endpoint's addresses, `getent ahosts <host>`: their count is `N_a`;
   - the TLS version, `psql -Atc "select version from pg_stat_ssl where pid = pg_backend_pid()"`;
   - `psql`'s version, `psql --version`: 15 or later, since the snapshot's one-request form needs it;
-  - the RTT: one session with `\timing on`, then 20 runs of `select 1`; take the median;
-  - `t_c`: 50 cold runs, each `/usr/bin/time -f %e psql -Xqc 'select 1'` under `PGSSLMODE=verify-full PGCONNECT_TIMEOUT=10`, 1 s apart; take the median, which sets `c`, and the p95. Then 50 more back to back, warm;
+  - the RTT: one session with `\timing on`, then 20 runs of `select 1`; take the median, and the p90, which is `register_rtt_ms=` (SVC-6);
+  - `t_c`: 50 cold runs, each `/usr/bin/time -f %e psql -Xqc 'select 1'` under `PGSSLMODE=verify-full PGCONNECT_TIMEOUT=10`, 1 s apart; take the median, the p90, which sets `c`, and the p95, while the workstation is at work. Then 50 more back to back, warm;
   - where libpq cuts the connect: `psql "host=<host> hostaddr=192.0.2.1 connect_timeout=<c>" -c 'select 1'`, timed, against an address that drops SYNs;
   - test 9's per-call figures and test 4's burst of ten, and one run with an empty state directory, since a cache miss fetches the files whole.
 
-**What test 9 records,** per attempt, beside files mode: Python start to `main`'s first line, the snapshot call, the scratch tree ready, the verb's exit, and the commit call, with the host's load average and the Python version; at act 3, against the named provider, also the path's RTT and each call's connect, warm and cold, on Eagle and Raven, and on each workstation that joins ("Over a remote database").
+**What test 9 records,** per attempt, beside files mode: Python start to `main`'s first line, the snapshot call, the scratch tree ready, the verb's exit, and the commit call, with the host's load average and the Python version; at act 3, against the server, also the path's RTT and each call's connect, warm and cold, on Eagle and Raven, and on each workstation that joins ("Over a remote database").
 
 ### The renderer prototype: [L4-1] to [L4-5], and F29
 
@@ -6213,9 +6263,9 @@ The runbook is `operations.md`, summarised below. In order:
    renderer's pure function and the image cache; the readers' SQL path; the
    operator tools; and the guard's detached answer 2, as phase 1's first guard
    PR, which fixes "Known defects in today's code" in every mode.
-   `lanes-index` refuses `mode=primary` throughout. The service
-   and its read API sit off the seams too, but are 007's last slice (Q29(a)),
-   after phase 3.
+   `lanes-index` refuses `mode=primary` throughout. The service and its read API
+   sit off the seams too, and are built beside phases 1 and 2, not last, as item
+   4 says.
 2. **Phase 2, after slices 1a and 1b land in the code leg:** the attempt loop at
    the commit seam, the refusals of direct writes, S6's checks, the marker
    check after S3's fetch and in the publish act, with agreement test 3's unit
@@ -6227,9 +6277,16 @@ The runbook is `operations.md`, summarised below. In order:
 3. **Phase 3,** in `lanes-index` and `tests/` only: the renderer's git half,
    rollback's push, and agreement tests 3 (its agreement form), 5 and 6; then
    the constant that lifts Q6(c)'s refusal.
-4. **The service,** 007's last slice (Q29(a)), with the guard as its client.
-   Tests 9 and 10 measure the direct guard first; act 4 waits for the service
-   only if that guard is over the budget Brett names.
+4. **The service,** with the guard as its client, built beside phases 1 and 2
+   (`operations.md` §2.7's groups A and B), not as 007's last slice. Under
+   Q29(a), act 4 waits for it only if the direct guard is over Brett's 1 s,
+   judged on the warm p95. Lane 5 measured Eagle's round trip to Central US at
+   about 86 ms at best, 205 ms at the median and 456 ms at the p90 (#165
+   6725361742): the guard without the service takes about 1.2 to 2.1 s, which
+   misses the 1 s, and about 0.5 to 0.7 s through it. So Q29(a)'s condition is
+   met: the cutover waits for the service, and by lane 3's ruling the v1.2.0 tag
+   waits for it too (#165 6724332510 and 6726078173). Tests 9 and 10 still
+   measure the direct guard.
 5. **The release** (Q24(a)): v1.2.0 with an rc1, the workBenches re-vendor and
    one image rebuild carrying the configuration mount (Q23(a)) and PostgreSQL
    16 (1A).
@@ -6241,8 +6298,10 @@ The runbook is `operations.md`, summarised below. In order:
    resume on whatever those environments carry. The list is confirmed in act
    3's runbook, Brett's act. A container started after the check is not
    covered, and the check says so.
-7. **Act 3** (Brett's): Eagle and Raven configured on `mode=index` with the
-   three roles (Q20(B)); the database on the host he names (Q22).
+7. **Act 3** (Brett's): Eagle and Raven configured first on `mode=index` with
+   the three roles (Q20(B)); the database on the host he named, CNPG in the
+   codeXfactory prod install, which that install creates (Q22; "Wait for the
+   install", #165 6723925474; `operations.md` §2.2).
 
    **Every engineer's workstation, human or AI host** (Brett, #165 6722593397).
    The register serves every engineer who writes it, not Eagle and Raven alone.
@@ -6317,33 +6376,50 @@ scope and D8's exit 3 for a write in doubt, both from the review of commit J
 themselves, against S2's renderer. He took each as recommended, as a recorded
 departure, on 2026-11-08 (#165 comment 6721370130).
 
-**Values Brett named on 2026-11-08.** Q22's host: Azure Database for PostgreSQL
-Flexible Server, PostgreSQL 16, in opensoft's prod subscription (Brett, #165
-6722593397), after "A separate server" and "Managed cloud Postgres" (#165
-6722025863). Its region is expected to be Central US, where opensoft's prod
-platform runs (Opensoft-Tenant's `infra/aks-platform/prod.bicepparam` has
-`location = 'centralus'`), and act 3 confirms it when it creates the server.
-Access is public, with one firewall rule per workstation address, and the
-setting that allows access from any Azure service stays off; the connection is
-TLS `verify-full`, with `require_secure_transport` on; Microsoft Entra ID is an
-option only, unused (§1.4; Brett, #165 6723413756). The server's compute tier
-sets `max_connections`, which must hold one service connection per environment
-of every engineer, beside the direct reads and the writers (SVC-1; lane 5, #165
-6722703424). Q22's backups: the daily `pg_dump` of both schemas, by a scheduled
-job in the prod subscription, into a storage container there with soft delete
-and 30-day retention ("Dump both", #165 6722541787; "Job + storage in prod sub",
-#165 6722593397), and the provider's automated backups and point-in-time
-restore, which count as a restore source ("Count both", #165 6722541787); if the
-subscription is lost, the GitHub mirror is the copy outside Azure ("Accept;
-mirror is the copy", #165 6723413756; D22). Q22's downtime limit: "4 hours
-(Recommended)" (#165 6722025863). Q29's limit: "1 s (Recommended)" (#165
-6722025863), judged on the warm p95 of the guard without the service, with the
-cold walk recorded beside it and not judged against the limit (lane 3's ruling
-on lane 2's question 2, as lane 5 suggests, #165 6722703424). Q28's two dates:
-"Confirm both (Recommended)" (Brett, #198 6722244541): slices 1a and 1b as draft
-PRs by 2026-11-10, ready by 2026-11-12, and the other four open by 2026-11-12,
-ready by 2026-11-17. **Still his to name later:** the expiry of any outage he
-declares. Lane 4's rows 18, 22 and 40 are answered (#165 6721583757).
+**Values Brett named on 2026-11-08.** Q22's host: PostgreSQL 16, run by
+CloudNativePG (CNPG) on the prod AKS cluster (`aks-opensoft-platform-prod-01`,
+the `workcore1` pool, Central US), as part of the codeXfactory install there
+("CNPG in the install", #165 6723925474). Brett first chose Azure Database for
+PostgreSQL Flexible Server, at 14:16Z (#165 6722593397), after "A separate
+server" and "Managed cloud Postgres" (#165 6722025863), and moved it to CNPG at
+16:17Z (#165 6723925474). It is one instance, with no HA, created only by that
+install ("Wait for the install"); a codexFactory lane that Brett names builds
+it, to lane 1's install contract (`operations.md` §2.2, "What the codeXfactory
+prod install provides"; "A codexFactory lane, now (Recommended)", #165
+6723967774). Engineers reach it with no VPN, through a protected public
+endpoint: a `LoadBalancer` limited to engineers' addresses, with
+`externalTrafficPolicy: Local`, and TLS `verify-full` with a certificate from
+the install's private CA ("Install's private CA (Recommended)", #165
+6726078173). Each engineer has two logins, made, rotated and revoked by
+`lanes-index login` ("Two logins each (Recommended)", #165 6723413756;
+"lanes-index login (Recommended)", #165 6726078173). Its region is the
+cluster's, Central US. The install sets `max_connections` by lane 1's formula,
+which holds one service connection per environment of every engineer, beside the
+direct reads and the writers (`operations.md` §2.2, the contract's item 8;
+SVC-1; lane 5, #165 6722703424). Q22's backups: the daily `pg_dump` of both
+schemas, by the install's `CronJob` as `lanes_register_dump`, into a storage
+container in the prod subscription with soft delete and 30-day retention ("Dump
+both", #165 6722541787; "Job + storage in prod sub", #165 6722593397), and
+CNPG's Barman Cloud backups to blob storage there, base backups, the WAL archive
+and a daily `ScheduledBackup`, kept 30 days (lane 3's ruling, #165 6726078173),
+with point-in-time restore, which count as a restore source ("Count both", #165
+6722541787); act 3 runs a restore drill to a chosen moment ("Yes, drill at act 3
+(Recommended)", #165 6726078173); if the subscription is lost, the GitHub mirror
+is the copy outside Azure ("Accept; mirror is the copy", #165 6723413756; D22).
+Q22's downtime limit: "4 hours (Recommended)" (#165 6722025863), which stands;
+with one instance and `enablePDB: false` (lane 3's ruling, #165 6726078173), a
+node drain or a restart is a short outage, during which the guard answers 2.
+Q29's limit: "1 s (Recommended)" (#165 6722025863), judged on the warm p95 of
+the guard without the service, with the cold walk recorded beside it and not
+judged against the limit (lane 3's ruling on lane 2's question 2, as lane 5
+suggests, #165 6722703424). From Eagle the guard without the service misses it,
+at about 1.2 to 2.1 s (lane 5, #165 6725361742), so Q29(a)'s condition is met
+and the cutover waits for the service (the fourth item of "Migration and rollout
+(summary)"). Q28's two dates: "Confirm both (Recommended)" (Brett, #198
+6722244541): slices 1a and 1b as draft PRs by 2026-11-10, ready by 2026-11-12,
+and the other four open by 2026-11-12, ready by 2026-11-17. **Still his to name
+later:** the expiry of any outage he declares. Lane 4's rows 18, 22 and 40 are
+answered (#165 6721583757).
 
 **Facts still to find:** whether the organisation's GitHub plan supports a push
 ruleset with a deploy-key bypass, and whether it can name the render set
@@ -6364,8 +6440,8 @@ mode. Lane 3 routes it as its own issue after #165 (lane 3's ruling, #165
 
 **The link to the server** (S5; lane 5, #165 6722703424): on primary, each
 prompt's guard needs the workstation's network path to the server, and while
-that path is down it answers 2 until an outage is declared (SVC-12). Routed to
-Brett on 2026-11-08.
+that path is down it answers 2 until an outage is declared (SVC-12). Brett
+accepted it: "Block until link returns (Recommended)" (#165 6723925474).
 
 **Deferrable within the design:** the per-call process cost, which changes no
 spec: [L4-c] puts an attempt at about 0.55 to 0.61 s, inside every frame
@@ -6382,7 +6458,7 @@ in later. Lane 5's section, lane 1's (the schema above, and
 `operations.md`) and lane 4's phase plan are folded; they settle their own
 points, and route the ones below marked with lane 5's question numbers,
 "from lane 1's v2" or "from the phase plan". Lane 2's test plan is folded too,
-as `test-plan.md` (commit J2); its routed tests are below.
+as `test-plan.md` (v3f, commit J3); its routed tests are below.
 
 - **Lane 1, the schema and the operations:** its section v2, folded above and
   in `operations.md`, takes up the points this list routed to it (the

@@ -627,9 +627,12 @@ are the design's (the council's product seat, P8):
 
 - **An idempotent bootstrap:** the register's schema, the three roles and their
   GRANTs, made from one admin connection that Brett supplies; it prints the
-  password-file lines for him to place and never stores a secret. The admin
-  connection is used once and held by nothing: clause (b)'s three roles stay the
-  only ones the register's tools hold.
+  password-file line of each login it creates for him to place and never stores
+  a secret, and a separate operator command, `lanes-index login`, makes each
+  engineer's two logins, a writer login and a reader login, and prints their
+  lines once (design §1.4). The admin connection is used once and held by
+  nothing: clause (b)'s three roles stay the only ones the register's tools
+  hold.
 - **A readiness check, run in each environment:** the installed tools' digests
   against the release, `psql` present, the configuration readable and saying
   the mode Q20 expects before the cutover (`mode=index` under its (B)), each
@@ -703,7 +706,8 @@ are the design's (the council's product seat, P8):
 
 - A **REGISTER-WRITER** role, scoped to the register's tables, the journal and
   the switch, is held by `lanes-edit.sh` and its renderer on every writing
-  workstation, through its own credential pair in `lanes-index.conf` (the
+  workstation, through the writer login of that workstation's engineer, a member
+  of the role, whose credential pair is in `lanes-index.conf` (the
   configuration, above). It is the one change to Amendment 14's "no session
   holds a writer role". Whether `lanes-register` is its only holder is Q2's.
 - Amendment 14's **indexer** role keeps the ledger half's derived tables and
@@ -832,7 +836,9 @@ also open a database connection per prompt.
   `lanes-index`'s own default, `PGCONNECT_TIMEOUT=5`, failed open under the
   hook's `timeout 5` 3 times out of 3. The values the probes measured, for the
   design to confirm (the figures are in `clarifications.md`, under ADV-C4):
-  - `connect_timeout=2` with one address, since it applies to each address;
+  - `connect_timeout=2` with one address, since it applies to each address (the
+    design takes each workstation's `c`, 2 s on a LAN, for each of the
+    endpoint's `N_a` addresses, design D9);
   - `lock_timeout=1000` and `statement_timeout=1500`, set when connecting;
   - a 4 s client timer around `psql` on the guard's path, since nothing on the
     server's side stops a host that goes silent after it connects: its expiry is
@@ -931,10 +937,9 @@ and credentials, the 69 refusal, the SQL's shape) always run.
     any environment a session inherits, and the service's answer to the
     guard's read under 50 ms on the suite's fixture register, recorded in
     the PR body (Q10), with today's direct guard beside it, and the whole
-    guard's figure, which is Q29's, taken at act 3 against the named
-    provider (P5; design SVC-10); and the hook inside its
-    5 s against a database that does not answer (the architecture seat's
-    concern 1, ADV-C4).
+    guard's figure, which is Q29's, taken at act 3 against the server (P5;
+    design SVC-10); and the hook inside its 5 s against a database that does not
+    answer (the architecture seat's concern 1, ADV-C4).
 11. A lane's day on `mode=primary` (the product seat's P6), on the local cluster
     with a bare-repo origin: `lane-start` for a new lane, then a resume;
     `claim`; a `HOLD`, `LANDING` and `LANDED` set; `lane-handoff`; and
@@ -1003,16 +1008,16 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 
 ## Not in this change
 
-- **Act 3, Brett Heap's:** Eagle and Raven configured together, with
-  `mode=primary`, `store=postgres`, the register-writer and reader roles, and act
-  2 installed on both. Whether `mode=primary` is written at act 3 or at the
-  cutover is Q20, answered (B), round 1's 3A: at the cutover, with act 3
-  leaving `mode=index` (#165 6710653292); the database itself, and Raven's
-  role, are Q22, answered (a) (6710653292). This change
-  builds the tools act 3 and the cutover use ("Operator tools", above).
-  Not done: at 2026-10-31T18:51Z the bench this was drafted
-  on had no `lanes-index.conf` and `LANES_INDEX_CONFIG` unset, as Amendment 23
-  measured on Eagle on 2026-10-17.
+- **Act 3, Brett Heap's:** Eagle and Raven configured together, and then every
+  engineer's workstation by the same steps as it joins (#165 6722593397), with
+  `mode=primary`, `store=postgres`, the register-writer and reader roles, and
+  act 2 installed on each. Whether `mode=primary` is written at act 3 or at the
+  cutover is Q20, answered (B), round 1's 3A: at the cutover, with act 3 leaving
+  `mode=index` (#165 6710653292); the database itself, and Raven's role, are
+  Q22, answered (a) (6710653292). This change builds the tools act 3 and the
+  cutover use ("Operator tools", above). Not done: at 2026-10-31T18:51Z the
+  bench this was drafted on had no `lanes-index.conf` and `LANES_INDEX_CONFIG`
+  unset, as Amendment 23 measured on Eagle on 2026-10-17.
 - **Act 4, Brett Heap's:** the cutover in the window he names, and rollback the
   same way. This change builds `import` and `rollback` and proves them on
   fixtures. Running them on opensoft/brett-wip is act 4; its `main`
@@ -1199,14 +1204,16 @@ the question names it; the design's D23 has the ruleset name the render set and
 answers from the mirror, labelled, only during an outage he declares, and a
 rollback's start declares one too, which narrows Amendment 22; Q28 (i) and (a),
 the cutover waits for Amendment 23's six act-2 PRs, which lane openRepoShape-2
-re-homes; and Q29 (a), the service is built last, and the cutover waits for it
-only if the guard, measured without it, is slower than a limit he names. **Named
-on 2026-11-08:** Q29's time limit, "1 s (Recommended)"; Q22's database host, its
-backups and how long it may be down (Q22, below); and Q28's two dates, "Confirm
-both (Recommended)": 1a and 1b ready by 2026-11-12, the other four by 2026-11-17
-(#165 6722025863, 6722593397 and 6723413756; #198 6722244541). Q21(b) also rests
-on whether the org's GitHub plan supports such a ruleset, which nobody has
-checked yet.
+re-homes; and Q29 (a), the cutover waits for the service only if the guard,
+measured without it, is slower than a limit he names; lane 5's figure puts it
+over his 1 s (#165 6725361742), so the cutover and the v1.2.0 tag wait for the
+service, built beside the first two groups of 007's slices, not last (lane 3's
+ruling, #165 6724332510 and 6726078173). **Named on 2026-11-08:** Q29's time
+limit, "1 s (Recommended)"; Q22's database host, its backups and how long it may
+be down (Q22, below); and Q28's two dates, "Confirm both (Recommended)": 1a and
+1b ready by 2026-11-12, the other four by 2026-11-17 (#165 6722025863,
+6722593397 and 6723413756; #198 6722244541). Q21(b) also rests on whether the
+org's GitHub plan supports such a ruleset, which nobody has checked yet.
 
 1. **The test strategy: answered.** Brett Heap, in lane 3's session at
    2026-10-31T19:32:08Z, verbatim: "1A and 2A" (#165 comment 6548141614), on
@@ -1967,17 +1974,27 @@ checked yet.
     "the rollback waits for it" never ends, and the recovery loses every write
     the mirror had not yet rendered, which exists only in SQL. The renderer's
     lag, which `status` shows, bounds that loss (the product seat, 6549261651).
-    **Answered, Brett's, on 2026-11-08:** a managed cloud PostgreSQL, "A
-    separate server" then "Managed cloud Postgres" (#165 6722025863): Azure
-    Database for PostgreSQL Flexible Server, version 16, in opensoft's prod
-    subscription (#165 6722593397), with public access, one firewall rule per
-    workstation address, and TLS `verify-full` (#165 6723413756). Its backups
-    are the daily `pg_dump` of both schemas, by a job in that subscription, and
-    the provider's own backups and point-in-time restore, with the git mirror as
-    the copy outside Azure (#165 6722541787, 6722593397 and 6723413756), and its
-    downtime limit is "4 hours (Recommended)" (#165 6722025863). Raven stays
-    configured with Eagle, (a), and the scope is every engineer's workstation,
-    human or AI host, each joining by act 3's steps (#165 6722593397).
+    **Answered, Brett's, on 2026-11-08:** "A separate server" then "Managed
+    cloud Postgres" (#165 6722025863), then Azure Database for PostgreSQL
+    Flexible Server, at 14:16Z (#165 6722593397), which he moved at 16:17Z to
+    "CNPG in the install": PostgreSQL 16, run by CloudNativePG (CNPG) on the
+    prod AKS cluster (`aks-opensoft-platform-prod-01`, the `workcore1` pool,
+    Central US), as part of the codeXfactory install there, one instance with no
+    HA, created only by that install ("Wait for the install"), which a
+    codexFactory lane that Brett names builds to lane 1's install contract (#165
+    6723925474 and 6723967774). Engineers reach it with no VPN, through a public
+    `LoadBalancer` limited to their addresses, with
+    `externalTrafficPolicy: Local`, and TLS `verify-full` with a certificate
+    from the install's private CA; each engineer has two logins, made, rotated
+    and revoked by `lanes-index login` (#165 6723413756 and 6726078173). Its
+    backups are the daily `pg_dump` of both schemas, by the install's `CronJob`,
+    into storage in the prod subscription, and CNPG's Barman Cloud backups
+    there, with point-in-time restore, each kept 30 days, with the git mirror as
+    the copy outside Azure and a restore drill at act 3 (#165 6722541787,
+    6722593397, 6723413756 and 6726078173), and its downtime limit is "4 hours
+    (Recommended)" (#165 6722025863). Raven stays configured with Eagle, (a),
+    and the scope is every engineer's workstation, human or AI host, each
+    joining by act 3's steps (#165 6722593397).
 23. **The configuration and password file on benches (R3's question 11, from
     R3c 6; for Brett).** `~/.config/openRepoTools` is not a bench mount, and the
     file must stay out of git trees and `~/.agents/` (Amendment 14(c)). Options:
@@ -2237,7 +2254,8 @@ change `skip-no-lane-guard`, not yet archived) is kept unchanged, not modified.
   invariants").
 - **Outside the repositories:**
   - at acts 3 and 4: a Postgres database and its roles; `mode=primary` in
-    `lanes-index.conf` on Eagle and Raven; `lanes/STORE` in opensoft/brett-wip;
+    `lanes-index.conf` on every engineer's workstation, Eagle and Raven first;
+    `lanes/STORE` in opensoft/brett-wip;
   - under 1A, PostgreSQL 16 in the bench images (opensoft/openBenches, lane
     openRepoTools-2's PR), and the images' rebuild, which stays Brett's;
   - per R3, as Q21, Q23 and Q24 settle: the workBenches re-vendor of the tools,
