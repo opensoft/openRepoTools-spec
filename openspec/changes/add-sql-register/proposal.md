@@ -1849,6 +1849,8 @@ PR.
     picked the rival's row 3 times out of 3, so (a)'s lookup by sequence is not
     safe even as the report, and the retry has to go through a UNIQUE `write_id`
     with a `lock_timeout` (S1). What stays open is the report's code.
+    **Answered:** Brett took exit 3 for it, as the design's departure B, on
+    2026-11-08 (#165 comment 6721370130).
 17. **The later `HOLD` or `LANDING` writer (the QA seat's QA-1; R2's design
     questions).** S6 says the later writer's transaction "reports the earlier
     line to it before it acts". Is that a refusal, and with which code, or a

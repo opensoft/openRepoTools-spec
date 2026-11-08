@@ -23,7 +23,9 @@ owned by a lane under lane 3's fan-out (#165 comment 6576888068): "The test
 plan" (lane openRepoTools-2). Lane 3 folds it in when it arrives. Round 1 of Brett
 Heap's questions is RULED: he confirmed all four answers on 2026-11-07 (#165
 comment 6710653292). Round 2 is answered too: he took every recommendation, so
-its recommended options, this design's working assumptions, are his answers.
+its recommended options, this design's working assumptions, are his answers. He
+also accepted the design's three departures A, B and C, each as recommended, on
+2026-11-08 (#165 comment 6721370130).
 
 ## Context
 
@@ -688,14 +690,14 @@ puts it to him.
 | D25: `lanes-index cutover` as a command of its own | Amendment 22's S5 and its ratified names | not yet routed |
 | A release for a stale `LANDING` (S6): lane 1's v2 carries it as the line kind `LANDING EXPIRED`, `register_lines.for_lane` and LR005 (§1.2, §1.3.1), tested on the engine and inert until a verb writes it | Amendment 10 and Rule 6, under Q17(B) | not yet routed: an open point for Brett |
 | A stray landing during a rollback: the rollback refuses while a divergence is recorded, at its start, after a fresh fetch right before its transaction, and inside that transaction (LR012). So only a stray that lands after that check, once the rollback's entry has set the switch to `files`, has no journalled way out, since S2's two ways out each need `primary` (lane 1's v2; narrowed by its v2.6, R2's S5) | Amendment 22's S5, under Q4(b)(iii) | not yet routed: an open point for Brett |
-| Files mode changes, against Amendment 22's scope, "a workstation with `mode=index`, or with no configuration, runs exactly as today": the guard's answer 2 runs its bind detached, and `lane-start`'s bind is one write, `start-record`, in every mode, which lane 3 ruled (#165 6710770304) and Brett was not asked; and `wip init` refuses wherever any file under `lanes/` exists, in every mode, the delta's third exception, which is his Q14(a) | Amendment 22's scope | for Brett: not yet answered |
-| D8's exit 3: a write in doubt that cannot settle exits 3, naming its write id, and may have been written, where S1 has an unreachable database refuse with 69 and write "nothing anywhere"; Q16 was not in round 2 | Amendment 22's S1 | for Brett: not yet answered |
+| Files mode changes, against Amendment 22's scope, "a workstation with `mode=index`, or with no configuration, runs exactly as today": the guard's answer 2 runs its bind detached, and `lane-start`'s bind is one write, `start-record`, in every mode, which lane 3 ruled (#165 6710770304) and Brett was not asked; and `wip init` refuses wherever any file under `lanes/` exists, in every mode, the delta's third exception, which is his Q14(a) | Amendment 22's scope | answered: A, 6721370130: both accepted as recorded departures |
+| D8's exit 3: a write in doubt that cannot settle exits 3, naming its write id, and may have been written, where S1 has an unreachable database refuse with 69 and write "nothing anywhere"; Q16 was not in round 2 | Amendment 22's S1 | answered: B, 6721370130: exit 3 accepted |
 | Q18(A): the renderer renders the render set only, and a commit under `lanes/` outside it, such as `lanes/repos.tsv`, is part of the tip, where S2 has "a commit under `lanes/` that the renderer did not make" stop the renderer; the round-2 file calls (B) "as Amendment 22 literally reads" | Amendment 22's S2 | answered: Q18, 6710653292 |
 | Q19(A): on primary `claim` prints "register seq `<n>`", where Amendment 7's claim "prints the log commit's sha" | Amendment 7 | answered: Q19, 6710653292 |
 | Q20(B), round 1's 3A: `mode=primary` is written at the cutover, and act 3 leaves `mode=index`, where act 3 has Eagle and Raven configured together with `mode=primary` | Amendment 22's act 3 | answered: Q20, 6710653292 |
 | 2A narrows S3: `lane-handoff`'s and the skill's naming reads come from the mirror (S3's table), and at four `lane-start` reads (`:1262`, `:1271`, `:3079`, `:3430`) a 69 stays a note | Amendment 22's S3 | answered: Q8, 6710653292 |
 | Q21(a)(A): on a workstation not yet flipped, acts and the guard refuse while the listings and `SessionStart` read the mirror | Amendment 22's S3 | answered: Q21(a), 6710653292 |
-| D24's two operator seqs, which `cutover` and `rollback` push themselves, where S2 has "the RENDERER, which commits … every sequence the mirror lacks". Q18(A) settles only that the marker is register seq 1 (`lanes/STORE` is `Register-Seq` 1), and round 1's 1A lists "rollback's push" among the phases without asking about the departure (lane 3's split of the row, commit M) | Amendment 22's S2 | for Brett: not yet answered |
+| D24's two operator seqs, which `cutover` and `rollback` push themselves, where S2 has "the RENDERER, which commits … every sequence the mirror lacks". Q18(A) settles only that the marker is register seq 1 (`lanes/STORE` is `Register-Seq` 1), and round 1's 1A lists "rollback's push" among the phases without asking about the departure (lane 3's split of the row, commit M) | Amendment 22's S2 | answered: C, 6721370130: accepted as a recorded departure |
 
 ## Architecture overview
 
@@ -5900,13 +5902,12 @@ release for a stale `LANDING`, for which the recommendation is a
 stray landing during a rollback after its last divergence check, which has
 no journalled way out (narrowed by lane 1's v2.6, R2's S5); and
 Q21(b)'s scope, `lanes/**` as the round-2 file words his answer, or the
-render set and `lanes/STORE` as D23 has it. Three more rows read "for
-Brett: not yet answered": two from the review of commit J (R1's S1), files
-mode's changes against Amendment 22's scope and D8's exit 3 for a write in
-doubt; and D24's two operator seqs, which `cutover` and `rollback` push
-themselves, against S2's renderer that commits every sequence the mirror
-lacks, which commit M splits from Q21(a)(A)'s row, since Q18(A) settles only
-that the marker is register seq 1.
+render set and `lanes/STORE` as D23 has it. Three more rows, put to Brett as A,
+B and C, are answered: files mode's changes against Amendment 22's scope and
+D8's exit 3 for a write in doubt, both from the review of commit J (R1's S1),
+and D24's two operator seqs, which `cutover` and `rollback` push themselves,
+against S2's renderer. He took each as recommended, as a recorded departure, on
+2026-11-08 (#165 comment 6721370130).
 
 **Values Brett names later:** Q29's time limit for the guard; Q22's database
 host, its backups and how long it may be down; Q28's two dates, one for slices
