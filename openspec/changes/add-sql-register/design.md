@@ -3948,11 +3948,12 @@ supervisor and which py-bench does not run, so "first call" is the form.
 `lanes-index serve` refuses with exit 2 unless the configuration says
 `primary`, and clients ask the socket only on a primary workstation (D3: no
 configuration, no question). On files mode and `mode=index` the guard and the
-readers stay exactly as today. In the frame's order, item 3 of "Migration and
-rollout" lifts Q6(c)'s refusal of `mode=primary` before item 4 builds the
-service, so the service is built against a `lanes-index` that accepts
-`primary`; until a host's flip, it runs only against the fixture's
-configuration, which is where test 10 runs it.
+readers stay exactly as today. The service is built beside groups A and B, not
+after item 3 of "Migration and rollout" lifts Q6(c)'s refusal of
+`mode=primary` (Q29; Brett, #165 6726766577). Until that lift `serve` refuses
+on every real host, so it is built and tested against the fixture's
+configuration, which is where test 10 runs it, and it runs on a host only
+after that host's flip.
 
 Reason: P4's "no second outage mode" applies to reads too. In files mode the
 service would add a process that can be down, for a read (`git show`) that is

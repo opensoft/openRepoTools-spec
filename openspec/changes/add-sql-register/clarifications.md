@@ -519,8 +519,10 @@ and in lane openRepoTools-1's:
   so the guard without the service takes about 1.2 to 2.1 s, which misses
   Brett's 1 s, and about 0.5 to 0.7 s through it (#165 6725361742). So Q29 (a)'s
   condition is met: the cutover waits for the service, the v1.2.0 tag waits for
-  it too, and it is built beside groups A and B, not last (lane 3's ruling, #165
-  6724332510 and 6726078173).
+  it too, and it is built beside groups A and B, not last. Lane 3 ruled so (#165
+  6724332510 and 6726078173), and Brett approved it on 2026-11-08, changing his
+  Q29 (a) answer: "4A", for "Build it beside groups A and B, and the tag waits
+  for it" (#165 6726766577).
 - **Q28, the two dates:** "Confirm both (Recommended)": #282 (1a) and #307 (1b)
   as draft PRs by 2026-11-10 and ready by 2026-11-12; #312, #316, #311 and #308
   open by 2026-11-12 and ready by 2026-11-17 (#198 6722244541).
