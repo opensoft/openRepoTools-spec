@@ -14,13 +14,12 @@ and every line cited here was re-read there for this file; a bare `#N` is
 opensoft/openRepoTools' issue or pull request `#N`; "the proposal" is
 `proposal.md` beside this file.
 
-Status: a frame with the core written, and four sections folded in: "The
+Status: a frame with the core written, and five sections folded in: "The
 register service's internals" (lane openRepoTools-5), "The schema" (lane
 openRepoTools-1's part 1), lane 1's part 2, the operations, as
-`operations.md` beside this file, and "The phase plan" (lane
-openRepoTools-4). One part is still a placeholder, marked **PLACEHOLDER** and
-owned by a lane under lane 3's fan-out (#165 comment 6576888068): "The test
-plan" (lane openRepoTools-2). Lane 3 folds it in when it arrives. Round 1 of Brett
+`operations.md` beside this file, "The phase plan" (lane openRepoTools-4), and
+"The test plan" (lane openRepoTools-2), with its full plan as `test-plan.md`
+beside this file. No part is still a placeholder. Round 1 of Brett
 Heap's questions is RULED: he confirmed all four answers on 2026-11-07 (#165
 comment 6710653292). Round 2 is answered too: he took every recommendation, so
 its recommended options, this design's working assumptions, are his answers. He
@@ -5700,25 +5699,66 @@ Every row below waits on the decision it names.
 - **Not checked:** the tests' assertions on exit 3; `request-handoff`'s own re-read of the binding apart from `--force` (`:17188`); whether `retire-rows` re-proves dormancy (R2C's claim); whether `lane-start`'s inner write arguments are deterministic across a rerun; the real register's log sizes and the size of the new `register` code ([L4-c] assumed 38 logs and 120 commits); a verb run under the flag; ten attempts at once on one host (test 4's job); the teardown of non-worktree scratch trees.
 - **Relayed, not re-printed by lane 4:** `lane-start:1262`, `:1271`, `:3079`, `:3430`; `lane-end:921–945`; `lane-worktrees:508–524`; `lanes-edit.sh:7428–7429`, `:8104–8109`, from R2B, R2V1 and R2V2.
 
-## The test plan — **PLACEHOLDER: lane openRepoTools-2's section**
+## The test plan
 
-> **PLACEHOLDER.** Lane openRepoTools-2 writes this section under lane 3's
-> fan-out (#165 comment 6576888068). Its scope, copied from that post: "Each
-> agreement test (1 to 14, and the council's additions), with its fixture, its
-> oracle and the option it assumes. R1's fixture and the fake `psql`; CI's
-> refusal switch, per 2A; the probes' burst, partition, in-doubt and
-> guard-timing cases written as tests; and the measurement plan (Q10)."
->
-> **Inputs it must account for:** P17 (the refusal switch scoped to the
-> `ubuntu-24.04` jobs with the binaries, and every job that runs the
-> real-engine modules named); the probe numbers for ADV-C1, ADV-C3, ADV-C4 and
-> ADV-C7 (`clarifications.md`); ADV-C8's render from a verb run with
-> `LANES_NO_FETCH=1`; ADV-C10's two spellings of one object; concern 4's
-> four-part measurement. **And the frame's own choices,** each needing a test:
-> the pending record's rerun (D8), `register-row-local` on primary (D11), every
-> row of the timeouts table (D9), the declared outage and its expiry (D20), the
-> marker's fields (D21), the refused hold line that names no repository (S6),
-> and the disaster path's re-import (D22).
+Lane openRepoTools-2's section, the test plan, folded in place of the
+placeholder by lane 3's writer in commit J2. Its sources are lane 2's plan,
+`/workspace/projects/.openrepotools-private-prep/work-20261022/lane2-165-testplan-1102/delta-rounds-1107/test-plan-v3e.md`
+(sha256 `50df314505715fe068552bd7e417e5a3a5686c420f3b8062ed4efa54f8d7bb90`,
+4,866 lines), and its summary for this section,
+`/workspace/projects/.openrepotools-private-prep/work-20261022/lane2-165-testplan-1102/delta-rounds-1107/design-summary-v3e.md`
+(sha256 `ac528e2f0475bcbb8a302e73baacffb7a2387d54d8dca293d361b3132b26fa6c`, 43
+lines), both delivered by lane 2's #165 comment 6721479518. The plan is
+`test-plan.md` beside this file, copied byte for byte: its sha256 is its
+source's, `50df314505715fe068552bd7e417e5a3a5686c420f3b8062ed4efa54f8d7bb90`.
+From the next paragraph to the end of this section the text is the summary's
+lines 3 to 43, byte for byte; its line 1 is this heading. Lane 2 pinned the
+plan's coverage table at commit I (`2be70f5a`), before commits J to U; its pass
+after lane 3's review re-pins the table and adds the tests that the item "Lane
+2, the test plan" in "Routed to the section writers by the frame review" names,
+against the commit the review leaves (6721479518).
+
+The full plan is `test-plan.md`, beside this file (lane openRepoTools-2). It
+adds no requirement: each test checks one that the proposal, this design,
+`operations.md` or the delta specs state.
+
+- **Three kinds of test.**
+  - **Real-engine (RE):** the real `psql` against the suite's own disposable
+    PostgreSQL 16 cluster. Only an engine proves a byte-identical render from
+    real tables, SERIALIZABLE order and its 40001, the GRANTs, the import and
+    rollback round trips, a write that fails partway, and the cost. A `psql`
+    shim in front of the real one injects faults, and the engine decides.
+  - **Fake-psql (FP):** a logging fake first on `PATH`, for argv, connection
+    strings, credentials (`PGSERVICE` only in the environment), the 69
+    refusal and the SQL's shape. It asserts nothing an engine decides.
+  - **Files-mode (FM):** bare origins and clones, no database: the marker's
+    refusal, test 1's twin, and the files-mode writes after a rollback.
+- **The fixture** is R1's option (a): `code/tests/pgcluster.py`, a pytest
+  plugin that starts one cluster per session by `Popen` on a Unix socket in a
+  0700 `/tmp/orpg-*` directory (about 0.9 s), a template built by the
+  bootstrap with `--no-passwords`, and one database per test cloned from it
+  (about 80 ms). A `stoppable_cluster` serves the tests that stop the
+  database. The binaries are PostgreSQL 16, found by `PG_BIN`, then
+  `pg_config`, then the Debian path.
+- **CI's refusal.** `OPENREPOTOOLS_REQUIRE_PG=1`, set in `tests.yml`'s `env:`
+  and by the root, independent of `OPENREPOTOOLS_COMPOSED`, makes a missing
+  engine a usage error (pytest exit 4) in every job that has the binaries.
+  Elsewhere the RE tests skip loudly, naming `PG_BIN` and `postgresql-16`. A
+  job moved to a runner without the binaries loses the variable.
+- **What it covers.** Agreement tests 1 to 14; the council's R, C5, P3, P8, C8
+  and C10; the frame's D8, D9, D19, D20 and D22; the schema's objects
+  (AT-SET, AT-MIR, AT-SPL, AT-LR5, AT-VER, AT-LR4), with v2.3's restore form,
+  `repo_spellings` and LR008; AT-LR006 and AT-F33, which show that two
+  attempts of one write meet as LR006, 40001 or 55P03, never as 23505; and
+  the frame review's findings, with the detached bind, `start-record`,
+  `act-begin`, the renderer's bounds, and today's two answer-2 defects as
+  regression tests. The probes' cases are tests, and each measured figure is
+  recorded in the PR body and the step summary, never a CI threshold.
+- **Coverage.** All 83 requirements of the two delta specs at lane 3's
+  commit I, `2be70f5a` (65 and 18), have a row: 13 changed between
+  `1c45123a` and `21f0191c`, and 11 since then, one of them added. 75 have
+  tests; eight have none or a partial one, five of them documentation or
+  Brett's decision.
 
 ## Risks / Trade-offs
 
