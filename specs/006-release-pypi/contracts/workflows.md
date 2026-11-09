@@ -35,14 +35,16 @@ on:
   every `release/v*` branch, and that every trigger runs the four jobs.
 - Every other comment stays as it is. That binds #228's change.
   opensoft/openRepoTools#77 later reworded the header comment's sentences on
-  what every trigger runs, extended the comment above `tests-no-submodule`,
-  and added comments above `tests-shard` and inside both shard jobs.
+  what every trigger runs, extended the comment that sat above
+  `tests-no-submodule`, now above `tests-no-submodule-shard`, and added
+  comments above `tests-shard` and inside both shard jobs.
 
 ### Jobs
 
-- opensoft/openRepoTools#77 leaves `guard-launch-mode` as it is and makes
-  `tests` and `tests-no-submodule` each a gate over a matrix of shard jobs,
-  `tests-shard` and `tests-no-submodule-shard`; the list under "Held by
+- opensoft/openRepoTools#77 (opensoft/openRepoTools-code#22) leaves
+  `guard-launch-mode` as it is and makes `tests` and `tests-no-submodule`
+  each a gate over a matrix of shard jobs, `tests-shard` and
+  `tests-no-submodule-shard`; the list under "Held by
   `tests/test_tests_workflow.py`" below says how. `guard-launch-mode`,
   `tests` and `tests-no-submodule` are among the gate's job ids, and the
   code leg keeps them (FR-046). The release gate reads the ids by name, and
