@@ -6,7 +6,7 @@
 to commit Y (`a6497d00`) of the change `add-sql-register`, which the spec
 branch merges whole at `066ad8f1`. Citations are spec.md's: `spec:<n>`
 and `svc:<n>` are lines of the change's two spec files on this branch, at
-`ce3fad83`; `Y:<n>`, `ops:<n>` and `clar:<n>` are lines of `design.md`,
+`ad82c2f4`; `Y:<n>`, `ops:<n>` and `clar:<n>` are lines of `design.md`,
 `operations.md` and `clarifications.md`, which are unchanged from Y.
 
 > **Assembly phase A.** This plan, spec.md and research.md are keyed to Y,
@@ -500,7 +500,7 @@ The tag, v1.2.0, on Brett's own word, after group C and the service ... [L3]:
   which quotes his typed words "4A, 5A, 1 let them stand, 3A"), for lane
   3's option "Build it beside groups A and B, and the tag waits for it". It
   changes his Q29 (a) answer, "the service is built last" (clar:473), and Y
-  records it (clar:524–525; svc:289; Y:4826; Y:3951–3956).
+  records it (clar:524–525; svc:293; Y:4826; Y:3951–3956).
   - Lane 5's T511 can start at once. T512 is coded beside group A and lands
     near its end, after lane 1's T103 to T106, T111, T113, T115 and T117,
     lane 3's T302, and lane 5's T504, T505 and T507. It does not wait for
@@ -711,7 +711,8 @@ Governed already, and unchanged by this feature, which adds no installable:
   - Mitigation: an erratum goes into research.md and leaves the change's
     text alone. A point that contradicts a SHALL is a spec delta: on lane
     3's ruling it changes the change's spec files on this branch, as
-    `dabd74bd` and `ce3fad83` do, and goes on the spec PR's list to Brett.
+    `dabd74bd`, `ce3fad83` and `ad82c2f4` do, and goes on the spec PR's list
+    to Brett.
 - **R7. The install's schedule.** Acts 3 and 4, and Q29's figure on each
   workstation, wait on it, and the cutover may slip (Brett's "Wait for the
   install", #165 6723925474).

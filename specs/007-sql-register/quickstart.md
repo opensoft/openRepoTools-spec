@@ -6,7 +6,7 @@ and points at their text; it restates no requirement, and the runbook in
 `docs/README-lanes.md` (FR-062) is the one that people follow.
 
 **Citations** are spec.md's: `spec:<n>` and `svc:<n>` are lines of the
-change's two spec files on this branch, at `ce3fad83`; `Y:<n>` is a line of
+change's two spec files on this branch, at `ad82c2f4`; `Y:<n>` is a line of
 `design.md` and `ops:<n>` of `operations.md`, which are unchanged from Y.
 
 Every step here is an act, on a person's word, never a build task. Nothing

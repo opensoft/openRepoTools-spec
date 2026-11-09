@@ -26,12 +26,13 @@ The spec leg's branch `007-sql-register` merges Y whole, at merge commit
   `git diff bb08d080..a6497d00 -- openspec/changes/add-sql-register` shows
   every change since lane 3's drafts.
 - **The branch after Y.** Lane 3's rulings since Y change the change's two
-  spec files on this branch, at `dabd74bd` and `ce3fad83`, and the spec PR's
+  spec files on this branch, at `dabd74bd`, `ce3fad83` and `ad82c2f4`, and the
+  spec PR's
   list names each change. Every other file of the change is Y's.
 
 **Citations**: `spec:<n>` is a line of `specs/sql-register/spec.md` and
 `svc:<n>` of `specs/register-service/spec.md`, as this branch has them at
-`ce3fad83`, where lane 3's rulings since Y change them (research.md's ERR-03
+`ad82c2f4`, where lane 3's rulings since Y change them (research.md's ERR-03
 and DEC-05). `Y:<n>` is a line of `design.md`, `ops:<n>` of `operations.md`
 and `clar:<n>` of `clarifications.md`, which are unchanged from Y. Each was
 checked by script against the text it stands for.
@@ -707,7 +708,7 @@ does not answer. No write depends on it.
 **Why this priority**: act 4 waits for the service, since from Eagle the
 guard without it takes about 1.2 to 2.1 s, which misses Brett's 1 s
 (Y:335–336; Y:4826). So the service is built beside groups A and B, and
-the v1.2.0 tag waits for it: Brett's "4A" (6726766577; svc:289;
+the v1.2.0 tag waits for it: Brett's "4A" (6726766577; svc:293;
 Y:3951–3956). It is P2 because no write depends on it, and every reader
 still works without it.
 
@@ -1378,7 +1379,7 @@ are lane 3's rulings memo's).
   `outage declare` refuses with 2 a `--why` that holds a line break, so that
   the declaration's label stays on one line (lane 1's block v4, T121, on
   lane 5's O15).
-  Sources: D20 (Y:599); svc:193; svc:254; ops:490.
+  Sources: D20 (Y:599); svc:197; svc:258; ops:490.
 
 #### The register service
 
@@ -1403,7 +1404,7 @@ are lane 3's rulings memo's).
   stand, 3A"), for "Build it beside groups A and B, and the tag waits for
   it" (clar:524–525). It changes his Q29 (a) answer, "the service is built
   last" (clar:473). Act 4 waits for it too, since the guard measured
-  without it from Eagle is over his 1 s. Sources: svc:289; Y:4826;
+  without it from Eagle is over his 1 s. Sources: svc:293; Y:4826;
   Y:3951–3956.
 
 #### Evidence, CI and the record
@@ -1424,11 +1425,11 @@ are lane 3's rulings memo's).
 - **FR-061**: The cost of a write (test 9) and the guard's figures (test 10)
   MUST be recorded in the pull-request bodies, never as CI thresholds.
   Sources: "The cost of a write is measured and recorded" (spec:1069);
-  svc:274.
+  svc:278.
 - **FR-062**: `docs/README-lanes.md` MUST gain "The SQL register", as the
   manual's requirement lists. Its server, backup and restore steps follow
   the install contract and the disaster path at Y (ops:133; ops:355).
-  Sources: spec:1090; spec:1097; svc:281.
+  Sources: spec:1090; spec:1097; svc:285.
 - **FR-063**: New bash MUST hold to bash 3.2, and new Python to the standard
   library on Python 3.9 or later. `dependencies = []` MUST stay. Source:
   "New code keeps to the toolchain floor" (svc:51).
@@ -1483,7 +1484,7 @@ are lane 3's rulings memo's).
     engine into a failure.
   - The fake-`psql` tests run everywhere.
 - **SC-002**: Q29's figure is measured on the warm p95 of the guard's whole
-  wall time on primary, without the service and through it (svc:289).
+  wall time on primary, without the service and through it (svc:293).
   - The cold walk is recorded beside it, and not judged.
   - Within 007, it is recorded in the PR body on the fixture, both local and
     at the emulated delay of AT-F6 (21).
@@ -1499,7 +1500,7 @@ are lane 3's rulings memo's).
   read returns, while a stub bind sleeps 15 s (AT-F6 (1); Y:5563).
 - **SC-005**: The service answers the guard's read in under 50 ms on the
   fixture register, from the client's connect to the last byte of a
-  digest-checked answer (svc:274; SVC-10, Y:4387).
+  digest-checked answer (svc:278; SVC-10, Y:4387).
 - **SC-006**: No write is lost or doubled in the tests (spec:236).
   - Test 12: exactly one journal entry per `write_id`, and exit 0 after a
     clean retry.
@@ -1516,7 +1517,7 @@ are lane 3's rulings memo's).
   build. A writer the rollback missed exits 69 and the journal's count is
   unchanged, in each of test 8's cases (spec:824).
 - **SC-010**: No environment that a session inherits carries a database URL
-  or a password, on a primary workstation (svc:172).
+  or a password, on a primary workstation (svc:176).
 - **SC-011**: The PR bodies record test 9's write cost and test 10's guard
   figures, beside files mode, on a named host, store and path (spec:1069).
 - **SC-012**: The hygiene suite passes over every new and changed file, under

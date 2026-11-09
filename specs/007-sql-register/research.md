@@ -24,7 +24,7 @@ Whose is written one of three ways:
   answer.
 
 **Citations** are spec.md's: `spec:<n>` and `svc:<n>` are lines of the sql
-spec and the service spec on this branch, at `ce3fad83`; `Y:<n>` is
+spec and the service spec on this branch, at `ad82c2f4`; `Y:<n>` is
 `design.md`, `ops:<n>` `operations.md` and `clar:<n>` `clarifications.md`,
 which are unchanged from Y. `Y-spec:<n>` and `Y-svc:<n>` are the two spec
 files' lines at Y, used only where an entry quotes Y's words that the
@@ -362,7 +362,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   built last" (clar:473), by his own word. Lane 3 had ruled the move first
   (6724332510, 6726078173), and named it on the spec PR's list as a change
   to his answer.
-- **Source:** svc:289; Y:4826; Y:3951–3956; clar:524–525.
+- **Source:** svc:293; Y:4826; Y:3951–3956; clar:524–525.
 
 ### DEC-02. The launcher's window reads are met outside 007 (R41)
 

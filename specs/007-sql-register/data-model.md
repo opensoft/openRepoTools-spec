@@ -6,7 +6,7 @@ restatement of it: where a requirement governs an object, it names the
 requirement, and the requirement's own words hold.
 
 **Citations** are spec.md's: `spec:<n>` and `svc:<n>` are lines of the
-change's two spec files on this branch, at `ce3fad83`; `Y:<n>` is a line of
+change's two spec files on this branch, at `ad82c2f4`; `Y:<n>` is a line of
 `design.md` and `ops:<n>` of `operations.md`, which are unchanged from Y.
 
 ## Where it lives
