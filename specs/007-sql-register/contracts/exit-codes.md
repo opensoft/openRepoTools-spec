@@ -2,7 +2,7 @@
 
 - **Owner of the `lanes-index` section:** lane 1 (`[L1]`), task T102. Each other lane adds its callers' arms in a section of its own below that section (plan.md's tree; [README.md](README.md)). A change to a `lanes-index` row goes through lane 1.
 - **Keyed to commit Y, `a6497d00`.** `Y:<n>` is a line of Y's `design.md`, and `ops:<n>` a line of Y's `operations.md` (the contract writes `Y-ops:<n>`). `code/lanes-index:<n>` is the code leg at the pin Y cites.
-- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5. The copy in this branch is draft 4.4, which keeps every section and line and differs only in §2.5's and §9's wording of the endpoint. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
+- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.4, which keeps every section and line and differs from 4.5 only in §2.5's and §9's wording of the endpoint. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
 - **By lane openRepoTools-1, 2026-11-09.** It answers PC-10 (research.md's Part 3; plan.md) and the test plan's open point 1, "The tests read the design's constant".
 
 **The marks:**
@@ -93,11 +93,11 @@ These rows restate the contract's exits, one row per code. The contract's text g
 | `register read`, forms 1 and 3 | 2 | a refused configuration, the TLS refusal included | contract §3.6 | T113 |
 | `register read`, form 2 (`--for guard --prefetch`) | 2 | only "too late to verify" (Y:4344's row) | contract §2.7, §3.6 | T113; lane 5's T507 |
 | `register read`, form 2 | 1 | a refused configuration, the TLS refusal included (O14) | contract §2.7, §3.6 | T113 |
-| `register read`, forms 1 to 3 | 69 | `refuse db <cause>`, a failed direct read, or its timer; from form 2, with `.outage` where a declaration applies ([config.md](config.md) §6) | contract §3.6 | T113; T507 |
+| `register read`, forms 1 to 3 | 69 | `refuse db <cause>`, a failed direct read, or its timer; by either path, a switch not `primary` or a `REGISTER_SCHEMA_VERSION` outside the readers' window (draft 4.6, :653). Under `--for guard`, its first stderr line is the cause: through the service `lanes-index: refuse db <cause> <SQLSTATE>`, `<cause>` one of `unreachable`, `auth`, `switch-files` and `schema`, and the same line, with `-`, from a direct read that found the switch or the window failing (draft 4.6, :767). From form 2, with `.outage` where a declaration applies ([config.md](config.md) §6) | contract §3.6 (draft 4.6, :653, :767) | T113; T507 |
 | `register read`, forms 1 to 3 | 78 | Q6(c) | contract §2.7; Y:2449–2451 | T113 |
 | `register read`, forms 1 to 3 | 64 | usage, an empty `--lane=` in form 2 included | contract §2.7, §3.6 | T113 |
 | `register read`, form 4 (`--for guard --at <n>`) | 0 | the one log's files written | contract §3.6 (B4) | T113 |
-| `register read`, form 4 | 69 | a log that could not be read: a missing `.head`, a generation that differs, an `--at <n>` above the head or below the generation's first seq, two logs that differ from the key only by case, or a failed read | contract §2.7, §3.6 (B3, B4, C11) | T113; T507 |
+| `register read`, form 4 | 69 | a log that could not be read: a missing `.head`, a generation that differs, an `--at <n>` above the head or below the generation's first seq, two logs that differ from the key only by case, a switch not `primary` or a `REGISTER_SCHEMA_VERSION` outside the readers' window (draft 4.6, :653), or a failed read | contract §2.7, §3.6 (B3, B4, C11; draft 4.6, :653) | T113; T507 |
 | `register read`, form 4 | 2 | too late to verify: a log that could not be read, which the guard notes and does not refuse | contract §2.7, §3.6 (B4; O19) | T113; T507 |
 | `register read`, form 4 | 1 | a refused configuration, the TLS refusal included: a log that could not be read | contract §2.7, §3.6 (B4; O14) | T113; T507 |
 | `register read`, form 4 | 78 | Q6(c): a log that could not be read | contract §2.7, §3.6 (B4) | T113; T507 |
@@ -213,9 +213,9 @@ Y fixes these codes, and the owner's task fixes the rest. The owner adds or corr
 | `render --revert <sha>`, `import --single <sha>` | 69 | their other calls: a failed read, or in doubt (3) where an earlier commit call of the same entry was | D9 (Y:3537) | lane 3's T324 |
 | `render --checkout`, `--until` | — | phase 3's ends are group C's; phase 2's answer is section 3.1's | contract §3.6, §3.7 | lane 3's T321 to T323 |
 | `serve` | 2 | unless the configuration says `primary`, Q6(c)'s refusal included | Y:3948–3953; FR-003 | lane 5's T512 |
-| `serve` | 2 | a run directory that fails its check; a socket path over 103 bytes; each with its stamp | Y:3765; Y:3779–3780; Y:3926–3930 | lane 5's T512 |
+| `serve` | 2 | a run directory that fails its check, which is never stamped: `serve` exits 2 naming the directory, and `lanes-index status` reports the failure itself (lane 3's OP-9, #165 6746215510, against Y:3928's `dir-check`); a socket path over 103 bytes, with its stamp, `path-too-long` | Y:3765; Y:3779–3780; Y:3926–3930; OP-9 | lane 5's T512 |
 | `serve` | 2 | [P] the stamp `config-refused`: a refused configuration, or a URL parameter SVC-2 does not map, as every refused configuration is 2 | Y:3812–3815; Y:3928–3929 | lane 5's T512 |
-| `serve` | [open] | the stamp `no-psql`: Y names no code | Y:3929 | lane 5's T512 |
+| `serve` | 2 | [P] the stamp `no-psql`, lane 5's proposal (#165 6746631207), which lane 1 takes: as with `path-too-long`, the directory check and `config-refused`, it is an end before the socket listens. Whether the service ever answers `refuse` without `psql` (`test-plan.md`:2028–2030) stays T511's OP-10, for lanes 2 and 3 | Y:3926–3929 | lane 5's T512 |
 
 ### 4. PC-10: the import's refusal and the cutover's abort, each 2
 

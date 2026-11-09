@@ -2,7 +2,7 @@
 
 - **Owner:** lane 1 (`[L1]`), task T102. Lane 1's T103 builds the mapping (section 3.3), T104 the keys and refusals (sections 2 and 4), and T121 the declaration's writer (section 6). Lane 5's T507 reads the declaration, and its T512 starts `serve` from the same file.
 - **Keyed to commit Y, `a6497d00`.** `Y:<n>` is a line of Y's `design.md`, and `ops:<n>` a line of Y's `operations.md` (the contract writes `Y-ops:<n>`). `code/lanes-index:<n>` is the code leg at the pin Y cites.
-- **The contract** is [register-cli.md](register-cli.md), cited by section; its §2.5 is the keys each register call reads. This file was written against its draft 4.5; the copy in this branch is draft 4.4, which differs only in §2.5's and §9's wording of the endpoint. Where this file and the contract differ, the contract holds. The exit codes are [exit-codes.md](exit-codes.md)'s.
+- **The contract** is [register-cli.md](register-cli.md), cited by section; its §2.5 is the keys each register call reads. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.4, which differs from 4.5 only in §2.5's and §9's wording of the endpoint. Where this file and the contract differ, the contract holds. The exit codes are [exit-codes.md](exit-codes.md)'s.
 - **By lane openRepoTools-1, 2026-11-09.**
 - **No real value is written here:** every host, address, login and file is a placeholder in angle brackets, and the endpoint is `<endpoint>`.
 
@@ -228,10 +228,10 @@ last-head=<seq>
 ### 6.4 How the guard reads it [Y]
 
 SVC-12's conditions, checked in order, offline (Y:4439–4466; ops:517–519):
-1. **Its database read failed:** `register read` exit 69 (Y:4445–4446; ops:517), or a read that found the switch at `files`, which counts as failed (D20, Y:609–610; ops:517).
+1. **Its database read failed:** `register read` exit 69 (Y:4445–4446; ops:517), or a read that found the switch at `files`, which counts as failed (D20, Y:609–610; ops:517). By either path that read is a 69 whose cause line names `switch-files` (contract draft 4.6, :653, :767).
 2. **The declaration counts** (Y:4447–4454; ops:518). `register-outage` is present beside `lanes-index.conf`, well formed and unexpired, and names this workstation's database label: [P] its `database=` equals the reading host's `register_label=`.
    - With `kind=word`, it is unexpired until `until=`, after which every guard ignores it (ops:542).
-   - With `kind=rollback`, it carries no expiry and counts as unexpired until it is cleared, but only where condition 1's read found the switch at `files` (Y:4449–4454).
+   - With `kind=rollback`, it carries no expiry and counts as unexpired until it is cleared, but only where condition 1's read found the switch at `files`, its cause `switch-files` (Y:4449–4454; contract draft 4.6, :767).
    - The client reads it once, at the prefetch, before the direct read (Y:4448–4449; ops:518). A file that is not well formed fails this condition.
 3. **The mirror is new enough:** `origin/main` as last fetched carries a `Register-Seq` of at least `mirror-seq=`, read by form C (Y:4455–4466; ops:519).
 
