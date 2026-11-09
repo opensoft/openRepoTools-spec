@@ -10,8 +10,9 @@ branch merges whole at `066ad8f1`. Citations are spec.md's: `Y:<n>`,
 > **Assembly phase A.** This plan, spec.md and research.md are keyed to Y,
 > with lane 3's rulings memo (R01 to R61), lane 3's assembly notes and the
 > rulings since. `tasks.md` is phase B, assembled from the lanes' blocks:
-> lane 1's v4, out at 11:25Z (#165 6738871108), lane 5's v5 with its review's
-> section D, lane 2's at 18:00Z, and lane 4's revision on 2026-11-09.
+> lane 1's v4.1, out at 11:42Z (#165 6739202842), lane 5's v5 with its
+> review's section D, lane 2's at 18:00Z, and lane 4's revision on
+> 2026-11-09.
 >
 > **Marks:**
 >
@@ -262,7 +263,7 @@ specs/007-sql-register/
 ├── quickstart.md        # Phase 1: a primary workstation on the fixture, by hand
 ├── contracts/
 │   ├── README.md        # the copy's source and digest, and each contract's owner
-│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4, copied in at phase A.
+│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.1, copied in at phase A.
 │   │                    #   THE CONTRACT BETWEEN GROUPS A AND B (FR-013 to FR-017),
 │   │                    #   and the readers' four forms (§3.6, which lane 5 reviews)
 │   ├── exit-codes.md    # [L1] T102: the lanes-index rows; each lane adds its callers' arms
@@ -277,12 +278,13 @@ specs/007-sql-register/
 
 `contracts/register-cli.md` is fixed before group B codes against it. Lane 1
 writes it, lane 4 confirms group B's sections, lane 5 reviews §3.6, and lane
-3 rules (R01, R06). Lane 1's draft 4, keyed to Y (`5d6ce7ca…`, 939 lines;
-#165 6738871108), folds in form 4, lane 5's review of §3.6 and lane 3's B4
-and B7. Lane 3 copied it into `contracts/register-cli.md` byte for byte, and
-[contracts/README.md](contracts/README.md) names its source and digest. Its
-§8 closes O14 to O20, and leaves only O21, lane 4's. Lane 1's T101 lands the
-final text at that path.
+3 rules (R01, R06). Lane 1's draft 4.1, keyed to Y (`df40136e…`, 954 lines;
+#165 6739202842), is draft 4 (`5d6ce7ca…`, 6738871108), which folds in
+form 4, lane 5's review of §3.6 and lane 3's B4 and B7, plus lane 5's check
+of draft 4 (6739068493). Lane 3 copied it into `contracts/register-cli.md`
+byte for byte, and [contracts/README.md](contracts/README.md) names its
+source and digest. Its §8 closes O14 to O20, and leaves only O21, lane 4's.
+Lane 1's T101 lands the final text at that path.
 
 ### Source Code (the code leg, `opensoft/openRepoTools-code` at `e39395895`)
 
@@ -557,10 +559,11 @@ Lane 4's group B plan is this section's source, summarised here and cited by
 its sections, never copied: lane 4's `group-B-plan.md`, sha256 `c84caab4…`,
 771 lines, with its block `lane4-block-T4xx.md`, `b95a1ff9…`, 381 lines
 (T401 to T434). Both are keyed to W, lane 1's contract draft 1 and slice 1b
-`34799b74`. Contract draft 4 changes none of group B's sections, §3.1 to
-§3.5 (its change list). Lane 4's whole revision, keyed to X with lane 1's
-draft 2 and lane 2's names, comes on 2026-11-09 (#165 6726825389); lane 3
-takes it at phase B.
+`34799b74`. Contract draft 4 changed group B's sections, §3.1 to §3.5,
+only by two citation-only edits, in §3.2 and §3.3, and draft 4.1 changes
+none of them (draft 4.1's change list). Lane 4's whole revision, keyed to X
+with lane 1's draft 2 and lane 2's names, comes on 2026-11-09 (#165
+6726825389); lane 3 takes it at phase B.
 
 - **Scope** (GB §1): U2's read verbs and arms (T401 to T408), U3's
   `act-begin` and `--walk` (T410, T411), and group B (T409, T412 to T434),
@@ -665,7 +668,7 @@ Governed already, and unchanged by this feature, which adds no installable:
 | DP-6 | v3f, lane 2's test plan | test names and prefixes for every `verify:` | in J3, and so in Y | every task's `verify:` |
 | DP-7 | Commits X, J3 and Y, and the freeze | this feature keyed to Y | done: frozen at Y | — |
 | DP-8 | The change's spec PR | 007's branches pushed, and its code PRs allowed to land | 007 exists locally; the PR goes to Brett with its list | every 007 code PR |
-| DP-9 | The lanes' blocks: lane 1's v4 (`203794ec…`, 638 lines, T101 to T122), lane 2's (18:00Z), lane 4's revision (2026-11-09); lane 5's v5 with its review's section D | tasks.md | lane 1's v4 is out (6738871108); the others are due today | phase B |
+| DP-9 | The lanes' blocks: lane 1's v4.1 (`53e66ced…`, 644 lines, T101 to T122), lane 2's (18:00Z), lane 4's revision (2026-11-09); lane 5's v5 with its review's section D | tasks.md | lane 1's v4.1 is out (6739202842); the others are due today | phase B |
 | DP-10 | The root's `composed.yml` switch, lane 1's R1 | `exact-pins` refuses a real-engine skip | to open | group A's first PR that needs a database |
 | DP-11 | PostgreSQL 16 in the bench images (openBenches, lane 2's PR) and the image rebuild (Brett's) | real-engine tests run on the benches | open | bench runs only; CI does not wait |
 | DP-12 | Slices 2a, 2b and 3 | act 4 waits for them (Q28(i)) | 2a is code#18; ready by 2026-11-17 | act 4, not 007 |
@@ -766,7 +769,7 @@ The draft's O1 to O5 are closed: U1 to U11 and PC-1 to PC-16 by lane 3's
 re-keying. These stay open, each with its owner:
 
 - **O21, lane 4's:** C2's (a) or (b) for T401's reader of a render-set path,
-  the only point contract draft 4's §8 leaves open. Lane 1 prefers (a):
+  the only point contract draft 4.1's §8 leaves open. Lane 1 prefers (a):
   `register-text` answers `lanes/LANES.md`, `lanes/aliases.tsv` and
   `lanes/log/*`, and 2 for any other path. Under (b), draft 5 adds
   `register read --at <n> --path <p> --cache <file>`. Lane 3 does not
@@ -774,7 +777,11 @@ re-keying. These stay open, each with its owner:
 - **Lane 2's:** where the new cases go: `tls_at_load`,
   `dump_restore_privileges` and `rotate_dump_job` (lane 1's T104, T109 and
   T110), and `guard_second_read_at`, `log_key_hex_slot` and
-  `journal_last_pickaxe` (lane 1's T113 and T114).
+  `journal_last_pickaxe` (lane 1's T113 and T114); and, with v3f, the
+  `[J3]` word for form 4's proof of "too late", which lane 5's T507 carries
+  in its own verify, beside its form-2 test for "too late", since only T507
+  has `T0` (lane 1's block v4.1; lane 5, #165 6739068493). T113's case
+  does not prove it.
 - **Brett's, on the spec PR's list:** Q21(b)'s ruleset scope, and whether
   the org's GitHub plan supports it; the design's differences from
   Amendments 22 and 23; lane 1's root acts R1 to R4 as 007's PRs under his

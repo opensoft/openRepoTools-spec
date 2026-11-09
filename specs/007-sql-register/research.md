@@ -27,8 +27,8 @@ spec, `svc:<n>` the service spec, `ops:<n>` `operations.md` and `clar:<n>`
 `clarifications.md`, all at Y. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4 (`contracts/register-cli.md`, `5d6ce7ca…`) and its
-block is v4 (`203794ec…`), both keyed to Y.
+contract is its draft 4.1 (`contracts/register-cli.md`, `df40136e…`) and
+its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
 
 ## Part 1: errata against the frozen text
 
@@ -232,8 +232,8 @@ block is v4 (`203794ec…`), both keyed to Y.
 
 - **The erratum:** lane 1's texts, folded into X, cite W's line numbers: 149
   citations shift. The frozen text keeps them. Lane 1 re-cited its own parts
-  against Y, and its contract draft 4 and block v4 keep Y's numbering. Three
-  citations were already wrong at W: C1's
+  against Y, and its contract draft 4.1 and block v4.1 keep Y's numbering.
+  Three citations were already wrong at W: C1's
   `proposal.md:607-611` and `:683-693` (Y:2232), and D2's
   `proposal.md:1810-1813` (ops:190).
 - **Whose:** lane 1's finding (#165 6726995665); lane 3's ruling to record it
@@ -337,7 +337,7 @@ block is v4 (`203794ec…`), both keyed to Y.
 
 ### DEC-04. The guard's second read stays at `n`; every other second read is at `n′` (O17)
 
-- **The decision:** Y:4159–4160 (SVC-8) and Y:4900 (the phase plan) each
+- **The decision:** Y:4159–4161 (SVC-8) and Y:4900 (the phase plan) each
   hold in their own scope.
   - **The guard:** one prompt decides on one snapshot, so its second read
     resolves the log at the head it prefetched, `n`, and refetches nothing.
@@ -352,8 +352,8 @@ block is v4 (`203794ec…`), both keyed to Y.
     journal's history (Y:4834).
 - **Whose:** lane 3's ruling, #165 6727201960. Lane 1 picked form 4's argv
   (6727229519), lane 5 confirmed it with B1 (`--pid`) and B2 (`--cache`) in
-  its §3.6 review (6738431117), and lane 1's contract draft 4 carries it.
-- **Source at Y:** Y:4159–4160; Y:4900; Y:4834.
+  its §3.6 review (6738431117), and lane 1's contract draft 4.1 carries it.
+- **Source at Y:** Y:4159–4161; Y:4900; Y:4834.
 
 ### DEC-05. Form 4 fails open on every end but 0 (B4)
 
@@ -368,6 +368,13 @@ block is v4 (`203794ec…`), both keyed to Y.
   an advisory read, which today's guard does not refuse over; failing open
   answers a handoff request one prompt late; and the cap ends form 4 before
   the hook's 5 s.
+- **Where it is proven** (lane 1's block v4.1, on lane 5's check, #165
+  6739068493): form 4's "too late", a start at or past `T0` + 3.75 s, is
+  proven in lane 5's T507's own verify, beside its form-2 test for "too
+  late", since only T507 has `T0`, the clamp, the cap and the floor. Lane
+  1's T113 ships the bounds: `--pid`, the cap at `T0` + 3.75 s and D9's
+  guard row. Its case `guard_second_read_at` keeps items 1 to 8, and item
+  9's ends 69, 78, 1 and 64.
 - **Source at Y:** Y:4269–4271.
 - **The SHALL, changed:** at Y the service spec's budget requirement said
   that a guard's client starting at or past the direct read's cap "SHALL

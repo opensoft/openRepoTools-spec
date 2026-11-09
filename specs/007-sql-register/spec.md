@@ -425,7 +425,7 @@ User Story 2 secures.
    verb reaches it, **Then** it makes one more `register read`, never a git
    read: at the current head `n′`, with the family refetched there, for
    every primitive but the guard; at the prefetched head `n`, for the guard
-   (Y:4900; Y:4159–4160; O17).
+   (Y:4900; Y:4159–4161; O17).
 
 **OpenSpec requirements**:
 
@@ -1029,7 +1029,7 @@ are lane 3's rulings memo's).
   Sources: the interfaces table (Y:4832); LR004's row (Y:1567; Y:2614).
 - **FR-015**: `lanes-index register read` MUST return the text at a head
   with per-file digests, and the `n` and generation it read in that
-  snapshot, in four forms (R06; O17; lane 1's contract draft 4, §3.6):
+  snapshot, in four forms (R06; O17; lane 1's contract draft 4.1, §3.6):
   1. the readers' prefetch, `--prefetch --cache <file>` with `--files` or
      `--all`, at `n`;
   2. the guard's prefetch, `--for guard` with `--pid`, `--repo` and
@@ -1040,7 +1040,7 @@ are lane 3's rulings memo's).
   4. the guard's second read,
      `--for guard --at <n> --pid <pid> --cache <file> --lane=<key>`, which
      reads one log at the prefetched `n`, takes the generation from `.head`,
-     and refetches nothing (Y:4159–4160).
+     and refetches nothing (Y:4159–4161).
 
   Form 4 MUST always read directly, never through the service, and MUST
   treat every end but 0 as a log that could not be read, which the guard
