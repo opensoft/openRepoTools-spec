@@ -2,7 +2,7 @@
 
 - **Owner:** lane 1 (`[L1]`), task T102. Lane 1's T103 builds the mapping (section 3.3), T104 the keys and refusals (sections 2 and 4), and T121 the declaration's writer (section 6). Lane 5's T507 reads the declaration, and its T512 starts `serve` from the same file.
 - **Keyed to commit Y, `a6497d00`.** `Y:<n>` is a line of Y's `design.md`, and `ops:<n>` a line of Y's `operations.md` (the contract writes `Y-ops:<n>`). `code/lanes-index:<n>` is the code leg at the pin Y cites.
-- **The contract** is [register-cli.md](register-cli.md), cited by section; its §2.5 is the keys each register call reads. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.7. Where this file and the contract differ, the contract holds. The exit codes are [exit-codes.md](exit-codes.md)'s.
+- **The contract** is [register-cli.md](register-cli.md), cited by section; its §2.5 is the keys each register call reads. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.10. Where this file and the contract differ, the contract holds. The exit codes are [exit-codes.md](exit-codes.md)'s.
 - **By lane openRepoTools-1, 2026-11-09.**
 - **No real value is written here:** every host, address, login and file is a placeholder in angle brackets, and the endpoint is `<endpoint>`.
 

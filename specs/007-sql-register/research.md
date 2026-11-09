@@ -8,7 +8,7 @@ Secret, corrected after Y on lane 1's word (#165 6742453803). This file
 records what the rulings since the freeze decide for 007, and the errors found
 in the frozen text.
 
-- **Part 1, the errata** (ERR-01 to ERR-37; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-39; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
 - **Part 2, the decisions** (DEC-01 to DEC-24): a choice the change leaves
@@ -33,8 +33,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.7 (`contracts/register-cli.md`, `429f74ef…`,
-#165 6747384945) and its block is v4.8 (`8d3e6ce2…`, #165 6747384945),
+contract is its draft 4.10 (`contracts/register-cli.md`, `e2b51782…`,
+#165 6748303517) and its block is v4.10 (`fe74285f…`, #165 6748303517),
 both keyed to Y, both keeping v4.2's line numbers.
 
 ## Part 1: errata against the frozen text
@@ -516,6 +516,34 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Whose:** lane 3's ruling on T408, #165 6747422030.
 - **Source:** Y:5740; Y:3022.
 
+### ERR-38. The printed rerun's `LANES_SESSION` is the value the digest took (T412's G2)
+
+- **The erratum:** Y:5200's printed rerun reads `LANES_SESSION=<the value <d>
+  took, empty where the run had none>`, in place of `LANES_SESSION=<uuid>`.
+  The digest `<d>` takes `<LANES_SESSION>` "as given on the original command
+  line" (Y:5171), so a rerun must carry exactly that value, or its own digest
+  differs and it meets LR007. Lane 5 checks that `start-record`'s lookup
+  (Y:5431) never meets the empty case.
+- **Whose:** lane 3's ruling on T412's G2, (a), #165 6747592174.
+- **Source:** Y:5200; Y:5171; Y:5431.
+
+### ERR-39. On register paths the URL is the whole connection
+
+- **The erratum:** Y:4970 drops only the inherited `PGPASSWORD`, `PGPASSFILE`,
+  `PGSERVICEFILE` and `PGSYSCONFDIR`. On register paths every inherited
+  variable whose name begins `PG` is dropped first, and `psql` gets only the
+  URL's mapping (SVC-2), the configured `PGPASSFILE` and `PGCONNECT_TIMEOUT`
+  at `c`, so that "the direct read and the service connect identically"
+  (Y:4970) whatever the shell exports. The register paths are the writer's and
+  reader's connections built from `register_url=` and `reader_url=`, the
+  direct read, and lane 5's `serve` through `pg_url_env`. The admin path keeps
+  `PGSERVICE=<service>`, as T109's `--admin-service` sets it, and nothing else
+  inherited. #160's index paths are unchanged. Contract draft 4.10's §2.2
+  states it (:214).
+- **Whose:** lane 3's ruling, (a), #165 6747611042, on lane 1's question in
+  6747565816. It narrows only the new register paths, inside FR-011.
+- **Source:** Y:4970.
+
 ## Part 2: decisions
 
 ### DEC-01. The service is built beside groups A and B, and the v1.2.0 tag waits for it (R35)
@@ -830,13 +858,19 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   `register_schema=` (Y:2323), and Y's bytes stay the template (Y:1039–1040),
   so no erratum is needed.
   - Only whole identifier tokens are substituted, in `CREATE SCHEMA`, every
-    `search_path` and every `lanes_register.` qualifier.
+    `search_path`, every `lanes_register.` qualifier, and the role block's
+    bare schema names after `ON SCHEMA` and `IN SCHEMA`, its 8 sites in
+    Y:2243–2278 (#165 6748109738). Migration 1 has none of the last, so its
+    rendering is unchanged.
   - The three role names, `lanes_register_owner`, `_writer` and `_reader`,
     stay as they are.
   - After rendering, the bootstrap refuses with 2 if `lanes_register` remains
     as anything but those three roles.
   - `register_schema=` is a plain lowercase identifier,
     `[a-z_][a-z0-9_]{0,62}`; anything else is the configuration's own refusal.
+    It may not equal the index half's schema, `lanes_index` or the configured
+    `schema=`, since that would meet #160's `schema_version` table, and may
+    not begin `pg_`, PostgreSQL's reserved prefix (#165 6748109738).
   - The migrations table keeps Y's template digest as `script_sha256`, and the
     bootstrap prints the rendered script's digest beside it; no column is
     added (lane 1's 6746948770, its suggestion A, which lane 3 takes). Y's
@@ -846,13 +880,14 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
     so the two digests are equal.
 - **Whose:** lane 3's ruling (a), #165 6746655077, on lane 1's question in
   6746601663; its last condition is lane 1's suggestion A in 6746948770, which
-  lane 3 takes.
+  lane 3 takes; its sites and refusals as lane 3's ruling (a), #165
+  6748109738, widens them, on lane 1's T109 question in 6748099727.
 - **Why:** it keeps Y:2323, :3175 and :6035 as they stand, and the rehearsal
   stays in the same database as Y planned. Option (b) would need three errata
   and drop `register_schema=`. Lane 2's `schema` module pins the rendering
   both ways.
-- **Source:** Y:2323; Y:1039–1040; Y:1051–1056; T109, whose task text block
-  v4.7 carries.
+- **Source:** Y:2323; Y:1039–1040; Y:1051–1056; Y:2243–2278; T109, whose task
+  text blocks v4.7 and v4.10 carry.
 
 ### DEC-24. A 007 task widens to an existing test file only where its own change fails that test
 
