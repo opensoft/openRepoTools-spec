@@ -3,30 +3,44 @@
 This directory holds the contract files that plan.md lists. Each is written
 by the lane that owns it, and lands before the code that rests on it.
 
-## `register-cli.md`: lane 1's contract draft 4.2, keyed to Y
+## `register-cli.md`: lane 1's contract draft 4.4, keyed to Y
 
-[register-cli.md](register-cli.md) is lane 1's contract draft 4.2, keyed to
-Y (`a6497d00`), copied here byte for byte by lane 3 at fix round B on
-2026-11-09. It replaces draft 4.1, which lane 3 copied in at assembly phase
-A in place of draft 4.
+[register-cli.md](register-cli.md) is lane 1's contract draft 4.4, keyed to
+Y (`a6497d00`), copied here byte for byte by lane 3 at fix round B2 on
+2026-11-09. It replaces draft 4.2, which lane 3 copied in at fix round B in
+place of draft 4.1, which replaced draft 4 at assembly phase A.
 
-- **Source:** lane 1's contract draft 4.2, `contracts-register-cli.v4.2.md`,
-  which lane 3 sent to 007 at fix round B (#165 6741494851).
+- **Source:** lane 1's contract draft 4.4, `contracts-register-cli.v4.4.md`,
+  posted on #165 at 6742751889.
 - **sha256:**
-  `dea51e4309f8773dbe4f30ec99580cb3b4bcfca3d7f2f88ed5fcd85c755206a2`, 963
-  lines. The copy here has the same digest.
-- **What draft 4.2 changes:** it is draft 4.1 with O21 closed by lane 4's
-  (a) (#165 6741093519). §8's O21 row reads closed; §3.6's "Not settled
-  here" leaves nothing unsettled; the C2 text in §3.6 and the header's note
-  on lane 5's review say O21 is closed; and the status line, its history
-  and a one-row "Changes from draft 4.1" section record it.
+  `8600078b571b36aee39a6346ad479084797ae91bbdb3a4748f8a9c7f4104a0be`, 963
+  lines. The copy here has the same digest. Drafts 4.3 and 4.4 keep every
+  line number of draft 4.2.
+- **What draft 4.4 changes:** it is draft 4.3 with lane 4's log set in
+  §3.6's C2 text (:811) and §8's O21 row (:947): each `lanes/log/<lane>.md`,
+  and 2 for `lanes/log/README.md`; and its status and history lines.
+- **What draft 4.3 changes** (#165 6742023901, `2cf9fd54…`): it is draft
+  4.2 with lane 5's 6741787745 taken. `reg_flush` also runs
+  `lane_alias_flush` (:815); `journal --last --at <n>` requires
+  `--generation <g>`, ending 64 without it and 69 for an `n` above the head
+  or another generation (:792, :796); and §1 names `--store-line` (R43,
+  T509) and `--decide` (R38, T502) as `lanes-edit.sh`'s own flags, outside
+  the contract (:182).
+- **What draft 4.2 changes** (`dea51e43…`, #165 6741494851): it is draft 4.1
+  with O21 closed by lane 4's (a) (#165 6741093519). §8's O21 row reads
+  closed; §3.6's "Not settled here" leaves nothing unsettled; the C2 text in
+  §3.6 and the header's note on lane 5's review say O21 is closed; and the
+  status line, its history and a one-row "Changes from draft 4.1" section
+  record it.
 - **Draft 4.1, posted:** #165 comment 6739202842, 2026-11-09T11:42Z,
   sha256 `df40136e…`, 954 lines, with lane 1's block v4.1
   (`lane1-tasks-block.v4.1.md`, `53e66ced…`, 644 lines, T101 to T122).
 - **The block in force:** lane 1's block v4.2 (`cad0fa93…`, 660 lines, T101
   to T122), #165 6739714248. It follows lane 3's restore order, the ruling
-  on test-plan open point 41 (#165 6739605144). The contract, at draft
-  4.2 as at 4.1, gives no restore order.
+  on test-plan open point 41 (#165 6739605144). Block v4.4 (`a4ce9e3b…`,
+  660 lines, #165 6742356416) replaces it for 007's tasks, and keeps its
+  line numbers. The contract, at draft 4.4 as at 4.1, gives no restore
+  order.
 - **What draft 4.1 changes:** it is draft 4 (#165 6738871108, `5d6ce7ca…`,
   939 lines) with lane 5's check of draft 4 taken (#165 6739068493). The
   quote of the guard's second read is cited as Y:4160–4161; the change list
@@ -43,8 +57,9 @@ A in place of draft 4.
   rules (R01, R06).
 - **Its open points:** none. Its §8 closes O14 to O21. O21 is closed by
   (a), lane 4's choice (#165 6741093519): T401's `register-text` and
-  `register-grep` answer `lanes/LANES.md`, `lanes/aliases.tsv` and
-  `lanes/log/*`, and 2 for any other path.
+  `register-grep` answer `lanes/LANES.md`, `lanes/aliases.tsv` and each
+  `lanes/log/<lane>.md`, and 2 for any other path, `lanes/log/README.md`
+  included (draft 4.4, :811 and :947).
 - **L1-D1's scope** (lane 1's own decision, 6738871108): the `=` form,
   `--lane=<key>` and `--log-key=<key>`, applies to `register read`'s
   `--lane` and `--log-key` only. Group B's `--lane <lane>`, on

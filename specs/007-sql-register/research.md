@@ -2,14 +2,16 @@
 
 Phase 0 of `/speckit.plan`, keyed to commit Y (`a6497d00`) of the change
 `add-sql-register`, which the spec branch merges at `066ad8f1`. The change is
-frozen at Y but for its two spec files, which lane 3's rulings since change
-on this branch (ERR-03; DEC-05). This file records what the rulings since
-the freeze decide for 007, and the errors found in the frozen text.
+frozen at Y but for its two spec files, which lane 3's rulings since change on
+this branch (ERR-03; DEC-05), and one clause of `operations.md`, item 2's
+Secret, corrected after Y on lane 1's word (#165 6742453803). This file
+records what the rulings since the freeze decide for 007, and the errors found
+in the frozen text.
 
 - **Part 1, the errata** (ERR-01 to ERR-22; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-21): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-22): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -31,9 +33,9 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.2 (`contracts/register-cli.md`, `dea51e43…`,
-#165 6741494851) and its block is v4.2 (`cad0fa93…`, #165 6739714248),
-both keyed to Y.
+contract is its draft 4.4 (`contracts/register-cli.md`, `8600078b…`,
+#165 6742751889) and its block is v4.4 (`a4ce9e3b…`, #165 6742356416),
+both keyed to Y, both keeping v4.2's line numbers.
 
 ## Part 1: errata against the frozen text
 
@@ -636,6 +638,25 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Whose:** lane 1's own decision, as the contract's author, taking lane 5's
   O15 (#165 6738431117): lane 1's block v4, T121.
 - **Source:** ops:490; D20 (Y:599).
+
+### DEC-22. The delayed loopback is a relay in the standard library
+
+- **The decision:** AT-D9c (d) and AT-F6's case 21 (T510) run through a
+  relay in the standard library, between the client and the primary
+  fixture's TLS port, which delays each byte by the delay the case names. It
+  needs no root, and both cases keep the delay and TLS they name. The relay
+  is lane 2's, a test fixture placed with lane 2's block. Lane 5's
+  `tc netem` harness stays open as a bench-only check, never a CI gate.
+- **Whose:** lane 3's ruling, option B, #165 6741861590, on the test plan's
+  open point 23, the delayed loopback (lane 2's question 3 of 6722518182).
+  It is not R35 or R36, which rule lane 5's own point 23.
+- **Why:** option A needs root and a `sch_netem` no one has checked on
+  GitHub's runner; option C leaves the guard's timing under a slow read, and
+  libpq's connect path under delay, to act 3's rows. The relay delays the
+  TCP handshake, TLS and each query round trip, the terms the design's
+  figures count. It models no slow start and no loss: lane 5's netem run and
+  act 3's rows cover those.
+- **Source:** the test plan's open point 23 at Y (section 5.6); T510.
 
 ## Part 3: the choices the design leaves to the plan
 

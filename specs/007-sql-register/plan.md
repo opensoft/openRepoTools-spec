@@ -265,7 +265,7 @@ specs/007-sql-register/
 ├── quickstart.md        # Phase 1: the operator's and an engineer's first steps
 ├── contracts/
 │   ├── README.md        # the copy's source and digest, and each contract's owner
-│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.2, copied in at fix round B.
+│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.4, copied in at fix round B2.
 │   │                    #   THE CONTRACT BETWEEN GROUPS A AND B (FR-013 to FR-017),
 │   │                    #   and the readers' four forms (§3.6, which lane 5 reviews)
 │   ├── exit-codes.md    # [L1] T102: the lanes-index rows; each lane adds its callers' arms
@@ -280,11 +280,12 @@ specs/007-sql-register/
 
 `contracts/register-cli.md` is fixed before group B codes against it. Lane 1
 writes it, lane 4 confirms group B's sections, lane 5 reviews §3.6, and lane
-3 rules (R01, R06). Lane 1's draft 4.2, keyed to Y (`dea51e43…`, 963 lines;
-#165 6741494851), is draft 4.1 (`df40136e…`, 6739202842) with O21 closed by
-lane 4's (a) (6741093519). Draft 4.1 is draft 4 (6738871108), with form 4,
-lane 5's review of §3.6, lane 3's B4 and B7 and lane 5's check (6739068493).
-Lane 3 copied draft 4.2 into `contracts/register-cli.md` byte for byte, and
+3 rules (R01, R06). Lane 1's draft 4.4, keyed to Y (`8600078b…`, 963 lines;
+#165 6742751889), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
+lane 4's (a) (6741093519), lane 5's 6741787745 (draft 4.3, 6742023901) and
+lane 4's log set. Draft 4.1 is draft 4 (6738871108), with form 4, lane 5's
+review of §3.6, lane 3's B4 and B7 and lane 5's check (6739068493).
+Lane 3 copied draft 4.4 into `contracts/register-cli.md` byte for byte, and
 [contracts/README.md](contracts/README.md) names its source and digest. Its
 §8 closes O14 to O21. Lane 1's T101 lands the final text at that path.
 
@@ -774,14 +775,12 @@ could object in its block. research.md records each with its source at Y.
 The draft's O1 to O5 are closed: U1 to U11 and PC-1 to PC-16 by lane 3's
 007 call (6724332510); O3, whether the tag waits for the service, by Brett's
 "4A" (6726766577); O4 by the install contract at Y (ops:133); O5 by this
-re-keying. These stay open, each with its owner:
+re-keying. O21, C2's (a) or (b) for T401's reader of a render-set path, is
+closed by lane 4's (a) (6741093519), in contract draft 4.2 and later:
+`register-text` and `register-grep` answer `lanes/LANES.md`,
+`lanes/aliases.tsv` and each `lanes/log/<lane>.md`, and 2 for any other
+path. These stay open, each with its owner:
 
-- **O21, lane 4's:** C2's (a) or (b) for T401's reader of a render-set path,
-  the only point contract draft 4.1's §8 leaves open. Lane 1 prefers (a):
-  `register-text` answers `lanes/LANES.md`, `lanes/aliases.tsv` and
-  `lanes/log/*`, and 2 for any other path. Under (b), draft 5 adds
-  `register read --at <n> --path <p> --cache <file>`. Lane 3 does not
-  decide it.
 - **Lane 2's:** where the new cases go: `tls_at_load`,
   `dump_restore_privileges` and `rotate_dump_job` (lane 1's T104, T109 and
   T110), and `guard_second_read_at`, `log_key_hex_slot` and
