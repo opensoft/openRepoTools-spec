@@ -2,9 +2,9 @@
 
 - Owner: lane 5 (R50). Tag: [L5]. Feature 007, `contracts/socket-api.md`, which tasks.md's T511 writes.
 - Built on by T512 (`lanes-index serve`, with `register read` as its client) and T513 (the `SessionStart` block's `lanes-index serve --start`). It is the source for lane 3's T341, "the socket API" in the manual's part 2 (tasks:1382).
-- Status: draft 2, written by lane openRepoTools-5 on 2026-11-09, under lane 1's review (U5). Draft 1 is commit `51fbd17b`. Draft 2 adds section 13, the bytes on the socket, as lane 5's proposal, and section 14 lists what it changed. It lands no earlier than the spec PR, and before T512 (tasks:1378).
+- Status: draft 3, written by lane openRepoTools-5 on 2026-11-09, under lane 1's review (U5). Draft 1 is commit `51fbd17b`, and draft 2, which added section 13, the bytes on the socket, as lane 5's proposal, is `7d462a5e`. Draft 3 folds in lane 3's rulings on OP-1, OP-2, OP-8, OP-9 and OP-14 (#165 6746215510, with its correction of OP-8 and its ruling on OP-15's bounds in #165 6746655077) and lane 1's answers on OP-4 to OP-7, OP-11, OP-13 and OP-15 (#165 6746620707, with lane 1's contract draft 4.6), and section 13 now encodes the set requests, as lane 5's proposal. Section 14 lists what each draft changed. It lands no earlier than the spec PR, and before T512 (tasks:1378).
 - In one line, as the manual will say it: the service answers the register's text at `n`, and the reader decides (svc:286; Y:4093–4100).
-- What it fixes: where the socket lives and how both ends check it, who may connect, what a request carries, the three answers, the limits, how the service connects, how it starts and stops, `serve --start`, and the client's side as far as the socket reaches. Section 13 proposes the bytes on the socket, section 14 lists draft 2's changes, and section 15 lists what the sources leave open or say two ways. Nothing here adds a value the sources do not give, except section 13's proposals, each marked "(proposal, lane 5)" with its reason.
+- What it fixes: where the socket lives and how both ends check it, who may connect, what a request carries, the three answers, the limits, how the service connects, how it starts and stops, `serve --start`, and the client's side as far as the socket reaches. Section 13 proposes the bytes on the socket, section 14 lists each draft's changes, and section 15 lists the open points, each closed with its ruling or answer, or still open with its owners. Nothing here adds a value the sources do not give, except section 13's proposals, each marked "(proposal, lane 5)" with its reason.
 
 ## 0. Basis, and how to read it
 
@@ -20,8 +20,12 @@
 | Lane 5's text 8″, `TEXTS-lane5-X-8pp-20261108T1839Z.md` | `e7a34f164124f207…` | 44 | text 8″a, 8″b |
 | Lane 1's contract draft 4.4, `contracts-register-cli.v4.4.md` | `8600078b571b36ae…` | 963 | `CLI44:<n>` |
 | Lane 1's contract draft 4.5, B3's `specs/007-sql-register/contracts/register-cli.md`. It differs from draft 4.4 only inside lines 5, 12, 273 and 957, none of which this contract cites | `da5a23ce00bff824…` | 963 | `CLI45:<n>` |
+| Lane 1's contract draft 4.6, `contracts-register-cli.v4.6.md`, which lane 3 takes into B4 in place of draft 4.5 (#165 6746655077). It differs from draft 4.5 only inside lines 5, 12, 653, 665, 673, 730, 764 and 767, and keeps every line number (its `rebuild-check-v4.6.md`) | `028937e66f9bce3f…` | 963 | `CLI46:<n>` |
 | Lane 3's rulings memo, R01 to R61, `MEMO-007-rulings-20261108.md` | `b2184b1adae0e060…` | 839 | `R<nn>`; `M:<n>` for its lines |
 | Lane 3's ruling on B4 and B7, #165 6738474549, as saved in `read-6738474549.md` | `6b798557b61d0cef…` | 31 | B7 |
+| Lane 3's rulings on OP-1, OP-2, OP-8, OP-9 and OP-14, #165 6746215510, as saved in `read-6746215510.md`, with their analysis, `RULINGS-L5OP-analysis-20261109.md` (`6999a644068fbfdb…`, 77 lines) | `a185844391d48fee…` | 42 | "lane 3's ruling, #165 6746215510, OP-n" |
+| Lane 3's correction of its OP-8 line, and its ruling on OP-15's bounds, #165 6746655077, as saved in `read-6746655077.md` | `c53cf4748f28e7ff…` | 28 | "lane 3's ruling, #165 6746655077, OP-n" |
+| Lane 1's answers on OP-4, OP-5, OP-6, OP-7, OP-11, OP-13 and OP-15, and its two fixes to draft 2, #165 6746620707, as saved in `read-6746620707.md` | `ea027400276f91c0…` | 44 | "lane 1's answer, #165 6746620707, OP-n" |
 | Lane 5's block v5, `lane5-tasks-block-v5.md` | `5d427c42b2a2a7bf…` | 839 | `L5:<n>` |
 | `tasks.md` at `722078c9` with lane 5's 43 fold edits applied, `tasks.md.lane5-722078c9`. B3's `tasks.md` (`e7b63983…`, 1,816 lines) carries T511 to T513 with the same text, 14 lines lower (T511 at its line 1392); `tasks:<n>` stays this copy's line | `e3c81f8e19cc3d8c…` | 1,779 | `tasks:<n>` |
 | 007's `research.md` at `722078c9`. B3's (`9956dc7f…`) carries ERR-04 and DEC-15 unchanged | `80b3a0f1f4fcf7c4…` | 663 | ERR-04, DEC-15 |
@@ -32,7 +36,9 @@
 - **`Y:<n>` is a line of Y's `design.md`,** which the branch holds byte for byte at `722078c9`. B3's `design.md` is not byte-identical to Y's: it differs at lines 2324, 2326, 6305, 6390 and 6393 only, and neither draft cites any of them. So a `Y:<n>` here is the same line in Y, at `722078c9` and at B3, and the line lane 1's drafts 4.4 and 4.5 cite by the same number.
 - **`CLI44:<n>` is also draft 4.2's line.** Draft 4.2 is the feature's `contracts/register-cli.md` (`dea51e43…`), and drafts 4.3 and 4.4 changed text only inside existing lines (CLI44:5).
 - **`CLI44:<n>` and `CLI45:<n>` name the same lines.** Draft 4.5, B3's `contracts/register-cli.md`, keeps every line number of draft 4.4 (CLI45:5). Draft 1's citations stay `CLI44:<n>`, and draft 2 cites its new ones as `CLI45:<n>`.
-- **Whose rulings.** R36, R37, R44, R50, R51 and B7 are lane 3's rulings, not Brett's. Brett's own answers appear only where svc or the task line cites them, with their comment.
+- **`CLI46:<n>` names the same line too.** Draft 4.6 keeps every line number of draft 4.5, and changes text only inside lines 5, 12, 653, 665, 673, 730, 764 and 767, adding at each a sentence marked `[P, T511's OP-n]` (CLI46:5). Draft 3 cites those eight lines as `CLI46:<n>`, in its new text and wherever sections 1 to 13 cited them before, and cites its other new lines as `CLI46:<n>` too. The records kept in section 15 keep drafts 1's and 2's labels, since they say what those drafts read: OP-11's record quotes CLI44:764 as draft 4.4 had it, before draft 4.6 changed it. Every other `CLI44:` and `CLI45:` citation stays, ranges included.
+- **Whose rulings.** R36, R37, R44, R50, R51 and B7 are lane 3's rulings, not Brett's, and so are #165 6746215510 and 6746655077, which give no word of Brett's. Lane 1's answers, #165 6746620707, are lane 1's, as the author of `register-cli.md`, and give no word either. Brett's own answers appear only where svc or the task line cites them, with their comment.
+- **Errata.** Lane 3's errata go into `research.md` Part 1 in B4, as ERR-23 onward, and Y's frozen text keeps its words (#165 6746215510). The analysis numbers none of the errata on T511's points, so this contract names them by the `Y:` lines they correct.
 - **#165** is opensoft/openRepoTools#165, and a number after it is a comment id.
 - **Names.** The service is `lanes-index serve`; the documentation and its log call it `lanes-register` (Y:3835–3842). Its client is `lanes-index register read` (Y:3843–3848). "The client" below means `register read`'s socket path, and "the guard" means `lanes-edit.sh guard`.
 
@@ -40,7 +46,7 @@
 
 - **One service per environment,** a bench container or a host shell (Y:3701; tasks:1390). It connects as its engineer's reader login, `lanes_r_<engineer>`, a member of READER, which the environment's `lanes-index.conf` names (Y:3708–3713).
 - **What it answers:** the register's text at the journal's head `n`, read fresh for each request. The reader runs today's parser on that text in its own process, and decides (svc:10; Y:4093–4100). The service answers no question by key (Y:4093–4095).
-- **Its clients** are `register read`'s socket path, "every reader's path" (Y:3843–3845), and the guard's prefetch, `register read --for guard --prefetch` (Y:3845–3848, Y:4127–4133). In lane 1's terms these are forms 1 and 2 of `register read` (CLI44:655–660). Form 3 is open (OP-7; section 13.9).
+- **Its clients** are `register read`'s socket path, "every reader's path" (Y:3843–3845), and the guard's prefetch, `register read --for guard --prefetch` (Y:3845–3848, Y:4127–4133). In lane 1's terms these are forms 1 and 2 of `register read` (CLI44:655–660), and form 3, the readers' second read, which asks the service first too (lane 1's answer, #165 6746620707, OP-7; CLI46:730; section 13.9).
 - **Not its clients:**
   - **form 4,** the guard's second read: it "always reads directly, never through the service" (B7; CLI44:747; research.md ERR-04; tasks:1384);
   - **the `SessionStart` block,** which "only starts the service and asks it nothing" (Y:3828–3829; svc:93; Y:4493–4499). Its start is `serve --start` (section 9);
@@ -60,7 +66,8 @@
 
 - **Checked on every use,** by the service before it binds and by the client before it connects or starts one: it must be a directory, not a symlink (`lstat`), owned by this uid, with mode 0700 (Y:3761–3763; tasks:1391).
 - **Made so when absent:** `lanes-index` creates it that way (Y:3763–3764).
-- **Never used, never repaired.** A directory that fails the check is not used: "the client reads directly, the service exits 2 naming it, and `lanes-index status` reports it" (Y:3764–3766). Where its stamp would go is OP-9.
+- **Never used, never repaired.** A directory that fails the check is not used: "the client reads directly, the service exits 2 naming it, and `lanes-index status` reports it" (Y:3764–3766).
+- **Never stamped.** `dir-check` is never stamped: `serve` exits 2 naming the directory (Y:3765) and writes nothing in it, and `lanes-index status` reports the failure itself (Y:3761–3768). That is lane 3's ruling (#165 6746215510, OP-9), with an erratum on Y:3927–3929, whose stamped causes name `dir-check`. Lane 1 reviews the `status` line (R44). Section 8.6 follows it.
 
 ### 2.3 The files
 
@@ -71,8 +78,10 @@
 ### 2.4 The owner file, `register.owner`: install, namespace and boot
 
 - **It holds** the service's pid, its start UTC, its install's identity, and on Linux its pid namespace (`readlink /proc/self/ns/pid`) and the boot id (`/proc/sys/kernel/random/boot_id`) (Y:3782–3784). The install's identity is the size, mtime and inode of the service's own `lanes-index` file (Y:3915–3916).
-- **Another namespace or boot.** A client whose own pid namespace or `boot_id` differs treats the service as unavailable (Y:3784–3786; tasks:1393). Whether it then starts one is OP-8.
-- **Another install.** A client that finds an owner file from another install starts a service (Y:3881–3883). The old service answers its next request `unavailable restarting`, and exits (Y:3915–3918).
+- **Another namespace or boot.** A client whose own pid namespace or `boot_id` differs treats the service as unavailable (Y:3784–3786; tasks:1393): it reads directly and starts none, so SVC-1 holds where a bench bind-mounts `~/.local/state` across containers (Y:3786–3788). That is SVC-2's text, and lane 3's ruling (#165 6746655077, OP-8, which corrects 6746215510's OP-8 line).
+  - **`ENOENT` or `ECONNREFUSED` still starts one,** whatever the owner file says (6746655077). So the owner file's namespace and boot decide only for a socket that answers the connect (section 13.8).
+  - **In B4:** an erratum drops "another namespace or" from Y:3882–3883's start list, which keeps "an owner file from another install, unless a failure stamp is fresh"; and tasks:1393's "as absent" (B3's `tasks.md:1407`) becomes "as unavailable, and starts none", for another namespace or boot (6746655077).
+- **Another install.** A client that finds an owner file from another install starts a service (Y:3881–3883). The old service answers its next request `unavailable restarting`, and exits (Y:3915–3918). Lane 3's correction keeps this case as it stands (#165 6746655077, OP-8).
 - **On macOS** the owner file holds no namespace or boot id: Y gives those "on Linux" (Y:3783).
 
 ### 2.5 A stale socket
@@ -91,12 +100,14 @@
 ## 4. The request: file names only
 
 - **It names the files the client wants, and nothing else** (Y:4036–4037; svc:59; tasks:1416): `lanes/LANES.md`, `lanes/aliases.tsv`, `lanes/log/<lane>.md`, "and the rest of the render set" (Y:4036–4037).
-- **The guard's request** names `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/<window name>.md`, the log of the lane the window is normally bound to (Y:4142–4144; CLI44:666).
+- **The guard's request** names `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/<window name>.md`, the log of the lane the window is normally bound to (Y:4142–4144), the last with `--lane=`, and only for a name in the class (CLI46:666, CLI46:670; Y:4956; lane 1's fix, #165 6746620707).
 - **It never carries** a session id, `cwd`, agent id, prompt, window, live record or liveness fact (svc:59, svc:61–63; tp:2045–2047).
-- **It never carries `n`,** nor a generation: "the request carries file names only, ... So it cannot be asked for a log at an older `n`, and form 4 never asks it" (tasks:1416; B7). So the guard's second read, at the `n` it prefetched, always reads directly, never asks the socket and never reads `.direct` (B7; CLI44:747). svc:59 stands.
+- **It never carries `n`,** nor a generation: "the request carries file names only, ... So it cannot be asked for a log at an older `n`, and form 4 never asks it" (tasks:1416; B7). So the guard's second read, at the `n` it prefetched, always reads directly and never asks the socket (B7; CLI44:747), and never reads `.direct` (B7; CLI44:688; lane 1's fix, #165 6746620707). svc:59 stands.
 - **B7's condition stands with it:** "if T511's and T512's measurements show that path often running out of budget, lane 5 brings the point back; a request naming `n` would be a spec change, for Brett" (tasks:1384; B7). This contract measures nothing; T512's tests do.
 - **The request's bytes** are section 13.3's proposal (OP-3).
-- **Not fixed here:** how a set the client cannot name is asked for (OP-5; section 13.9 keeps the format neutral on it); a log named in another case (OP-6; section 13.4 proposes the one reading the format needs).
+- **Sets, by the names they cover.** Form 1's members that the client cannot name before the read go in the same request by the render-set names they cover, file names only: `archive` as the set `lanes/archive/`; `--all`'s logs as the set `lanes/log/`, which the client filters to `check_lane_name`'s class; and `paths` as the render set's listing at `n`. The service resolves a set in the request's own transaction at `n`, and a set names files only, never a host-local fact or an `n` (lane 1's answer, #165 6746620707, OP-5; CLI46:665; Y:4036–4041; Y:4611; B7). Section 13 encodes them (proposal, lane 5).
+- **The spec question stays open.** Whether a reader's request may name a set or the listing, when Y:4036–4037 says the request names the files it wants "and nothing else", is still OP-5's question for lane 3 and Brett. Lane 1 has asked lane 3 the same (#165 6746948770). Section 13's encoding holds only if the answer is yes. If it is no, form 1's sets read directly (13.9).
+- **A log named in another case** is resolved by the service, case-insensitively among the render set's paths at its `n`, by T113's one function, which `serve` reuses (lane 1's answer, #165 6746620707, OP-6; CLI46:673; SVC-3). Section 13.4 gives its records.
 
 ## 5. The answers
 
@@ -104,23 +115,27 @@ The service gives one of three answers to a request, and the client turns each i
 
 ### 5.1 The text at `n`, with digests, `n` and the generation
 
-- **One snapshot per request.** For each request the service runs one transaction at REPEATABLE READ READ ONLY. It reads the journal's head `n`, the requested files' digests at `n`, and, in the same transaction, any journal entries or whole files it needs (Y:4036–4041; tasks:1410). Its statements, from `BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY` to `COMMIT`, are joined with psql's `\;` and sent as one query, so a request is one round trip (Y:3985–3988).
-- **The generation, from the same snapshot.** The answer carries the register generation that transaction read, beside `n`. Y's interfaces table gives `register read` "text at `n` with digests, and the `n` and the register `generation` it read, in the same snapshot" (Y:4833), and the task line asks for "`n` and generation". The client writes them to `.head`'s `n=` and `generation=` (CLI44:694–695). Form 4 takes its generation from `.head` (CLI44:745), and the offer's `act` is built from that `n` and generation (L5:364). SVC-7's own words give the answer's head as `text <n>` alone (Y:4064–4066): see OP-2, and section 13.4's head line, `text <n> <generation>`.
+- **One snapshot per request.** For each request the service runs one transaction at REPEATABLE READ READ ONLY. It reads the journal's head `n`, the requested files' digests at `n`, and, in the same transaction, any journal entries or whole files it needs (Y:4036–4041; tasks:1410), and the members of any set the request names (CLI46:665). Like every form's snapshot, it reads the switch and checks `REGISTER_SCHEMA_VERSION` against `readers_from` and `version`, as a reader's first SELECT does (Y:2334, Y:2336; CLI46:653): a switch not `primary`, or a number outside the window, is a failed read (section 5.2). Its statements, from `BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY` to `COMMIT`, are joined with psql's `\;` and sent as one query, so a request is one round trip (Y:3985–3988).
+- **The generation, from the same snapshot.** The answer carries the register generation that transaction read, beside `n`. Y's interfaces table gives `register read` "text at `n` with digests, and the `n` and the register `generation` it read, in the same snapshot" (Y:4833), and the task line asks for "`n` and generation". The client writes them to `.head`'s `n=` and `generation=` (CLI44:694–695). Form 4 takes its generation from `.head` (CLI44:745), and the offer's `act` is built from that `n` and generation (L5:364). SVC-7's own words give the answer's head as `text <n>` alone (Y:4064–4066). Lane 3's ruling makes that an erratum: Y:4064–4066's head reads "`text <n>` with the register generation that transaction read" (Y:4833) (#165 6746215510, OP-2). The bytes stay OP-3's: section 13.4's head line, `text <n> <generation>`, for lane 1's U5 review.
 - **Fresh at `n`.** It answers `text <n>` only for that transaction's `n`, so the files of one answer are never from two seqs (Y:4064–4065). It "never answers from images it read before" (Y:4088; svc:23).
 - **Where the images come from** (Y:4043–4050):
   - images it holds in memory with the digests at `n` are answered;
   - otherwise it brings them to `n` with the journal entries read in that transaction, by the function the writers' snapshot uses, and checks them against the digests;
   - on a mismatch it takes the file from the per-environment image cache, where the cache holds it at the digest at `n`;
-  - otherwise it answers `unavailable`, and fetches the file whole in the background, in a transaction of its own, never on a request's timer (OP-15).
+  - otherwise it answers `unavailable`, and fetches the file whole in the background, in a transaction of its own, never on a request's timer: on the one held connection, between requests, with its own bounds (section 7; OP-15, closed).
 - **The write-through.** What it fetched goes to the per-environment image cache, the one cache the writers' snapshot reads (Y:4054–4062; tasks:1418).
-- **Its contents:** `text <n>`, then for each file its path, its byte count, its digest and its bytes (Y:4065–4066). The digest is the database's at `n` (Y:4070–4072): the `sha256` of `journal_files` (Y:2394), which `.head`'s `file=` rows also carry (CLI44:699). The bytes are section 13.4's proposal.
+- **Its contents:** `text <n>`, then for each file its path, its byte count, its digest and its bytes (Y:4065–4066); a set's members are files like any other, and the listing is the render set's paths (CLI46:665; section 13.4). The digest is the database's at `n` (Y:4070–4072): the `sha256` of `journal_files` (Y:2394), which `.head`'s `file=` rows also carry (CLI44:699). The bytes are section 13.4's proposal.
 - **The client's checks.** It checks each file against the digest in the same answer, which catches a cut or corrupted transfer (Y:4072–4074). Then it writes the cache family at `n`, each file in the form its read site expects, `.head` last (Y:4142–4151; CLI44:675–688), and exits 0 (Y:4341).
 
 ### 5.2 `refuse db <cause>`
 
-- **Only where the failure is definitive in this request:** "the connection refused, an authentication error, the switch not `primary`, the schema version refused", with a fixed cause and the SQLSTATE (Y:4082–4085). Two cause words are named, `auth` and `unreachable` (Y:3931–3932). It carries fixed phrases and the SQLSTATE only, never `psql`'s message text (Y:3797–3799).
+- **Only where the failure is definitive in this request:** "the connection refused, an authentication error, the switch not `primary`, the schema version refused", with a fixed cause and the SQLSTATE (Y:4082–4085). It carries fixed phrases and the SQLSTATE only, never `psql`'s message text (Y:3797–3799).
+- **The four causes.** Y names two cause words, `auth` and `unreachable` (Y:3931–3932). Lane 1's answer names all four: `<cause>` is one of `unreachable`, `auth`, `switch-files` and `schema` (#165 6746620707, OP-4; CLI46:767). Lane 5 reads them as Y:4083–4085's four definitive failures, in their order: the connection refused, an authentication error, the switch not `primary`, the schema version refused.
+- **Definitive in this request.** Lane 1 reads Y:4082–4091 as letting the service answer `unavailable` whenever the request itself did not see the cause, such as a past background connect's outcome, so that needs no ruling (6746620707, OP-4). The direct read then decides, and the outcome is the same 69 or 2 (Y:4089–4091).
 - **The client refuses exactly as the direct read would** (Y:4085–4086), and makes no direct read after it. `register read` exits 69, in form 2 too (Y:4343; CLI44:775). The guard then makes SVC-12's declared-outage check, and otherwise refuses with 2 (Y:4343; svc:23).
-- **Not fixed here:** the words for the switch and the schema version, how the switch at `files` is told apart, which a rollback's declaration needs, and what the client prints as the cause (OP-4). The line's bytes are section 13.5's proposal, which leaves the cause words to OP-4.
+- **What the client prints.** Under `--for guard`, the first stderr line on that 69 is `lanes-index: refuse db <cause> <SQLSTATE>`, with `-` where there is no SQLSTATE, built from the answer's fixed cause and SQLSTATE, never `psql`'s message text (CLI46:767; Y:3797–3799). A direct read that found the switch not `primary`, or the number outside the window, prints the same line, with `-` for the SQLSTATE, before any other; every other failed direct read keeps lane 1's §2.6 line 1 first (CLI46:767). No fallback line follows a `refuse db` (section 11.2).
+- **A rollback's declaration** counts only where the cause is `switch-files`, by either path (Y:4449–4454; CLI46:767), so SVC-12's condition 2 reads one fact.
+- **The line's bytes** are section 13.5's proposal, with these four words, and an optional fifth field after `schema` for the two numbers that lane 1's U5 review asks it to name (#165 6746948770), pending that review.
 
 ### 5.3 `unavailable`
 
@@ -129,15 +144,16 @@ The service gives one of three answers to a request, and the client turns each i
   - at its per-request timer, as `unavailable slow` (Y:4012–4013);
   - before its `psql` child has connected, after a restart (Y:4014–4016);
   - on a cache miss the image cache cannot fill (Y:4046–4049);
+  - at once, to a request that arrives during the background whole-file fetch (lane 1's answer, #165 6746620707, OP-15; section 7);
   - when its install has changed, as `unavailable restarting` (Y:3916–3918).
 - **What the client counts as `unavailable` too:**
   - no socket (`ENOENT`), or a dead one (`ECONNREFUSED`) (Y:3881–3882);
   - a failed directory or length check (Y:3764–3765, Y:3778–3779);
-  - an owner file of another pid namespace or `boot_id` (Y:3784–3786);
+  - an owner file of another pid namespace or `boot_id`, on a socket that answers the connect; the client then starts none (Y:3784–3788; section 2.4);
   - a server of another uid (Y:3792–3794);
   - a service that accepts a connection and never answers (svc:117);
-  - "a bad header, a byte count that does not match, a digest that does not match, a file it did not ask for, an answer over 16 MB, or one not complete within the 300 ms share" (Y:4076–4078). Section 13.7 lists each case under draft 2's format.
-- **What the client does.** It discards all of the answer and reads directly (Y:4079), within what its budget has left (Y:4087–4088), and writes `.direct` (Y:4153–4154). The guard's client prints the fallback line where that direct read succeeds (section 11.2).
+  - "a bad header, a byte count that does not match, a digest that does not match, a file it did not ask for, an answer over 16 MB, or one not complete within the 300 ms share" (Y:4076–4078). Section 13.7 lists each case under section 13's format.
+- **What the client does.** It discards all of the answer and reads directly (Y:4079), within what its budget has left (Y:4087–4088), and writes `.direct` (Y:4153–4154). The guard's client prints the fallback line once, whether that direct read succeeds or fails (section 11.2).
 
 ### 5.4 From answer to exit
 
@@ -147,9 +163,10 @@ The client's exits through the socket, from Y's exit mapping (Y:4336–4343) and
 |---|---|---|---|
 | the text at `n`, through the service | 0 | 0, files cached | parses; decides 0 or 2 |
 | `unavailable`, then a direct read that succeeded | 0 | 0, files cached, and `guard: direct (service unavailable)` on stderr | parses; decides 0 or 2 |
-| `refuse db <cause>`, or `unavailable` then a direct read that failed | 69 | 69 | SVC-12's declared-outage check; otherwise 2 |
+| `refuse db <cause>` | 69 | 69; first on stderr, `lanes-index: refuse db <cause> <SQLSTATE>`; no fallback line | SVC-12's declared-outage check; otherwise 2 |
+| `unavailable`, then a direct read that failed | 69 | 69; first on stderr, the direct read's cause line, then `guard: direct (service unavailable)` | SVC-12's declared-outage check; otherwise 2 |
 
-The other rows (too late, mode `index`, Q6(c)'s 78, and any other failure) are not the socket's, and stay as Y:4344–4347 and CLI44:769–782 give them.
+The stderr in the last two rows is lane 1's answer (#165 6746620707, OP-4 and OP-11; CLI46:764, CLI46:767), and section 11.2 gives it. The other rows (too late, mode `index`, Q6(c)'s 78, and any other failure) are not the socket's, and stay as Y:4344–4347 and CLI44:769–782 give them.
 
 ## 6. The limits
 
@@ -187,10 +204,14 @@ The other rows (too late, mode `index`, Q6(c)'s 78, and any other failure) are n
   - `c` is the URL's `connect_timeout=`, the connect bound each workstation writes from its own p90 when it joins; with none it is 2, and a value under 2 is refused (Y:3810–3812, Y:5877).
   - `N_a` is `register_addresses=`, default 1 (Y:5877).
   - On register paths `PGCONNECT_TIMEOUT` is set to `c`, not defaulted, so an inherited value cannot lengthen it (Y:4970).
-  - Y:3892 (W:3857) still says the service "overrides with 2": OP-1.
+  - Y:3892 (W:3857) still says the service "overrides with 2". Lane 3's ruling makes that an erratum: Y:3892's "which the service overrides with 2" reads "which the service, as every register path, sets to `c` (SVC-6)", as every other place says (#165 6746215510, OP-1).
 - **In the background only.** The child starts at the service's first request and restarts lazily after any failure (Y:3971–3973). Its connect runs "outside any share, so that no request waits for it" (svc:124; Y:4024–4025).
 - **Where it connects:** the primary's port 5432, directly, through the install's load balancer, never through a pooler (Y:3976–3979; text 15; R51).
 - **One query at a time,** one round trip a request. The service handles connections concurrently, but each query, ended by an `\echo` of a per-request marker, goes to the one `psql` in turn (Y:3982–3988).
+- **The background whole-file fetch** (section 5.1), on a cache miss the image cache cannot fill (Y:4046–4050):
+  - **One connection.** The fetch runs on the held connection, in its own transaction, between requests (Y:3714; Y:4048–4050), so lane 1's install formula, one connection per environment, stands (lane 1's answer, #165 6746620707, OP-15).
+  - **A request that arrives during the fetch** is answered `unavailable` at once, and a request's `SIGINT` (Y:4012–4016) never cancels the fetch (6746620707, OP-15).
+  - **Its bounds:** `SET LOCAL lock_timeout = '1000ms'` and `statement_timeout = '10s'`, the renderer's row (Y:3527), with an 11 s timer. On expiry the fetch is dropped, and the next miss retries. That is lane 3's ruling, as lane 1 suggested, and B4 records it as an erratum that adds a D9 row for the fetch (#165 6746655077, OP-15).
 - **The idle check.** While no request comes, the service sends `SELECT 1` on the held connection every 60 s, under the same timer, and a failure restarts `psql` in the background (Y:3993–3995). So the connection is never idle for the 4 minutes after which the load balancer resets a flow (Y:3995–4000; text 16). Section 10 gives the test-only interval.
 - **What it never does:** write, render or re-index; read the mirror or the outage declaration (Y:4030–4032); read a pid, a `/proc` entry of a lane, a session record or tmux (Y:4436–4437).
 
@@ -201,7 +222,7 @@ No supervisor of its own: no systemd and no launchd (svc:41; Y:3872–3876).
 ### 8.1 Who starts it
 
 - **The `SessionStart` block,** on a primary workstation, after its own answer, without waiting, through `serve --start` (Y:3878–3881; section 9).
-- **Any client** that finds no socket (`ENOENT`), a dead one (`ECONNREFUSED`), or an owner file from another install, unless a failure stamp is fresh (Y:3881–3883). Item 1 also names an owner file from another namespace, which SVC-2 contradicts (OP-8).
+- **Any client** that finds no socket (`ENOENT`), a dead one (`ECONNREFUSED`), or an owner file from another install, unless a failure stamp is fresh (Y:3881–3883). Item 1 also names an owner file from another namespace, which SVC-2 contradicts. Lane 3's ruling: SVC-2 governs, so a client that finds an owner file from another pid namespace or another boot on a socket that answers reads directly and starts none, and Y:3882–3883's start list drops "another namespace or", as an erratum in B4 (#165 6746655077, OP-8, correcting 6746215510; section 2.4).
 - **Never form 4,** which never asks the socket (B7), **and never a writer** (Y:3829–3831).
 
 ### 8.2 How
@@ -233,39 +254,45 @@ No supervisor of its own: no systemd and no launchd (svc:41; Y:3872–3876).
 
 ### 8.6 The failure stamp, `register.failed`
 
-- **What is stamped:** only the causes that make `serve` exit before it listens: `path-too-long`, `dir-check`, `config-refused` (a refused configuration, a mode other than `primary`, or a URL parameter SVC-2 does not map) and `no-psql` (Y:3926–3929).
+- **What is stamped:** only the causes that make `serve` exit before it listens: `path-too-long`, `config-refused` (a refused configuration, a mode other than `primary`, or a URL parameter SVC-2 does not map) and `no-psql` (Y:3926–3929).
+- **Never `dir-check`.** Y:3928 also names `dir-check`, but `register.failed` is a file in that same directory (Y:3767–3768), which is never used once it fails its check (Y:3764–3765). Lane 3's ruling takes it out, as an erratum on Y:3927–3929: `serve` exits 2 naming the directory and writes nothing in it, and `lanes-index status` reports the failure itself (#165 6746215510, OP-9; section 2.2).
 - **What it holds:** the UTC and that fixed cause, and no other text (Y:3929–3931).
 - **What is not stamped:** a database that refuses or does not answer (`auth`, `unreachable`, a refused schema version). The service listens, answers `refuse db <cause>` or `unavailable`, and reconnects in the background (Y:3931–3934).
-- **Who reads it:** a client, only after `ENOENT` or `ECONNREFUSED`; a stamp younger than 60 s means it starts nothing and reads directly (Y:3934–3936; tasks:1400). And `lanes-index status`, which reports a stamp and its cause (Y:3939), in T512's lines in `cmd_status` (R44; tasks:1419).
+- **Who reads it:** a client, only after `ENOENT` or `ECONNREFUSED`; a stamp younger than 60 s means it starts nothing and reads directly (Y:3934–3936; tasks:1400). And `lanes-index status`, which reports a stamp and its cause (Y:3939), and a directory that fails its check, which has no stamp (OP-9), in T512's lines in `cmd_status` (R44; tasks:1419).
 - **When it goes:** the service removes any stamp once it listens, and again at its first successful connect (Y:3936–3938).
-- **Two causes are open:** `dir-check` (OP-9) and `no-psql` (OP-10).
+- **One cause is open:** `no-psql` (OP-10). `dir-check` is closed (OP-9).
 
 ## 9. The start-only form: `lanes-index serve --start` (R50)
 
 - **What it does:** it runs the starter of section 8.2 and returns at once, so the bash `SessionStart` block detaches nothing itself (tasks:1401; R50, M:714–720; Y:3892–3893).
 - **What it does not do:** ask the service anything, or wait for it (svc:93; Y:4493–4499; tasks:1436).
-- **What it runs** is "the start a client runs on `ENOENT`" (Y:4498–4499): the length and directory checks of section 2, the stamp of section 8.6, then the start. A live service is left as it is: the `serve` it starts finds `register.lock` held, and exits 0 (section 8.3).
+- **What it runs** is "the start a client runs on `ENOENT`" (Y:4498–4499): the length and directory checks of section 2, the stamp of section 8.6, then the start. It makes no socket try of its own, and runs the client's start path (Y:4497–4499). A live service is left as it is: the `serve` it starts finds `register.lock` held, and exits 0 (section 8.3). This bullet and the next two are lane 5's decision, which adopts lane 1's review position as the contract's text (lane 1's answer, #165 6746620707, OP-13).
+- **Its exits:**
+  - **0** when it launched `serve`, or when the rules start none: a fresh stamp (section 8.6);
+  - **2** for a refused configuration, Q6(c)'s included (Y:4872), a mode other than `primary` (Y:3948–3949), or a failed path or directory check (section 2); a failed directory check is never stamped, by lane 3's OP-9 ruling (section 2.2);
+  - **64** for usage.
+- **No stamp of its own.** `serve --start` writes no `register.failed`; the `serve` it launches stamps as section 8.6 says.
+- **OP-8's case.** Lane 1's position also counts OP-8's case among the rules that start none, with exit 0. It was written before lane 3's correction (#165 6746655077), under which `ENOENT` or `ECONNREFUSED` starts one whatever the owner file says, and only a socket that answers with an owner file from another namespace or boot starts none (section 2.4). `serve --start` makes no socket try, and runs the start a client runs on `ENOENT`, so it never meets that case: it launches `serve`, which exits 0 where another namespace's service holds a shared `register.lock` (section 8.3), and binds where the owner file is stale. Its exit is 0 either way. OP-16 asks lane 1 to confirm this reading.
 - **Its caller** is T513's block, on a `mode=primary` workstation, after its own answer, without waiting (svc:93; tasks:1432). The block exits 0 always (svc:93), so it never branches on `serve --start`'s exit; R36 reads the block the same way (M:594).
 - **Under Q6(c)'s refusal** it exits 2 at load, as every subcommand but `mode` and `register read` does (Y:4872). Before group C no real host is `primary`, so the block's start never fires there (tasks:1437).
-- **Not fixed here:** its other exits, and whether it tries the socket before it starts `serve` (OP-13).
 
 ## 10. The two test-only variables (R37)
 
 - **`LANES_REGISTER_SERVE_IDLE_CHECK_S`:** the interval of section 7's `SELECT 1`, default 60 (tasks:1421; Y:3994).
 - **`LANES_REGISTER_SERVE_IDLE_STOP_S`:** section 8.4's idle stop, default 900 (tasks:1422; Y:3912).
 - **Test-only** (R37; research.md DEC-15). They shorten AT-10's idle-check case and the idle-stop guess (tasks:1428).
-- **Honoured only where set.** Each names whole seconds. A value that is not a positive whole number is ignored, and the default kept, so each has a floor of 1 s (tasks:1423; R37, M:603).
+- **Honoured only where set.** Each names whole seconds. A value that is not a positive whole number is ignored, and the default kept, so each has a floor of 1 s (tasks:1423; R37, M:603). A value under the floor is ignored and the default kept, never `config-refused` (lane 3's ruling, #165 6746215510, OP-14; Y:3928–3929). DEC-15 gains "a value that is not a positive whole number is ignored, and the default kept", in B4.
 - **The idle check's cap:** below 240 s, the load balancer's idle reset. A value of 240 or more is ignored, and 60 kept (tasks:1423; R37; DEC-15; Y:3995–3997). The idle stop has no cap.
 - **The starter keeps both** in its reduced environment where they are set, or the service never sees them (tasks:1427; R37; DEC-15).
-- **R37 says "refuse" where T512 says "ignored":** OP-14.
+- **R37 says "refuse" where T512 says "ignored":** R37's "refuse a value under 1 s" means the value is ignored and the default kept (lane 3's ruling, #165 6746215510, OP-14). OP-14 is closed.
 
 ## 11. The client's side, as far as the socket fixes it
 
 ### 11.1 One client
 
 - **`lanes-index register read` asks the socket first,** and reads directly when the service is unavailable (Y:3843–3845; tasks:1394). "One socket client, one fallback, one set of timeouts" (Y:3847–3848).
-- **Phase 1's `register read` has only its direct path.** The socket, the `.direct` flag and the write-through come with `serve` (Y:4868–4870; CLI44:653). Phase 1 fixes what `serve` must also return: "the files at `n` with per-file digests, written by the client into the cache files" (Y:4870).
-- **By form** (CLI44:655–662): form 1, the readers' prefetch, asks the socket; form 2, the guard's prefetch, asks it; form 3 is OP-7; form 4 never asks it (B7). Section 13.9 says what each form can ask under draft 2's format.
+- **Phase 1's `register read` has only its direct path.** The socket, the `.direct` flag and the write-through come with `serve` (Y:4868–4870; CLI46:653). Phase 1 fixes what `serve` must also return: "the files at `n` with per-file digests, written by the client into the cache files" (Y:4870).
+- **By form** (CLI44:655–662): form 1, the readers' prefetch, asks the socket; form 2, the guard's prefetch, asks it; form 3, the readers' second read, asks it first, and reads `.direct` as forms 1 and 2 do (lane 1's answer, #165 6746620707, OP-7; CLI46:730); form 4 never asks it (B7). Section 13.9 says what each form sends.
 
 ### 11.2 The fallback, and its line
 
@@ -276,12 +303,12 @@ No supervisor of its own: no systemd and no launchd (svc:41; Y:3872–3876).
   guard: direct (service unavailable)
   ```
 
-  `--for guard` sets it (Y:3845–3848). Form 2 prints it, and only where the service did not answer and the direct read did (CLI44:764; Y:4342). See OP-11.
+  `--for guard` sets it (Y:3845–3848). Form 2 prints it once, wherever the service was unavailable and the client then read directly, whether that read succeeded (Y:4342) or failed (svc:104, svc:116–121; tp:1846–1849). It never comes after a `refuse db <cause>`, which is not unavailable and is followed by no direct read (Y:4085–4086). On a 69 it follows the cause line, which stays first (section 5.2). That is lane 1's answer (#165 6746620707, OP-11; CLI46:764, CLI46:767).
 - **Test 10's comparison.** Through the service and through the direct read, the guard's stdout, its stderr less this one line, and its exit code are equal, for `ok`, `refuse` and `offer` (svc:86–90; tp:1912–1916).
 
 ### 11.3 The service-down flag, `.direct`
 
-- **A file,** `$SE_CACHE_FILE.direct`, written by the first fallback in the invocation. Every later read in that invocation, inside any subshell, finds it and goes straight to the direct path (Y:4153–4156; tasks:1413).
+- **A file,** `$SE_CACHE_FILE.direct`, written by the first fallback in the invocation. Every later read in that invocation, inside any subshell, finds it and goes straight to the direct path (Y:4153–4156; tasks:1413). Forms 1, 2 and 3 read it (CLI44:688; CLI46:730).
 - **Form 4 never reads it** (B7; CLI44:688). `reg_flush` keeps it (CLI44:815).
 
 ### 11.4 `w_s`, the client's wait, in `.head`
@@ -320,11 +347,11 @@ Each passage this contract uses where the branch's text is not W's. The contract
 | The guard's second read | Y:4159–4160, "direct if the flag file exists" (as W) | research.md ERR-04: "always direct, at `n`" | B7 |
 
 - **Against lane 5's texts.** The branch carries texts 11 to 22, 8″a and 8″b as written: each new text occurs once in the branch, and no text they replaced remains.
-- **Where text 13 stops.** Text 13 replaced SVC-4 item 6 (W:3888–3890) only. Item 2's "which the service overrides with 2" (W:3857) stands at Y:3892: OP-1.
+- **Where text 13 stops.** Text 13 replaced SVC-4 item 6 (W:3888–3890) only. Item 2's "which the service overrides with 2" (W:3857) stands at Y:3892, and lane 3's erratum reads it as "sets to `c` (SVC-6)" (#165 6746215510, OP-1; section 7).
 
 ## 13. The bytes on the socket (proposal, lane 5, for lane 1's U5 review)
 
-Draft 2's answer to OP-3. The sources fix what a request and an answer carry (sections 4 and 5); this section fixes how they travel. Each of OP-3's items is marked "(proposal, lane 5, for lane 1's U5 review)", and every value here that no source gives is marked "(proposal, lane 5)", with its reason. Where a choice touches Y, svc, CLI45 or one of lane 3's rulings, the bullet says which, and why it stays inside it. Lane 1 is answering OP-4 to OP-7, OP-11, OP-13 and OP-15 (opensoft/openRepoTools#165, 6745905089). Where the format can stay neutral on one of those it does, and says so.
+Draft 2's answer to OP-3, with draft 3's additions. The sources fix what a request and an answer carry (sections 4 and 5); this section fixes how they travel. Each of OP-3's items is marked "(proposal, lane 5, for lane 1's U5 review)", and every value here that no source gives is marked "(proposal, lane 5)", with its reason. Where a choice touches Y, svc, CLI45, CLI46 or one of lane 3's rulings, the bullet says which, and why it stays inside it. Lane 1 has answered OP-4 to OP-7, OP-11, OP-13 and OP-15 (#165 6746620707), and draft 3 encodes what those answers need: OP-4's cause words (13.5); OP-5's sets and listing (13.3 and 13.4), the one new design in draft 3; OP-6's resolution (13.4); and what forms 1 and 3 send under it (13.9).
 
 ### 13.1 In one view
 
@@ -332,18 +359,23 @@ Draft 2's answer to OP-3. The sources fix what a request and an answer carry (se
 The request, client to service:
 
 read 1\n
-file <path>\n                          one line for each file asked
+file <path>\n                          a file asked by name
+set <prefix>\n                         a set: lanes/archive/ or lanes/log/ (13.3; OP-5)
+listing\n                              the render set's paths present at n (13.3; OP-5)
 end\n
 
 The answer, service to client, then the service closes the connection. One of:
 
-text <n> <generation>\n                the head line; then one record for each file asked, in the request's order:
-file <path> <sha256> <size>\n          a file present at n, followed by its <size> bytes and one \n
-absent <path>\n                        a file absent at n
-ambiguous <path>\n                     a log name that two logs at n match, differing only by case (13.4; OP-6)
-end\n                                  after the last record
+text <n> <generation>\n                the head line; then one item for each request line, in the request's order:
+file <path> <sha256> <size>\n          for a file line: a file present at n, followed by its <size> bytes and one \n
+absent <path>\n                        for a file line: a file absent at n
+ambiguous <path>\n                     for a file line: a log name that two logs at n match, differing only by case (13.4; OP-6)
+set <prefix> <count>\n                 for a set line: then <count> file records, one per member, in bytewise order of <path>
+listing <count>\n                      for the listing line: then <count> lines, <path>\n each, in bytewise order
+end\n                                  after the last item
 
-refuse db <cause> <sqlstate>\n
+refuse db <cause> <sqlstate>\n         <cause>: unreachable, auth, switch-files or schema (OP-4)
+refuse db schema <sqlstate> <detail>\n an optional fifth field, after schema only (13.5)
 
 unavailable\n
 unavailable slow\n
@@ -352,7 +384,7 @@ unavailable restarting\n
 
 ### 13.2 What the format must meet
 
-- **The cache family, unchanged.** The client writes from an answer what the direct read writes from its own snapshot: `.head`'s `n=`, `generation=`, `file=` and `absent=` rows, the files, and `.paths` where form 1 asks for it (CLI45:655–704). So an answer carries the database's values only: `n`, the generation, and, for each file asked, its path at `n`, whether it is present there, its digest and its bytes. `.head`'s `c=`, `n_a=` and `w_s_ms=` come from the client's own configuration, as the direct read takes them (CLI45:296–303).
+- **The cache family, unchanged.** The client writes from an answer what the direct read writes from its own snapshot: `.head`'s `n=`, `generation=`, `file=` and `absent=` rows, the files, and `.paths` where form 1 or form 3 asks for it, from the listing (CLI45:655–704; CLI46:665; 13.4). So an answer carries the database's values only: `n`, the generation, and, for each file asked, its path at `n`, whether it is present there, its digest and its bytes; for a set, the same for each of its members; and for the listing, the render set's paths present at `n`. `.head`'s `c=`, `n_a=` and `w_s_ms=` come from the client's own configuration, as the direct read takes them (CLI45:296–303).
 - **No byte added or lost.** A file's bytes travel behind their count, never escaped, quoted or re-encoded. The client never decodes them as text: it hands them to the writer that the direct read hands its own bytes to (T113's). So each cache file holds the same bytes whichever path read it, which is what lane 2's test 10 compares through the guard's output (svc:86–90; tp:1912–1916).
 - **Standard-library Python at both ends.** `lanes-index serve`, and `register read` as its client (T512), need `socket`, `select` and `hashlib`, among the modules SVC-3 names (Y:3854–3857). ASCII lines and decimal counts need no `struct` and no third-party framing.
 - **One round trip a request.** An answer holds nothing that the request's one transaction, sent as one query, does not read (Y:3985–3988; Y:4038–4041).
@@ -361,25 +393,27 @@ unavailable restarting\n
 ### 13.3 The request (proposal, lane 5, for lane 1's U5 review)
 
 - **One request per connection, said outright** (proposal, lane 5). The client connects, sends one request and reads one answer; the service answers it and closes the connection. Reason: Y's wait runs "connect and answer together" (Y:4182) and is timed "from the `connect()` call to the last byte" (Y:4393), and the close is how the client knows the answer has ended (13.4).
-- **Its form, and how it ends** (proposal, lane 5): the line `read 1`, the request's kind and this format's version; one line `file <path>` for each file the client wants, in the order it wants the records; then the line `end`. Each line ends in one `\n` (0x0A), with no `\r`, and one space (0x20) separates its fields. Reason: both ends are one install, since a client starts a new service when the owner file names another install (Y:3881–3883) and the old one answers `unavailable restarting` (Y:3915–3918). So the version only guards the moment between an upgrade and the old service's exit, for seven bytes.
+- **Its form, and how it ends** (proposal, lane 5): the line `read 1`, the request's kind and this format's version; one line for each thing the client wants, in the order it wants the answer's items: `file <path>` for a file it names, `set <prefix>` for a set, and `listing` for the render set's listing; then the line `end`. Each line ends in one `\n` (0x0A), with no `\r`, and one space (0x20) separates its fields. Reason: both ends are one install, since a client starts a new service when the owner file names another install (Y:3881–3883) and the old one answers `unavailable restarting` (Y:3915–3918). So the version only guards the moment between an upgrade and the old service's exit, for seven bytes.
 - **Its encoding** (proposal, lane 5): ASCII. Every name is bytes 0x21 to 0x7E, so no name is quoted or escaped. Reason: every name a client sends is in that range (next bullet).
-- **The names** (proposal, lane 5): `lanes/LANES.md`, `lanes/aliases.tsv`, and `lanes/log/<key>.md` for a `<key>` in `check_lane_name`'s class, `[A-Za-z0-9._-]`, not opening with `.` or `-` (Y:4956; CLI45:665, CLI45:669–670). A request names at least one. Reason: these are the members a client can name before the read. Forms 1 and 2 already skip a key outside the class (CLI45:670), and a set that the client cannot name is OP-5's (13.9).
-- **File names only, inside B7.** The `read 1` and `end` lines frame the request and carry no fact. So a request carries nothing but the names of the files the client wants: no `n`, no generation, no session id, `cwd`, agent id, prompt, window, live record or liveness fact (Y:4036–4037; svc:59, svc:61–63; Y:4611; B7). That is what the recording stand-in of `test_the_guards_request_carries_only_file_names` reads (tp:2045–2047).
+- **The names** (proposal, lane 5): `lanes/LANES.md`, `lanes/aliases.tsv`, and `lanes/log/<key>.md`. Forms 1 and 2 name a log only for a `<key>` in `check_lane_name`'s class, `[A-Za-z0-9._-]`, not opening with `.` or `-` (Y:4956; CLI46:665, CLI45:669–670). Form 3 also names a `--log-key=` key outside the class (CLI46:730), so a `<key>` may be any bytes of 0x21 to 0x7E but `/`, at least one. Reason: these are the members a client can name before the read; forms 1 and 2 already skip a key outside the class (CLI45:670), and a key holding `/`, a space or any byte outside 0x21 to 0x7E names no line this format can carry, so form 3 reads such a call directly (13.9).
+- **Sets and the listing** (proposal, lane 5, for OP-5, whose spec question stays open: section 4): `set lanes/archive/` and `set lanes/log/`, each prefix byte for byte, ending in `/`, and the line `listing`, with no field. These are lane 1's three: `archive` is the set `lanes/archive/`; `--all`'s logs are the set `lanes/log/`; `paths` is the render set's listing at `n` (lane 1's answer, #165 6746620707, OP-5; CLI46:665). A set covers every path of the render set present at `n` that begins with its prefix; the render set's paths are `lanes/archive/<name>.md` and `lanes/log/<name>.md`, with no `/` in `<name>` (Y:258–259; Y:1145–1146, Y:1170–1171), so a set has no subdirectory. Reason: the prefix is the render-set name the member covers, as lane 1 has it, and a line with a fixed word and one fixed field is the smallest form that keeps the request file names only.
+- **No new version** (proposal, lane 5). Draft 2 said a set would come "under a new version". No build has spoken `read 1` yet, so draft 3 keeps 1 and adds the two lines. Reason: a version guards only the moment between an upgrade and the old service's exit (above), and no old service exists.
+- **File names only, inside B7.** The `read 1` and `end` lines frame the request and carry no fact. A set or the listing names render-set files by their paths, never a host-local fact or an `n`, as lane 1 reads it (CLI46:665); whether Y:4036–4037 lets a reader's request name one stays OP-5's spec question, for lane 3 and Brett (#165 6746948770). So a request carries nothing but the names of the files the client wants: no `n`, no generation, no session id, `cwd`, agent id, prompt, window, live record or liveness fact (Y:4036–4037; svc:59, svc:61–63; Y:4611; B7). That is what the recording stand-in of `test_the_guards_request_carries_only_file_names` reads (tp:2045–2047).
 - **Its size limit** (proposal, lane 5): 65,536 bytes, the `end` line included. Reason: the largest request a client sends names the register, the aliases and one log for each lane, about 3 KB for a register of 73 lanes, the real one's shape (tp:1903–1906). The limit is about twenty times that, and bounds what a stray connection can make the service hold.
 - **How long the service waits for it** (proposal, lane 5): from the accept to the `end` line, at most the client's own wait, `w_s`: 300 ms, or `register_rtt_ms=` plus 200 ms where that is over 100 ms (CLI44:298–301; Y:4182). The service computes it from the key it already reads for its timer (CLI45:278). At that wait it closes the connection with no answer. Reason: a client that has not sent its whole request by then has stopped waiting (Y:4182), so an answer would reach no one. It leaves SVC-6's per-request timer as it is (next bullet).
 - **The request's arrival** is the moment the service has read the `end` line. The per-request timer, 200 ms, or `register_rtt_ms=` plus 100 ms where that is over 100 ms (Y:4001–4002), runs from there, as AT-10 reads `unavailable slow` "no earlier than 200 ms after the request reached it" (tp:1966–1970).
-- **A connection that sends no request** gets no answer (proposal, lane 5). The service closes it when the client closes, or at the wait above. It is not a request, so it does not move the idle stop's clock, which counts time "with no request" (Y:3912). Reason: a try that only connects, such as the starter's under the lock, where "one that answers means a live service" (Y:3901–3903), then costs the service nothing. Whether `serve --start` makes such a try stays OP-13.
-- **A request the service cannot take** (proposal, lane 5): a first line other than `read 1`; a line that is neither `file <path>` nor `end`; a name outside the three shapes; no name; or more than 65,536 bytes before `end`. The service answers `unavailable` (13.5), and writes the fixed phrase `bad request` to `register.log`, never the request's text. Reason: the client then reads directly, as for any `unavailable`, and the log keeps to fixed phrases, as Y:3797–3799 has it.
+- **A connection that sends no request** gets no answer (proposal, lane 5). The service closes it when the client closes, or at the wait above. It is not a request, so it does not move the idle stop's clock, which counts time "with no request" (Y:3912). Reason: a try that only connects, such as the starter's under the lock, where "one that answers means a live service" (Y:3901–3903), then costs the service nothing. `serve --start` makes no try of its own (section 9).
+- **A request the service cannot take** (proposal, lane 5): a first line other than `read 1`; a line that is none of `file <path>`, `set <prefix>`, `listing` and `end`; a name outside the three shapes; a prefix other than the two; no line between `read 1` and `end`; or more than 65,536 bytes before `end`. The service answers `unavailable` (13.5), and writes the fixed phrase `bad request` to `register.log`, never the request's text. Reason: the client then reads directly, as for any `unavailable`, and the log keeps to fixed phrases, as Y:3797–3799 has it.
 
 ### 13.4 The text at `n` (proposal, lane 5, for lane 1's U5 review)
 
 - **The head line, with `n` and the generation** (proposal, lane 5, for OP-2): `text <n> <generation>`.
   - `<n>` is the head the request's transaction read, in ASCII decimal, with no sign and no leading zero.
   - `<generation>` is the register generation the same transaction read, as PostgreSQL prints a `uuid`: 36 characters, lowercase hex in groups of 8, 4, 4, 4 and 12, joined by `-`.
-  - Reason: Y's head, `text <n>` (Y:4064–4066), stays the line's opening, and the generation joins it on the same line because it comes from the same snapshot (Y:4833) and goes to `.head`'s `generation=` beside `n=` (CLI45:694–695). It touches Y:4064–4066, which names no generation, and stays inside Y by adding only what Y:4833 requires. Whether Y:4064–4066 takes an erratum stays lane 3's (OP-2).
-- **One record for each name, in the request's order** (proposal, lane 5). The i-th record answers the request's i-th name. Reason: the client knows from its own request how many records come and what each answers, so no count or index travels.
+  - Reason: Y's head, `text <n>` (Y:4064–4066), stays the line's opening, and the generation joins it on the same line because it comes from the same snapshot (Y:4833) and goes to `.head`'s `generation=` beside `n=` (CLI45:694–695). It touches Y:4064–4066, which names no generation, and stays inside Y by adding only what Y:4833 requires. Lane 3's ruling makes that an erratum on Y:4064–4066, whose head reads "`text <n>` with the register generation that transaction read" (#165 6746215510, OP-2); the bytes stay this proposal, for lane 1's U5 review.
+- **One item for each request line, in the request's order** (proposal, lane 5). The i-th item answers the request's i-th line between `read 1` and `end`: one record for a `file` line, a set's head line and its members for a `set` line, and the listing's head line and its paths for the `listing` line. Reason: the client knows from its own request how many items come and what each answers, so no index travels; a set's or the listing's own count says where it ends (below).
 - **A file present at `n`** (proposal, lane 5): the line `file <path> <sha256> <size>`, then exactly `<size>` bytes, the file's body, then one `\n`, which is not part of the file.
-  - `<path>` is the file's path at `n`: the name asked, or, for a log, the path it resolved to (below).
+  - `<path>` is the file's path at `n`: the name asked; for a log, the path it resolved to; for a set's member, its own path (below).
   - `<sha256>` is the database's digest of the file at `n` (Y:4070–4072), the value `.head`'s `file=` row carries (CLI44:699), written as §3.2's canonical row writes it: 64 lowercase hex (CLI45:452–456).
   - `<size>` is the body's length in bytes, in ASCII decimal, with no sign and no leading zero, and `0` for an empty file.
   - Reason for the `\n` after the body: "a byte count that does not match" (Y:4076–4077) then fails at the next byte, before the digest is computed.
@@ -388,29 +422,45 @@ unavailable restarting\n
   - for `lanes/aliases.tsv`, `.aliases` as the one line `# no lane aliases` (Y:4150; CLI45:682);
   - for a log, an empty `.log.<key>` and `.logpath.<key>`, and the row `absent=<key>` (CLI45:683–684, CLI45:700);
   - and whatever `file=` row the direct read writes for a path absent at `n` (CLI45:699, with §3.2's `0` and `-`, CLI45:453–454).
-- **A log name** (proposal, lane 5, pending lane 1's answer in 6745905089; OP-6 stays open). The format needs one reading here: form 2 caches no `.paths` (CLI45:680), so it cannot resolve the name itself, and an exact match alone would answer `absent` where the direct read finds the log in another case. So the service resolves `lanes/log/<key>.md` case-insensitively among the render set's logs at `n`, in the request's own transaction, as the direct read resolves it (CLI45:683; Y:4957), folding ASCII case only, since `check_lane_name`'s class is ASCII (Y:4956):
-  - one log resolves: a `file` record whose `<path>` is the resolved `lanes/log/<File>.md`, which may differ from the name asked in case only. The client writes `.log.<key>` from the body, and `.logpath.<key>` as that `<path>` (CLI45:683–684);
-  - none resolves: `absent lanes/log/<key>.md`;
-  - two or more differ from `<key>` only by case: the line `ambiguous lanes/log/<key>.md`, with the name asked. The client writes neither `.log.<key>` nor `.logpath.<key>`, as the direct read writes neither (CLI45:673, CLI45:683).
-  - It stays inside D17: resolving a path decides nothing, and it is the resolution the direct read makes, in the same `lanes-index` (Y:3835–3838). Lane 1 is asked to confirm that T113's direct read folds ASCII case only, so that both ends resolve alike.
-- **How an answer ends** (proposal, lane 5): the line `end` after the last record; then the service closes the connection. The client takes an answer as whole only where it has read the head line, one record for each name, the line `end`, and then the end of the stream, with no byte after `end\n`. Reason: a cut answer then always lacks its end line or its close, so it is never taken for a whole one, and the digests still catch a corrupted body (Y:4072–4074).
+- **A log name** (lane 1's answer, #165 6746620707, OP-6; CLI46:673; the records' bytes are lane 5's proposal, for lane 1's U5 review). The request names `lanes/log/<key>.md` in the key's own spelling, and the service resolves it as the direct read does: case-insensitively among the render set's paths at its `n`, in the request's own transaction, by T113's one function, which `serve` reuses (SVC-3; CLI46:673; Y:4957). Form 2 caches no `.paths` (CLI45:680), so the client cannot resolve the name itself. The answer:
+  - one log resolves: a `file` record whose `<path>` is the resolved `lanes/log/<File>.md`, which may differ from the name asked in case. A resolved path in another case answers the name asked, and is not "a file it did not ask for" (CLI46:673; Y:4077). The client writes `.log.<key>` from the body, and `.logpath.<key>` as that `<path>` (CLI45:683–684);
+  - none resolves: `absent lanes/log/<key>.md`, and the client writes both files empty, with an `absent=<key>` row (CLI46:673);
+  - two or more differ from `<key>` only by case: the line `ambiguous lanes/log/<key>.md`, with the name asked. The client writes neither `.log.<key>` nor `.logpath.<key>`, as the direct read writes neither (C11; CLI46:673, CLI45:683).
+  - It stays inside D17: resolving a path decides nothing, and it is the resolution the direct read makes, in the same `lanes-index` (Y:3835–3838). Both ends resolve alike because they run one function (CLI46:673), so draft 2's request that lane 1 confirm an ASCII-only fold falls.
+  - `ambiguous` stays a record of its own, as lane 1's answer has it: the answer "marks it as matching two logs" (CLI46:673). The service never answers the whole request `unavailable` for it. That closes the choice draft 2 left open, in `ambiguous`'s favour.
+- **A set** (proposal, lane 5, for OP-5): the line `set <prefix> <count>`, then `<count>` `file` records, one for each member, in bytewise order of `<path>`, as `LC_ALL=C` sorts, none repeated.
+  - `<prefix>` is the request's prefix, byte for byte. `<count>` is the number of members, in ASCII decimal, with no sign and no leading zero.
+  - Each member is a path of the render set present at `n` that begins with `<prefix>`, read in the request's own transaction (CLI46:665; Y:4036–4041), and its record is a `file` record as above: its path, its digest at `n`, its size, then its body and one `\n`. A set holds no `absent` or `ambiguous` record: it lists what is present.
+  - **An empty set** is the line `set <prefix> 0`, with no record after it.
+  - For each member whose text it caches, the client writes `.head`'s `file=` row from its `<path>`, `1` and `<sha256>`, as the direct read does (CLI45:699).
+  - **`lanes/archive/`:** the client hands every member to the writer the direct read uses for `.archive`, which holds "`lanes/archive/*`, as `archive_text` prints it today" (CLI46:681).
+  - **`lanes/log/`, filtered to the class:** the client keeps a member `lanes/log/<File>.md` only where `<File>` is in `check_lane_name`'s class, tested without dying (Y:4956), and takes it as `--all`'s member `log:<File>` (CLI46:665). It resolves `<File>` among the set's paths by T113's one function, as a named log is resolved, and writes `.log.<File>` and `.logpath.<File>` as the direct read writes them, or neither where two differ only by case (C11; CLI46:673, CLI46:683–684). A member outside the class it drops: it writes no file and no row for it, but checks its record like any other (13.7). The render set never holds `lanes/log/README.md` (Y:258–259; Y:1145–1146).
+  - Reason: the count says where the set ends with no closing line of its own, so a cut set is caught as a cut answer is; bytewise order is `.paths`' own order (CLI46:680), and lets the client check that each member follows the last; and each member travels as a named file does, so the client writes it with the same code and the same checks.
+- **The listing** (proposal, lane 5, for OP-5): the line `listing <count>`, then `<count>` lines, each one path of the render set present at `n` followed by `\n`, in bytewise order, none repeated. `<count>` is written as a set's is.
+  - **An empty listing** is the line `listing 0`, with no line after it.
+  - The render set does not hold `lanes/STORE` (Y:258–260; Y:5050), so neither does the listing.
+  - The client writes `.paths` from the listing's paths, "one per line, sorted bytewise (`LC_ALL=C`)" (CLI46:680).
+  - Reason: the listing carries paths and no text, so it takes neither a digest nor a body, and its lines, in `.paths`' order, are what `.paths` holds.
+- **A path the lines cannot carry** (proposal, lane 5). Every path an answer names, whether a resolved log's, a set member's or the listing's, is bytes 0x21 to 0x7E, as every line but a body is (13.7). The render set's names may hold any byte but `/` (Y:1145–1146, Y:1170–1171). So where a path the answer would name holds any other byte, the service answers the whole request `unavailable` (13.5), and the client reads directly. Reason: the lines stay ASCII and split on single spaces. Such a name costs a direct read, which then decides, never a wrong cache, and a log whose name is in `check_lane_name`'s class always fits.
+- **How an answer ends** (proposal, lane 5): the line `end` after the last item; then the service closes the connection. The client takes an answer as whole only where it has read the head line, one item for each request line, the line `end`, and then the end of the stream, with no byte after `end\n`. Reason: a cut answer then always lacks its end line or its close, so it is never taken for a whole one, and the digests still catch a corrupted body (Y:4072–4074).
 - **Built whole, then sent** (proposal, lane 5). The service writes no byte of a text answer until its transaction has answered and every body has been checked against its digest at `n` (Y:4043–4050). Reason: its timer then ends a request with `unavailable slow` (13.5), never with half a text answer, and no answer mixes two seqs (Y:4064–4065).
 
 ### 13.5 `refuse db` and `unavailable` (proposal, lane 5, for lane 1's U5 review)
 
 - **Each is one line, then the service closes the connection** (proposal, lane 5). The client takes one only where the line ends in `\n` and no byte follows it. Reason: a cut or padded refusal then reads as malformed, which is `unavailable` (13.7), so a cut never turns into a refusal.
-- **`refuse db <cause> <sqlstate>`**, exactly four fields:
-  - `<cause>` is one fixed word, never `psql`'s message text (Y:3797–3799, Y:4082–4085). Y names two, `auth` and `unreachable` (Y:3931–3932). The words for the switch not `primary` and for the schema version refused, how the switch at `files` is told apart, and whether a cause needs more fields, such as the schema's two numbers (Y:2338), are OP-4's, which lane 1 is answering. So the format takes any word of `[a-z0-9-]`, 1 to 32 bytes (proposal, lane 5). Reason: OP-4's answer can then name its words with no change to this line; a cause that needs more fields would change it.
-  - `<sqlstate>` is the five-character SQLSTATE (Y:4085), of `[0-9A-Z]`, or `-` where the refusal has none, as for a check the transaction makes on a value it read (proposal, lane 5). Reason: `-` is what §3.2's canonical row writes for a value that is not there (CLI45:454). It stays inside Y:4085, which gives the SQLSTATE where a refusal has one.
+- **`refuse db <cause> <sqlstate>`**, four fields, and a fifth only after `schema`:
+  - `<cause>` is one fixed word, never `psql`'s message text (Y:3797–3799, Y:4082–4085): one of `unreachable`, `auth`, `switch-files` and `schema` (lane 1's answer, #165 6746620707, OP-4; CLI46:767). Any other word is a field out of its form, so `unavailable` (13.7). Draft 2's grammar, a word of `[a-z0-9-]` of 1 to 32 bytes, kept the line open for OP-4's words, and the four need no change to it.
+  - `<sqlstate>` is the five-character SQLSTATE (Y:4085), of `[0-9A-Z]`, or `-` where the refusal has none, as for a check the transaction makes on a value it read (proposal, lane 5). Reason: `-` is what §3.2's canonical row writes for a value that is not there (CLI45:454). It stays inside Y:4085, which gives the SQLSTATE where a refusal has one. Lane 1's answer gives the same `-` for the client's line (CLI46:767).
+  - **An optional fifth field, after `schema` only** (proposal, lane 5, pending lane 1's U5 review): `refuse db schema <sqlstate> <detail>`, where `<detail>` is one field of bytes 0x21 to 0x7E, with no space. Lane 1's coming review asks that the `schema` cause name the two numbers, the reader's schema version and the window it was refused against, `readers_from` and `version` (Y:2334, Y:2338; #165 6746948770). That review fixes the field's content and what the client prints from it, so this contract does not name the numbers' form; until then the client prints CLI46:767's line. The client takes the `schema` line with or without the field. Reason: the line can then carry the numbers once lane 1's review fixes them, with no change to its grammar, and a line without them stays whole.
 - **The three `unavailable` lines,** exactly:
-  - `unavailable`: the server's `lock_timeout` or `statement_timeout`, and any other timeout but the per-request timer's (Y:4017–4021, Y:4086–4087); a request before `psql` has connected (Y:4014–4016); a cache miss (Y:4046–4049); and a request the service cannot take (13.3);
+  - `unavailable`: the server's `lock_timeout` or `statement_timeout`, and any other timeout but the per-request timer's (Y:4017–4021, Y:4086–4087); a request before `psql` has connected (Y:4014–4016); a cache miss (Y:4046–4049); a request that arrives during the background whole-file fetch (lane 1's answer, #165 6746620707, OP-15; section 7); a cause the request itself did not see (section 5.2); a request the service cannot take (13.3); and an answer that would name a path the lines cannot carry (13.4);
   - `unavailable slow`: the per-request timer (Y:4012–4013);
   - `unavailable restarting`: an install change (Y:3916–3918).
   - The client treats the three alike: it discards the answer and reads directly (Y:4079; Y:4087–4088). The word after `unavailable` is for the record, and for AT-10, which reads `unavailable slow` (tp:1966–1970).
 
 ### 13.6 What 16 MB counts (proposal, lane 5, for lane 1's U5 review)
 
-- **Every byte the client reads from the socket for one answer:** the head line, each record's line, each body and the `\n` after it, and the end line; or a refusal's one line (proposal, lane 5). Reason: the bound guards the client's memory and its share of the 5 s, which every byte costs, and one count is one comparison. The lines are a few hundred bytes beside a 2,590,927-byte `lanes/LANES.md` (Y:4050), so counting them changes no real answer.
+- **Every byte the client reads from the socket for one answer:** the head line, each record's line, each body and the `\n` after it, each set's and the listing's head line, the listing's lines, and the end line; or a refusal's one line (proposal, lane 5). Reason: the bound guards the client's memory and its share of the 5 s, which every byte costs, and one count is one comparison. The lines are a few hundred bytes beside a 2,590,927-byte `lanes/LANES.md` (Y:4050), so counting them changes no real answer.
 - **Its unit: 16·2^20 bytes, 16,777,216** (proposal, lane 5). Reason: the client counts bytes, a buffer's megabyte is usually 2^20 bytes, and the choice moves only lane 2's boundary case, which then has one number. It stays inside Y:4079–4080, which says "16 MB" and names no unit.
 - **How the client applies it:** it holds at most 16,777,216 bytes of an answer. An answer longer than that is over 16 MB, so `unavailable` (Y:4076–4079): the client stops at the first byte past the bound, or sooner, at a record line whose `<size>` would carry the answer past it. It also stops at its wait, whichever comes first (Y:4079–4080).
 
@@ -423,13 +473,16 @@ Y:4076–4079 makes "a mismatch or a malformed answer (a bad header, a byte coun
 | no byte before the end of the stream, or a reset | not complete |
 | a first line that is none of the head line, a `refuse db` line and the three `unavailable` lines | a bad header |
 | a head line whose `<n>` has a sign, a leading zero or a byte that is not a digit, or whose `<generation>` is not 36 lowercase characters in the uuid's groups | a bad header |
-| a `refuse db` line with other than four fields, or a field out of its form | a bad header |
+| a `refuse db` line with other than four fields, or five after `schema`; or a field out of its form, a `<cause>` other than the four included | a bad header |
 | in any line but a body, a byte before its `\n` that is outside 0x20 to 0x7E, a `\r` among them | a bad header |
 | any byte after the `\n` of a `refuse db` or `unavailable` line | a malformed answer |
 | a record line that is not `file`, `absent` or `ambiguous`, or a field out of its form: a `<sha256>` that is not 64 lowercase hex, or a `<size>` with a sign, a leading zero or a byte that is not a digit | a bad header |
-| a record whose `<path>` is not the name asked at its place; for a log, one that does not equal the name asked under ASCII case folding; or an `ambiguous` record for a name that is not a log | a file it did not ask for |
-| a record where `end` belongs, after the last name's | a file it did not ask for |
-| `end` before the last name's record, or the end of the stream before `end` | not complete |
+| a record whose `<path>` is not the name asked at its place; for a log, one that the name asked does not match case-insensitively, by T113's one function (CLI46:673); or an `ambiguous` record for a name that is not a log | a file it did not ask for |
+| at a `set` line's place, a line other than `set` with the prefix asked, byte for byte, and a `<count>` in its form; at the `listing` line's place, a line other than `listing` with a `<count>` in its form | a bad header |
+| inside a set, a record other than `file`; a member whose `<path>` does not begin with the set's prefix, is not a render-set path (Y:1145–1146), or does not follow the member before it in bytewise order | a file it did not ask for |
+| a listing line that is not a render-set path, or `lanes/STORE`, or that does not follow the line before it in bytewise order | a malformed answer |
+| a record or a listing line where `end` belongs, after the last item | a file it did not ask for |
+| `end` before the last item, or before a set's last member or the listing's last line; or the end of the stream before `end` | not complete |
 | a body cut short by the end of the stream | not complete |
 | a byte after a body that is not `\n` | a byte count that does not match |
 | a body whose sha256 is not its record's `<sha256>` | a digest that does not match |
@@ -443,7 +496,7 @@ Y:4076–4079 makes "a mismatch or a malformed answer (a bad header, a byte coun
 ### 13.8 The client's read, in order (proposal, lane 5)
 
 1. Check the path's length and the directory, and read the owner file (sections 2.1 to 2.4).
-2. Connect, and check the server's uid by `SO_PEERCRED`, or `LOCAL_PEERCRED` on macOS (section 3).
+2. Connect. `ENOENT` or `ECONNREFUSED` is unavailable, and the client starts a service under section 8.1's rule, whatever the owner file says. On a socket that answers, an owner file of another pid namespace or boot is unavailable, and the client starts none (lane 3's ruling, #165 6746655077, OP-8; section 2.4). Then check the server's uid by `SO_PEERCRED`, or `LOCAL_PEERCRED` on macOS (section 3).
 3. Send the whole request at once.
 4. Read until the end of the stream, the 16 MB bound, or the end of the wait, whichever comes first. The wait is one deadline on a monotonic clock, set at the `connect()` call, so it covers the connect, the send and the read together (Y:4182; Y:4393).
 5. Check the whole answer (13.4 to 13.7).
@@ -451,17 +504,39 @@ Y:4076–4079 makes "a mismatch or a malformed answer (a bad header, a byte coun
 
 Reason: one deadline is Y's "connect and answer together" (Y:4182), and checking before writing keeps 13.7's rule that no cache file is written from an answer that fails.
 
-### 13.9 Which forms can ask the socket, under this format
+### 13.9 Which forms ask the socket, and what each sends
 
-- **Form 2, the guard's prefetch,** names all it reads: `lanes/LANES.md`, `lanes/aliases.tsv`, and `lanes/log/<window>.md` where `--lane=<window>` is given and in the class (CLI45:666). So the guard's whole path fits the format.
+- **Form 2, the guard's prefetch,** names all it reads: `file lanes/LANES.md`, `file lanes/aliases.tsv`, and `file lanes/log/<window>.md` where `--lane=<window>` is given and in the class (CLI46:666, CLI46:670). It never names a set or the listing. So the guard's whole path fits the format.
 - **Form 4** never asks the socket (B7; CLI45:747).
-- **Form 1, the readers' prefetch** (OP-5, pending lane 1's answer in 6745905089; the point stays open). Its members `register`, `aliases` and `log:<key>` are names a request carries. Its `paths` and `archive` members, and `--all`, are sets whose members the client cannot know before the read (CLI45:665). The format stays neutral, and either answer fits it:
-  - where a form-1 call with a set reads directly, the format needs nothing more;
-  - where such a call is to ask the socket, the request must name a set, and that is more than file names. It is a spec question for lane 3 and Brett, against Y:4036–4037, lane 3's ruling at Y:4611 and B7's "the request carries file names only" (svc:59 binds only the guard's request, which never names a set). The format would take a set as a new kind of line under a new version (13.3), never inside a `file` line.
-  - Either way, one form-1 call reads one snapshot (Y:4890), so it never takes some members through the socket and others directly.
-- **Form 3, the readers' second read** (OP-7, pending lane 1's answer in 6745905089; the point stays open). The format stays neutral. Form 3's `--files` members are names a request can carry, but its `changed=` lines come from the journal entries in `(n, n′]` (CLI45:730), which no answer carries and which a request without `n` cannot ask for (B7). If form 3 asks the socket, those lines must come from elsewhere; if it reads directly, the format needs nothing more.
+- **Form 1, the readers' prefetch** (lane 1's answer, #165 6746620707, OP-5; CLI46:665). One request names every member of `--files <set>`, or of `--all`, each by the render-set names it covers, on these lines (proposal, lane 5, for the lines):
 
-## 14. Changes from draft 1
+  | Member | Its request line |
+  |---|---|
+  | `register` | `file lanes/LANES.md` |
+  | `aliases` | `file lanes/aliases.tsv` |
+  | `log:<key>` | `file lanes/log/<key>.md` |
+  | `archive` | `set lanes/archive/` |
+  | `paths` | `listing` |
+  | `--all`'s logs | `set lanes/log/`, which the client filters to the class (13.4) |
+
+  - `--all` is `register`, `paths`, `archive`, `aliases` and the logs (CLI46:665), so it sends five lines.
+  - One form-1 call reads one snapshot (Y:4890), so it never takes some members through the socket and others directly. The service answers the whole request, and an `unavailable` sends the whole call to the direct read.
+  - If OP-5's spec question is answered no (section 4), a form-1 call that names `archive`, `paths` or `--all` reads directly, and the format needs nothing more.
+- **Form 3, the readers' second read** (lane 1's answer, #165 6746620707, OP-7; CLI46:730–733). It asks the service first, as every reader's `register read` does (Y:3843–3845; Y:5443), and reads `.direct` as forms 1 and 2 do (C6). It rests on lane 3's OP-2 erratum, the generation in the answer (6746620707).
+  - **What it sends:** one request naming every member the family holds, by `.head`, and every member that `--files` and `--log-key=` name, as file names only with no `n` (CLI46:730; Y:4611; B7). Each goes on form 1's line for it, above, and a cached `log:<key>`, each `absent=<key>` row and each `--log-key=<key>` go as `file lanes/log/<key>.md` (proposal, lane 5, for the lines).
+  - **How it compares:** the answer's head line gives `n′` and the generation, and its records give the digests at `n′`. They take the place of the direct read's in CLI46:730–733's rules:
+    - a `.head` `file=` row is changed where the answer gives its path another `<sha256>`, or does not give its path: an `absent` record; a `file` record that resolves the same key to another path, since the cached path matches that key too, and two paths present at `n′` that match one key would have been answered `ambiguous`; or a set whose members lack it;
+    - a path in the listing and not in the cached `.paths`, or in the cached `.paths` and not in the listing, was created or removed;
+    - an `absent=<key>` whose record is now a `file` record now resolves;
+    - a `.head` that is missing, or names another `n` or another generation than the answer's head line, rewrites the whole family (CLI46:733).
+  - **What it writes:** from the same answer, the members `--files` names, or the whole family, then `.head`, as CLI46:731–732 say. One request is one snapshot at `n′` (Y:4890), so the direct read and the service give the same lines and the same family (CLI46:730).
+  - **An `ambiguous` record** (proposal, lane 5): form 3 discards the answer and reads directly, as for `unavailable`. Reason: the record says neither whether a cached log's path is one of the two nor that path's digest at `n′`, which CLI46:730's first rule needs; the direct read then decides by C11 (CLI46:673).
+  - **A `--log-key=` key the request cannot carry** (proposal, lane 5): a key holding `/`, a space or any byte outside 0x21 to 0x7E makes the whole call read directly (13.3). Reason: one call reads one snapshot (Y:4890), and the direct read takes any key (CLI46:669, CLI46:671).
+  - **A cached set.** CLI46:732 has only "A path created or removed counts against `.paths`, where `.paths` is cached". Lane 1's coming review finds no rule there for a path created or removed under a cached set (#165 6746948770). Form 3 applies CLI46's rules as they stand, and a set in the answer carries every member at `n′`, which such a rule would need.
+
+## 14. Changes
+
+### 14.1 Changes from draft 1
 
 - **The status line:** draft 2. Draft 1 is `51fbd17b`.
 - **Section 13, new:** the bytes on the socket, lane 5's proposal for lane 1's U5 review, with each of OP-3's items:
@@ -481,12 +556,40 @@ Reason: one deadline is Y's "connect and answer together" (Y:4182), and checking
 - **Pointers to section 13** in sections 1, 4, 5.1, 5.2, 5.3, 6.3 and 11.1. The header's line on what the contract fixes now names section 13's proposals as the one place it adds values.
 - **Numbering:** the open points move from section 13 to section 15, and keep their numbers, OP-1 to OP-15.
 
+### 14.2 Changes from draft 2
+
+- **The status line:** draft 3. Draft 2 is `7d462a5e`. Section 14 now holds both lists.
+- **The basis** (section 0): lane 1's contract draft 4.6 is cited as `CLI46:<n>`, for its eight changed lines and draft 3's other new cites, with every other `CLI44:` and `CLI45:` cite kept; the three posts folded in have their rows; and errata are named by the `Y:` lines they correct, since the analysis numbers none of T511's.
+- **Lane 3's rulings, #165 6746215510:**
+  - OP-1: Y:3892's "overrides with 2" is an erratum, and reads "sets to `c` (SVC-6)" (sections 7 and 12);
+  - OP-2: Y:4064–4066's head carries the generation, as an erratum; the bytes stay section 13.4's (sections 5.1 and 13.4);
+  - OP-9: `dir-check` is never stamped; `serve` exits 2 naming the directory, and `status` reports the failure itself (sections 2.2, 8.6 and 9);
+  - OP-14: a value under the floor is ignored and the default kept, never `config-refused` (section 10).
+- **Lane 3's ruling, #165 6746655077:**
+  - OP-8, correcting 6746215510's line: an owner file from another pid namespace or boot, on a socket that answers, is unavailable, and the client starts none; `ENOENT` or `ECONNREFUSED` still starts one; the install change stays as draft 1 has it (sections 2.4, 5.3, 8.1 and 13.8);
+  - OP-15's bounds: 1000 ms and 10 s, the renderer's row, with an 11 s timer (section 7).
+- **Lane 1's answers, #165 6746620707, with draft 4.6:**
+  - OP-4: the four cause words, the client's first stderr line on the 69, `switch-files` for a rollback's declaration, and "definitive in this request" (sections 5.2, 13.5 and 13.7);
+  - OP-5: sets by the render-set names they cover, encoded in section 13 as lane 5's proposal; the spec question stays open (sections 4, 13.3, 13.4 and 13.9);
+  - OP-6: the service resolves a log name by T113's one function, and `ambiguous` stays its own record (sections 4, 13.4 and 13.7);
+  - OP-7: form 3 asks the service first, reads `.direct`, and compares by the digests at `n′` (sections 1, 11.1, 11.3 and 13.9);
+  - OP-11: the fallback line is printed once wherever the client fell back, after the cause line on a 69, and never after a `refuse db` (sections 5.3, 5.4 and 11.2);
+  - OP-13: lane 1's review position on `serve --start` is the contract's text, as lane 5's decision, with OP-8's case read under lane 3's correction (section 9; OP-16);
+  - OP-15, lane 1's part: one connection, `unavailable` at once during a fetch, and no `SIGINT` to the fetch (sections 5.1, 5.3, 7 and 13.5).
+- **Lane 1's two fixes to draft 2** (6746620707), found by their words: the guard's request names its log "with `--lane=`, and only for a name in the class", and the `.direct` clause cites CLI44:688 (section 4).
+- **Section 13, the set encoding** (proposal, lane 5): the request lines `set lanes/archive/`, `set lanes/log/` and `listing`; the answer's `set <prefix> <count>` with one `file` record per member, and `listing <count>` with one path per line, each in bytewise order, `0` for an empty one; the client's filter of `lanes/log/` to the class; a path the lines cannot carry answered `unavailable`; the version kept at 1; form 3's request, and its two fallbacks to the direct read (sections 13.1 to 13.9).
+- **`refuse db`'s optional fifth field, after `schema` only** (proposal, lane 5, pending lane 1's U5 review, #165 6746948770): room for the two numbers, whose form lane 1's review fixes (sections 5.2, 13.1, 13.5 and 13.7).
+- **The open points** (section 15): OP-1, OP-2, OP-4, OP-6 to OP-9, OP-11 and OP-13 to OP-15 are closed, each with its ruling or answer; OP-3 stays lane 5's proposal under review; OP-5's spec question, OP-10 and OP-12 stay open; OP-16 is new.
+
 ## 15. Open points
 
-For lane 1, the U5 reviewer, and lane 3, unless a point names another lane. Each names its sources. Where the contract must take one reading to be whole, it says which, and the point stays open.
+For lane 1, the U5 reviewer, and lane 3, unless a point names another lane. Each names its sources. Where the contract must take one reading to be whole, it says which, and the point stays open. Draft 3 opens each point ruled or answered with "closed: <by whom, which comment>, see §…", and keeps each point's earlier text as its record.
+
+Still open after draft 3: OP-5's spec question, for lane 3 and Brett; OP-10, for lanes 2 and 3; OP-12, for lanes 1 and 2; and OP-16, new, for lane 1. OP-3 stays lane 5's proposal, under lane 1's U5 review.
 
 ### OP-1. SVC-4 item 2 still gives the service's connect as 2 s
 
+- **Closed:** lane 3's ruling, #165 6746215510, OP-1, see §7 and §12. Y:3892's "which the service overrides with 2" reads "which the service, as every register path, sets to `c` (SVC-6)", as an erratum in `research.md` Part 1 in B4.
 - Y:3892 (W:3857): "`_env` also defaults `PGCONNECT_TIMEOUT` to 5, which the service overrides with 2."
 - Against it: text 13, at Y:3923–3925; SVC-6, Y:3974–3975; D9's row, Y:3519; Y:4970; and Y:5877, "`PGCONNECT_TIMEOUT` is set to `c`". Text 13 replaced W:3888–3890, not W:3857.
 - This contract: `c` for each of the `N_a` addresses (section 7), as the task line has it.
@@ -494,6 +597,7 @@ For lane 1, the U5 reviewer, and lane 3, unless a point names another lane. Each
 
 ### OP-2. Where the generation sits in the answer
 
+- **Closed:** lane 3's ruling, #165 6746215510, OP-2, see §5.1 and §13.4. Y:4064–4066's head reads "`text <n>` with the register generation that transaction read" (Y:4833), as an erratum in B4. The bytes stay section 13.4's head line, `text <n> <generation>`, lane 5's proposal under lane 1's U5 review (OP-3).
 - Y:4064–4066 gives the answer as "`text <n>`, then for each file its path, its byte count, its digest and its bytes", with no generation.
 - Y:4833 gives `register read` "the `n` and the register `generation` it read, in the same snapshot". `.head` carries `generation=` (CLI44:695), form 4 checks it (CLI44:745), and the offer's `act` carries it (L5:364).
 - This contract: every text answer carries the generation read in its own transaction (section 5.1). Its place in the bytes is OP-3's.
@@ -514,40 +618,46 @@ For lane 1, the U5 reviewer, and lane 3, unless a point names another lane. Each
   - how long the service waits for a connected client's request.
 - For lane 5's next draft of this contract, before T512 starts, under lane 1's review (U5).
 - Draft 2 proposes each item, for lane 1's U5 review: the request, one per connection, its end, its size limit and the service's wait for it, in section 13.3; the head line, each file's record, the `absent` mark and the end, in section 13.4; the `refuse db` and `unavailable` lines, in section 13.5; what the 16 MB counts, and its unit, in section 13.6; and each malformed case, in section 13.7. The cause words inside `refuse db` stay OP-4's.
+- **Draft 3: still lane 5's proposal, under lane 1's U5 review.** Lane 1 calls the encoding lane 5's (#165 6746620707, OP-4 and OP-5). Draft 3 adds the set and listing lines and records (sections 13.3 and 13.4), names OP-4's four cause words (13.5), and gives `refuse db` an optional fifth field after `schema`, pending lane 1's U5 review (13.5; #165 6746948770).
 
 ### OP-4. `refuse db`'s causes
 
+- **Closed:** lane 1's answer, #165 6746620707, OP-4 (CLI46:653, CLI46:767), see §5.2 and §13.5. The causes are `unreachable`, `auth`, `switch-files` and `schema`; under `--for guard` the first stderr line on the 69 is `lanes-index: refuse db <cause> <SQLSTATE>`, with `-` where there is none; a rollback's declaration counts only on `switch-files`; and a cause the request itself did not see is answered `unavailable`, which needs no ruling.
 - Y names the definitive failures (Y:4082–4085), but only two cause words, `auth` and `unreachable` (Y:3931–3932): none for the switch not `primary`, or a refused schema version.
 - The client needs the switch's word to tell "the switch at `files`", since a rollback's declaration counts only where the read found the switch at `files` (Y:4449–4453).
 - It also needs a line for the 69's first stderr line, "the cause the guard quotes" (CLI44:767), while the service sends no `psql` message text (Y:3797–3799).
 - And the connect runs only in the background, and a request before it connects is `unavailable` (Y:4014–4016). So it is not said when "the connection refused" or "an authentication error" is "definitive in this request" (Y:4082–4084), rather than a past background attempt's outcome, which svc:23's "never answer from what it read before" may exclude.
 - For lane 1 and lane 3.
-- Lane 1 is answering (opensoft/openRepoTools#165, 6745905089).
 
 ### OP-5. Sets the client cannot name
 
+- **Answered:** lane 1's answer, #165 6746620707, OP-5 (CLI46:665): each member goes in one request by the render-set names it covers, `archive` as the set `lanes/archive/`, `--all`'s logs as the set `lanes/log/`, which the client filters to the class, and `paths` as the render set's listing at `n`; a set names files only. Encoded as lane 5's proposal, see §4, §13.3, §13.4 and §13.9.
+- **Still open, the spec question, for lane 3 and Brett:** whether a reader's request may name a set or the listing, when Y:4036–4037 says the request names the files it wants "and nothing else" (Y:4611; B7). Lane 1 has asked lane 3 the same (#165 6746948770). If the answer is no, form 1's sets read directly (§13.9).
 - The request names files (Y:4036–4037; svc:59). Form 1's `--all` (every log at `n`), its `archive` member (`lanes/archive/*`) and its `paths` member (the render set's paths present at `n`) are sets whose members the client cannot know before the read (CLI44:665, CLI44:680–681).
 - How they are asked of the service, under "file names only", is not said.
 - For lane 1 and lane 3.
-- Draft 2's format stays neutral on it (section 13.9), pending lane 1's answer in 6745905089. Said plainly: asking the service for one of these sets is more than file names, so it is a spec question for lane 3 and Brett, not a matter of the format.
+- Draft 2's format stayed neutral on it (section 13.9), pending lane 1's answer. Said plainly then: asking the service for one of these sets is more than file names, so it is a spec question for lane 3 and Brett, not a matter of the format. Draft 3 keeps that question open, above.
 
 ### OP-6. A log named in another case
 
+- **Closed:** lane 1's answer, #165 6746620707, OP-6 (CLI46:673), see §13.4 and §13.7. The service resolves the name by T113's one function, which `serve` reuses; the answer names the resolved path, marks the name absent, or marks two matches. Draft 2's choice between an `ambiguous` record and answering the whole request `unavailable` is closed in `ambiguous`'s favour.
 - Form 2 asks for `lanes/log/<window name>.md` (Y:4142–4144). The direct read writes `.log.<key>` where the key "resolves case-insensitively to a `lanes/log/<File>.md` of the render set", with `.logpath.<key>` the path it resolved to, and neither where two logs differ only by case (CLI44:673, CLI44:683–684; Y:4957).
 - Through the service the client must write the same two files, or test 10's byte-identity can break through `parse_log_stream`'s `unreadable:` warnings, which name `.logpath`'s path (Y:4957; svc:86).
 - Whether the service resolves the name, and how its answer names the path it resolved to, is not said.
 - For lane 1.
-- Draft 2 proposes the one reading its format needs (section 13.4) (proposal, lane 5, pending lane 1's answer in 6745905089): the service resolves the name case-insensitively at `n`, the `file` record names the resolved path for `.logpath.<key>`, and `ambiguous` marks two logs that differ only by case. The point stays open.
+- Draft 2 proposed the one reading its format needs (section 13.4): the service resolves the name case-insensitively at `n`, the `file` record names the resolved path for `.logpath.<key>`, and `ambiguous` marks two logs that differ only by case. Lane 1's answer matches its `file`, `absent` and `ambiguous` records, with T113's one function in place of draft 2's ASCII-only fold.
 
 ### OP-7. Form 3 and the socket
 
+- **Closed:** lane 1's answer, #165 6746620707, OP-7 (CLI46:730), see §11.1 and §13.9. Form 3 asks the service first, reads `.direct` as forms 1 and 2 do, and finds the cached paths changed in `(n, n′]` by their digests at `n′`, against `.head`, a cached `.paths` and the `absent=` keys. It rests on lane 3's OP-2 erratum.
 - Form 3 reads at the head `n′`, and needs the paths changed in `(n, n′]` (CLI44:726–735; Y:4900). The request carries no `n` (svc:59; B7), so the service cannot answer "changed since `n`".
 - Not said: whether form 3 asks the socket, comparing the answer's digests with `.head`'s `file=` rows for every cached member, or always reads directly, as form 4 does. Y:4900's "(SVC-8's rule)" points at Y:4157–4161, which ERR-04 reads as "always direct" for the guard's read only.
 - For lane 1 and lane 3.
-- Draft 2's format stays neutral on it (section 13.9), pending lane 1's answer in 6745905089.
+- Draft 2's format stayed neutral on it (section 13.9), pending lane 1's answer.
 
 ### OP-8. An owner file from another namespace: start one or not
 
+- **Closed:** lane 3's ruling, #165 6746655077, OP-8, which corrects 6746215510's OP-8 line and answers lane 1's question on it (6746620707), see §2.4, §8.1 and §13.8. SVC-2 governs: an owner file from another pid namespace or another boot is unavailable, and the client reads directly and starts none; `ENOENT` or `ECONNREFUSED` still starts one, whatever the owner file says. In B4: an erratum drops "another namespace or" from Y:3882–3883's start list, which keeps the install change that Y:3914–3918's `unavailable restarting` covers; and tasks:1393's "as absent" (B3's `tasks.md:1407`) becomes "as unavailable, and starts none".
 - SVC-2: "each container's client refuses the other's service and starts none" (Y:3786–3788).
 - SVC-4 item 1: any client that finds "an owner file from another namespace or another install" starts one (Y:3881–3883). T512: such a client "treats the service as absent" (tasks:1393).
 - This contract fixes only that such a service is unavailable to the client (section 2.4). Where the lock is shared, a start there finds `register.lock` held, and exits 0 (section 8.3).
@@ -555,6 +665,7 @@ For lane 1, the U5 reviewer, and lane 3, unless a point names another lane. Each
 
 ### OP-9. Where a `dir-check` stamp goes
 
+- **Closed:** lane 3's ruling, #165 6746215510, OP-9, see §2.2, §8.6 and §9. `dir-check` is never stamped: `serve` exits 2 naming the directory, and `lanes-index status` reports the failure itself, with an erratum on Y:3927–3929. Lane 1 reviews the `status` line (R44).
 - A directory that fails the check "is never used and never repaired" (Y:3764–3765). But `dir-check` is a stamped cause (Y:3928), and `register.failed` is a file in that directory (Y:3767–3768, Y:3929–3930).
 - A client checks the directory before it would read a stamp (Y:3761–3763), so only `status` would read one.
 - For lane 3, and for lane 1, whose `status` reports it.
@@ -564,33 +675,35 @@ For lane 1, the U5 reviewer, and lane 3, unless a point names another lane. Each
 - Y: `serve` stamps `no-psql`, and exits before it listens (Y:3926–3931).
 - tp:2028–2030: with no `psql` on its `PATH`, the service "answers `refuse`".
 - This contract follows Y (section 8.6).
-- For lane 2, whose test it is, and lane 3.
+- For lane 2, whose test it is, and lane 3. **Still open.**
+- Lane 5 proposed exit 2 for `serve` on `no-psql` (#165 6746631207), as for `path-too-long`, the directory check and `config-refused`: each is an end before the socket listens (Y:3926–3929). Lane 1's T102 follow-up gives the `no-psql` stamp 2 in `exit-codes.md`, and leaves this point's question open (#165 6746948770): whether the service ever answers `refuse` without `psql` (tp:2028–2030).
 
 ### OP-11. The fallback line where the direct read fails
 
+- **Closed:** lane 1's answer, #165 6746620707, OP-11 (CLI46:764, CLI46:767), see §5.3, §5.4 and §11.2. The fallback line is printed once, wherever the service was unavailable and the client then read directly, whether that read succeeded or failed (svc:104, svc:116–121; tp:1846–1849). It never comes after a `refuse db`, and on a 69 it follows the cause line.
 - svc:104: with the service unavailable, the hook "SHALL print `guard: direct (service unavailable)` on stderr, with the same exit code".
 - CLI44:764 and Y:4342: form 2 prints it only where the service did not answer and the direct read did. CLI44:767 makes the first stderr line on a 69 the cause the guard quotes.
-- This contract follows CLI44 (section 11.2).
+- Drafts 1 and 2 followed CLI44 (section 11.2); draft 3 follows CLI46.
 - For lane 1 and lane 3, to confirm that svc:104 reads so.
-- Lane 1 is answering (opensoft/openRepoTools#165, 6745905089).
 
 ### OP-12. macOS's peer check
 
 - Y:3794–3796: "Where `SO_PEERCRED` is not available (macOS offers `LOCAL_PEERCRED` instead, untested here), the directory's owner and mode are the whole protection."
 - tasks:1392 and the task line: `LOCAL_PEERCRED` on macOS.
 - This contract takes `LOCAL_PEERCRED` at both ends (section 3). No source names a macOS test bed for it, and the owner file has no namespace or boot id there (Y:3783).
-- For lane 1, and lane 2: whether T512 shows it on macOS, or records it as not shown, with Y's fallback.
+- For lane 1, and lane 2: whether T512 shows it on macOS, or records it as not shown, with Y's fallback. **Still open.**
 
 ### OP-13. `serve --start`'s exits, and its first step
 
+- **Closed:** lane 5's decision, which adopts lane 1's review position (#165 6746620707, OP-13) as the contract's text, see §9. No socket try of its own; the client's start path; 0 when it launched `serve` or the rules start none; 2 for a refused configuration (Q6(c) included), a mode other than `primary`, or a failed path or directory check; 64 for usage; no stamp of its own. Its OP-8 clause is read under lane 3's later correction, and OP-16 asks lane 1 to confirm that reading.
 - R50 is "lean on `serve --start`" (M:717). No source gives its exits, but Q6(c)'s 2 at load (Y:4872).
 - Not said: whether it tries the socket before it starts `serve`. Without that, each session start with the service running costs one more Python start, which section 8.3 then ends with exit 0.
 - T513's block reads neither (svc:93).
 - For lane 1 and lane 3.
-- Lane 1 is answering (opensoft/openRepoTools#165, 6745905089).
 
 ### OP-14. R37's floor: refused or ignored
 
+- **Closed:** lane 3's ruling, #165 6746215510, OP-14, see §10. A value under the floor is ignored and the default kept, never `config-refused`, and DEC-15 gains "a value that is not a positive whole number is ignored, and the default kept" in B4.
 - R37: "with a floor (refuse a value under 1 s)" (M:603). DEC-15: "with a floor of 1 s".
 - T512: "a value that is not a positive whole number is ignored, with the default kept" (tasks:1423).
 - This contract follows T512 (section 10).
@@ -598,8 +711,16 @@ For lane 1, the U5 reviewer, and lane 3, unless a point names another lane. Each
 
 ### OP-15. The background whole-file fetch
 
+- **Closed:** lane 1's part, #165 6746620707, OP-15, and its bounds, lane 3's ruling, #165 6746655077, OP-15, see §7. One connection: the fetch runs on the held connection, in its own transaction, between requests; a request that arrives during it is answered `unavailable` at once; a request's `SIGINT` never cancels it. Its bounds are `SET LOCAL lock_timeout = '1000ms'` and `statement_timeout = '10s'`, the renderer's row (Y:3527), with an 11 s timer; on expiry the fetch is dropped, and the next miss retries. B4 records an erratum that adds a D9 row for the fetch.
 - On a cache miss the service "fetches the file whole in the background, in a transaction of its own, never on a request's timer" (Y:4048–4050). A whole `lanes/LANES.md` took 1,219 ms at a 150 ms round trip (Y:4050–4053).
 - The held connection takes one query at a time (Y:3982–3984), under a 180 ms `statement_timeout` (Y:4017–4020), and D9's table has no row for this fetch (Y:3516–3537).
 - Not said: whether the fetch holds the one connection, so that requests behind it answer `unavailable slow`, or runs on a second; and its bounds.
 - For lane 1 and lane 3.
-- Lane 1 is answering (opensoft/openRepoTools#165, 6745905089).
+
+### OP-16. `serve --start` and OP-8's case (new in draft 3)
+
+- Lane 1's position on OP-13 counts "lane 3's OP-8 case" among the rules under which `serve --start` starts none, with exit 0 (#165 6746620707). It was posted before lane 3's correction of OP-8 (#165 6746655077), and asked lane 3 what 6746215510's "another install" meant.
+- Under the correction, `ENOENT` or `ECONNREFUSED` starts one whatever the owner file says, and only a socket that answers with an owner file from another namespace or boot starts none (§2.4).
+- `serve --start` makes no socket try of its own, and runs the start a client runs on `ENOENT` (Y:4497–4499). So this contract reads it as never meeting OP-8's case: it launches `serve`, which exits 0 where another namespace's service holds a shared `register.lock` (§8.3), and binds where the owner file is stale, as after a container restart, which leaves its stale files on the overlay (Y:3910–3911), or a reboot. Its exit is 0 either way (§9).
+- The other reading, that `serve --start` reads the owner file and starts none on another namespace or boot, would leave the `SessionStart` block's warm start undone after every reboot or container restart, until a client's `ECONNREFUSED` starts one.
+- For lane 1, to confirm, and lane 3 if the correction meant otherwise.
