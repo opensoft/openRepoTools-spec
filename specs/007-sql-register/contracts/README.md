@@ -3,21 +3,30 @@
 This directory holds the contract files that plan.md lists. Each is written
 by the lane that owns it, and lands before the code that rests on it.
 
-## `register-cli.md`: lane 1's contract draft 4.6, keyed to Y
+## `register-cli.md`: lane 1's contract draft 4.7, keyed to Y
 
-[register-cli.md](register-cli.md) is lane 1's contract draft 4.6, keyed to
-Y (`a6497d00`), copied here byte for byte by lane 3 at round B4 on
-2026-11-09. It replaces draft 4.5, which lane 3 copied in at round B3;
-draft 4.4 came in at fix round B2, draft 4.2 at fix round B, and draft 4.1
-at assembly phase A.
+[register-cli.md](register-cli.md) is lane 1's contract draft 4.7, keyed to
+Y (`a6497d00`), copied here byte for byte by lane 3 at round B5 on
+2026-11-09. It replaces draft 4.6, which lane 3 copied in at round B4;
+draft 4.5 came in at round B3, draft 4.4 at fix round B2, draft 4.2 at fix
+round B, and draft 4.1 at assembly phase A.
 
-- **Source:** lane 1's contract draft 4.6, `contracts-register-cli.v4.6.md`,
-  posted on #165 at 6746620707.
+- **Source:** lane 1's contract draft 4.7, `contracts-register-cli.v4.7.md`,
+  posted on #165 at 6747384945.
 - **sha256:**
-  `028937e66f9bce3ffdeb6130cafdcd5111bd25050756676ba5f609080a810f5d`, 963
-  lines. The copy here has the same digest. Drafts 4.3 to 4.6 keep every
+  `429f74ef7a7c811d7f30b26cdffa41906378103484d222f07c05d894e2293f1d`, 963
+  lines. The copy here has the same digest. Drafts 4.3 to 4.7 keep every
   line number of draft 4.2.
-- **What draft 4.6 changes:** it is draft 4.5 with lane 1's answers to T511's
+- **What draft 4.7 changes:** it is draft 4.6 with lane 3's ruling that a
+  reader's request may name member sets and the render set's listing (#165
+  6747048305; :665, as research.md's ERR-31 records), and three fixes from
+  lane 1's U5 review of T511's draft 2: `.head` has a `file=` row for every
+  path read at `n`, present or not (:699, :703); form 3 counts a path created
+  or removed under a cached set member (:730, :732); and a `schema` refusal
+  names the client's `REGISTER_SCHEMA_VERSION`, the database's `readers_from`
+  and `version`, and Y:2338's remedy (:767). Its status and basis lines change
+  too (:5, :12). Its §3.1 to §3.5 are draft 4.6's, byte for byte.
+- **What draft 4.6 changes** (`028937e6…`, #165 6746620707): it is draft 4.5 with lane 1's answers to T511's
   open points for lane 1 (T511's §13, #165 6745670828), inside existing lines
   of §3.6 (:653, :665, :673, :730, :764 and :767): `register read` reads the
   switch and the readers' schema window, with the 69's cause line fixed
@@ -59,7 +68,14 @@ at assembly phase A.
   660 lines, #165 6745214166) replaces it for 007's tasks, and keeps its
   line numbers: it is block v4.4 (`a4ce9e3b…`, #165 6742356416) with T119's
   check 11 and its tests naming the prod OpenXPKI's root (:386, :388). The
-  contract, at draft 4.6 as at 4.1, gives no restore order.
+  contract, at draft 4.7 as at 4.1, gives no restore order. Block v4.8
+  (`8d3e6ce2…`, 660 lines, #165 6747384945) replaces v4.5 for 007's tasks
+  since round B5, and keeps its line numbers. It is block v4.7 (`041c88d3…`,
+  #165 6746948770) paired with contract draft 4.7 (:278, :289, :290); v4.7
+  is block v4.6 (`823aaaa3…`) with T109's rendering rule (:186), T113's form
+  3 and snapshot as draft 4.6 has them (:278, :289), and T119's check 11 and
+  its tests back to the install's CA (:386, :388); and v4.6 is v4.5 with
+  :212's ERR-03 correction.
 - **What draft 4.1 changes:** it is draft 4 (#165 6738871108, `5d6ce7ca…`,
   939 lines) with lane 5's check of draft 4 taken (#165 6739068493). The
   quote of the guard's second read is cited as Y:4160–4161; the change list
@@ -85,7 +101,7 @@ at assembly phase A.
   `register snapshot`, `register commit` and `journal --write-id`, keeps the
   form of the phase plan's interfaces table (Y:4834).
 - **Its landing:** tasks.md's T101 rides the spec PR, since its output is
-  this file, in the spec branch at draft 4.6 (lane 3, #165 6745826156). A
+  this file, in the spec branch at draft 4.7 (lane 3, #165 6745826156). A
   later draft replaces this copy as a fix before the spec PR leaves draft,
   with its own source and digest here.
 

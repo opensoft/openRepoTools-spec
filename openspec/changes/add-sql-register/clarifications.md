@@ -492,7 +492,7 @@ and in lane openRepoTools-1's:
   install contract by "A codexFactory lane, now (Recommended)" (#165
   6723967774). Engineers reach it with no VPN, through a public `LoadBalancer`
   limited to their addresses, with `externalTrafficPolicy: Local`, and TLS
-  `verify-full` with a certificate from "Install's private CA (Recommended)" (superseded on 2026-11-09 by Brett's "add openXPKI to prod and use that. both QA and Prod need openXPKI" (14:38:23Z), #165 6742844912);
+  `verify-full` with a certificate from "Install's private CA (Recommended)" (superseded on 2026-11-09 by Brett's "add openXPKI to prod and use that. both QA and Prod need openXPKI" (14:38:23Z), #165 6742844912; then, on 2026-11-09 at 16:58:23Z (answers observed), his "Interim CA now, OpenXPKI later (Recommended)" (#165 6746095035) made it the issuer again, as the interim CA until the prod OpenXPKI exists);
   its logins are "Two logins each (Recommended)" (#165 6723413756), made,
   rotated and revoked by "lanes-index login (Recommended)" (#165 6726078173).
   Its region is the cluster's, Central US.

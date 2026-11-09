@@ -85,7 +85,7 @@ and the only scope it takes, are:
     6726078173): "Install's private CA (Recommended)", "lanes-index login
     (Recommended)" and "Yes, drill at act 3 (Recommended)"; the first is
     superseded on 2026-11-09 by Brett's "add openXPKI to prod and use that.
-    both QA and Prod need openXPKI" (14:38:23Z);
+    both QA and Prod need openXPKI" (14:38:23Z), and then, at 16:58:23Z (answers observed), his "Interim CA now, OpenXPKI later (Recommended)" (#165 6746095035) made it the issuer again, as the interim CA until the prod OpenXPKI exists;
   - **lane 3's rulings on the lanes' blocks** (6726556972), R01 to R61, with
     their evidence memo, and the rulings after it (6726725691, 6727022920,
     6727201960, 6738474549). research.md records each one this feature
@@ -667,7 +667,7 @@ fixture: tests 7, 8 and 13, P8, D22, and AT-F18.
    - the constant still in place;
    - tools outside the schema's window;
    - check 11: a URL without `sslmode=verify-full` and the root file of the
-     issuer, the prod OpenXPKI, or with `sslrootcert=system`, or a chain that
+     issuer, or with `sslrootcert=system`, or a chain that
      does not verify against that root (ops:454; Y:2324);
    - check 13: an endpoint whose address count differs from
      `register_addresses=`, which the install's one A record makes 1
@@ -1005,8 +1005,8 @@ are lane 3's rulings memo's).
 - **FR-011**: Every register and reader URL, and the admin's own service, MUST
   name the install's endpoint and carry `sslmode=verify-full` and an
   `sslrootcert=` that names the root of the issuer that signs the server's
-  certificate, the prod OpenXPKI (Brett, 2026-11-09 14:38:23Z: "add openXPKI
-  to prod and use that. both QA and Prod need openXPKI"), and never `system`
+  certificate, the issuer that `operations.md` §2.2, item 4, names
+  (#165 6726078173, 6742844912 and 6746095035), and never `system`
   (Y:2324; ops:153). It MUST be enforced in three places (R09):
   - `load_config` refuses, as a refused configuration, a `register_url=` or
     `reader_url=` at a TCP host that is not loopback, unless it carries
@@ -1373,7 +1373,7 @@ are lane 3's rulings memo's).
   - Passwords are SCRAM verifiers computed on the client.
   - Sources: ops:398; ops:407; ops:437; ops:462; ops:477.
 - **FR-055**: `ready` MUST make §2.4's checks 1 to 13 (ops:444–456). Check 11
-  reads `verify-full` and the prod OpenXPKI's root file, and fails on `system`
+  reads `verify-full` and the issuer's root file, and fails on `system`
   (ops:454); check 13 expects the install's one address, `N_a` 1 (ops:456;
   ops:151).
 - **FR-056**: `outage declare` and `outage clear` MUST write and remove the

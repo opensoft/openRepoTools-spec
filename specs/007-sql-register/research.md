@@ -8,10 +8,10 @@ Secret, corrected after Y on lane 1's word (#165 6742453803). This file
 records what the rulings since the freeze decide for 007, and the errors found
 in the frozen text.
 
-- **Part 1, the errata** (ERR-01 to ERR-30; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-37; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-23): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-24): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -33,8 +33,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.6 (`contracts/register-cli.md`, `028937e6…`,
-#165 6746620707) and its block is v4.5 (`4d740972…`, #165 6745214166),
+contract is its draft 4.7 (`contracts/register-cli.md`, `429f74ef…`,
+#165 6747384945) and its block is v4.8 (`8d3e6ce2…`, #165 6747384945),
 both keyed to Y, both keeping v4.2's line numbers.
 
 ## Part 1: errata against the frozen text
@@ -293,7 +293,7 @@ both keyed to Y, both keeping v4.2's line numbers.
 - **Superseded on 2026-11-09** by Brett's "add openXPKI to prod and use that.
   both QA and Prod need openXPKI" (14:38:23Z; #165 6742844912): the endpoint's
   certificate now comes from the prod OpenXPKI, as `operations.md`'s item 4
-  reads since round B3. This record keeps what was decided on 2026-11-08.
+  reads since round B3. This record keeps what was decided on 2026-11-08. Then, on 2026-11-09 at 16:58:23Z (answers observed), Brett's "Interim CA now, OpenXPKI later (Recommended)" (#165 6746095035) made the install's private CA the issuer again, as the interim CA until the prod OpenXPKI exists.
 
 ### ERR-18. D1's item 5 keeps the physical backups 30 days
 
@@ -430,18 +430,91 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 
 - **The erratum:** Y:4895's mirror row and Y:4928 name only `window-lane` and
   `swapped`, and `test-plan.md:2198–2204` has `canon-lane` exit 69 with the
-  variable set. With it set, these read the mirror: in `lane-handoff`,
-  `window-lane`, `swapped`, `register-row`, `canon-lane`, `last-session`,
-  `lane-state`, `set-lane-state`, `handoff-path` and `write-handoff`; in the
-  handoff skill, `publish-handoff`. Only `who` and `lane-last` still exit 69
-  under it. No register write rests on those answers: `PAUSED`, the `LANES.md`
-  line and the row still exit 69 with their notes, and the lane stays
-  `SWAPPING`. spec:692 already requires it.
-- **Whose:** lane 3's ruling on lane 4's item 1, #165 6746035594. The
+  variable set. With it set, these read the mirror, by verb: `window-lane`,
+  `swapped`, `register-row`, `canon-lane`, `last-session`, `lane-state`,
+  `set-lane-state`, `handoff-path` and `write-handoff`, and the skill's own
+  calls of these verbs (after slice 3, `handoff-path --create` and
+  `write-handoff --prepend`). Only `who` and `lane-last` still exit 69 under
+  it. No register write rests on those answers: `PAUSED`, the `LANES.md` line
+  and the row still exit 69 with their notes, and the lane stays `SWAPPING`.
+  spec:692 already requires it.
+- **Whose:** lane 3's ruling on lane 4's item 1, #165 6746035594, with its list by
+  verb (#165 6747422030). The
   ownership seam in an outage is Brett's, PENDING-BRETT (spec:648–649 against
   `lane-handoff:1728–1741` at code `ddc972d`), his spec-PR list item 9.
 - **Source:** Y:4895; Y:4928; `test-plan.md:2198–2204`; spec:692;
   spec:648–649.
+
+### ERR-31. A reader's request may name member sets and the render set's listing
+
+- **The erratum:** Y:4036–4037's "The request names the files it wants" reads:
+  it names "the files it wants, singly or by the contract's member sets, or
+  the render set's listing at `n`", and still nothing else: register files at
+  `n`, and no pid, session or host fact (SVC-11). A member set names fixed
+  render-set files; `--all` and `paths` ask for the render set's listing at
+  `n`, which the service reads in the same transaction. Contract draft 4.6's
+  :665 and :730 rest on it, and draft 4.7's :665 states it.
+- **Whose:** lane 3's ruling, #165 6747048305, on lane 1's question in
+  6746948770. The citation is Y:4036–4037, as lane 1 corrected it (#165
+  6747151224), since the line before it is blank.
+- **Source:** Y:4036–4037.
+
+### ERR-32. `lane-start`'s two routing reads are phase 2's (T402's point 1)
+
+- **The erratum:** Y:4924's table of the lifecycle scripts' sites gains
+  `lane-start:1269` (`ls_rows_source`) and `:1791`, at lane 4's T402 commit
+  `ce8076a`, as phase 2. They are slice 2b's routing reads of
+  `origin/<branch>`, made only under `LANES_ROUTE_WRITES=1`, and on primary
+  `:1269` would decide new lane against resume from the mirror. T428 moves
+  both to the register before the cutover.
+- **Whose:** lane 3's ruling on T402's point 1, #165 6747281902.
+- **Source:** Y:4924.
+
+### ERR-33. `request-handoff`'s arm in `lane-start` is a write's arm (T402's point 2)
+
+- **The erratum:** Y:5730's row of arms that already refuse and pass the code
+  lists `:2511–2512`, `request-handoff`'s arm. It moves to Y:5731's row, the
+  writes. The arm keeps 1 in every mode until T428, which passes the code and
+  relays the writer's rerun on a 3, as T432 does for `lane`'s arm.
+- **Whose:** lane 3's ruling on T402's point 2, #165 6747281902.
+- **Source:** Y:5730; Y:5731.
+
+### ERR-34. Two `lane-transcript` refusals after the rename (T402's point 5)
+
+- **The erratum:** spec:685's "nothing was written" does not hold for the two
+  `lane-transcript` refusals after the rename where `request-handoff` answered
+  0. There the refusal names what it wrote, the HANDOFF-REQUESTED line or the
+  forced PAUSED, and gives the window back its name, as #138 item 3 does.
+- **Whose:** lane 3's ruling on T402's point 5, #165 6747281902.
+- **Source:** spec:685.
+
+### ERR-35. The register's role names are fixed (ops:413)
+
+- **The erratum:** ops:413's "the role names: by default `design.md` §1.4's"
+  drops "by default". Migration 1's role block is Y:2235–2278 byte for byte,
+  and lane 3's ruling (a) on T107 (DEC-23) keeps the three role names fixed,
+  so no other names can be configured.
+- **Whose:** lane 3's answer, #165 6747313608, to lane 1's question in
+  6747233899.
+- **Source:** ops:413; Y:2235–2278.
+
+### ERR-36. "Pass the code" is for 69, 75 and 3 (T408)
+
+- **The erratum:** Y:5722's "Pass the code" gains "for 69, 75 and 3; any other
+  code keeps the arm's exit of today", read with Y:5746, under which the read
+  arms change nothing in files mode. Files mode stays byte-identical, exit
+  codes included. It narrows lane 3's point 4 for T402 (#165 6747281902) the
+  same way.
+- **Whose:** lane 3's ruling on T408, #165 6747422030.
+- **Source:** Y:5722; Y:5746.
+
+### ERR-37. `next-free`'s two arms join `lane`'s row (T408)
+
+- **The erratum:** Y:5740's `lane` row gains `next-free`'s two arms, `go_new`
+  and the listing's note, in phase 1. They pass 69, 75 and 3, since Y:3022
+  makes `next-free` a 69 reader. T408 owns them.
+- **Whose:** lane 3's ruling on T408, #165 6747422030.
+- **Source:** Y:5740; Y:3022.
 
 ## Part 2: decisions
 
@@ -780,6 +853,22 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   both ways.
 - **Source:** Y:2323; Y:1039–1040; Y:1051–1056; T109, whose task text block
   v4.7 carries.
+
+### DEC-24. A 007 task widens to an existing test file only where its own change fails that test
+
+- **The decision:** a 007 task widens to an existing test file only where its
+  own change fails that test and no code form avoids it, and lane 2 reviews
+  the hunk. T404 meets it: its move breaks the fake `lanes-edit.sh` and the
+  report's text in `tests/test_lane_worktrees.py` and
+  `tests/test_lane_worktrees_report.py`. T401 does not: its array form, headed
+  by `--`, passes `repo_hygiene` with git's argv unchanged, and the scanner's
+  false positive fails safe.
+- **Whose:** lane 3's rule, #165 6747281902, on lane 4's T404 item 1 and lane
+  2's NOTES Q23; lane 2 takes it for T404 (#165 6746979269).
+- **Why:** the fix belongs with the change that needs it, and keeps that pull
+  request green on its own. It follows Q-L2-3 (a), where lane 4's T417 adds
+  its `_EXIT_3_CAUSES` entries and lane 2 reviews the hunk.
+- **Source:** T404; T401; T417.
 
 ## Part 3: the choices the design leaves to the plan
 

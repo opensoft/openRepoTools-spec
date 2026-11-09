@@ -1985,7 +1985,7 @@ org's GitHub plan supports such a ruleset, which nobody has checked yet.
     6723925474 and 6723967774). Engineers reach it with no VPN, through a public
     `LoadBalancer` limited to their addresses, with
     `externalTrafficPolicy: Local`, and TLS `verify-full` with a certificate
-    from the prod OpenXPKI (Brett, 2026-11-09 14:38:23Z: "add openXPKI to prod and use that. both QA and Prod need openXPKI"; it replaces the install's private CA); each engineer has two logins, made, rotated
+    from the install's private CA, the interim CA until the prod OpenXPKI re-issues the certificate (Brett, 2026-11-09: "add openXPKI to prod and use that. both QA and Prod need openXPKI", 14:38:23Z, #165 6742844912; then "Interim CA now, OpenXPKI later (Recommended)", #165 6746095035); each engineer has two logins, made, rotated
     and revoked by `lanes-index login` (#165 6723413756 and 6726078173). Its
     backups are the daily `pg_dump` of both schemas, by the install's `CronJob`,
     into storage in the prod subscription, and CNPG's Barman Cloud backups

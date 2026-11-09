@@ -117,7 +117,7 @@ never runs `psql`.
   prod install creates, on the prod AKS cluster in Central US, with one
   instance and no HA (Y:3327–3330). It is reached through a public
   `LoadBalancer` limited to engineers' addresses, with `verify-full` against
-  the prod OpenXPKI's root (Brett, 2026-11-09 14:38:23Z), never through a
+  the install's private CA, until the prod OpenXPKI replaces it (#165 6742844912, 6746095035), never through a
   pooler (Y:2324; ops:133). This feature builds none of the install's parts.
 - **In CI**: the PostgreSQL 16 binaries on `ubuntu-24.04`, found by
   `PG_BIN`, then `pg_config`, then the Debian path.
@@ -265,7 +265,7 @@ specs/007-sql-register/
 ├── quickstart.md        # Phase 1: the operator's and an engineer's first steps
 ├── contracts/
 │   ├── README.md        # the copy's source and digest, and each contract's owner
-│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.6, copied in at round B4.
+│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.7, copied in at round B5.
 │   │                    #   THE CONTRACT BETWEEN GROUPS A AND B (FR-013 to FR-017),
 │   │                    #   and the readers' four forms (§3.6, which lane 5 reviews)
 │   ├── exit-codes.md    # [L1] T102: the lanes-index rows; each lane adds its callers' arms
@@ -280,12 +280,12 @@ specs/007-sql-register/
 
 `contracts/register-cli.md` is fixed before group B codes against it. Lane 1
 writes it, lane 4 confirms group B's sections, lane 5 reviews §3.6, and lane
-3 rules (R01, R06). Lane 1's draft 4.6, keyed to Y (`028937e6…`, 963 lines;
-#165 6746620707), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
+3 rules (R01, R06). Lane 1's draft 4.7, keyed to Y (`429f74ef…`, 963 lines;
+#165 6747384945), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
 lane 4's (a) (6741093519), then lane 5's 6741787745, lane 4's log set, the
-endpoint's name and lane 1's answers to T511's open points. Draft 4.1 is
+endpoint's name, and lane 1's T511 answers and U5 fixes. Draft 4.1 is
 draft 4 (6738871108), with form 4, lane 5's review of §3.6, lane 3's B4 and
-B7 and lane 5's check (6739068493). Lane 3 copied draft 4.6 into the path
+B7 and lane 5's check (6739068493). Lane 3 copied draft 4.7 into the path
 byte for byte, and [contracts/README.md](contracts/README.md) names its
 source and digest. Its §8 closes O14 to O21. T101 rides the spec PR (B4).
 
