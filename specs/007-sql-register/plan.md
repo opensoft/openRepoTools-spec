@@ -490,11 +490,11 @@ The tag, v1.2.0, on Brett's own word, after group C and the service ... [L3]:
   - "Group B: lane 4's plan", below, summarises lane 4's order.
 - **Phase 4, the service,** is built beside groups A and B, and the v1.2.0
   tag waits for it. This is Brett's own word, "4A", typed in lane 3's
-  session at about 2026-11-08T20:33Z (#165 6726766577; the record,
-  `RULINGS-brett-20261108-text-4a5a.md`), for lane 3's option "Build it
-  beside groups A and B, and the tag waits for it". It changes his Q29 (a)
-  answer, "the service is built last" (clar:473), and Y records it
-  (clar:524–525; svc:283; Y:4826; Y:3951–3956).
+  session at about 2026-11-08T20:33Z (lane 3's #165 comment 6726766577,
+  which quotes his typed words "4A, 5A, 1 let them stand, 3A"), for lane
+  3's option "Build it beside groups A and B, and the tag waits for it". It
+  changes his Q29 (a) answer, "the service is built last" (clar:473), and Y
+  records it (clar:524–525; svc:283; Y:4826; Y:3951–3956).
   - Lane 5's T511 can start at once. T512 is coded beside group A and lands
     near its end, after lane 1's T103 to T106, T111, T113, T115 and T117,
     lane 3's T302, and lane 5's T504, T505 and T507. It does not wait for
@@ -554,13 +554,13 @@ written into `contracts/register-cli.md`.
 ## Group B: lane 4's plan
 
 Lane 4's group B plan is this section's source, summarised here and cited by
-its sections, never copied: `group-B-plan.md`, sha256 `c84caab4…`, 771
-lines, in lane 4's read-only snapshot `w5/snap-1108-op/`, with its block
-`lane4-block-T4xx.md`, `b95a1ff9…`, 381 lines (T401 to T434). Both are keyed
-to W, lane 1's contract draft 1 and slice 1b `34799b74`. Contract draft 4 changes
-none of group B's sections, §3.1 to §3.5 (its change list). Lane 4's whole
-revision, keyed to X with lane 1's draft 2 and lane 2's names, comes on
-2026-11-09 (#165 6726825389); lane 3 takes it at phase B.
+its sections, never copied: lane 4's `group-B-plan.md`, sha256 `c84caab4…`,
+771 lines, with its block `lane4-block-T4xx.md`, `b95a1ff9…`, 381 lines
+(T401 to T434). Both are keyed to W, lane 1's contract draft 1 and slice 1b
+`34799b74`. Contract draft 4 changes none of group B's sections, §3.1 to
+§3.5 (its change list). Lane 4's whole revision, keyed to X with lane 1's
+draft 2 and lane 2's names, comes on 2026-11-09 (#165 6726825389); lane 3
+takes it at phase B.
 
 - **Scope** (GB §1): U2's read verbs and arms (T401 to T408), U3's
   `act-begin` and `--walk` (T410, T411), and group B (T409, T412 to T434),

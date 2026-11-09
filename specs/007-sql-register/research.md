@@ -59,6 +59,8 @@ block is v4 (`203794ec…`), both keyed to Y.
   faithfully", so it went into no erratum commit. Lane 1's words are at line
   285 of its texts file (its D8), which Y carries at ops:372 (lane 3, #165
   6727022920).
+- **The decision:** lane 3's #165 6726725691, carried by lane 1's T110 and
+  its `rotate --dump-job`.
 - **Source at Y:** ops:483; ops:372; ops:482; ops:710. The sql spec already
   has the dump job's password "rotated" by `lanes-index login` (spec:846).
 
@@ -291,13 +293,13 @@ block is v4 (`203794ec…`), both keyed to Y.
   guard without the service takes about 1.2 to 2.1 s, which misses Brett's
   1 s. No service pull request lands before the spec PR.
 - **Whose: Brett's.** His words, verbatim, typed in lane 3's session at about
-  2026-11-08T20:33Z: "4A, 5A, 1 let them stand, 3A" (#165 6726766577; the
-  record, `RULINGS-brett-20261108-text-4a5a.md` in lane 3's briefs). Option
-  4A, as lane 3 asked it in text: "Build it beside groups A and B, and the
-  tag waits for it (recommended). X already says this." It changes his Q29
-  (a) answer, "the service is built last" (clar:473), by his own word. Lane
-  3 had ruled the move first (6724332510, 6726078173), and named it on the
-  spec PR's list as a change to his answer.
+  2026-11-08T20:33Z: "4A, 5A, 1 let them stand, 3A", as lane 3's #165
+  comment 6726766577 quotes them. Option 4A, as lane 3 asked it in text:
+  "Build it beside groups A and B, and the tag waits for it (recommended).
+  X already says this." It changes his Q29 (a) answer, "the service is
+  built last" (clar:473), by his own word. Lane 3 had ruled the move first
+  (6724332510, 6726078173), and named it on the spec PR's list as a change
+  to his answer.
 - **Source at Y:** svc:283; Y:4826; Y:3951–3956; clar:524–525.
 
 ### DEC-02. The launcher's window reads are met outside 007 (R41)

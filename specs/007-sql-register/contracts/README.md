@@ -9,8 +9,8 @@ by the lane that owns it, and lands before the code that rests on it.
 (`a6497d00`), copied here byte for byte by lane 3 at assembly phase A on
 2026-11-09.
 
-- **Source:**
-  `/workspace/projects/.openrepotools-private-prep/work-20261108/007/contracts-register-cli.v4.md`
+- **Source:** lane 1's contract draft 4, posted on #165 at 6738871108,
+  sha256 `5d6ce7ca…`.
 - **sha256:**
   `5d6ce7ca7b0705f0e7a9eb70332745045d3e88d006e1affcc190434f3c2cae91`, 939
   lines. The copy here has the same digest.

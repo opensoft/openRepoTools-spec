@@ -1384,12 +1384,13 @@ are lane 3's rulings memo's).
   the reads and the guard, and writes do not depend on it" (svc:9).
 - **FR-058**: The service MUST be built beside groups A and B, not after
   them, and the v1.2.0 tag MUST wait for it. This is Brett's own word,
-  "4A", typed in lane 3's session at about 2026-11-08T20:33Z (#165
-  6726766577; `RULINGS-brett-20261108-text-4a5a.md`), for "Build it beside
-  groups A and B, and the tag waits for it" (clar:524–525). It changes his
-  Q29 (a) answer, "the service is built last" (clar:473). Act 4 waits for
-  it too, since the guard measured without it from Eagle is over his 1 s.
-  Sources: svc:283; Y:4826; Y:3951–3956.
+  "4A", typed in lane 3's session at about 2026-11-08T20:33Z (lane 3's #165
+  comment 6726766577, which quotes his typed words "4A, 5A, 1 let them
+  stand, 3A"), for "Build it beside groups A and B, and the tag waits for
+  it" (clar:524–525). It changes his Q29 (a) answer, "the service is built
+  last" (clar:473). Act 4 waits for it too, since the guard measured
+  without it from Eagle is over his 1 s. Sources: svc:283; Y:4826;
+  Y:3951–3956.
 
 #### Evidence, CI and the record
 
