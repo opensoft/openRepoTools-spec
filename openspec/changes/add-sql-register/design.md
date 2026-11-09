@@ -618,7 +618,7 @@ the section that carries it.
   Two backups count (Q22, Brett, 2026-11-08): the daily `pg_dump` of both
   schemas, which the install's `CronJob` writes, as `lanes_register_dump`, into
   a storage container in opensoft's prod subscription, with soft delete,
-  and deletion by lifecycle after 30 days, with no immutability (#165 6751452061; "Dump both", #165 6722541787; "Job + storage in prod sub",
+  and deletion by lifecycle after 30 days, with no immutability (#165 6751452061; "Dump both", #165 6722541787; "Job + storage in prod sub (Recommended)",
   #165 6722593397), and CNPG's Barman Cloud backups to blob storage in the prod
   subscription: base backups, the WAL archive and a daily `ScheduledBackup`,
   kept 30 days (lane 3's ruling, #165 6726078173), which give point-in-time
@@ -6400,7 +6400,7 @@ direct reads and the writers (`operations.md` §2.2, the contract's item 8;
 SVC-1; lane 5, #165 6722703424). Q22's backups: the daily `pg_dump` of both
 schemas, by the install's `CronJob` as `lanes_register_dump`, into a storage
 container in the prod subscription with soft delete, and deletion by lifecycle after 30 days, with no immutability (#165 6751452061; "Dump
-both", #165 6722541787; "Job + storage in prod sub", #165 6722593397), and
+both", #165 6722541787; "Job + storage in prod sub (Recommended)", #165 6722593397), and
 CNPG's Barman Cloud backups to blob storage there, base backups, the WAL archive
 and a daily `ScheduledBackup`, kept 30 days (lane 3's ruling, #165 6726078173),
 with point-in-time restore, which count as a restore source ("Count both", #165

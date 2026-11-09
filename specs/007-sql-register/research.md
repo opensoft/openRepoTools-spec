@@ -29,15 +29,18 @@ place, so every line of `design.md`, `operations.md`, `clarifications.md` and
   :6402, ops:197 and the words quoted at ops:191; R2's S1 and S2, the words of
   #165 6743050889 and the root switch's order: design:2324 and :6390, ops:135
   and :151.
+- **Round B9, part 1:** Brett's label "Job + storage in prod sub
+  (Recommended)" quoted whole, as clar:503 records it (#165 6722593397), at
+  design:621 and :6403 and ops:191.
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number.
 
-- **Part 1, the errata** (ERR-01 to ERR-43; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-44; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-29): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-30): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -587,19 +590,27 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 ### ERR-39. On register paths the URL is the whole connection
 
 - **The erratum:** Y:4970 drops only the inherited `PGPASSWORD`, `PGPASSFILE`,
-  `PGSERVICEFILE` and `PGSYSCONFDIR`. On register paths every inherited
-  variable whose name begins `PG` is dropped first, and `psql` gets only the
-  URL's mapping (SVC-2), the configured `PGPASSFILE` and `PGCONNECT_TIMEOUT`
-  at `c`, and `PGOPTIONS` with the call's bounds (Y:3503), so that "the
-  direct read and the service connect identically"
-  (Y:4970) whatever the shell exports. The register paths are the writer's and
-  reader's connections built from `register_url=` and `reader_url=`, the
-  direct read, and lane 5's `serve` through `pg_url_env`. The admin path keeps
-  `PGSERVICE=<service>`, as T109's `--admin-service` sets it, and nothing else
-  inherited. #160's index paths are unchanged. Contract draft 4.10's §2.2
-  states it (:214).
+  `PGSERVICEFILE` and `PGSYSCONFDIR`. Every path drops five, `PGSERVICE` too,
+  as T103's `PG_ENV_DROPPED` holds them (`lanes-index:271`), #160's index
+  paths included: libpq applies a service's entries before the `PG`
+  variables, so an inherited `PGSERVICE` would outrank the URL once the URL
+  travels as variables. On register paths every inherited variable whose
+  name begins `PG` is dropped first, and `psql` gets only the URL's mapping
+  (SVC-2), the configured `PGPASSFILE`, `PGCONNECT_TIMEOUT` at `c`,
+  `PGOPTIONS` with the call's bounds (Y:3503) and `PGAPPNAME`, set to
+  `lanes-index` (`lanes-index:1756` at T105 `6928ffb`; contract :216;
+  `config.md:110`), so that "the direct read and the service connect
+  identically" (Y:4970) whatever the shell exports. The register paths are
+  the writer's and reader's connections built from `register_url=` and
+  `reader_url=`, the direct read, and lane 5's `serve` through `pg_url_env`.
+  The admin path keeps `PGSERVICE=<service>`, as T109's `--admin-service`
+  sets it, and nothing else inherited. Contract draft 4.10's §2.2 states it
+  (:214).
 - **Whose:** lane 3's ruling, (a), #165 6747611042, on lane 1's question in
   6747565816. It narrows only the new register paths, inside FR-010.
+  `PGSERVICE` among the five: lane 1's account of T103 (#165 6752086222),
+  which lane 3 accepted (6752115241). `PGAPPNAME`: lane 1's (6752336451),
+  which lane 3 accepted (6752360829).
 - **Source:** Y:4970.
 
 ### ERR-40. Y:5172's `database` is written empty (T412's G1)
@@ -651,6 +662,26 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   It corrects lane 3's 6751772589, point 18, question 1, which had tied the
   files' index to `bind`. T501's draft 4 records it.
 - **Source:** Y:5394; Y:5429; Y:5431; Y:5503–5504.
+
+### ERR-44. A `psql` older than 15 is refused (T106)
+
+- **The erratum:** Y:1417's fallback, "A client with psql older than 15,
+  which prints only a Query's last result, reads the parts instead as one
+  `COPY` of tagged rows", is not built. A `psql` older than 15 is refused
+  with 69, naming its version, and nothing is sent, as FR-012, `plan.md:110`
+  and T106's line require. The test plan's oracle at
+  `test-plan.md:3719–3721`, "With the fake's `psql --version` at 14, the
+  snapshot is one `COPY` of tagged rows, with no `BEGIN`", reads the same:
+  the fake's `psql --version` at 14 gives 69, one `--version` call and no
+  request. Lane 2's `[snapshot-psql-14]` case (T257) follows it in F9, and
+  contract draft 4.11 aligns its :234 in round B9's part 2.
+- **Whose:** lane 3's ruling, #165 6752697506, on lane 1's point 1 in
+  6752661856.
+- **Why:** no SHALL in the change's spec requires the fallback, spec.md's
+  assumptions already have `psql` 15 or later on every workstation, and
+  `ready`'s check 2 asks for 16 (ops:445), so the fallback could only serve
+  a workstation that fails `ready`.
+- **Source:** Y:1417; `test-plan.md:3719–3721`; ops:445.
 
 ## Part 2: decisions
 
@@ -1130,6 +1161,25 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   tells the writer, the same kind of check as Y:5115's refusal of a
   hand-typed `LANDING EXPIRED`.
 - **Source:** Y:5114–5116.
+
+### DEC-30. Form 3 exits 69 only for a key the call asked for (lane 1's N-g)
+
+- **The decision:** `register read`'s form 3 exits 69 for a log that matches
+  two render-set logs (C11) only where the call asked for that key, by
+  `--files` or `--log-key=`. A cached member that the call names only
+  because the family holds it, and that now matches two logs, is dropped
+  from the family: its `.log.<key>` and `.logpath.<key>` are removed, so the
+  first read that asks for it ends 69. Contract draft 4.11 states it at its
+  :673, and lane 5's T511 draft follows at its D4:565; draft 4.11 comes in
+  round B9's part 2, and until then the branch's contract :673 keeps "forms
+  3 and 4 exit 69".
+- **Whose:** lane 3's ruling, #165 6752360829, on N-g of lane 1's U5
+  re-check of T511's draft 4 (6752336451).
+- **Why:** a read should not fail on a member it never asked for, and the
+  ambiguity still surfaces at the first read that does ask. Y gives no rule
+  for a cached member that turns ambiguous, so this is a decision, not an
+  erratum.
+- **Source:** contract §3.6 (:673, C11).
 
 ## Part 3: the choices the design leaves to the plan
 

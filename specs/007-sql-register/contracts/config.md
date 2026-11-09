@@ -109,7 +109,7 @@ Every `psql` that `lanes-index` runs takes its connection from these variables, 
 | the call's D9 bounds | `PGOPTIONS`, `-c lock_timeout=<ms> -c statement_timeout=<ms>` | Y:3503; contract §2.2 |
 | — | `PGAPPNAME`, `lanes-index` | contract §2.2 |
 
-- **Dropped from the inherited environment:** `PGPASSWORD`, `PGPASSFILE`, `PGSERVICEFILE` and `PGSYSCONFDIR`, so no inherited variable points libpq at another file (Y:4970; contract §2.2).
+- **Dropped from the inherited environment,** on every path, #160's index paths included: `PGPASSWORD`, `PGPASSFILE`, `PGSERVICEFILE`, `PGSYSCONFDIR` and `PGSERVICE`, the five that T103's `PG_ENV_DROPPED` holds (`lanes-index:271`), so no inherited variable points libpq at another file or service (Y:4970; contract §2.2, :214; lane 1, #165 6752086222; lane 3, 6752115241).
 - **`PGCONNECT_TIMEOUT` is set, not defaulted,** on register paths, so an inherited value cannot lengthen the bound. The index paths keep today's 5 s (Y:4970).
 - **`PGSERVICE=<service>`** is set only on `bootstrap`'s and `login`'s admin path, never as `service=` or `-d` on a command line (ops:404; T103).
 - **Any other query parameter, or a password in the URL, is refused** (Y:3812–3814; Y:4970), so the direct read and the service connect alike (section 4, R5 and R13).

@@ -1000,8 +1000,10 @@ are lane 3's rulings memo's).
   "One engineer's logins" (Y:2285); ops:142; ops:477.
 - **FR-010**: Every connection MUST reach `psql` through `PG*` variables set
   in `_env`, never a `-d` URL in an argument list (Question 11).
-  - Inherited `PGPASSWORD`, `PGPASSFILE`, `PGSERVICEFILE` and `PGSYSCONFDIR`
-    MUST be dropped.
+  - Inherited `PGPASSWORD`, `PGPASSFILE`, `PGSERVICEFILE`, `PGSYSCONFDIR`
+    and `PGSERVICE` MUST be dropped, on every path, the five that T103
+    built (lane 1, #165 6752086222; lane 3, 6752115241; research.md's
+    ERR-39).
   - On register paths, `PGCONNECT_TIMEOUT` MUST be set, not merely
     defaulted.
   - Sources: Question 11 (Y:4967); SVC-2's mapping (Y:3751).
