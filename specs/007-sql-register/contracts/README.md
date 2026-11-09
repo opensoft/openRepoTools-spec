@@ -47,9 +47,26 @@ Y (`a6497d00`), copied here byte for byte by lane 3 at assembly phase A on
   path. A later draft replaces this copy, with its own source and digest
   here.
 
+## `render-commit.md`: lane 3's contract, written from Y
+
+[render-commit.md](render-commit.md) is lane 3's own contract, tagged `[L3]`
+in plan.md. Lane 3 wrote it at assembly phase B on 2026-11-09, from Y's
+`design.md` and `operations.md` alone, with `Y:` and `ops:` citations. It
+adds nothing Y does not say.
+
+- **What it is:** D15's render commit (its author, committer, dates, build
+  and message), `Register-Seq` (its value, its trailer, which commits carry
+  it, and who reads it), and the one push function that the renderer,
+  `cutover` and `rollback` share (FR-044, FR-045).
+- **Its last section** lists what Y leaves open or unprobed, and does not
+  decide it.
+- **Its landing:** tasks.md's T344 lands the final text at this path, before
+  group C (T320, T322, T326 and T327) codes against it.
+
 ## The other contracts
 
-None is in yet. Each owner writes its file at this directory's path:
+Each owner writes its file at this directory's path. Of these, only lane 3's
+`render-commit.md` is in:
 
 | File | Owner | Task |
 | --- | --- | --- |
@@ -58,4 +75,4 @@ None is in yet. Each owner writes its file at this directory's path:
 | `pending-record.md` | lane 4 (R34) | T412 |
 | `bind-record.md` | lane 5 (R50) | T501 |
 | `socket-api.md` | lane 5 (R50) | T511 |
-| `render-commit.md` | lane 3 | — |
+| `render-commit.md` | lane 3; in at phase B, from Y (above) | T344 |
