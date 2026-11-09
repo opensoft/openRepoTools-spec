@@ -575,6 +575,10 @@ passages, and the absence of the pipx route.
   - Every run MUST include the jobs `guard-launch-mode`, `tests`,
     `tests-no-submodule` and `package`.
   - The three existing jobs MUST stay unchanged.
+    - Note: this MUST binds #228's change. opensoft/openRepoTools#77 later
+      made `tests` and `tests-no-submodule` each a gate over a matrix of
+      shard jobs (contracts/workflows.md, "Jobs"); the three keep their ids
+      (FR-046).
   - The header comment that says "`push` (main only)" and "those same three
     jobs" MUST be rewritten for the two branches and the four jobs.
 - **FR-026**: `tests.yml` MUST have a `package` job on ubuntu with Python 3.9.

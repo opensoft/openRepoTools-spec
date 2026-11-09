@@ -33,16 +33,20 @@ on:
 
 - Lines 29 to 36 are rewritten. They now say that `push` covers `main` and
   every `release/v*` branch, and that every trigger runs the four jobs.
-- Every other comment stays as it is.
+- Every other comment stays as it is. That binds #228's change.
+  opensoft/openRepoTools#77 later reworded the header comment's sentences on
+  what every trigger runs, extended the comment above `tests-no-submodule`,
+  and added comments above `tests-shard` and inside both shard jobs.
 
 ### Jobs
 
-- `guard-launch-mode` stays byte for byte. `tests` and `tests-no-submodule`
-  did too, until opensoft/openRepoTools#77 made each a gate over a matrix
-  of shard jobs, `tests-shard` and `tests-no-submodule-shard`; the list
-  under "Held by `tests/test_tests_workflow.py`" below says how. The three
-  are the gate's job ids, and the code leg keeps them (FR-046). The release
-  gate reads the ids by name, and no shard job has one of them.
+- opensoft/openRepoTools#77 leaves `guard-launch-mode` as it is and makes
+  `tests` and `tests-no-submodule` each a gate over a matrix of shard jobs,
+  `tests-shard` and `tests-no-submodule-shard`; the list under "Held by
+  `tests/test_tests_workflow.py`" below says how. `guard-launch-mode`,
+  `tests` and `tests-no-submodule` are among the gate's job ids, and the
+  code leg keeps them (FR-046). The release gate reads the ids by name, and
+  no shard job has one of them.
 - `package` is new, with exactly that id and no `name:`. Its steps, in
   order:
 
@@ -360,15 +364,17 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
 
 - `push.branches` is exactly `[main, 'release/v*']`, and the other triggers
   are as above.
-- The jobs are exactly the four job ids and the two shard jobs behind
-  `tests` and `tests-no-submodule`, which are `tests-shard` and
-  `tests-no-submodule-shard`. None of the six has a `name:`. `tests` and
+- The jobs are exactly the four job ids and `tests-shard` and
+  `tests-no-submodule-shard`, the shard jobs behind `tests` and
+  `tests-no-submodule`. None of the six has a `name:`. `tests` and
   `tests-no-submodule` each have `if: ${{ always() }}`, and the other four
   have no `if:`.
 - `guard-launch-mode`, `tests-shard` and `tests-no-submodule-shard` keep
   today's `runs-on`, checkout options, Python version and `run:` commands.
   A shard job carries what `tests` or `tests-no-submodule` carried, with the
-  pytest command replaced by the shard's:
+  pytest command replaced by the shard's. It gains `timeout-minutes`,
+  `strategy`, an `env:` of `SHARD` on the step that runs the shard, and the
+  step that uploads the shard's report. The shard's command is:
   `python3 .github/ci/ci_shards.py run --variant tests --shard "$SHARD" --out "$RUNNER_TEMP/shard"`
   in `tests-shard`, and the same with `--variant tests-no-submodule` in
   `tests-no-submodule-shard`. These are asserted from the file's text, not
@@ -376,9 +382,9 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
   pull request's diff review confirms the rest of "unchanged".
 - `tests` and `tests-no-submodule` are each a gate over their shard job:
   - `needs:` is exactly that shard job, `if:` is `${{ always() }}`, and the
-    job has no `strategy:` and no `continue-on-error`. So the gate runs
-    when a shard fails or is cancelled, and goes red. A skipped job would
-    count as passing for a required check.
+    job has no `strategy:` and no job-level `continue-on-error`. So the
+    gate runs when a shard fails or is cancelled, and goes red. A skipped
+    job would count as passing for a required check.
   - Its last step is the one step that runs `ci_shards.py verify`. That
     step has `if: ${{ always() }}` and no `continue-on-error`. Its `env:`
     sets `SHARDS_RESULT` to `${{ needs.tests-shard.result }}` in `tests`
@@ -387,6 +393,11 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
     `python3 .github/ci/ci_shards.py verify --variant tests --results "$RUNNER_TEMP/shards" --needs-result "$SHARDS_RESULT"`
     in `tests`, and the same with `--variant tests-no-submodule` in
     `tests-no-submodule`.
+  - "No `continue-on-error`" is the job's, and the last step's. The step
+    that downloads the shards' reports has `continue-on-error: true`, and
+    no test holds that. Of the gate's steps the test holds only the last,
+    and that no other step runs `ci_shards.py verify`. The pull request's
+    diff review answers for the rest.
   - What `verify` checks is `ci_shards.py`'s own, and
     `tests/test_ci_shards.py` holds it, not this list.
 - Each shard job's `strategy:` has `fail-fast: false` and one matrix key,
