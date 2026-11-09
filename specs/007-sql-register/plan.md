@@ -561,14 +561,14 @@ written into `contracts/register-cli.md`.
 ## Group B: lane 4's plan
 
 Lane 4's group B plan is this section's source, summarised here and cited by
-its sections, never copied: lane 4's `group-B-plan.md`, sha256 `c84caab4…`,
-771 lines, with its block `lane4-block-T4xx.md`, `b95a1ff9…`, 381 lines
-(T401 to T434). Both are keyed to W, lane 1's contract draft 1 and slice 1b
-`34799b74`. Contract draft 4 changed group B's sections, §3.1 to §3.5,
-only by two citation-only edits, in §3.2 and §3.3, and draft 4.1 changes
-none of them (draft 4.1's change list). Lane 4's whole revision, keyed to X
-with lane 1's draft 2 and lane 2's names, comes on 2026-11-09 (#165
-6726825389); lane 3 takes it at phase B.
+its sections, never copied: lane 4's `group-B-plan.md`, revision w11,
+sha256 `801274de…`, 795 lines, with its block `lane4-block-T4xx.md`,
+`a7c58603…`, 502 lines (T401 to T434), and its changes since `b95a1ff9`
+(`ad9a3857…`) (#165 6742584818). Both are keyed to Y, lane 1's contract
+draft 4.2 and slice 1b `34799b74`. Group B's sections, §3.1 to §3.5, were
+unchanged from draft 3 to draft 4.2 but for two citation-only edits; lane 4
+confirmed draft 4.5's for group B (6746695468), and draft 4.10 changes
+§3.5's texts and fields (T424).
 
 - **Scope** (GB §1): U2's read verbs and arms (T401 to T408), U3's
   `act-begin` and `--walk` (T410, T411), and group B (T409, T412 to T434),
@@ -603,9 +603,10 @@ with lane 1's draft 2 and lane 2's names, comes on 2026-11-09 (#165
   the anchored two-run form (R28); GB §4.3 lists the cases lane 2's items do
   not name yet (R29).
 - **The order** (GB §6): phase 1 is about 8.5 writer-days and phase 2 about
-  30. The spine is T412 → T413 → T414 → T415 → T416 → T417 → T418 → T421 →
-  T422 → T423, about 15 writer-days after slice 1b is ready on 2026-11-12,
-  and about 24 days with one review day per spine PR.
+  30. T412 comes first, once 1a and 1b have landed; then T413 → T414 → T415
+  → T417 → T418 → T421 → T422 → T423 is about 14 writer-days after slice 1b
+  is ready on 2026-11-12, and about 22 days with one review day per spine
+  PR. T416 is not on the spine: it lands after T415 and T321 (PB4).
 - **The code at `34799b74`** (GB §7): the tail's lock is the workstation's
   sidecar lock (F-B1; R19); routing on primary (F-B2; R17); the captures and
   `add-row`'s compensating commit are gone at 1b (F-B5).
@@ -617,8 +618,8 @@ with lane 1's draft 2 and lane 2's names, comes on 2026-11-09 (#165
 - **Rulings lane 3 applies at phase B** (the assembly notes): R38's
   amendment (T502 accepts `lanes --decide` and ignores it until T509; T403's
   and T408's lines land after T502); T423 lands after T506; T409 adds R17's
-  mode carry across 1a's `exec`; Q-L2-3 (a) for T417; and lane 4's choice of
-  C2's (a) or (b) for T401's reader (open, O21).
+  mode carry across 1a's `exec`; Q-L2-3 (a) for T417; and O21, closed by
+  lane 4's (a) (6741093519) for T401's reader.
 
 ## Governed invariants
 
@@ -712,8 +713,10 @@ Governed already, and unchanged by this feature, which adds no installable:
   - Mitigation: an erratum goes into research.md and leaves the change's
     text alone. A point that contradicts a SHALL is a spec delta: on lane
     3's ruling it changes the change's spec files on this branch, as
-    `dabd74bd`, `ce3fad83` and `ad82c2f4` do, and goes on the spec PR's list
+    `dabd74bd`, `ce3fad83`, `ad82c2f4` and `04a9de6b` do, and goes on the spec PR's list
     to Brett.
+    Round B8's deltas, spec:649, :664, :670, :685 and :692, carry his
+    approval (research.md's DEC-27 and ERR-34).
 - **R7. The install's schedule.** Acts 3 and 4, and Q29's figure on each
   workstation, wait on it, and the cutover may slip (Brett's "Wait for the
   install", #165 6723925474).

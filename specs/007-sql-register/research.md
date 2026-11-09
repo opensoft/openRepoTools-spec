@@ -2,16 +2,42 @@
 
 Phase 0 of `/speckit.plan`, keyed to commit Y (`a6497d00`) of the change
 `add-sql-register`, which the spec branch merges at `066ad8f1`. The change is
-frozen at Y but for its two spec files, which lane 3's rulings since change on
-this branch (ERR-03; DEC-05), and one clause of `operations.md`, item 2's
-Secret, corrected after Y on lane 1's word (#165 6742453803). This file
-records what the rulings since the freeze decide for 007, and the errors found
-in the frozen text.
+frozen at Y but for the edits below. This file records what the rulings since
+the freeze decide for 007, and the errors found in the frozen text.
 
-- **Part 1, the errata** (ERR-01 to ERR-39; ERR-19 is now DEC-21): a line
+**The edits to Y's files since Y,** by round. All but the first are made in
+place, so every line of `design.md`, `operations.md`, `clarifications.md` and
+`proposal.md` keeps Y's number:
+
+- **Round B4, the two spec files** (`dabd74bd`, `ce3fad83`, `ad82c2f4` and
+  `04a9de6b`; lane 3's rulings B4, #165 6738474549, and (a), 6727022920): the
+  SHALLs that DEC-05 and ERR-03 name. They add lines after Y-spec:846 and
+  Y-svc:124, which is why `spec:` and `svc:` lines are cited at `ad82c2f4`.
+- **Fix round B2** (`991426a`; lane 1's clause, #165 6742453803): ops:141,
+  item 2's Secret.
+- **Round B3** (`a138b1b`; lane 1's fold, #165 6745214166, on the OpenXPKI
+  ruling of 6742844912; lane 3's calls, 6745266800): design:2324, :2326,
+  :6305, :6390 and :6393; ops:135, :146, :151, :153, :181, :190, :195 and
+  :711; clar:495; proposal:1988.
+- **Round B5** (`c5c4b46`; the interim-CA answers, #165 6746095035; lane 1's
+  fold, 6746948770; lane 3's calls, 6747048305): design:2324, :6305 and
+  :6393; ops:135, :153, :181, :195 and :711; clar:495; proposal:1988.
+- **Round B8:** the seam and YS:685 deltas (DEC-27; ERR-34): spec:649, :664,
+  :670, :685 and :692, in place, and design:3019; lane 1's install fold (#165
+  6751628903, on opsXfactory-6's 6751205159): design:2321 and ops:141, :144,
+  :161, :163, :191, :199 and :206; lane 3's calls on it: design:620–621 and
+  :6402, ops:197 and the words quoted at ops:191; R2's S1 and S2, the words of
+  #165 6743050889 and the root switch's order: design:2324 and :6390, ops:135
+  and :151.
+
+So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
+quotes Y's text at `a6497d00`; where a round above changed that line, the
+branch holds the newer text at the same number.
+
+- **Part 1, the errata** (ERR-01 to ERR-43; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-24): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-29): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -26,9 +52,9 @@ Whose is written one of three ways:
   answer.
 
 **Citations** are spec.md's: `spec:<n>` and `svc:<n>` are lines of the sql
-spec and the service spec on this branch, at `ad82c2f4`; `Y:<n>` is
-`design.md`, `ops:<n>` `operations.md` and `clar:<n>` `clarifications.md`,
-which are unchanged from Y. `Y-spec:<n>` and `Y-svc:<n>` are the two spec
+spec and the service spec on this branch, numbered as at `ad82c2f4`; `Y:<n>`
+is `design.md`, `ops:<n>` `operations.md` and `clar:<n>` `clarifications.md`,
+which keep Y's numbers (above). `Y-spec:<n>` and `Y-svc:<n>` are the two spec
 files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
@@ -91,9 +117,10 @@ both keyed to Y, both keeping v4.2's line numbers.
   of X (6726995665).
 - **Not a ruling:** lane 1's block v4 reports a dialog in lane 1's session,
   answered at 21:01:25Z with the option "--roles-only runs them
-  (Recommended)" (#165 6727094958). That answer was an accepted prompt
-  suggestion in lane 1's session, not Brett's choice, so nothing here rests
-  on it.
+  (Recommended)" (#165 6727094958). By lane 1's own account there, the
+  request that opened it, "ask me the CNPG choices with multichoice", came
+  in as an accepted prompt suggestion, and the answers then came in the
+  dialog. It is not taken as a ruling here, and nothing rests on it.
 - **Source:** ops:411; ops:434; Y:2239; Y:2243–2244; Y:2256–2257.
 - **The SHALL, changed:** at Y the sql spec's bootstrap requirement said "A
   roles-only form SHALL make only the roles" (Y-spec:846). Two commits on this
@@ -128,9 +155,10 @@ both keyed to Y, both keeping v4.2's line numbers.
     database exists and one naming it for the steps after, and runs
     `--roles-only` and `login add` before the admin creates it. It corrects
     ops §2.3's step 6 (ops:371), which runs `--roles-only` first without
-    naming the database its admin service names, and ops §2.4 (ops:410;
-    ops:486), which give the admin service and the roles-only form and
-    `login add` with no database named.
+    naming the database its admin service names; ops §2.3's dump route
+    (ops:372), which still runs `login add` after `pg_restore` and
+    `bootstrap`; and ops §2.4 (ops:410; ops:486), which give the admin
+    service and the roles-only form and `login add` with no database named.
     Those texts keep their words, so this entry is their erratum.
   - **Whose:** lane 3's ruling, which answers the test plan's open point 41
     (`test-plan.md:9064–9072`). Its record is lane 3's #165 6739605144, and
@@ -204,10 +232,10 @@ both keyed to Y, both keeping v4.2's line numbers.
 
 - **The erratum:** the mirror class reads SQL first and falls back to the
   mirror (Y:4895). The `SessionStart` block reads the mirror offline, always,
-  and exits 0 (spec:626; Y:4492–4494). So it is in the mirror class with no
+  and exits 0 (spec:626; Y:4493–4495). So it is in the mirror class with no
   register call.
 - **Whose:** lane 3's ruling R39 (#165 6726556972), on lane 5's open point 2.
-- **Source:** Y:4895; Y:4492–4494; spec:626.
+- **Source:** Y:4895; Y:4493–4495; spec:626.
 
 ### ERR-10. The outer sweeps `timeout`'s group (R47)
 
@@ -293,7 +321,7 @@ both keyed to Y, both keeping v4.2's line numbers.
 - **Superseded on 2026-11-09** by Brett's "add openXPKI to prod and use that.
   both QA and Prod need openXPKI" (14:38:23Z; #165 6742844912): the endpoint's
   certificate now comes from the prod OpenXPKI, as `operations.md`'s item 4
-  reads since round B3. This record keeps what was decided on 2026-11-08. Then, on 2026-11-09 at 16:58:23Z (answers observed), Brett's "Interim CA now, OpenXPKI later (Recommended)" (#165 6746095035) made the install's private CA the issuer again, as the interim CA until the prod OpenXPKI exists.
+  read from round B3 until round B5. This record keeps what was decided on 2026-11-08. Then, on 2026-11-09 at 16:58:23Z (answers observed), Brett's "Interim CA now, OpenXPKI later (Recommended)" (#165 6746095035) made the install's private CA the issuer again, as the interim CA until the prod OpenXPKI exists.
 
 ### ERR-18. D1's item 5 keeps the physical backups 30 days
 
@@ -303,9 +331,9 @@ both keyed to Y, both keeping v4.2's line numbers.
 - **Whose:** lane 3's ruling, #165 6726078173, which Y records (Y:624;
   clar:505–506); recorded here by lane 3's ruling #165 6727022920. Lane 1's
   dialog of 21:01Z (6727094958) also answered it, with `enablePDB: false`
-  and the dump route's (a), but that answer was an accepted prompt
-  suggestion in lane 1's session, not Brett's choice, and nothing rests on
-  it.
+  and the dump route's (a). By lane 1's own account there, the request that
+  opened it was an accepted prompt suggestion, and the answers then came in
+  the dialog; it is not taken as a ruling here, and nothing rests on it.
 - **Source:** ops:155; Y:624; clar:505–506.
 
 ### ERR-19. Moved to DEC-21
@@ -434,14 +462,15 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   `swapped`, `register-row`, `canon-lane`, `last-session`, `lane-state`,
   `set-lane-state`, `handoff-path` and `write-handoff`, and the skill's own
   calls of these verbs (after slice 3, `handoff-path --create` and
-  `write-handoff --prepend`). Only `who` and `lane-last` still exit 69 under
-  it. No register write rests on those answers: `PAUSED`, the `LANES.md` line
-  and the row still exit 69 with their notes, and the lane stays `SWAPPING`.
-  spec:692 already requires it.
+  `write-handoff --prepend`), and, at the ownership seam, `managed-projection`
+  (DEC-27). Only `who` and `lane-last` still exit 69 under it. No register
+  write rests on those answers: `PAUSED`, the `LANES.md` line and the row
+  still exit 69 with their notes, and the lane stays `SWAPPING`. spec:692
+  already requires it.
 - **Whose:** lane 3's ruling on lane 4's item 1, #165 6746035594, with its list by
   verb (#165 6747422030). The
-  ownership seam in an outage is Brett's, PENDING-BRETT (spec:648–649 against
-  `lane-handoff:1728–1741` at code `ddc972d`), his spec-PR list item 9.
+  ownership seam in an outage (spec:648–649 against `lane-handoff:1728–1741`
+  at code `ddc972d`) was his spec-PR list item 9, and is answered: DEC-27.
 - **Source:** Y:4895; Y:4928; `test-plan.md:2198–2204`; spec:692;
   spec:648–649.
 
@@ -479,19 +508,34 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Whose:** lane 3's ruling on T402's point 2, #165 6747281902.
 - **Source:** Y:5730; Y:5731.
 
-### ERR-34. Two `lane-transcript` refusals after the rename (T402's point 5)
+### ERR-34. Two `lane-transcript` refusals after the rename name what was written (T402's point 5; a spec delta)
 
-- **The erratum:** spec:685's "nothing was written" does not hold for the two
-  `lane-transcript` refusals after the rename where `request-handoff` answered
-  0. There the refusal names what it wrote, the HANDOFF-REQUESTED line or the
-  forced PAUSED, and gives the window back its name, as #138 item 3 does.
-- **Whose:** lane 3's ruling on T402's point 5, #165 6747281902.
-- **Source:** spec:685.
+- **The erratum:** Y-spec:685's "nothing was written" does not hold for the
+  two `lane-transcript` refusals after the rename where `request-handoff`
+  answered 0. There the refusal names what it wrote, the HANDOFF-REQUESTED
+  line or the forced PAUSED, and gives the window back its name, as #138
+  item 3 does.
+- **Whose:** lane 3's ruling on T402's point 5, #165 6747281902. The change to
+  the SHALL is Brett's. He chose "Accept the delta (Recommended)" by
+  interactive choice in lane 3's session (transcript
+  `83619980-06bb-4469-ae73-2a8c5e61981a`), answered at 2026-11-09T21:09:40Z,
+  on his typed request at 21:03:13Z, "ask anything waiting on me in
+  interactive multi choice". The option read: "YS:685 gains an exception:
+  there the refusal names what it wrote and gives the window back its name, as
+  #138 item 3 does (lane 3's ERR-34). It is added to your spec-PR list."
+- **The SHALL, changed** (round B8, in place): spec:685 keeps its words and
+  gains the exception for the two `lane-transcript` arms (`:3079`, `:3430`),
+  which run after the window is renamed: where `request-handoff` answered 0,
+  the refusal names what it wrote, in place of saying that nothing was
+  written, and gives the window back its name. This entry is the record of
+  that delta; T402's line cites it.
+- **Source:** Y-spec:685.
 
 ### ERR-35. The register's role names are fixed (ops:413)
 
 - **The erratum:** ops:413's "the role names: by default `design.md` §1.4's"
-  drops "by default". Migration 1's role block is Y:2235–2278 byte for byte,
+  drops "by default". The role block, inside which migration 1 runs (Y:2242),
+  is Y:2235–2278 byte for byte,
   and lane 3's ruling (a) on T107 (DEC-23) keeps the three role names fixed,
   so no other names can be configured.
 - **Whose:** lane 3's answer, #165 6747313608, to lane 1's question in
@@ -505,6 +549,16 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   arms change nothing in files mode. Files mode stays byte-identical, exit
   codes included. It narrows lane 3's point 4 for T402 (#165 6747281902) the
   same way.
+- **What round B8 found** (R2's N9; a trace of `lanes-edit.sh` at code `main`
+  `a2073eae`, reading each verb behind the arms of Y:5726–5730 and
+  Y:5733–5740): no read verb there emits 3 in files mode. Two 3s inside read
+  paths never reach a caller: `retired_identity_hits`' at `:4160`, which the
+  `retired-identity` arm turns into 1, and `lane_alias_target`'s at `:5953`,
+  which `canon_lane` turns into a note. But two arms in those rows run a
+  write, `log`, not a read: `lane-end:2490` (Y:5735) and `lane-handoff:2817`
+  (Y:5737). `log`'s `commit_push` dies 3 in files mode (`:2374`, `:2751`,
+  `:2823`), as `request-handoff`'s arm does (ERR-33). This entry does not
+  rule on those two.
 - **Whose:** lane 3's ruling on T408, #165 6747422030.
 - **Source:** Y:5722; Y:5746.
 
@@ -518,14 +572,17 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 
 ### ERR-38. The printed rerun's `LANES_SESSION` is the value the digest took (T412's G2)
 
-- **The erratum:** Y:5200's printed rerun reads `LANES_SESSION=<the value <d>
-  took, empty where the run had none>`, in place of `LANES_SESSION=<uuid>`.
-  The digest `<d>` takes `<LANES_SESSION>` "as given on the original command
-  line" (Y:5171), so a rerun must carry exactly that value, or its own digest
-  differs and it meets LR007. Lane 5 checks that `start-record`'s lookup
-  (Y:5431) never meets the empty case.
-- **Whose:** lane 3's ruling on T412's G2, (a), #165 6747592174.
-- **Source:** Y:5200; Y:5171; Y:5431.
+- **The erratum:** the printed rerun at Y:5200, and the same rerun in exit 3's
+  text (Y:2664) and in the live-owner 3 (Y:5218), reads
+  `LANES_SESSION=<the value <d> took, empty where the run had none>`, in
+  place of `LANES_SESSION=<uuid>`. The digest `<d>` takes `<LANES_SESSION>`
+  "as given on the original command line" (Y:5171), so a rerun must carry
+  exactly that value, or its own digest differs and it meets LR007. Lane 5
+  confirmed that `start-record`'s lookup (Y:5431) never meets the empty case
+  (#165 6747708996), and lane 3 closed G2 (6747722621).
+- **Whose:** lane 3's ruling on T412's G2, (a), #165 6747592174; widened to
+  Y:2664 and Y:5218 in round B8 (R2's S4). T412 and T417 cite it.
+- **Source:** Y:5200; Y:2664; Y:5218; Y:5171; Y:5431.
 
 ### ERR-39. On register paths the URL is the whole connection
 
@@ -533,7 +590,8 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   `PGSERVICEFILE` and `PGSYSCONFDIR`. On register paths every inherited
   variable whose name begins `PG` is dropped first, and `psql` gets only the
   URL's mapping (SVC-2), the configured `PGPASSFILE` and `PGCONNECT_TIMEOUT`
-  at `c`, so that "the direct read and the service connect identically"
+  at `c`, and `PGOPTIONS` with the call's bounds (Y:3503), so that "the
+  direct read and the service connect identically"
   (Y:4970) whatever the shell exports. The register paths are the writer's and
   reader's connections built from `register_url=` and `reader_url=`, the
   direct read, and lane 5's `serve` through `pg_url_env`. The admin path keeps
@@ -541,8 +599,58 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   inherited. #160's index paths are unchanged. Contract draft 4.10's §2.2
   states it (:214).
 - **Whose:** lane 3's ruling, (a), #165 6747611042, on lane 1's question in
-  6747565816. It narrows only the new register paths, inside FR-011.
+  6747565816. It narrows only the new register paths, inside FR-010.
 - **Source:** Y:4970.
+
+### ERR-40. Y:5172's `database` is written empty (T412's G1)
+
+- **The erratum:** "Y:5172's `database` is written empty in format 1. No
+  source reaches `lanes-edit.sh` (R05), and no reader compares or prints it;
+  `generation` tells databases apart (Y:632–634)." The key stays, so that a
+  later source can fill it with no format change.
+- **Whose:** lane 3's ruling on T412's G1, as built, #165 6750702819.
+- **Source:** Y:5172; Y:632–634.
+
+### ERR-41. Another generation's refusal may name no `<g′>` (T412's G4)
+
+- **The erratum:** "Where the first snapshot refused the record's generation
+  (LR007 `generation`), it prints no generation (contract §3.2). So Y:5209's
+  `<g′>` reads 'this register is another generation', and Y:5207's 'The run's
+  first snapshot says which generation the register is' reads 'says whether
+  it is the record's'." T415 maps the snapshot's exit 2 carrying
+  `DETAIL:  generation` to that refusal, with no `<g′>`.
+- **Whose:** lane 3's ruling on T412's G4, as built, #165 6750702819.
+- **Source:** Y:5207; Y:5209.
+
+### ERR-42. A claim file is created whole (T412's G10)
+
+- **The erratum:** Y:5184's "created with noclobber" reads "created whole: its
+  body is written to a temporary file in the same directory, which is then
+  linked to `<d>.take.<k>` with `ln`. The link fails where the name exists,
+  as noclobber's create does." The temporary file is removed whether the
+  link succeeds or fails, and no reader may take its name for a record or a
+  claim. A failed write of the body is then exit 1, never a wait on the run's
+  own empty claim.
+- **Whose:** lane 3's ruling on T412's G10, #165 6750702819. Its analysis
+  probed the built claim: a maker killed between noclobber's create and its
+  write, or a write that fails on a full disk, left an empty claim that
+  wedged its command for ever.
+- **Source:** Y:5184.
+
+### ERR-43. The bind's files take an index of their own (T501's point 18)
+
+- **The erratum:** Y:5394's `<k>`, in `<offers>/<uuid>.bind.<k>.out`, is the
+  files' index, not the attempt: one above the highest index among the uuid's
+  `.bind.*` files, and 1 where there are none. `bind` stays the attempt
+  count, 1 to 3 per offer, as Y:5429 has it, and the record's `out`, already
+  a key at Y:5431, names the attempt's own file, where the outer and the
+  guard find it and the facts file sits beside it. Case 11's check of
+  `bind`, the guard's three attempts per offer (Y:5503–5504) and `bind=k+1`
+  at the next `2` are unchanged.
+- **Whose:** lane 3's ruling, (a), #165 6751818233, on lane 5's 6751803196.
+  It corrects lane 3's 6751772589, point 18, question 1, which had tied the
+  files' index to `bind`. T501's draft 4 records it.
+- **Source:** Y:5394; Y:5429; Y:5431; Y:5503–5504.
 
 ## Part 2: decisions
 
@@ -551,7 +659,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **The decision:** `lanes-index serve` is built beside groups A and B, not
   last. The cutover and the v1.2.0 tag wait for it, since from Eagle the
   guard without the service takes about 1.2 to 2.1 s, which misses Brett's
-  1 s. No service pull request lands before the spec PR.
+  1 s.
 - **Whose: Brett's.** His words, verbatim, typed in lane 3's session at about
   2026-11-08T20:33Z: "4A, 5A, 1 let them stand, 3A", as lane 3's #165
   comment 6726766577 quotes them. Option 4A, as lane 3 asked it in text:
@@ -560,6 +668,8 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   built last" (clar:473), by his own word. Lane 3 had ruled the move first
   (6724332510, 6726078173), and named it on the spec PR's list as a change
   to his answer.
+- **Lane 3's rule beside it:** no service pull request lands before the spec
+  PR (#165 6726556972).
 - **Source:** svc:293; Y:4826; Y:3951–3956; clar:524–525.
 
 ### DEC-02. The launcher's window reads are met outside 007 (R41)
@@ -642,8 +752,10 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   (Y-svc:124), for any client, and a guard's read that failed was a 2 in
   Y-svc:23, Y-svc:104, Y-svc:124 ("A database that does not answer SHALL be
   a 2 inside the hook"), Y-svc:174 and the declared outage's check
-  (Y-svc:188), and in the sql spec's Y-spec:87 and Y-spec:574. Three
-  commits on this branch after `aa190a7f`, on lane 3's ruling B4:
+  (Y-svc:188), and in the sql spec's Y-spec:87, Y-spec:188 (the guard in the
+  write requirement) and Y-spec:574; Y-svc:30's scenario lost the database
+  with no word of when. Four commits on this branch after `aa190a7f`,
+  `dabd74bd`, `ce3fad83`, `ad82c2f4` and `04a9de6b`, on lane 3's ruling B4:
   - scope each of those refusals to the guard's prefetch, its first read;
   - add that the second read, started at or past `T0` + 3.75 s whatever a
     declaration says (B5), exits as "too late to verify", and that it fails
@@ -652,10 +764,11 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   - name the prefetch's direct read in the declaration's sentence;
   - scope the scenarios "A guard that starts too late" and "A read held
     behind a lock" to the prefetch, and add "A second read that starts too
-    late" and "A second read that cannot read the database".
+    late" and "A second read that cannot read the database";
+  - say in Y-svc:30's scenario that the database is lost "before the prompt".
 
-  No spec delta is left. ERR-21 records the design's three passages that
-  still read as a refusal for any late read.
+  No spec delta is left. ERR-21 records the design's six passages that
+  still read as a refusal for any late or failed read.
 
 ### DEC-06. `register read`'s keys take the `=` form (L1-D1)
 
@@ -860,8 +973,9 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   - Only whole identifier tokens are substituted, in `CREATE SCHEMA`, every
     `search_path`, every `lanes_register.` qualifier, and the role block's
     bare schema names after `ON SCHEMA` and `IN SCHEMA`, its 8 sites in
-    Y:2243–2278 (#165 6748109738). Migration 1 has none of the last, so its
-    rendering is unchanged.
+    Y:2243–2278 (#165 6748109738). Migration 1's own statements (§1.2,
+    §1.3.1), which run inside the role block at Y:2242, hold none of the last;
+    all 8 are the role block's.
   - The three role names, `lanes_register_owner`, `_writer` and `_reader`,
     stay as they are.
   - After rendering, the bootstrap refuses with 2 if `lanes_register` remains
@@ -885,7 +999,8 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Why:** it keeps Y:2323, :3175 and :6035 as they stand, and the rehearsal
   stays in the same database as Y planned. Option (b) would need three errata
   and drop `register_schema=`. Lane 2's `schema` module pins the rendering
-  both ways.
+  both ways: PENDING-L2: F10, which adds those tests after F9 (lane 2, #165
+  6751920725); F8b's map has none yet.
 - **Source:** Y:2323; Y:1039–1040; Y:1051–1056; Y:2243–2278; T109, whose task
   text blocks v4.7 and v4.10 carry.
 
@@ -904,6 +1019,117 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   request green on its own. It follows Q-L2-3 (a), where lane 4's T417 adds
   its `_EXIT_3_CAUSES` entries and lane 2 reviews the hunk.
 - **Source:** T404; T401; T417.
+
+### DEC-25. A claim whose owner cannot be tested here counts as live for the seam's cap, then dead (T412's G10)
+
+- **The decision:** where Y is silent, a claim whose owner cannot be tested
+  on this host counts as live for the seam's cap, 120 s
+  (`LANES_REGISTER_SEAM_CAP_S`), then as dead. Y:5220 gives a claim from
+  another host or container that cap "since its pid cannot be tested here",
+  and DEC-25 applies the same reason here. It covers two cases:
+  - **a claim with no pid, or one that cannot be read:** the cap runs from
+    the later of the file's mtime and the record's `updated_utc`;
+  - **a claim whose pid lives but whose `pid_start` is empty,** so reuse
+    cannot be told (lane 4's contract :176; code `:4441` at `fb2732f`): the
+    cap runs from the later of the claim's UTC and the record's
+    `updated_utc`.
+
+  R49 is unchanged: `pid_start_of`'s exit 2 still counts as live, for every
+  caller. T417's exit 3 gains a form for an untested claim at the deadline,
+  which names the claim file and the UTC after which a run may take it. T412
+  changes `wr_claim_create`, `wr_claim_live` and `wr_claim_take`; the
+  contract's §4.1 and §4.3 rows change, and its §9's G10 row closes, citing
+  ERR-42 and DEC-25.
+- **Whose:** lane 3's ruling on T412's G10, #165 6750702819.
+- **Why:** as built, an empty claim counted as live for ever. Every later run
+  of its command waited to its deadline and stopped, and on `start-record`'s
+  digest it blocked every bind of the session (Y:5515). Nothing cleared it.
+- **Source:** Y:5184; Y:5189; Y:5220; Y:5515.
+
+### DEC-26. A record's claim files are the owner's and those below it (T412's G11)
+
+- **The decision:** Y:5193's "with its claim files" means the owner's claim
+  and those numbered below it. A higher claim belongs to a later run that
+  judged the owner dead; removing it would make that run fail at every
+  record write, and would let a third run take `take.0` beside it. A claim
+  left behind never blocks: a dead one is passed by `take.<k+1>` (Y:5187),
+  and that owner's removal clears it. The one claim that could block was
+  G10's empty one, which DEC-25 now bounds.
+- **Whose:** lane 3's ruling on T412's G11, as built, #165 6750702819.
+- **Source:** Y:5193; Y:5187.
+
+### DEC-27. The ownership seam reads the mirror in an outage, and `lane-start` refuses `managed-projection`'s 1 (a spec delta)
+
+- **The decision:** under `LANES_READ_MIRROR=1`, the ownership seam
+  (`lane-handoff:1728–1741` at code `ddc972d`) reads the mirror's marker,
+  labels the read, and still refuses on 0 and 1. So with the primary down a
+  handoff still writes its file (spec:692; R-A11-11), and an ownership nobody
+  could establish is never read as legacy. With it, at `lane-start`,
+  `managed-projection`'s 1 refuses as UNKNOWN, and 69 stays for the row
+  count, `lane-last` and `canon-lane`. T405 and T406 set the variable at the
+  seam, and `managed-projection` joins ERR-30's list there.
+- **Whose: Brett's.** He chose "(i) Mirror read (Recommended)" by interactive
+  choice in lane 3's session (transcript
+  `83619980-06bb-4469-ae73-2a8c5e61981a`), answered at 2026-11-09T21:09:40Z,
+  on his typed request at 21:03:13Z, "ask anything waiting on me in
+  interactive multi choice". The question was his spec-PR list item 9. The
+  option read: "Under LANES_READ_MIRROR=1 the seam reads the mirror's marker,
+  labels the read, and still refuses on 0 and 1. With it you accept the
+  YS:664/Y:3019 erratum: at lane-start, managed-projection's 1 refuses as
+  UNKNOWN, and 69 stays for the row count, lane-last and canon-lane." The
+  recommendation was lane 3's (#165 6746035594; 6747281902).
+- **The SHALLs, changed** (round B8, in place, a spec delta with his
+  approval, as B4's were):
+  - spec:649 gains: under the variable, which `lane-handoff` and the handoff
+    skill set at the seam, `managed-projection` answers from the mirror's
+    marker, labelled, and those callers still refuse on 0 and 1;
+  - spec:692 gains the seam's read of the mirror's marker, labelled, still
+    refusing on 0 and 1;
+  - spec:664 and its scenario's THEN, spec:670, read as his spec-PR list
+    item 9 words the erratum: "…refuse before anything is renamed or
+    written: with managed-projection's 1, UNKNOWN (S4), at `:1555`, and with
+    69 at the row count, `lane-last` and `canon-lane`", spec:664 keeping its
+    line cites after it; design:3019, the `lane-start` row of Y's table,
+    reads the same.
+- **Source:** Y-spec:649; Y-spec:664; Y-spec:669–670; Y-spec:692; Y:3019;
+  `lane-handoff:1728–1741` at code `ddc972d`.
+
+### DEC-28. Under `LANES_INDEX=off`, `sync` and `reconcile` keep #160's no-op, and `mode` always reads the configuration
+
+- **The decision:** under `LANES_INDEX=off`, `lanes-index sync` and
+  `reconcile` keep #160's no-op exit 0, even over a `mode=primary` file:
+  FR-003's "every other command with 2" holds where a configuration is read.
+  One condition: `lanes-index mode` reads the configuration whatever
+  `LANES_INDEX` says, and answers `primary`, or this build's 78, wherever the
+  file says `mode=primary`, so that a writer never takes files mode on a
+  primary estate. T105 carries both; lane 2's test 14 gains the case of
+  `LANES_INDEX=off` with a `mode=primary` file, which gives 78 from `mode`
+  (F9's).
+- **Whose:** lane 3's ruling, #165 6747957479, on lane 1's question in
+  6747929926. Lane 3 reads it as a reading of spec:87, not a change to it.
+- **Why:** under `LANES_INDEX=off` the two write nothing, so nothing is
+  lost, and #160's switch stays as it is; on primary they are not the
+  register's write path. And `LANES_INDEX=off` "must never skip the query or
+  the renderer fork" (Y:5718), while `lane-worktrees` sets it on every
+  `lanes-edit.sh` call.
+- **Source:** spec:87; Y:5718.
+
+### DEC-29. `append-line` refuses a `LANDING` take whose lane cannot be read
+
+- **The decision:** on primary, `append-line` refuses with 2, before the
+  lock, a `LANDING` take whose lane cannot be read, as a fourth text beside
+  the three of Y:5114–5116, since a take that holds `main` with nothing able
+  to close it would block every landing. Contract draft 4.10's §3.5 states
+  it, with `register classify`'s `<lane>` field; T122 and T424 carry it.
+  Files mode keeps writing and skipping such a line, as today.
+- **Whose:** lane 3's ruling, (a), #165 6747761107, on lane 1's question 3 in
+  6747719970.
+- **Why:** taking the lane from the writer's row, (b), would let the slot's
+  lane differ from the line's own text, so that a later `LANDED` or
+  `WITHDRAWN` would close nothing. Refusing at the write fails closed and
+  tells the writer, the same kind of check as Y:5115's refusal of a
+  hand-typed `LANDING EXPIRED`.
+- **Source:** Y:5114–5116.
 
 ## Part 3: the choices the design leaves to the plan
 

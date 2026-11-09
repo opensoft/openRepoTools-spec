@@ -85,7 +85,7 @@ and the only scope it takes, are:
     6726078173): "Install's private CA (Recommended)", "lanes-index login
     (Recommended)" and "Yes, drill at act 3 (Recommended)"; the first is
     superseded on 2026-11-09 by Brett's "add openXPKI to prod and use that.
-    both QA and Prod need openXPKI" (14:38:23Z), and then, at 16:58:23Z (answers observed), his "Interim CA now, OpenXPKI later (Recommended)" (#165 6746095035) made it the issuer again, as the interim CA until the prod OpenXPKI exists;
+    both QA and Prod need openXPKI" (14:38:23Z, #165 6742844912), and then, at 16:58:23Z (answers observed), his "Interim CA now, OpenXPKI later (Recommended)" (#165 6746095035) made it the issuer again, as the interim CA until the prod OpenXPKI exists;
   - **lane 3's rulings on the lanes' blocks** (6726556972), R01 to R61, with
     their evidence memo, and the rulings after it (6726725691, 6727022920,
     6727201960, 6738474549). research.md records each one this feature
@@ -935,7 +935,10 @@ are lane 3's rulings memo's).
 - **FR-003**: Until the constant is set, `lanes-index` MUST refuse
   `mode=primary`:
   - `mode` and `register read` with 78 and the fixed text;
-  - every other command with 2, `serve` among them (R36).
+  - every other command with 2, `serve` among them (R36), where a
+    configuration is read: under `LANES_INDEX=off`, `sync` and `reconcile`
+    keep #160's no-op exit 0, and `mode` reads the configuration whatever
+    `LANES_INDEX` says (lane 3, #165 6747957479; research.md's DEC-28).
 
   The constant MUST be set only by group C's last pull request. Sources: "A
   build without the renderer's git half refuses `mode=primary`" (spec:86);
@@ -1551,9 +1554,12 @@ are lane 3's rulings memo's).
 - **`psql` 15 or later** is on every workstation, and PostgreSQL 16's
   binaries are in CI's `ubuntu-24.04` jobs and, after the image rebuild, in
   the bench images.
-- **The design is complete for coding,** and frozen at Y. Its "New and
+- **The design is complete for coding,** and frozen at Y, but for the
+  in-place edits that research.md's opening names, each with its round and
+  source; a `Y:<n>` citation quotes Y's text at `a6497d00`. Its "New and
   unproven" names count as proven once lane 2's tests hold them. An error
-  found in its text since is an erratum in research.md, not an edit.
+  found in its text since is an erratum in research.md, and a point against
+  a SHALL a spec delta on the spec PR's list (plan.md, R6).
 - **Brett's standing word lands 007's pull requests and the root bumps:**
   he chose "Standing words per group (Recommended)", whose option gave the
   word "land each once its CI is green and lane 3's review passes, by merge

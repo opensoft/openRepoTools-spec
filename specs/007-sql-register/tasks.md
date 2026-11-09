@@ -11,10 +11,12 @@ description: "Tasks for 007-sql-register: the SQL register under lanes-edit.sh"
 `04a9de6b`, keyed to commit Y (`a6497d00`) of `add-sql-register`.
 
 **Status**: assembly phase B, started early (2026-11-09), with fix rounds B
-and B2. Lanes 1, 3, 4 and 5's tasks are in: lane 1's from its block v4.10,
-and lane 4's from its revision w11, keyed to Y (#165 6742584818). Lane 2's
-block, T200 to T279, is in since round B5 (#165 6746715586), and its
-Table 2 placed each lane 2 marker it names.
+and B2 and rounds B3 to B8. Lanes 1, 3, 4 and 5's tasks are in: lane 1's
+from its block v4.10, and lane 4's from its revision w11, keyed to Y (#165
+6742584818). Lane 2's block, T200 to T279, is in since round B5, at F8b
+since round B7 (#165 6748678333). Its Table 2 placed each lane 2 marker it
+names; round B8 placed the 19 that came in at round B2, as lane 2 gave
+them (#165 6751920725).
 
 **Sources.** Each task names its source line as `<tag>:<line>`:
 
@@ -22,7 +24,7 @@ Table 2 placed each lane 2 marker it names.
 | --- | --- | --- | --- |
 | L1 | lane 1's block v4.10, T101 to T122, keyed to Y; it keeps v4.2's line numbers | `fe74285f…` | #165 6748303517 |
 | L5 | lane 5's block v5, T501 to T513, keyed to W `bb08d080` (its `W:` lines stand, as below), with its §3.6 review's section D (keyed to Y) (`e26a91e6…`) and lane 5's #165 6739068493 applied, then lane 5's fold-ready edits (#165 6742056462, edit 22 as #165 6742096448 corrects it); `v5:<n>` is the same block (v5 = L5) | `5d427c42…` | lane 5's review, #165 6738431117 |
-| L2 | lane 2's block F7, T200 to T279, keyed to Y, with its NOTES §13's Table 1 and Table 2 placements (`NOTES-T2xx.md`) | `2f2dc869…` | #165 6746715586 |
+| L2 | lane 2's block F8b, T200 to T279, 589 lines, keyed to Y, with its NOTES §13's Table 1 and Table 2 placements (`NOTES-T2xx.md`); its folder checks against `SHA256SUMS-F8b` (`5159230a…`) | `8c87cab0…` | #165 6748678333 |
 | L4 | lane 4's block, revision w11, T401 to T434, keyed to Y, with its group B plan (`801274de…`) and its changes since `b95a1ff9` (`ad9a3857…`) | `a7c58603…` | #165 6742584818; its independent check, RV11, says READY |
 | SK | lane 3's task skeleton, keyed to W, re-keyed here | `43b01027…` | — |
 | M | lane 3's rulings memo, R01 to R61 | `b2184b1a…` | #165 6726556972 |
@@ -90,8 +92,9 @@ ownership, so a user story spans lanes. Each task names its story.
     a real-engine test can never pass by skipping.
 - **Each task line** is followed by:
   - **Source:** its block line;
-  - **Depends on:** the tasks it waits for, with `PENDING-L2: <item>` where
-    lane 2's block will name the task; `SPEC-PR` on every task but those
+  - **Depends on:** the tasks it waits for, with "lane 2's T2xx: <item>"
+    where lane 2's block names the task, as "Lane 2's block" below says, and
+    `PENDING-L2: <item>` where it does not yet; `SPEC-PR` on every task but those
     whose output is already in this spec branch, T101, T102 and T344, which
     ride the spec PR; and `SLICE-1A` or `SLICE-1B` for the gates below.
 
@@ -202,8 +205,12 @@ exits 4. With the binaries present, the fixture's cases pass.
 **Goal**: everything that runs through none of `lanes-edit.sh`'s three write
 seams. `lanes-index` refuses `mode=primary` throughout.
 
-**Independent Test**: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'sql_register or lanes_index or wip_init'`,
-and test 1's files-mode twin, which shows that nothing changed.
+**Independent Test**: the tests lane 2's map places in phase N, those of
+T210 to T226 and T229 to T233, each run by the node ids its `verify:` names,
+with `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh`. A
+`-k 'sql_register or lanes_index or wip_init'` would also take phases W and
+G. Files mode is unchanged: test 1's files-mode twin is phase W's, lane 2's
+T240.
 
 ### Tests for group A (write first)
 
@@ -254,17 +261,18 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **`[X: hosting]`:** every real URL names `<endpoint>`, which is not loopback, so the refusal reaches every workstation's file.
 - [ ] T105 [US1] [O] The constant and `lanes-index mode` (FR-003; L1-A3's constant, L1-A4) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_build_flip.py -k 'sql_register_build_flip and (sql_once_flipped[refusing] or register_read_exits)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:138.
-  - **Depends on:** SPEC-PR; T104 (L1:491); lane 2's T212: L2-N2, test 14's refusing state (L1:508); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T104 (L1:491); lane 2's T212: L2-N2, test 14's refusing state (L1:508); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: the two sentences on `LANES_INDEX=off` (lane 3, #165 6747957479; research.md's DEC-28; R1's SHOULD 4, R2's S5).
   - **The constant:** `RENDER_GIT_HALF = False`, beside `SCHEMA_VERSION`. T328, lane 3's, is the only task that sets it True.
   - **While it is False,** `mode=primary` is refused:
     - `mode` and `register read` exit 78, with the fixed text;
-    - every other command exits 2 (test 14's refusing state, L2-N2).
-  - **`lanes-index mode`** prints exactly one line, `index` or `primary`. A refused configuration exits 2.
+    - every other command exits 2, where a configuration is read (test 14's refusing state, L2-N2). Under `LANES_INDEX=off`, `sync` and `reconcile` keep #160's no-op exit 0, even over a `mode=primary` file (DEC-28).
+  - **`lanes-index mode`** prints exactly one line, `index` or `primary`. A refused configuration exits 2. It reads the configuration whatever `LANES_INDEX` says, and answers `primary`, or this build's 78, wherever the file says `mode=primary` (DEC-28).
   - **`USAGE`** gains every new subcommand.
   - **Not here:** the writers' "primary: exit 69" arm is lane 4's T409 in `lanes-edit.sh`, which lands after T105 (lane 3's R03).
 - [ ] T106 [US2] [O] `PostgresStore`'s third role, and one request per register call (FR-012; L1-A5) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_shape.py -k 'sql_register_shape and (one_request or register_role or psql_version or pgoptions)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:146.
-  - **Depends on:** SPEC-PR; T105 (L1:491); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T105 (L1:491); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **Changed at assembly:** lane 3, round B6, 2026-11-09: block v4.10's :147, the inherited-variable rule and its three cases (#165 6747611042, 6748303517).
   - **The roles:** `PostgresStore(cfg, role)` takes `register_writer` and `register_reader` beside today's `writer` and `reader`. On these two roles every inherited variable whose name begins `PG` is dropped before the URL's mapping is set, so the URL is the whole connection: `psql` gets only the mapping, the configured password file, `PGCONNECT_TIMEOUT` at `c` and the call's own `PGOPTIONS` (lane 3's ruling, #165 6747611042; contract draft 4.10's §2.2 at :214). Its cases: an inherited `PGHOSTADDR` with `PGSSLMODE=disable`, an inherited `PGOPTIONS` and an inherited `PGTARGETSESSIONATTRS`, each absent at `psql`.
     - The register writer connects with `register_url=`/`register_passfile=`.
@@ -275,7 +283,7 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **Bounds:** each request carries D9's bounds in the startup `options=` (`-c lock_timeout=… -c statement_timeout=…`) through `PGOPTIONS` (Y:1573). They need a direct connection, never through a pooler: C13 (Y:1575).
 - [ ] T107 [US2] [O] Migration 1's schema and functions inside `lanes-index`, applied only by the bootstrap (FR-006 to FR-008; L1-A6) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and (mirror_state_starts or record_mirror_state_records or a_failed_pass_record or a_second_divergence or mirror_state_refuses or a_stray_import_or or a_client_outside_the_version_window_is or a_migration_out_of or a_migration_against or line_scopes_derives or doc_line_scopes_adds or entry_new_keys_reads or scope_fault_shows or scope_checked_raises or the_journal_scopes or a_write_that_deletes or an_import_whose_line or every_copy_of_register or set_seq_is_minus or the_marker_moves or a_write_is_refused or the_rollbacks_entry_sets or no_kind_commits_in or switch_to_files_aborts or an_operator_entry or the_switch_checks)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_in_doubt.py -k 'sql_register_in_doubt and (a_write_of_another or the_switchs_own_generation or an_old_generation or a_same_generation or an_id_in_the_journal or find_write_returns or find_write_refuses_another_writes or find_write_refuses_another_generation or find_write_gives or find_write_waits or a_lookup_held_at or an_orphan_that_takes)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_order.py -k 'sql_register_order and (lr005_refuses_a_claim or lr005_refuses_a_hold or two_spellings_of_one_repository or lr005_rolls_back or lr005_does_not_fire or each_claim_and_main or a_malformed_act_is or act_id_is_the_acts or the_act_id_checks or each_entry_stores or an_import_a_cutover or a_stray_import_stores or an_aborted_cutover or lr009_names_the_first or an_entry_outside or a_star_key_after or an_empty_expectation or lr002_comes_before)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:154.
-  - **Depends on:** SPEC-PR; T103 (L1:490, :492); lane 2's T216, T217, T221, T222: L2-N4 and L2-N6 (L1:510); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T103 (L1:490, :492); lane 2's T216, T217, T221, T222: L2-N4 and L2-N6 (L1:510); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **The DDL:** §1.2's tables, views and indexes in `lanes_register` (Y:1033).
   - **The functions:** §1.3.1's `commit_write` in full (Y:1577), with `find_write`, `switch_to_files`, `record_marker`, `record_mirror_state`, `render_file`, `line_scopes`, `doc_line_scopes`, `entry_new_keys`, `scope_fault` and `scope_checked`.
     - `commit_write` checks the generation first, then the write id, then the switch, then the act (lane 1's order).
@@ -285,9 +293,10 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **The version:** `REGISTER_SCHEMA_VERSION`, with `writers_from` and `readers_from` (§1.5, Y:2330). Migrations are forward-only, and an older schema is migrated forward, never down.
   - **The one-number rule:** every copy of `REGISTER_SCHEMA_VERSION` in a release is one number. Lane 2's hygiene test (L2-N6) holds it.
   - **The script's digest** is the `script_sha256` the `migrations` row records.
-- [ ] T108 [US7] [O] §1.4's roles and GRANTs, as the bootstrap's role block (FR-007, FR-009; L1-A6) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_roles.py -k 'sql_register_roles and (the_writer_and_reader or no_register_role)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and only_register_writer' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
+- [ ] T108 [US7] [O] §1.4's roles and GRANTs, as the bootstrap's role block (FR-007, FR-009; L1-A6) (its verify leaves out lane 2's T216 tests: they fail until T228, which waits for this task through T110; lane 2, #165 6751920725) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and only_register_writer' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:164.
-  - **Depends on:** SPEC-PR; T107 (L1:492); lane 2's T216, T217, T221, T222: L2-N4 and L2-N6 (L1:510); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T107 (L1:492); lane 2's T216, T217, T221, T222: L2-N4 and L2-N6 (L1:510); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: its verify's first run, T216's tests, is left out, since they fail until T228 (lane 2, #165 6751920725; R1's SHOULD 3).
   - **The block** is Y:2235–2278 byte for byte. It is the same at X, and byte-identical to W's 2216–2259, which lane 1's engine ran twice as a CNPG-shaped owner, with identical catalogs (#165 6724409717).
     - The owner `lanes_register_owner`, NOLOGIN.
     - The groups `lanes_register_writer` and `lanes_register_reader`, NOLOGIN.
@@ -300,10 +309,10 @@ and test 1's files-mode twin, which shows that nothing changed.
     - `lanes_index`'s schema, with the reader's default privileges.
   - **No floors on a group:** the floors are each login's own (T110), since a role's settings reach no member.
   - **Its order:** the `CREATE ROLE`s and the admin's GRANT first, each guarded by a `pg_roles` check, then migration 1 (T107), then the rest. The rest and the GRANT can run again.
-- [ ] T109 [US7] [O] `lanes-index bootstrap` (Y ops §2.4, `:407`; FR-053, FR-054; L1-A7) `[X: hosting]` `[X: backups]` (the scratch schema's rendering: DEC-23; block v4.7 carries its task text) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_operator_tools.py -k 'sql_register_operator_tools and (bootstrap_run_twice or bootstrap_prints or the_bootstrap_refuses_when or the_bootstrap_refuses_a or the_bootstrap_passes)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_roles.py -k 'sql_register_roles and the_bootstrap_holds' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_managed.py -k 'sql_register_managed and (bootstrap_without or bootstrap_refuses or dump_restore_privileges)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and a_second_bootstrap' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
+- [ ] T109 [US7] [O] `lanes-index bootstrap` (Y ops §2.4, `:407`; FR-053, FR-054; L1-A7) `[X: hosting]` `[X: backups]` (the scratch schema's rendering: DEC-23; block v4.7 carries its task text) (its verify leaves out lane 2's T216, T218 and T224 tests: they fail until T228 or T229, which wait for this task through T110; lane 2, #165 6751920725) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and a_second_bootstrap' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:177.
-  - **Depends on:** SPEC-PR; T108 (L1:492); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
-  - **Changed at assembly:** lane 3, fix round B, 2026-11-09: the dialog answer was an accepted prompt suggestion in lane 1's session, as research.md's ERR-03 says, and the ruling is lane 3's (#165 6727022920); lane 3, round B4, 2026-11-09: the task line names DEC-23, lane 3's ruling on the scratch schema (#165 6746655077), whose task text block v4.7 carries; lane 3, round B5, 2026-11-09: block v4.7's :186 carries it, and block v4.8 keeps it (#165 6746948770, 6747384945); lane 3, round B6, 2026-11-09: block v4.10's :179 and :186, the inherited-variable rule and DEC-23 as widened (#165 6747611042, 6748109738, 6748303517).
+  - **Depends on:** SPEC-PR; T108 (L1:492); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Changed at assembly:** lane 3, fix round B, 2026-11-09: the dialog in lane 1's session opened on an accepted prompt suggestion, as research.md's ERR-03 says, and the ruling is lane 3's (#165 6727022920); lane 3, round B4, 2026-11-09: the task line names DEC-23, lane 3's ruling on the scratch schema (#165 6746655077), whose task text block v4.7 carries; lane 3, round B5, 2026-11-09: block v4.7's :186 carries it, and block v4.8 keeps it (#165 6746948770, 6747384945); lane 3, round B6, 2026-11-09: block v4.10's :179 and :186, the inherited-variable rule and DEC-23 as widened (#165 6747611042, 6748109738, 6748303517); lane 3, round B8, 2026-11-09: its verify's runs of T216's, T218's and T224's tests are left out (lane 2, #165 6751920725; R1's SHOULD 3), and the admin is named `lanes_register_admin` (lane 1, #165 6751452061).
   - **Flags:**
     - `--admin-service '<service>'`, reaching `psql` only as `PGSERVICE=<service>` in its environment, with every other inherited variable whose name begins `PG` dropped first (lane 3's ruling, #165 6747611042);
     - `--roles-only`: what a database dump does not carry, which a restore needs before it loads. That is the `CREATE ROLE`s and the admin's GRANT (T108's first part), and the three database-level statements (option (a), below);
@@ -326,7 +335,7 @@ and test 1's files-mode twin, which shows that nothing changed.
     - 2: a role holds a privilege outside its scope;
     - 2: `store=sqlite`.
   - **With the switch at `primary`,** as on a restored backup, it verifies, applies a pending migration and writes no label. It "changes nothing else" (Y ops:434).
-  - **`[X: hosting]`:** the admin is the CNPG Cluster's `initdb` owner, with `LOGIN CREATEROLE CREATEDB` from its `managed.roles` entry (Y:2283). `initdb` made the database with the admin as its owner, so the ownership check passes; a Cluster whose `initdb` owner is not the admin's login is refused with 2.
+  - **`[X: hosting]`:** the admin is the CNPG Cluster's `initdb` owner, `lanes_register_admin` (opsXfactory-6's name, #165 6751205159; lane 1, 6751452061), with `LOGIN CREATEROLE CREATEDB` from its `managed.roles` entry (Y:2283). `initdb` made the database with the admin as its owner, so the ownership check passes; a Cluster whose `initdb` owner is not the admin's login is refused with 2.
   - **`[X: backups]`, the routes lane 2's T224 tests** (Y ops §2.3, `:372`):
     - **A point-in-time restore** carries the roles, their verifiers, memberships and floors, and the database's privileges. `--roles-only` prints `unchanged` for each, and no password line. T110's `rotate` follows.
     - **The dump's route,** in lane 3's ruled order (#165 6739605144), as lane 3's `research.md` ERR-03 refines its step 1. It corrects Y ops §2.3's step 6 and §2.4, which 007's `research.md` records as lane 3's errata:
@@ -338,7 +347,7 @@ and test 1's files-mode twin, which shows that nothing changed.
       - Steps 2 to 5, the `pg_restore` among them, run through one admin service, which names the register's database. `lanes-index` never picks a database.
       - **Why this order:** under option (a), `--roles-only` runs the database-level REVOKE and GRANT CONNECT, which need the database to exist, and `ALTER DEFAULT PRIVILEGES` applies only to the database it is connected to.
     - **The re-import's route** is `bootstrap`, then T115.
-  - **Option (a): `--roles-only` also runs the three database-level statements no database dump carries,** as it carries no role. Lane 3 ruled it (#165 6727022920). The option "--roles-only runs them (Recommended)", answered in a dialog in lane 1's session at 21:01:25Z, was an accepted prompt suggestion in that session, not Brett's own choice, and nothing here rests on it (research.md's ERR-03). The three:
+  - **Option (a): `--roles-only` also runs the three database-level statements no database dump carries,** as it carries no role. Lane 3 ruled it (#165 6727022920). The option "--roles-only runs them (Recommended)" was answered in a dialog in lane 1's session at 21:01:25Z, which opened on an accepted prompt suggestion, "ask me the CNPG choices with multichoice" (#165 6727094958); it is not taken as a ruling here, and nothing rests on it (research.md's ERR-03). The three:
     - Y:2243's `REVOKE ALL ON DATABASE … FROM PUBLIC`;
     - Y:2244's `GRANT CONNECT`, to the writer and reader groups and the indexer's login;
     - Y:2256–2257's global `ALTER DEFAULT PRIVILEGES FOR ROLE lanes_register_owner REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC`.
@@ -352,9 +361,10 @@ and test 1's files-mode twin, which shows that nothing changed.
     4. the writer and reader groups and the indexer hold CONNECT;
     5. the owner's global default privilege is there: a function the owner makes afterwards is not executable by a role outside the groups;
     6. `bootstrap` after the restore changes nothing: it re-runs no statement and writes no label.
-- [ ] T110 [US7] [O] `lanes-index login add`, `add --dump-job`, `rotate`, `rotate --dump-job` and `revoke` (Y ops §2.4, `:477`; FR-009, FR-054; L1-A8) `[X: logins]` `[X: backups]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_roles.py -k 'sql_register_roles and (each_role_is_refused or a_login_in_a_group or a_readers_plain_write or each_login_role_connects)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_managed.py -k 'sql_register_managed and (login_add_makes_an or login_add_run_again or login_rotate_keeps or login_refuses_a_bad or an_open_session_gets or the_reader_login or a_restore_from_the_dump or a_restore_from_the_providers or rotate_dump_job)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
+- [ ] T110 [US7] [O] `lanes-index login add`, `add --dump-job`, `rotate`, `rotate --dump-job` and `revoke` (Y ops §2.4, `:477`; FR-009, FR-054; L1-A8) `[X: logins]` `[X: backups]` (its verify leaves out lane 2's T216 and T224 tests: they fail until T228 or T229, which wait for this task; T228's verify runs T216's; lane 2, #165 6751920725) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:226.
-  - **Depends on:** SPEC-PR; T109 (L1:492); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T109 (L1:492); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: its verify's runs of T216's and T224's tests are left out, since they fail until T228 or T229, which wait for it, so its verify is the regression run until lane 2 names a test of its own (lane 2, #165 6751920725; R1's SHOULD 3).
   - **The login step** is Y:2288–2300.
     - `lanes_w_<engineer>` joins REGISTER-WRITER and carries the writer's floors: `lock_timeout` 2000ms, `statement_timeout` 5s and `idle_in_transaction_session_timeout` 5s.
     - `lanes_r_<engineer>` joins READER and carries `default_transaction_read_only` on, `lock_timeout` 1000ms and `statement_timeout` 1500ms.
@@ -382,7 +392,7 @@ and test 1's files-mode twin, which shows that nothing changed.
     - after a re-import, they make them again after `bootstrap` (T109).
 - [ ] T111 [US2] [O] `lanes-index register snapshot` (FR-013; L1-A9) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_shape.py -k 'sql_register_shape and snapshot' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and snapshot' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:252.
-  - **Depends on:** SPEC-PR; T106 and T107 (L1:493); T302 for `--tree` (L1:512); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T106 and T107 (L1:493); T302 for `--tree` (L1:512); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **Lane 1's order of checks,** as §1.3 and T101 fix it, in one read-only snapshot.
   - **It returns** `n`, the switch, the database clock (D13) and the write id's entry.
   - **`c=` and `n_a=`** in its output come from `lanes-index`'s own configuration: `connect_timeout` and `register_addresses=`. `lanes-edit.sh` parses no configuration (lane 3's R05; Y:5877's "from the configuration" is a `research.md` erratum).
@@ -393,7 +403,7 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **Exits** are T101's.
 - [ ] T112 [US2] [O] `lanes-index register commit` (FR-014; L1-A10) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and (the_rollbacks_entry_makes or a_claim_records_its or a_released_claims or lr004_on_an_edit or lr004_reloads_once or an_entry_without or the_operator_flag or a_file_without_a)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_writes.py -k 'sql_register_writes and the_storage_layer' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_measure.py -k 'sql_register_measure and one_write_cost_is' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:261.
-  - **Depends on:** SPEC-PR; T106 and T107 (L1:493); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T106 and T107 (L1:493); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **Input:** the attempt directory, in T101's format, with `not_after`.
   - **Before `psql`:** the client checks `LANES_ACT` and `LANES_EXPECT` again.
   - **The call:** one `commit_write` call at SERIALIZABLE, as one request.
@@ -407,7 +417,7 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **Bounds:** D9's commit row.
 - [ ] T113 [US4] [O] `lanes-index register read`, in contract §3.6's four forms (FR-015; L1-A11) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and (guard_second_read_at or log_key_hex_slot)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:273.
-  - **Depends on:** SPEC-PR; T106 and T107 (L1:493); T302 for `--prefetch` and form 4's images at `n`; lane 5's review of §3.6, given (L1:514); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T106 and T107 (L1:493); T302 for `--prefetch` and form 4's images at `n`; lane 5's review of §3.6, given (L1:514); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **Changed at assembly:** lane 3, round B5, 2026-11-09: block v4.7's and v4.8's :278, :289 and :290, with contract drafts 4.6 and 4.7 (#165 6746948770, 6747384945).
   - **Its start:** after lane 5 has reviewed contract §3.6 (lane 3's R06). Lane 5 reviewed it on 2026-11-09 (#165 6738431117), and this task follows lane 1's decisions on that review, which contract draft 4 takes.
   - **The four forms,** as contract §3.6 fixes them. Form 4 is lane 1's argv for O17 (#165 6727229519), after lane 3's ruling (#165 6727201960), with lane 5's B1 and B2:
@@ -456,7 +466,7 @@ and test 1's files-mode twin, which shows that nothing changed.
   - Its `-k` words, `since`, `guard_second_read_at` and `log_key_hex_slot` among them, are `[J3]`.
 - [ ] T114 [US4] [O] `lanes-index journal` (FR-016; L1-A12) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and journal_last_pickaxe' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:319.
-  - **Depends on:** SPEC-PR; T106 and T107 (L1:493); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T106 and T107 (L1:493); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **The lookup:** `--write-id`, `--not-after`, `--generation`, `--lane`, `--verb` and `--args-sha256`, with `--clock` and `--clock-age`, as contract §3.4 fixes them.
     - It goes through `find_write`, at READ COMMITTED, in a transaction it rolls back.
     - The client's own wait comes first, on its own estimate (F3; LR011).
@@ -470,7 +480,8 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **Its case,** `journal_last_pickaxe` `[J3]`, which lane 1 asks lane 2 to place: a lane name holding `.` matches only itself; a later edit that keeps the line's count of `<key>` does not match; with no match there is no `seq=` line; `--at <n>` bounds the search to entries at or below `n`; `--at` without `--generation` ends 64; and an `n` above the head, or a generation that differs, ends 69.
 - [ ] T115 [US7] [O] `lanes-index import --at <C>` (FR-049, FR-052, FR-053; L1-A13) `[X: backups]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_import.py -k 'sql_register_import and (import_at_a_commit or import_refuses_on or import_answers_every or a_reimport_replaces or word_lines_with_milliseconds or import_reads_origin or import_loads_takes or main_slots_pairing or line_scopes_agrees or the_log_path_sidecar or the_imports_proof)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and an_import_carries' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_bounds.py -k 'sql_register_bounds and inside_its_bound[import-F1]' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:331.
-  - **Depends on:** SPEC-PR; T109 (L1:494); T301 for the scratch render (L1:516); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T109 (L1:494); T301 for the scratch render (L1:516); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507); lane 2's T211, T220, T231: the tests its verify selects.
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names the lane 2 tasks whose tests its verify selects (R1's SHOULD 2).
   - **The load** goes into a staging schema, from origin only.
   - **The proof** is a scratch render through T301, and R3's three-part proof, byte-identical.
   - **The swap** is one short transaction.
@@ -482,7 +493,7 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **`[X: backups]`:** `--after-loss` takes `M`'s newest `Register-Seq` as its baseline (D22, Y:616; Y ops §2.3), after the re-import route's `bootstrap` (T109).
 - [ ] T116 [US7] [O] `lanes-index cutover`'s transaction, against a scratch schema only while the constant is unset (FR-050, FR-052; L1-A14) `[X: backups]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_cutover.py -k 'sql_register_cutover and (cutover_without_register or cutover_at_files or a_first_cutovers)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and (set_seq_after_a_cutover or the_reimport_forms or restore_prior_is)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:341.
-  - **Depends on:** SPEC-PR; T109 (L1:494); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T109 (L1:494); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **The transaction:**
     - the switch to `primary`;
     - the marker `adding`;
@@ -496,7 +507,8 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **T327, lane 3's,** adds the push.
 - [ ] T117 [US6] [O] `status`'s new lines, `reconcile`'s read-only check, and `sync`'s register source on primary (FR-048; L1-A15) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_render.py -k 'sql_register_render and sync_source_register' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_outage.py -k 'sql_register_outage and (and_no_guard[status] or status_reports_a)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_bounds.py -k 'sql_register_bounds and (import_and_reconcile or inside_its_bound[reconcile-F1] or inside_its_bound[status-F1] or the_client_timer[status] or the_client_timer[reconcile])' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:353.
-  - **Depends on:** SPEC-PR; T109 (L1:494); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T109 (L1:494); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507); lane 2's T210, T219, T220: the tests its verify selects.
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names the lane 2 tasks whose tests its verify selects (R1's SHOULD 2).
   - **`cmd_status` adds:**
     - the switch;
     - `n`;
@@ -510,13 +522,13 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **`cmd_sync`** with a `register:<owner/repo>` source does nothing on primary, and says so.
 - [ ] T118 [US3] [O] `REGISTER_KIND_RE` grows to Q17(B)'s kinds and `LANDING EXPIRED`, for the commit's one classifier (FR-030; S6, D18; L1-A16) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_order.py -k 'sql_register_order and (a_landing_expired_for or a_landing_expired_closes or the_holder_may_write or a_landing_expired_that_names or on_primary_a_take or a_refresh_or_a_line or the_for_lane_checks)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:365.
-  - **Depends on:** SPEC-PR; T103 (L1:495); T107, since its verify selects T223's `commit_write` cases (lane 1, #165 6748303517); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T103 (L1:495); T107, since its verify selects T223's `commit_write` cases (lane 1, #165 6748303517); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **Changed at assembly:** lane 3, round B6, 2026-11-09: block v4.10's :367, `REGISTER_SLOTS`, and its landing after T107 (#165 6748303517).
   - Today's regex is `^(HOLD RELEASED|HOLD|LANDING|LANDED)[ \t]+(—|-)[ \t]`.
   - `parse_register_line` and the SQL classifier agree on every kind (S7's agreement test, L2-W4). T118 also gives each kind its `slot_role` and `slot_kind` in a table beside the regex, `REGISTER_SLOTS`, which T122's `<slot_role>` reads (contract draft 4.10's §3.5).
 - [ ] T119 [US7] [O] `lanes-index ready`, checks 1 to 13 (Y ops §2.4, `:437`; FR-054, FR-055; L1-A17) `[X: hosting]` on checks 11 and 13 — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_operator_tools.py -k 'sql_register_operator_tools and (the_readiness_check_fails or the_readiness_check_passes or the_readiness_check_10 or the_readiness_check_13)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_managed.py -k 'sql_register_managed and (ready_check_11_needs or a_member_made_without or ready_check_12_passes)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_schema.py -k 'sql_register_schema and ready_fails_a_client' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:368.
-  - **Depends on:** SPEC-PR; T109 (L1:494); lane 2's T218, T219, T220: L2-N5 (L1:520); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T109 (L1:494); lane 2's T218, T219, T220: L2-N5 (L1:520); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **Changed at assembly:** lane 3, round B5, 2026-11-09: check 11 and its tests name the install's CA again, by Brett's answer of 16:58:23Z, "Interim CA now, OpenXPKI later (Recommended)" (#165 6746095035), as lane 1's fold (A9, A10) and block v4.7's :386 and :388 give them.
   - **Flags:** `--expect index|primary`, `--release` and `--env`.
   - **The checks,** each a read that writes nothing:
@@ -540,7 +552,7 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **Lane 2's tests:** T224's check-11 test, with the fixture's CA standing for the install's private root and a full chain; and T230, the case for "never `system`" and a `tls.crt` with the leaf and every intermediate, which lane 3 kept (6726725691).
 - [ ] T120 [US7] [O] `lanes-index set-mode` and its refusals (Y ops §2.4, `:462`; FR-054; L1-A17) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_operator_tools.py -k 'sql_register_operator_tools and (set_mode_primary or the_flip_writes_only or the_flip_refuses)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:389.
-  - **Depends on:** SPEC-PR; T109 (L1:494); lane 2's T218, T219, T220: L2-N5 (L1:520); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T109 (L1:494); lane 2's T218, T219, T220: L2-N5 (L1:520); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **What it does:** rewrites only the `mode=` line by temp file and rename, keeping 0600.
   - **Setting `primary`,** it refuses with 2:
     - unless the switch is `primary` with the marker `present` and `origin/main` names this database;
@@ -551,7 +563,7 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **Setting `index`** refuses only on usage, and warns where the switch still reads `primary`.
 - [ ] T121 [US7] [O] `lanes-index outage declare` and `outage clear` (D20, Y:599; Y ops §2.5; FR-056; L1-A18), U4, ruled lane 1's — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_outage.py -k 'sql_register_outage and (outage_declare_writes or outage_declare_refuses or outage_declare_is or outage_declare_on or outage_declare_rollback or outage_declare_takes)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_bounds.py -k 'sql_register_bounds and (the_outage_declare or inside_its_bound[outage-probe-F1] or the_client_timer[outage-probe])' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:398.
-  - **Depends on:** SPEC-PR; T106 (L1:496); lane 2's T218, T219, T220: L2-N5 (L1:520); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
+  - **Depends on:** SPEC-PR; T106 (L1:496); lane 2's T218, T219, T220: L2-N5 (L1:520); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **The declaration** is `register-outage`, beside `lanes-index.conf`. Its fields:
     - the database label;
     - Brett's words verbatim (`--why`);
@@ -598,10 +610,11 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **The keys `c`, `n_a` and `w_s_ms`**, written by the guard from its prefetch's `.head`, from which `guard-bind` computes `bound_s` (R05; open point 3). `c` is `.head`'s, the larger of the two URLs' `connect_timeout=`, not the snapshot's; `w_s_ms` is `w_s` in whole milliseconds, copied from `.head`'s `w_s_ms=` (O15).
   - **Liveness** (W:5383): the pid is live and its start equals `pidstart`, by `pid_start_of` (Q-L5-6). Its exit 2 counts as live (R49). The record says who reads it: the guard, `guard-bind`, lane 4's T412 (which uses `pid_start_of`) and lane 2's AT-F6.
   - **The test seam** `LANES_BIND_BODY`, as lane 5 answers point 39(b) (routed to lanes 5 and 4 by 6726110116; lane 4's note, 6726296119, raises nothing on it).
-- [ ] T502 [US5] [O] Make answer 2 detached in every mode, as phase 1's first guard pull request (#347): the offer site's branch and the eleven cases, `guard_answer`'s choice 2, the internal verb `guard-bind` with its outer and body, `pid_start_of`, the record's phase-1 keys, `bound_s`, the rename back, and the child's environment, and the `lanes` arm's acceptance of `--decide`, which it ignores until T509 (FR-038, FR-040; W:5336–5468, W:5505–5512) (covers L5-A1); its selectors are v3f's AT-F6 names `[J3: v3f]`, with three guesses `[J3]` (lane 4's confirmation of the outer's sweep is in (6726296119), for v3f's open point 39, which lane 3 routed to lanes 5 and 4 in 6726110116; STOP until lane 2 has answered A1; lands after the spec PR, T501, L2-N3 and lane 2's rewrite of `tests/test_lane_helpers.sh:7811–7830`) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_guard.py -k 'sql_register_guard and (test_answer_2_exits_2_binding_before_t0_plus_1_s_and_the_runner_sees_eof or test_the_bind_child_survives_a_group_kill_and_hangup_and_ends_bound or test_a_prompt_mid_bind_is_not_passed_and_leaves_the_record or test_after_bound_one_moved_then_the_next_prompt_passes or test_a_failed_bind_renames_back_keeps_the_offer_and_allows_three_attempts or test_a_dead_bind_outer_answers_in_progress_while_its_session_lives_then_no_outcome or test_a_reused_bind_pid_gives_no_outcome_with_no_session_test or test_a_bind_body_past_its_bound_ends_with_the_bounds_code_and_leaves_no_process or test_a_live_bind_past_its_bound_that_timeout_has_not_ended_answers_2_and_names_the_pid_to_kill or test_a_binding_from_another_host_or_container_is_not_judged_by_its_pid_until_the_deadline_plus_60_s or test_an_unreadable_bind_record_is_dropped_with_exit_2 or test_two_sessions_binding_one_lane_in_files_mode_the_second_is_refused_at_the_reread or test_the_bind_child_reaches_tmux_through_tmux_pane or test_the_bind_child_environment_is_as_lane_4_lists_it or test_the_hook_string_and_guard_timeout_are_unchanged or test_kill_of_the_bind_outer_ends_the_record_with_the_signals_code or test_a_bind_with_no_timeout_says_bounded_no_and_kill_stops_its_group_once or test_the_bind_resume_path_makes_at_most_n_r_read_calls or test_answer_2_survives_a_group_sigterm_at_the_hooks_timeout or test_a_failed_bind_can_be_answered_again) and not primary' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_guard.py -k 'sql_register_guard and (test_pid_start_of_answers_live_dead_and_unreadable or test_a_bind_stopped_by_its_bound_leaves_no_process_of_its_group_after_the_sweep)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and test_lanes_accepts_decide_and_reads_as_without_it' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'guard_launch_mode or lane_helper_suite_passes or repo_hygiene'`
+- [ ] T502 [US5] [O] Make answer 2 detached in every mode, as phase 1's first guard pull request (#347): the offer site's branch and the eleven cases, `guard_answer`'s choice 2, the internal verb `guard-bind` with its outer and body, `pid_start_of`, the record's phase-1 keys, `bound_s`, the rename back, and the child's environment, and the `lanes` arm's acceptance of `--decide`, which it ignores until T509 (FR-038, FR-040; W:5336–5468, W:5505–5512) (covers L5-A1); its selectors are v3f's AT-F6 names `[J3: v3f]`, with three guesses `[J3]` (lane 4's confirmation of the outer's sweep is in (6726296119), for v3f's open point 39, which lane 3 routed to lanes 5 and 4 in 6726110116; A1 is placed, and the STOP never held for local coding (lane 3, #165 6746892249); lands after the spec PR, T501, L2-N3 and lane 2's rewrite of `tests/test_lane_helpers.sh:7811–7830`) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_guard.py -k 'sql_register_guard and (test_answer_2_exits_2_binding_before_t0_plus_1_s_and_the_runner_sees_eof or test_the_bind_child_survives_a_group_kill_and_hangup_and_ends_bound or test_a_prompt_mid_bind_is_not_passed_and_leaves_the_record or test_after_bound_one_moved_then_the_next_prompt_passes or test_a_failed_bind_renames_back_keeps_the_offer_and_allows_three_attempts or test_a_dead_bind_outer_answers_in_progress_while_its_session_lives_then_no_outcome or test_a_reused_bind_pid_gives_no_outcome_with_no_session_test or test_a_bind_body_past_its_bound_ends_with_the_bounds_code_and_leaves_no_process or test_a_live_bind_past_its_bound_that_timeout_has_not_ended_answers_2_and_names_the_pid_to_kill or test_a_binding_from_another_host_or_container_is_not_judged_by_its_pid_until_the_deadline_plus_60_s or test_an_unreadable_bind_record_is_dropped_with_exit_2 or test_two_sessions_binding_one_lane_in_files_mode_the_second_is_refused_at_the_reread or test_the_bind_child_reaches_tmux_through_tmux_pane or test_the_bind_child_environment_is_as_lane_4_lists_it or test_the_hook_string_and_guard_timeout_are_unchanged or test_kill_of_the_bind_outer_ends_the_record_with_the_signals_code or test_a_bind_with_no_timeout_says_bounded_no_and_kill_stops_its_group_once or test_the_bind_resume_path_makes_at_most_n_r_read_calls or test_answer_2_survives_a_group_sigterm_at_the_hooks_timeout or test_a_failed_bind_can_be_answered_again) and not primary' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_guard.py -k 'sql_register_guard and test_pid_start_of_answers_live_dead_and_unreadable' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and test_lanes_accepts_decide_and_reads_as_without_it' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'guard_launch_mode or lane_helper_suite_passes or repo_hygiene'`
   - **Source:** L5:189.
-  - **Depends on:** SPEC-PR; T501; lane 2's T214, T254: A1, the files/primary parameter ids for AT-F6 (STOP until A1); lane 2's T213, T214, T215: L2-N3; PENDING-L2: L2-N4, unless lane 2 places test_lanes_accepts_decide_and_reads_as_without_it in L2-N3's module; lane 2's T234, in T502's pull request: A3, the rewrite of tests/test_lane_helpers.sh:7811–7836, 7887–7912, 7933–7954 and 8283–8293 at `e3939589`; lane 2's T214: A2, AT-F6 case 7 stubbed through LANES_BIND_BODY, with the swept-grandchild case (the verify needs it); lane 2's T214: A5's guesses test_pid_start_of_answers_live_dead_and_unreadable and test_a_bind_stopped_by_its_bound_leaves_no_process_of_its_group_after_the_sweep [J3]; lane 2's T217: test_lanes_accepts_decide_and_reads_as_without_it [J3] (R38 as amended); lane 2's T200, T201, T202, T203, T204, T205, T206, T207, T227: L2-0a to L2-0e (cluster, switch, FAKE_PSQL, stub lanes-index, prefixes), with T107-T110 through L2-0a's template, before any real-engine run (v5:189; v5:599, v5:605, v5:609–613, v5:617–618; v5:674; R38 as amended).
-  - **Changed at assembly:** lane 3, applying: ruling R38, as lane 3 amended it: T502 accepts `lanes --decide` and ignores it; ruling R38, as amended: the verify gains one [J3] guess; rule: no 007 code PR lands before the spec PR (lane 3's rule, 6726556972; brief); ruling R38, as amended: T502's verify gains test_lanes_accepts_decide_and_reads_as_without_it [J3] (module placed by lane 3's analyst; lane 3's assembly working notes, not in the branch); ruling R38, as amended (T403's and T408's lines land after T502); lane 3, round B4, 2026-11-09: cases 7 and 9 rename the window back to `<from>` (ERR-23; lane 3's ruling on lane 5's point 7, #165 6746215510).
+  - **Depends on:** SPEC-PR; T501; lane 2's T214, T254: A1, the files/primary parameter ids for AT-F6 (placed; the STOP never held for local coding, #165 6746892249); lane 2's T213, T214, T215: L2-N3; lane 2's T217: L2-N4; lane 2's T234, in T502's pull request: A3, the rewrite of tests/test_lane_helpers.sh:7811–7836, 7887–7912, 7933–7954 and 8283–8293 at `e3939589`; lane 2's T214: A2, AT-F6 case 7 stubbed through LANES_BIND_BODY, with the swept-grandchild case (the verify needs it); lane 2's T214: A5's guess test_pid_start_of_answers_live_dead_and_unreadable [J3], and case 7's [grandchild-ignores-term] for the sweep; lane 2's T217: test_lanes_accepts_decide_and_reads_as_without_it [J3] (R38 as amended); lane 2's T200, T201, T202, T203, T204, T205, T206, T207, T227: L2-0a to L2-0e (cluster, switch, FAKE_PSQL, stub lanes-index, prefixes), with T107-T110 through L2-0a's template, before any real-engine run (v5:189; v5:599, v5:605, v5:609–613, v5:617–618; v5:674; R38 as amended).
+  - **Changed at assembly:** lane 3, applying: ruling R38, as lane 3 amended it: T502 accepts `lanes --decide` and ignores it; ruling R38, as amended: the verify gains one [J3] guess; rule: no 007 code PR lands before the spec PR (lane 3's rule, 6726556972; brief); ruling R38, as amended: T502's verify gains test_lanes_accepts_decide_and_reads_as_without_it [J3] (module placed by lane 3's analyst; lane 3's assembly working notes, not in the branch); ruling R38, as amended (T403's and T408's lines land after T502); lane 3, round B4, 2026-11-09: cases 7 and 9 rename the window back to `<from>` (ERR-23; lane 3's ruling on lane 5's point 7, #165 6746215510).; lane 3, round B8, 2026-11-09: lane 5's words for its second run and Depends (#165 6751612452, 6751955144), A1 placed (#165 6746892249), and the bullet below (R1's SHOULD 6).
+  - **Where this text and T501's contract differ, the contract governs** (`contracts/bind-record.md`, lane 5's T501). Lane 3's rulings on T501 since this block are folded there, not here: #165 6746215510, 6747528875, 6747722621, 6751772589 and 6751818233; research.md's ERR-43 records 6751818233's erratum to Y:5394.
   - **The offer site** (in `guard_run`; W:5442 cites `:10648–10659` in W's copy): a branch of its own, after 18(h)'s count and before the table, on `mode` in `binding`, `bound` or `bind-failed`. `guard_answer` is never called on these modes.
   - **The eleven cases** (W:5444–5456):
     - the answer `2` itself: "BINDING", exit 2;
@@ -659,10 +672,10 @@ and test 1's files-mode twin, which shows that nothing changed.
   - **The rule:** this adds the binding row and the stamp to that test, so a rerun after a failed stamp push writes no register line and exactly one stamp (AT-F6 case 11).
   - **Files mode** is otherwise byte-identical.
   - **Not `[P]`.** Lane 4's T402 is also `[P]` on `lane-start` in phase 1 (`L4:57`), and no two tasks of one file are `[P]` (`skel:846–847`). A `[P]` task also depends on no incomplete task (`skel:40–41`), and T503 lands after T502.
-- [ ] T504 [US4] [O] Add the read door, `reg_open`, in the dispatcher's main shell: one mode answer per process; on primary, one `register read --prefetch` that also answers the mode; the five classes and a sixth, `writer` (R46); each class's failure; F17 off primary; `LANES_READ_MIRROR` honoured on the ten arms of lane 3's item 1 (#165 6746035594); and the flag honoured by asking nothing (FR-033; W:4829–4849, W:4893–4898, W:5070) (covers L5-A5, its first part); its selectors are v3f's `[J3: v3f]`, with one guess `[J3]` (its STOP is lifted: lane 5 accepted Q-L5-1 and Q-L5-2 (L5:492–499) and agreed Q-L5-5 (L5:506–507), R39 rules open point 2, R46 open point 14 and R38 open point 1 (lane 3, fix round B, 2026-11-09); lands after the spec PR, T409, T105, T113, L2-N2, L2-N4, and lane 2's phase-N item for the reader marker cases, A8) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and (test_every_dispatcher_arm_is_classified_for_the_read_door or test_a_none_class_arm_makes_no_register_call_with_the_store_unreachable or test_managed_projection_with_the_database_unreachable_exits_1_never_legacy)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_build_flip.py -k 'sql_register_build_flip and (test_lanes_edit_asks_lanes_index_mode_only_where_a_configuration_exists or test_readers_under_the_refusal_answer_the_78_as_a_failed_read) and not guard and not session-start' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_marker.py -k 'sql_register_marker and (test_a_readers_refusal_under_the_marker_names_the_refs_age or test_a_reader_refuses_when_its_read_ref_carries_the_marker_and_its_tree_does_not)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and test_the_read_mirror_variable_lowers_each_read_that_names_the_lane_on_primary' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene or named_read_unreadable_290 or subfield_misreads_301 or lane_helper_suite_passes'`
+- [ ] T504 [US4] [O] Add the read door, `reg_open`, in the dispatcher's main shell: one mode answer per process; on primary, one `register read --prefetch` that also answers the mode; the five classes and a sixth, `writer` (R46); each class's failure; F17 off primary; `LANES_READ_MIRROR` honoured on each read of item 1's verbs, as ERR-30 lists them (#165 6746035594, 6747422030); and the flag honoured by asking nothing (FR-033; W:4829–4849, W:4893–4898, W:5070) (covers L5-A5, its first part); its selectors are v3f's `[J3: v3f]`, with one guess `[J3]` (its STOP is lifted: lane 5 accepted Q-L5-1 and Q-L5-2 (L5:492–499) and agreed Q-L5-5 (L5:506–507), R39 rules open point 2, R46 open point 14 and R38 open point 1 (lane 3, fix round B, 2026-11-09); lands after the spec PR, T409, T105, T113, L2-N2, L2-N4, and lane 2's phase-N item for the reader marker cases, A8) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and (test_every_dispatcher_arm_is_classified_for_the_read_door or test_a_none_class_arm_makes_no_register_call_with_the_store_unreachable or test_managed_projection_with_the_database_unreachable_exits_1_never_legacy)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_build_flip.py -k 'sql_register_build_flip and (test_lanes_edit_asks_lanes_index_mode_only_where_a_configuration_exists or test_readers_under_the_refusal_answer_the_78_as_a_failed_read) and not guard and not session-start' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_marker.py -k 'sql_register_marker and (test_a_readers_refusal_under_the_marker_names_the_refs_age or test_a_reader_refuses_when_its_read_ref_carries_the_marker_and_its_tree_does_not)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and test_the_read_mirror_variable_lowers_each_read_that_names_the_lane_on_primary' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene or named_read_unreadable_290 or subfield_misreads_301 or lane_helper_suite_passes'`
   - **Source:** L5:245.
   - **Depends on:** SPEC-PR; T409; T105; T113; lane 2's T211, T212: L2-N2; lane 2's T216, T217: L2-N4; lane 2's T225: A8's phase-N item for the reader marker cases; lane 2's T217: A5's guess test_the_read_mirror_variable_lowers_each_read_that_names_the_lane_on_primary [J3]; lane 2's T200, T201, T202, T203, T204, T205, T206, T207, T227: L2-0a to L2-0e (cluster, switch, FAKE_PSQL, stub lanes-index, prefixes), with T107-T110 through L2-0a's template, before any real-engine run (v5:245; v5:576, v5:581, v5:598, v5:600, v5:605, v5:648–651, v5:664, v5:675; v5:678 dropped by R45; T504's STOP lifted (lane 3, fix round B, 2026-11-09: Q-L5-1 and Q-L5-2 accepted, L5:492–499; Q-L5-5 agreed, L5:506–507; R39; R46)).
-  - **Changed at assembly:** lane 3, applying: ruling R38; rule: no 007 code PR lands before the spec PR (lane 3's rule, 6726556972; brief); ruling R38, as amended; ruling R45; lane 3, fix round B, 2026-11-09: T504's STOP lifted (Q-L5-1 and Q-L5-2 accepted, L5:492–499; Q-L5-5 agreed, L5:506–507; open point 2 by R39; open point 14 by R46); lane 3, round B4, 2026-11-09: `LANES_READ_MIRROR=1` honoured on the ten arms of lane 3's item 1 (#165 6746035594), with lane 5's lines for the class table and the variable (#165 6746507353); the A5 guess's name stays until lane 2's block gives its new one; lane 3, round B5, part 2, 2026-11-09: the A5 guess takes T217's name, `test_the_read_mirror_variable_lowers_each_read_that_names_the_lane_on_primary` (lane 5, #165 6746755665; lane 2's Table 2); lane 3, round B6, 2026-11-09: the `LANES_READ_MIRROR=1` line names the skill's own calls of these verbs (after slice 3, `handoff-path --create` and `write-handoff --prepend`) for `publish-handoff` (#165 6747743440).
+  - **Changed at assembly:** lane 3, applying: ruling R38; rule: no 007 code PR lands before the spec PR (lane 3's rule, 6726556972; brief); ruling R38, as amended; ruling R45; lane 3, fix round B, 2026-11-09: T504's STOP lifted (Q-L5-1 and Q-L5-2 accepted, L5:492–499; Q-L5-5 agreed, L5:506–507; open point 2 by R39; open point 14 by R46); lane 3, round B4, 2026-11-09: `LANES_READ_MIRROR=1` honoured on the ten arms of lane 3's item 1 (#165 6746035594), with lane 5's lines for the class table and the variable (#165 6746507353); the A5 guess's name stays until lane 2's block gives its new one; lane 3, round B5, part 2, 2026-11-09: the A5 guess takes T217's name, `test_the_read_mirror_variable_lowers_each_read_that_names_the_lane_on_primary` (lane 5, #165 6746755665; lane 2's Table 2); lane 3, round B6, 2026-11-09: the `LANES_READ_MIRROR=1` line names the skill's own calls of these verbs (after slice 3, `handoff-path --create` and `write-handoff --prepend`) for `publish-handoff` (#165 6747743440).; lane 3, round B8, 2026-11-09: lane 5's words for item 1's reads (#165 6751612452).
   - **Where it runs.** In the main shell, after the workspace check and before the dispatcher (`:15577`; `1b:` after `:17399` and before `:17414`), so the answer outlives the `$( )` reads (W:4849, W:5070). Where the answer is carried across 1a's `exec` is R17's: `LANES__MODE`, with the `LANES__PID` check (#165 6726831985).
   - **The mode question** is asked only where a configuration exists at `lanes-index`'s path or `LANES_INDEX_CONFIG` is set (D3, W:360–364). Its answers by row (W:4829–4835):
     - none: today, plus the marker check;
@@ -812,15 +825,15 @@ and test 1's files-mode twin, which shows that nothing changed.
 - [ ] T402 [P] [US4] [O] Move `lane-start`'s reads of `$LANES_FILE` behind `register-text`, keeping files mode byte-identical, and set its read arms as "The callers' default arms" give them (Y:5720–5747; FR-036), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-A1) (lands after T401, L2-N4) — files: `lane-start` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and lane_start' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'lane_start_hardening_138 or a23_lane_start_read or lane_start_row_stamp'`
   - **Source:** L4:94.
   - **Depends on:** SPEC-PR; T401; lane 2's T217: L2-N4 (its gate, L4:94).
-  - **Changed at assembly:** lane 3, round B5, 2026-11-09: points 2, 4 and 5 of lane 3's rulings on T402 (#165 6747281902), point 4 as lane 3 narrowed it for T408 (#165 6747422030); ERR-33, ERR-34 and ERR-36; lane 3, round B6, 2026-11-09: the arm bullet in Y's words, 69 a note at those five reads (#165 6747743440).
+  - **Changed at assembly:** lane 3, round B5, 2026-11-09: points 2, 4 and 5 of lane 3's rulings on T402 (#165 6747281902), point 4 as lane 3 narrowed it for T408 (#165 6747422030); ERR-33, ERR-34 and ERR-36; lane 3, round B6, 2026-11-09: the arm bullet in Y's words, 69 a note at those five reads (#165 6747743440); lane 3, round B8, 2026-11-09: `resolve-home`'s 69 is silent (R2's N8), and spec:664's and spec:685's deltas (DEC-27, ERR-34).
   - **The reads:** `rows_for_lane` (`lane-start:1623`) and `row_names_for_lane` (`:1634`), used at `:1644–1650`, keep their awk and read `register-text lanes/LANES.md`. A non-zero answer refuses with that code; it is never an empty register.
   - **The arms** (Y:5726–5732, pinned at `2a057a6d`; re-cite each by function):
     - `canon-lane` (`:1136–1161`) refuses 69, 75 and 3, passing the code, where today it notes and carries on;
     - `session-lane` (`:2237–2239`) refuses 69, 75 and 3;
-    - `resolve-home` (Y's row for `:1332`) and the four lane-transcript and lane-dir reads (`:1262`, `:1271`, `:3079`, `:3430`) refuse 75 and 3, passing the code; 69 stays a note; every other code keeps today's exit (Y:5722, read with Y:5746; ERR-36);
-      - the two `lane-transcript` refusals after the rename give the window back its name, as #138 item 3 does (`lane-start:2878–2905`), and name what `request-handoff` wrote if it answered 0, the HANDOFF-REQUESTED line or the forced PAUSED (ERR-34);
+    - the four lane-transcript and lane-dir reads (`:1262`, `:1271`, `:3079`, `:3430`) refuse 75 and 3, passing the code, and 69 stays a note; `resolve-home` (Y's row for `:1332`) refuses 75 and 3, passing the code, and stays silent on 69, as Y:5728 has it; every other code keeps today's exit (Y:5722, read with Y:5746; ERR-36);
+      - the two `lane-transcript` refusals after the rename give the window back its name, as #138 item 3 does (`lane-start:2878–2905`), and name what `request-handoff` wrote if it answered 0, the HANDOFF-REQUESTED line or the forced PAUSED (ERR-34, now spec:685's own exception: Brett's "Accept the delta (Recommended)", by interactive choice in lane 3's session (transcript `83619980-06bb-4469-ae73-2a8c5e61981a`), answered at 2026-11-09T21:09:40Z);
     - the arms that already refuse pass the code, except `request-handoff`'s, a write's arm that T428 changes, as T432 changes `lane`'s (ERR-33).
-  - **The requirements:** spec:663–690 states these arms. The reads that decide state refuse 69 before anything is renamed or written, and the seven default read arms refuse the busy and in-doubt codes.
+  - **The requirements:** spec:663–690 states these arms. The reads that decide state refuse before anything is renamed or written: with `managed-projection`'s 1, UNKNOWN, at `:1555`, which this task passes, and with 69 at the row count, `lane-last` and `canon-lane` (spec:664, as research.md's DEC-27 records). The seven default read arms refuse the busy and in-doubt codes (spec:685, with ERR-34's exception).
   - **Files mode:** none of these codes is emitted in files mode (Y:5746).
 - [ ] T403 [P] [US4] [S] Move `lane-end`'s awk over `$LANES_FILE` behind `register-text`, keeping files mode byte-identical, set its read arms (Y:5733–5735), and pass `lanes --decide` in `--retire-dormant` (R38), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-A1) (lands after T401, T502, L2-N4) — files: `lane-end` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and lane_end' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'lifecycle_fail_open_113_114_115'`
   - **Source:** L4:103.
@@ -843,27 +856,29 @@ and test 1's files-mode twin, which shows that nothing changed.
 - [ ] T405 [P] [US4] [S] Give `lane-handoff`'s `sread` a `69)` arm, and set `LANES_READ_MIRROR=1` on the full list of lane 3's item 1 (Y:5736, Y:4928; #165 6746035594), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-A1) (lands after L2-N4) — files: `lane-handoff` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and lane_handoff' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'triad_lane_tooling_handoff'`
   - **Source:** L4:114.
   - **Depends on:** SPEC-PR; lane 2's T217: L2-N4 (its gate, L4:114).
-  - **Changed at assembly:** lane 3, round B4, 2026-11-09: items 1 and 2 of lane 3's rulings on lane 4's questions (#165 6746035594) widen the reads under `LANES_READ_MIRROR=1` and have `sread` forward the mirror line; T405's build stands, and only its scope widens; lane 3, round B5, 2026-11-09: T405's reads by verb and line, its label follow-up and `kept_block_say`'s hint (#165 6747281902, 6747422030, 6747431966, 6747466716).
+  - **Changed at assembly:** lane 3, round B4, 2026-11-09: items 1 and 2 of lane 3's rulings on lane 4's questions (#165 6746035594) widen the reads under `LANES_READ_MIRROR=1` and have `sread` forward the mirror line; T405's build stands, and only its scope widens; lane 3, round B5, 2026-11-09: T405's reads by verb and line, its label follow-up and `kept_block_say`'s hint (#165 6747281902, 6747422030, 6747431966, 6747466716); lane 3, round B8, 2026-11-09: lane 4's M1 (item 4, #165 6751963583), and the seam's answer, (i) (DEC-27).
   - **`sread`** (`lane-handoff:1448`): its `69)` arm re-reads from the mirror and prints the `read: mirror` line.
   - **The naming reads:** `window-lane` (`:1655`) and `swapped` (`:1666`).
   - **`LANES_READ_MIRROR=1`** goes on the list of lane 3's item 1, by verb (#165 6746035594, 6747422030): `window-lane`, `swapped`, `register-row`, `canon-lane`, `last-session`, `lane-state`, `set-lane-state`, `handoff-path`, `write-handoff`, and the skill's own calls of these verbs (after slice 3, `handoff-path --create` and `write-handoff --prepend`). T405 sets it in `lane-handoff` at (lines at code `ddc972d`; lane 4, #165 6747431966): `window-lane` `:1662` and `swapped` `:1673`; `register-row` `:1656` and `:2521`; `canon-lane` `:1711`; `last-session` `:1822`; `lane-state` `:1507` and `:1524`; `set-lane-state` `:1529` and `:1572`; `handoff-path` `:2539`; `write-handoff` `:2721`. `who` and `lane-last` still exit 69 under it (research.md's ERR-30).
   - `sread` forwards any `read: mirror at …` line from its first call's stderr, and keeps the rest hidden, with the restart skill's filter (`skills/restart/SKILL.md:57–61`) (lane 3's item 2, #165 6746035594).
+  - **A failed mirror re-read** keeps `sread`'s `*)` refusal text, which says "(exit 69, then exit N from the mirror)"; a re-read that exits 2 with Amendment 15(d)'s words gives 15(d)'s refusal and exit 2, not 1 (lane 3's item 4, #165 6746035594).
   - **The labels of `:1507` and `:1529`:** T405 forwards the `read: mirror at …` labels that `lane-handoff:1507` and `:1529` now send to `/dev/null`, with item 2's filter (YS:692; lane 3's Q22 answer 4, #165 6747281902). It is a T405 follow-up, owed after 21:00Z (lane 4, #165 6747431966).
   - **`kept_block_say`'s rerun hint** (`lane-handoff:2641` at code `ddc972d`, so T405's): it names `LANES_READ_MIRROR=1` only where this run read the mirror, and prints as today everywhere else (lane 3, #165 6747422030, point 5).
-  - PENDING-BRETT: the ownership seam in an outage (YS:648–649 against `lane-handoff:1728–1741`), his spec-PR list item 9. YS is Y's `specs/sql-register/spec.md`, and `lane-handoff` is at code `ddc972d`.
+  - **The ownership seam** (`lane-handoff:1728–1741` at code `ddc972d`; YS:648–649, YS being Y's `specs/sql-register/spec.md`): T405 sets `LANES_READ_MIRROR=1` on its `managed-projection` read too, so in an outage the seam reads the mirror's marker, labels the read, and still refuses on 0 and 1. It is Brett's answer, "(i) Mirror read (Recommended)", by interactive choice in lane 3's session (transcript `83619980-06bb-4469-ae73-2a8c5e61981a`), answered at 2026-11-09T21:09:40Z (research.md's DEC-27; spec:649, :692).
 - [ ] T406 [P] [US4] [S] Give the handoff skill's `sread` the same `69)` arm, and set `LANES_READ_MIRROR=1` on the full list of lane 3's item 1 (Y:5736, Y:4928; #165 6746035594), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-A1) (lands after L2-N4) — files: `skills/handoff/SKILL.md` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and handoff_skill' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'skill_shell_blocks or handoff_skill'`
   - **Source:** L4:117.
   - **Depends on:** SPEC-PR; lane 2's T217: L2-N4 (its gate, L4:117).
-  - **Changed at assembly:** lane 3, round B4, 2026-11-09: items 1 and 2 of lane 3's rulings on lane 4's questions (#165 6746035594), as for T405; lane 3, round B5, 2026-11-09: T406's seven calls, two of them under R25 as widened (#165 6747422030, 6747431966, 6747466716).
+  - **Changed at assembly:** lane 3, round B4, 2026-11-09: items 1 and 2 of lane 3's rulings on lane 4's questions (#165 6746035594), as for T405; lane 3, round B5, 2026-11-09: T406's seven calls, two of them under R25 as widened (#165 6747422030, 6747431966, 6747466716); lane 3, round B8, 2026-11-09: lane 4's M2 (item 4, #165 6751963583), and the seam's answer, (i) (DEC-27).
   - **`sread`** is at `skills/handoff/SKILL.md:97`, and its naming reads are at `:210` (`window-lane`) and `:218` (`swapped`). All three are in the skill's step 1.
   - **`LANES_READ_MIRROR=1`** goes on the list of lane 3's item 1, by verb, as for T405 (#165 6746035594, 6747422030). T406 sets it in the skill at (lines at slice 3's `2c97a92`; lane 4, #165 6747431966; lane 3, #165 6747466716): `window-lane` `:266` and `swapped` `:274`; `register-row` `:196` and `:348`; `canon-lane` `:295`; `handoff-path "$lane" --create` `:424`; `write-handoff "$lane" --prepend` `:596`. `who` and `lane-last` still exit 69 under it (research.md's ERR-30).
   - `sread` forwards any `read: mirror at …` line from its first call's stderr, and keeps the rest hidden, with the restart skill's filter (`skills/restart/SKILL.md:57–61`) (lane 3's item 2, #165 6746035594).
-  - PENDING-BRETT: the ownership seam in an outage (YS:648–649 against `lane-handoff:1728–1741`), his spec-PR list item 9. YS is Y's `specs/sql-register/spec.md`, and `lane-handoff` is at code `ddc972d`.
+  - **A failed mirror re-read** keeps `sread`'s `*)` refusal text, which says "(exit 69, then exit N from the mirror)"; a re-read that exits 2 with Amendment 15(d)'s words gives 15(d)'s refusal and exit 2, not 1 (lane 3's item 4, #165 6746035594).
+  - **The ownership seam:** wherever the skill reads `managed-projection` before the handoff file is published, T406 sets `LANES_READ_MIRROR=1` on it the same way, as Brett's "(i) Mirror read (Recommended)" has it, by interactive choice in lane 3's session (transcript `83619980-06bb-4469-ae73-2a8c5e61981a`), answered at 2026-11-09T21:09:40Z (DEC-27).
   - **Its scope** (R25): T406 may edit the skill's step-1 reads. Lane 3 widens the placeholder's "at its step-4 writes only" (skeleton `:618–619`) to the step-1 reads and the step-4 writes, as L4-A1's "the skills' `sread`" and Y:5678's step-1 reads (`SKILL.md:143–243`) need. The skill's commit block stays slice 3's. R25 widens for two calls only: T406 may set the variable on `handoff-path "$lane" --create` (`SKILL.md:424`) and `write-handoff "$lane" --prepend` (`:596`) at `2c97a92`, and on the three reads at `:196`, `:295` and `:348`; the rest of the commit block stays slice 3's (lane 3, #165 6747466716).
 - [ ] T407 [P] [US4] [S] Give the restart skill's `lread` its 69 arm under S3 (FR-036), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-A1) (lands after L2-N4) — files: `skills/restart/SKILL.md` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and restart_skill' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'skill_shell_blocks'`
   - **Source:** L4:120.
   - **Depends on:** SPEC-PR; lane 2's T217: L2-N4 (its gate, L4:120).
-  - **`lread`** is at `skills/restart/SKILL.md:48`; its calls are at `:117`, `:130` and `:140`. A 69 stops the skill with the read's text. It is never taken as "no lane".
+  - **`lread`** is at `skills/restart/SKILL.md:48`; its calls are at `:117`, `:130` and `:140`. A 69 stops the skill with the read's text and exit 1, its REFUSED [1] (lane 3's item 5, #165 6746035594; TP:2908–2910). It is never taken as "no lane".
 - [ ] T408 [P] [US4] [S] Make `lane`'s default arms pass the code instead of dying 1 (Y:5740), and pass `lanes --decide` in its two `lanes` reads (R38), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-A1) (lands after T502, L2-N4) — files: `lane` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and lane_arms' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'park_resume_commands or openrepotools_command'`
   - **Source:** L4:122.
   - **Depends on:** SPEC-PR; T502; lane 2's T217: L2-N4 (its gate, L4:122).
@@ -913,19 +928,20 @@ and test 1's files-mode twin, which shows that nothing changed.
 
 ### Implementation for group A: lane 3
 
-- [ ] T301 [US6] [O] Add the renderer's pure function, `lanes-index render --images --at <k> --out <dir>` (S2's journal paragraph; FR-042), as detailed below; its `-k` selector waits for v3f `[J3]` (placement: lane 2's) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_render.py -k 'sql_register_render and not image_cache' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T301 [US6] [O] Add the renderer's pure function, `lanes-index render --images --at <k> --out <dir>` (S2's journal paragraph; FR-042), as detailed below; its `-k` selector waits for v3f `[J3]` (placement: lane 2's) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_render.py -k 'sql_register_render and (storage_layer_entry_renders or render_of_one_entry)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:134; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T107 (lane 1's table).
+  - **Depends on:** SPEC-PR; T107 (lane 1's table); lane 2's T210, whose two render tests its verify names (its tests fail until L1-A6, L1-A10, L1-A15 and T301 land: T210's Order).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: its verify names T210's two render tests, since `sql_register_render` also matched `renderer_git`'s module and T240's phase-W cases (R1's MUST 1); its regression run names `test_lanes_index.py` (R1's SHOULD 1); Depends names T210 (R1's SHOULD 2).
   - It builds every render-set file's image at seq `k`, from the journal's entries, from the latest import's baseline on (§1.3's kinds table: every imported line is a `create` or an `append`). It uses no git and no checkout.
   - The render set is Q18(A)'s: `lanes/LANES.md`, every `lanes/log/<lane>.md` but `lanes/log/README.md`, `lanes/aliases.tsv` and `lanes/archive/*`. `lanes/repos.tsv` and `lanes/STORE` are never images.
   - Each image is byte-identical to a full render, final newline included (`files.final_newline`), as agreement test 1's phase-N part compares against an import.
   - It needs only `SELECT` and `render_file`, which both groups hold (§1.4), and reads with the renderer's row of D9's bounds. A `k` it cannot render, above the head or before the latest import, is refused with the code that `contracts/exit-codes.md` gives it (T102).
   - It writes each file whole, by temp file and rename, into `<dir>`.
   - It runs while the constant is unset: it decides nothing and writes no register.
-- [ ] T302 [US4] [O] Add the image cache, which User Story 2's snapshots read too, under `lanes-index`'s state directory, `register-images/` (U8, lane 3's; PC-1, as research.md takes it), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_render.py -k 'sql_register_render and image_cache' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T302 [US4] [O] Add the image cache, which User Story 2's snapshots read too, under `lanes-index`'s state directory, `register-images/` (U8, lane 3's; PC-1, as research.md takes it), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_render.py -k 'sql_register_render and image_cache' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:141; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T301.
-  - **Changed at assembly:** lane 3, round B4, 2026-11-09: the API below, and N = 3, are lane 3's ruling (#165 6746004829).
+  - **Depends on:** SPEC-PR; T301; PENDING-L2: a test for T302's image cache API, which its first run's `image_cache` would select. F8b's map has none of T302's own: T243's and T255's `image_cache` tests fail until L4-B3 and L4-B8, which wait for T302 through T111 (R1's MUST 2).
+  - **Changed at assembly:** lane 3, round B4, 2026-11-09: the API below, and N = 3, are lane 3's ruling (#165 6746004829); lane 3, round B8, 2026-11-09: lane 2's marker for its test (R1's MUST 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1).
   - It holds:
     - `objects/<digest>`, content-addressed and immutable, written by temp file and `os.replace`;
     - `seq/<n>` manifests, path to digest;
@@ -955,9 +971,10 @@ and test 1's files-mode twin, which shows that nothing changed.
   - The refusal names the path it found and says that nothing was committed.
   - `GUARD_COMMAND`, `GUARD_TIMEOUT`, `guard_block_text` and the hook entries stay byte for byte (plan.md, "Governed invariants").
   - Lane 2's two cases, from the requirement's two scenarios, are in `tests/test_wip_init_command.py` (placement: lane 2's).
-- [ ] T304 [US7] [O] Add `lanes-index rollback`'s transaction, runnable only against a scratch schema while the constant is unset (S5's steps 0 and 1; lane 4's row 9; FR-051), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_rollback.py -k 'sql_register_rollback and scratch' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T304 [US7] [O] Add `lanes-index rollback`'s transaction, runnable only against a scratch schema while the constant is unset (S5's steps 0 and 1; lane 4's row 9; FR-051), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_rollback.py -k 'sql_register_rollback and scratch' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:155; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T107 (lane 1's functions) and T121 (`outage declare --rollback`).
+  - **Depends on:** SPEC-PR; T107 (lane 1's functions) and T121 (`outage declare --rollback`); PENDING-L2: a test for T304's steps 0 and 1 against a scratch schema, which its first run's `scratch` would select, as lane 2's NOTES question 6 asks lane 3 (T273's tests fail until T326 too: T273's Order) (R1's MUST 2).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: lane 2's marker for its test (R1's MUST 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1).
   - It runs with `LANES_LANE=<operator lane>`, from a shell or a `CLAUDE_NO_LANE=1` session, through that lane's checkout (D24).
   - **Step 0's database half.** It refuses with 2 while `mirror_state.diverged_sha` is set. Inside step 1, `commit_write` refuses a `rollback` entry with LR012. T326 adds the git half: the fresh fetch, and the renderer's check.
   - **Step 1** is one short transaction taking the head row. It sets the switch to `files`, moves the head from `k` to `k+1`, writes the operator entry removing `lanes/STORE`, and leaves the marker `removing`.
@@ -993,24 +1010,29 @@ needs from `lanes-edit.sh`.
 
 ### Implementation for group B: lane 4
 
-- [ ] T412 [US2] [O] [X: backups] Add the write id and the pending-record library (F10; FR-021; Y:5169–5224, Y:2466–2502), and write `contracts/pending-record.md`, as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-B2; `contracts/pending-record.md` is lane 4's under R34) (STOP until T101; lands after 1a, 1b, T502, L2-W3) — files: `lanes-edit.sh`, `../spec/specs/007-sql-register/contracts/pending-record.md` — verify: `test -s ../spec/specs/007-sql-register/contracts/pending-record.md && command grep -q 'call=' ../spec/specs/007-sql-register/contracts/pending-record.md && command grep -q 'register-done/' ../spec/specs/007-sql-register/contracts/pending-record.md && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_in_doubt.py -k 'sql_register_in_doubt and (pending_record or claim_chain)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
+- [ ] T412 [US2] [O] [X: backups] Add the write id and the pending-record library (F10; FR-021; Y:5169–5224, Y:2466–2502), and write `contracts/pending-record.md`, as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-B2; `contracts/pending-record.md` is lane 4's under R34) (STOP until T101; lands after 1a, 1b, T502, L2-W3) — files: `lanes-edit.sh`, `../spec/specs/007-sql-register/contracts/pending-record.md`, `../spec/specs/007-sql-register/contracts/README.md` — verify: `test -s ../spec/specs/007-sql-register/contracts/pending-record.md && command grep -q 'call=' ../spec/specs/007-sql-register/contracts/pending-record.md && command grep -q 'register-done/' ../spec/specs/007-sql-register/contracts/pending-record.md && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_in_doubt.py -k 'sql_register_in_doubt and (pending_record or claim_chain)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
   - **Source:** L4:157.
   - **Depends on:** SPEC-PR; SLICE-1A; SLICE-1B; T111; T112; T113; T114; T101 (STOP until it lands); T502; lane 2's T244, T245, T246, T247, T248: L2-W3 (its gate, L4:157; group B's gate, L1:531).
-  - **`wr_state_dir`** is defined above the file-scope resolver, before `:1160` (review m3). It mirrors `state_dir()` (`lanes-index:173–175`), with a hygiene test that the two agree; lane 1 adds that test's `lanes-index` side (contract §7, Q5).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: lane 4's C2 and C3 (#165 6751963583); lane 3's rulings on T412's G1, G3, G4, G10 and G11 (#165 6750702819: ERR-40 to ERR-42, DEC-25, DEC-26), and ERR-38 as widened (R2's S4); lane 1's marker for the hygiene test's task.
+  - **`wr_state_dir`** is defined above the file-scope resolver, before `:1160` (review m3). It mirrors `state_dir()` (`lanes-index:173–175`). The hygiene test that the two agree is lane 1's, one test that reads both sides; T412 supplies `wr_state_dir` (lane 3, #165 6747592174; contract §7, Q5). PENDING-L1: which task (6747592174) carries that test.
+  - **`contracts/README.md`:** its line for `pending-record.md` changes in T412's own spec commit, the one that brings the contract into the branch. The exit table's copy in `docs/README-lanes.md` is T340's, and lane 4 supplies the new refusals' rows (lane 3, #165 6747592174).
   - **The id:** a new write's first snapshot passes `--write-id new` and takes the minted id from `write_id=` (contract §3.2, §4; review M13). The claim file is taken before that snapshot, and the record is written after it, once the generation is known (Y:5192).
-  - **`LANES_WRITE_ID` without `LANES_WRITE_GENERATION`** (the contract's O4): the generation is taken from the pending record that holds that id for this command line. With no such record, the run refuses with 2 before any call, naming the printed rerun's form (Y:5200). So `lanes-index`'s 64 for an id without a generation is never reached from `lanes-edit.sh`.
-  - **The digest:** `wr_digest` is the sha256 of `lanes-pending/1 NUL lane NUL session NUL verb NUL args…`, over `ORIG_ARGV` (`:741`).
-  - **The record:** written by temp file and `mv`, mode 0600 in a 0700 directory, with Y:5172's keys and the `call=` lines.
+  - **`LANES_WRITE_ID` without `LANES_WRITE_GENERATION`** (the contract's O4): the generation is taken from the pending record that holds that id for this command line. With no such record, the run refuses with 2 before any call, naming the printed rerun's form (Y:5200, with ERR-38's `LANES_SESSION`). So `lanes-index`'s 64 for an id without a generation is never reached from `lanes-edit.sh`.
+  - **The digest:** `wr_digest` is the sha256 of `lanes-pending/1 NUL lane NUL session NUL verb NUL args…`, over `ORIG_ARGV` less its leading `--no-sweep`, `--sweep` and `--no-github`, which `cmdline` keeps (Y:2476, Y:5171). `ORIG_ARGV` is `:741` at `34799b74`, the base of this block's other `lanes-edit.sh` cites; it is `:786` at `ddc972d` (lane 3, T412's G3, #165 6750702819).
+  - **The record:** written by temp file and `mv`, mode 0600 in a 0700 directory, with Y:5172's keys and the `call=` lines. Its `database` is written empty (ERR-40).
   - **The claims:** a claim chain of `<d>.take.<k>` files. Another host's claim gets 120 s.
-    - **The owner's liveness** is `pid_start_of <pid>`, lane 5's T502 (L5-A1; Q-L5-6, answered). Exit 0 is live, with the start token on stdout, compared as a string on the same host and container. Exit 1 is not live. Exit 2, a start that cannot be read, counts as live (R49), so a wrong "dead" never lets a claim be stolen.
-    - Each claim holds the run's pid, start time, host, container and UTC (Y:5184). The 3 for a claim with no record beside it prints them (T417; open point 42, taken under R26).
+    - **Each claim is created whole** (ERR-42): its body is written to a temporary file in the same directory and linked to `<d>.take.<k>` with `ln`, which fails where the name exists, as noclobber's create does. The temporary file is removed either way, and is never read as a record or a claim. A failed write of the body is exit 1, never a wait on the run's own empty claim.
+    - **A record is removed** with the owner's claim and those numbered below it, never a higher one, which a later run holds (DEC-26).
+    - **The owner's liveness** is `pid_start_of <pid>`, lane 5's T502 (L5-A1; Q-L5-6, answered). Exit 0 is live, with the start token on stdout, compared as a string on the same host and container. Exit 1 is not live. Exit 2, a start that cannot be read, counts as live (R49, unchanged).
+    - **An owner that cannot be tested here** counts as live for the seam's cap, 120 s (`LANES_REGISTER_SEAM_CAP_S`), then as dead (DEC-25): a claim with no pid, or one that cannot be read, from the later of the file's mtime and the record's `updated_utc`; a claim whose pid lives with an empty `pid_start`, from the later of the claim's UTC and the record's `updated_utc`.
+    - Each claim holds the run's pid, start time, host, container and UTC (Y:5184, created whole by ERR-42). The 3 for a claim with no record beside it prints them (T417; open point 42, taken under R26).
     - **The selector:** T412's `-k` word is `claim_chain`, not `claim`, so that it does not select AT-F10's record-less test, which needs T417. That test is T417's, through `no_record`. L2-0e's names replace both.
   - **`updated_utc`** is rewritten with every `call=` line, before the call is sent. It is always the host's clock (`date -u`), never the snapshot's, even though `utc_now` answers the snapshot's clock in the child (T413). A takeover ages the newest line's clock by it (T417; open point 36, taken under R26).
   - **The age** (`LANES_REGISTER_PENDING_MAX_AGE_S`, 15 minutes):
     - a record of this generation past its age is not reused: the run warns, prints the lookup, and writes anew (Y:5207);
-    - a record of another generation is refused at any age, until `LANES_WRITE_ID=new` (Y:2487);
+    - a record of another generation is refused at any age, until `LANES_WRITE_ID=new` (Y:2487); where the first snapshot refused the record's generation, its text names no `<g′>` (ERR-41);
     - only done marks are removed by age (Y:5183). No record is purged.
-  - **Reruns:** `LANES_WRITE_ID=new`, and another generation's refusal text with `LANES_WRITE_GENERATION` (Y:5209–5215).
+  - **Reruns:** `LANES_WRITE_ID=new`, and another generation's refusal text with `LANES_WRITE_GENERATION` (Y:5209–5215). Every printed rerun carries `LANES_SESSION=<the value <d> took, empty where the run had none>` (ERR-38).
   - **Not here:** the live-owner exit 3 (Y:5218) moves to T417, with the exit-3 rule (review M8).
   - **After 1a and 1b** (R23): T412 touches no 1b function, but it is inert until T415, and landing it early would move `main` under 1a and 1b.
 - [ ] T413 [US2] [O] (1b) Honour `LANES_REGISTER_SCRATCH=<attempt dir>`, the internal flag (F22; Y:5032–5044), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-B3, the child; L4-B7, `gh_reads`; L4-B11, D12 and D13) (STOP until T101; lands after T412, T504, L2-W1) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_writes.py -k 'sql_register_writes and scratch' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'a23_write_routing'`
@@ -1102,11 +1124,12 @@ needs from `lanes-edit.sh`.
 - [ ] T417 [US2] [O] [X: backups] Add the in-doubt rule, F3 through `journal`, with exit 3's primary clause (F3, D8; FR-022, FR-028; Y:5226–5287, Y:2648–2748), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-B5, L4-B15) (STOP until T101; lands after T415, T114, L2-W3) — files: `lanes-edit.sh`, `tests/test_repo_hygiene.py`, `../spec/docs/README-lanes.md` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_in_doubt.py -k 'sql_register_in_doubt and (lookup or call_line or exit_3 or takeover or no_record)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
   - **Source:** L4:253.
   - **Depends on:** SPEC-PR; SLICE-1A; SLICE-1B; T111; T112; T113; T114; T101 (STOP until it lands); T415; lane 2's T244, T245, T246, T247, T248: L2-W3 (its gate, L4:253; group B's gate, L1:531).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: the exit-3 form for an untested claim (DEC-25, #165 6750702819), ERR-38's rerun (R2's S4), and `--clock` as contract §3.4 has it (R2's N7).
   - **The call line:** `call=` is written before each commit call, and dropped only on 75, a definitive 69, or 2.
   - **A taken record:** a run that takes a record holding `call` lines is in doubt from its start.
   - **At every end but 0:** `journal --write-id --not-after --generation --lane --verb --args-sha256 --clock --clock-age` (contract §3.4). `--not-after` is the largest of the `call` lines' and `--clock` is the last snapshot's `clock=`, with `--clock-age` from bash's `SECONDS`. `journal` makes the wait and the tries itself, and the run sets no timer around it. `--lane <lane>` keeps its space form, as in T415 (contract §3.6, L1-D1; #165 6738871108).
   - **A takeover whose own snapshot failed** (open point 36, taken under R26) has no snapshot clock of its own. It takes the record's:
-    - `--clock` is the clock of the `call` line with the largest `not_after`;
+    - `--clock` is the clock of the record's newest `call` line (contract §3.4; DEC-12);
     - `--clock-age` is the whole seconds since the record's `updated_utc`, on this host.
     - That estimate can only lag the database: the line was written after its snapshot ended. So `journal` waits until `<n>` is at most 2 s ahead, LR011 is not reached, and the wait the record exists for (Y:5178, Y:5199) takes place.
     - Only a run with neither clock calls at once (Y:5236): a record written on another host, whose `host` is not this one. LR011 then gives 3, with the record kept.
@@ -1116,6 +1139,7 @@ needs from `lanes-edit.sh`.
     - **Why not a plain rerun:** if the other run finished with 0, its record is gone and its done mark is keyed by write id, so a plain rerun would write anew (Y:5182).
     - **Why not the done mark:** finding the other write's id from its done mark would rest on a pid with no start time (Y:5181 records pid, host and container), and the mark carries no digest, so it could not show the mark is this command's.
     - **A run that was itself under `LANES_WRITE_ID`** prints its own id again with its generation, not the plain command.
+  - **An untested claim at the deadline** (DEC-25): where the highest claim's owner cannot be tested here, because the claim names no pid, cannot be read, or has a live pid with an empty `pid_start`, and the seam's cap has not run out at D7's deadline, the run ends with 3 in a form of its own. It names the claim file, `<state>/register-pending/<d>.take.<k>`, and the UTC after which a run may take it, the end of the cap from DEC-25's anchor, and says that this run sent nothing.
   - **Reading its answer:** `found <seq>` with rows, or `absent`, exit 0. A 2 counts as LR007 only with stderr's `ERROR:  LR007:` and a `DETAIL:` token; any other 2, a crash, or a code outside the contract's set is in doubt, 3, with the record kept (CO-2, CO-3). Draft 2 took both (contract §2.7, §3.4), but for Q6(c)'s 2 on `journal --write-id`, which no primary write can precede, and which this rule reads as 3 in any case.
   - **The outcomes:**
     - found: 0;
@@ -1124,8 +1148,8 @@ needs from `lanes-edit.sh`.
     - LR007 `another-write`: 2, removing it;
     - LR011, or no lock: 3, naming the id and printing the rerun.
   - **Exit 3:**
-    - the live-owner 3 (Y:5218, moved here from T412);
-    - exit 3's text (Y:2661–2665);
+    - the live-owner 3 (Y:5218, moved here from T412), whose rerun carries ERR-38's `LANES_SESSION`;
+    - exit 3's text (Y:2661–2665), whose rerun carries ERR-38's `LANES_SESSION`;
     - the exit table's row 3, its primary clause, which is T417's (R21; Y:468–469; the row's header is at `lanes-edit.sh:524`);
     - each new `die … 3` mapped in `_EXIT_3_CAUSES` (`tests/test_repo_hygiene.py:2794`), in the same PR as that `die`, a hunk lane 2 reviews (R22; Q-L2-3 is (a), #165 6726725691).
   - **The manual:** its exit-3 row (`../spec/docs/README-lanes.md`) changes in the same landing. The exit-3 test reads it in a composed run (`doc()`, `tests/test_repo_hygiene.py:35–39`; `conftest.py:268–275`). T417 lands that row as a spec-leg PR beside its code PR, and T340 keeps it when it assembles the manual (R21).
@@ -1179,14 +1203,15 @@ needs from `lanes-edit.sh`.
   - **`guard_type`** (`:19591`) runs only in the tail.
   - **The poll** (`log_sync`, `:19618`) reads D17's path after `committed`, through lane 5's read door: `reg_open` (T504), and `log_sync` with no fetch on primary (T506). Without T506 the poll would fetch on primary, which D12 forbids, so T423 lands after T506 (#165 6726831985, 6726857112).
   - **Exit 2** where none of its tail ran.
-- [ ] T424 [US3] [O] On primary only, `append-line` refuses three texts with 2, before the lock, as classified by `lanes-index`'s one classifier (Y:5114–5116, Y:3396–3400), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-B10, the refusals) (lands after T415, T122, L2-W2) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_order.py -k 'sql_register_order and append_line' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
+- [ ] T424 [US3] [O] On primary only, `append-line` refuses four texts with 2, before the lock, as classified by `lanes-index`'s one classifier (Y:5114–5116, Y:3396–3400; lane 3's ruling, #165 6747761107), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-B10, the refusals) (lands after T415, T122, L2-W2) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_order.py -k 'sql_register_order and append_line' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
   - **Source:** L4:319.
   - **Depends on:** SPEC-PR; SLICE-1A; SLICE-1B; T111; T112; T113; T114; T415; T122; lane 2's T243: L2-W2 (its gate, L4:319; group B's gate, L1:531).
-  - **The three texts:**
+  - **The four texts:**
     - a taking line that names no repository;
     - a take with no readable UTC;
-    - a `LANDING EXPIRED` typed by hand.
-  - **The classifier:** `register classify` (contract §3.5): stdin lines in, `<kind>` TAB `<slot_role>` TAB `<repo_key>` TAB `<utc_ts>` out, `-` for NULL. No database call. It is lane 1's new T122, `[O]`, in group A, with a parity test against `parse_register_line`, and this task lands after it (R04).
+    - a `LANDING EXPIRED` typed by hand;
+    - a `LANDING` take whose lane cannot be read, which would hold `main` with nothing able to close it (lane 3's ruling, #165 6747761107; files mode keeps writing it, as today).
+  - **The classifier:** `register classify` (contract §3.5): stdin lines in, `<kind>` TAB `<slot_role>` TAB `<repo_key>` TAB `<utc_ts>` TAB `<lane>` out, `-` for NULL. No database call. `<slot_role>` is the kind's role in `REGISTER_SLOTS`, whatever fields the line lacks (lane 4's (a), #165 6747900504, in contract draft 4.10, #165 6748099727). So T424 refuses a line whose `<kind>` is `LANDING EXPIRED`; a `take` whose `<utc_ts>` or `<repo_key>` is `-`; and a `LANDING` whose `<lane>` is `-` (contract §3.5). It is lane 1's new T122, `[O]`, in group A, with a parity test against `parse_register_line`, and this task lands after it (R04).
   - **Where:** in `append-line` (`:17597`), beside its newline (`:17607`) and managed-vocabulary (`:17613`) refusals.
   - **Files mode** is byte-identical.
 - [ ] T425 [US3] [O] Add `append-line --landing-expired <holder> --pr --repo --word --word-where --word-utc`, with `RULE6_PRIMARY` and `RULE6_EXPIRED_AWK` (F13; FR-032; Y:5099–5142), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-B10) (STOP until T101; lands after T424, T415, T112, T118, T504, L2-W5; the `who --landing` test lands after T505) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_order.py -k 'sql_register_order and landing_expired' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
@@ -1200,7 +1225,7 @@ needs from `lanes-edit.sh`.
   - **The one line** (R45; Q-L5-4, answered): `reg_open` sets only `REG_MODE`. One line after both doors and before the arm, where Y:5121 places it, sets `rule6_primary_on` and T426's `key()` variable from `REG_MODE`, so that the writers' branch, the child and a reader all take it. It ships with T425 and T426, which own those variables (review m5). **T425 adds it,** setting `rule6_primary_on`, and T426 adds `key()`'s variable to the same line, so T426 lands after T425 (lane 4's decision, which is lane 3's default in its review of phase B, #165 6741485907).
 - [ ] T426 [US4] [O] On primary only, `RETIRED_ROWS_AWK`'s `key()` trims a number's leading zeros as text (Y:6574–6577), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers the routed item at Y:6574–6577, lane 4's on primary only under R31) (lands after T409, T504, T425, L2-N4) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and retired' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
   - **Source:** L4:334.
-  - **Depends on:** SPEC-PR; SLICE-1A; SLICE-1B; T111; T112; T113; T114; T409; T504; T425; lane 2's T217: L2-N4 (its gate, L4:334; group B's gate, L1:531).
+  - **Depends on:** SPEC-PR; SLICE-1A; SLICE-1B; T111; T112; T113; T114; T409; T504; T425; lane 2's T217: L2-N4; lane 2's T259, which writes this task's one test, `test_retired_rows_key_trims_leading_zeros_as_text_on_primary` (its gate, L4:334; group B's gate, L1:531).
   - **On primary:** `key()` (`:4907–4912`) trims with `sub(/^0+/, "", p); if (p == "") p = "0"`, through an awk variable that R45's one line sets from `REG_MODE` (R45; Q-L5-4, answered). T425 adds that line, and T426 adds this variable to it, so T426 lands after T425 (lane 4's decision; #165 6741485907). So the writers' branch, the child, and a reader whose `reg_open` (T504) answered `primary` all trim.
   - **The readers it reaches:** besides the writers, `retired-identity` (`:20299–20305`) reaches `RETIRED_ROWS_AWK` through `retired_identity_hits` (`:4924–4932`). Y:6575–6577 asks that the read and v2.5's keys agree, so that read trims too.
   - **Files mode** keeps `(p + 0)` (`:4911`), so nothing changes where the marker is absent (spec:59; review m7).
@@ -1323,9 +1348,10 @@ changes `lanes-index` and `tests/` only (lane 4's row 10).
 
 ### Implementation for group C: lane 3
 
-- [ ] T320 [US6] [O] Add the one push function that the renderer, `cutover` and `rollback` share (D23; S2's "The push"; the phase plan's "The push URL"; FR-045; `contracts/render-commit.md`), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and push' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T320 [US6] [O] Add the one push function that the renderer, `cutover` and `rollback` share (D23; S2's "The push"; the phase plan's "The push URL"; FR-045; `contracts/render-commit.md`), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and push' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:223; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T344 (the contract); T415, group B's commit with the author that `register commit` stores (L4:216).
+  - **Depends on:** SPEC-PR; T344 (the contract); T415, group B's commit with the author that `register commit` stores (L4:216); lane 2's T270, whose push tests its verify selects (they fail until T320 to T323, T325 and L4-B13, lane 4's T416, land: T270's Order).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names lane 2's T270 (R1's SHOULD 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1).
   - **Order:** lane 4's T416, the renderer's fork, lands after T321, as lane 4's block says (L4:247). The skeleton's order, which put it before group C (SK:827), is superseded (lane 3, fix round B, 2026-11-09).
   - **With `render_key=`:**
     - The URL is `ssh://git@github.com/<owner>/<repo>.git`, where `<owner>/<repo>` is `_norm_repo` of the checkout's own `git remote get-url origin`, and equals `source_of`'s.
@@ -1342,17 +1368,19 @@ changes `lanes-index` and `tests/` only (lane 4's row 10).
     - Nothing is written to the checkout's configuration: no `set-url` and no `pushurl`.
   - **The read-back** fetches `origin` and checks `merge-base --is-ancestor`, since a push to a URL moves no `refs/remotes/origin/main`.
   - It is security-sensitive: the key bypasses the ruleset, so the key stays in no environment a session inherits ("A server-side gate protects the rendered paths and `lanes/STORE`").
-- [ ] T321 [US6] [O] Add `lanes-index render --checkout <c>`'s lock and its handshake (D14; S2's first bullet; FR-044), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and lock' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T321 [US6] [O] Add `lanes-index render --checkout <c>`'s lock and its handshake (D14; S2's first bullet; FR-044), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and lock' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:239; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T320.
+  - **Depends on:** SPEC-PR; T320; lane 2's T270, whose lock tests its verify selects (they fail until T320 to T323, T325 and L4-B13, lane 4's T416, land: T270's Order).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names lane 2's T270 (R1's SHOULD 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1).
   - It takes `fcntl.flock(LOCK_EX | LOCK_NB)` on `<git-dir>/lanes-render.lock`, opened close-on-exec. It never takes the lane's write lock, and never a `mkdir` mutex.
   - **Both halves of `SyncLock`'s handshake:**
     - a fork that finds the lock held writes `lanes-render.rerun`, tries once more, and exits;
     - the holder, after it releases, looks for a mark once more, and takes the lock back for it.
   - It removes `LANES_NO_FETCH` from every child's environment, and never consults it (D12).
-- [ ] T322 [US6] [O] Add the renderer's pass (S2's "A pass"; D15; D16; FR-044; `contracts/render-commit.md`), as detailed below; its `-k` selector waits for v3f `[J3]` (placement: lane 2's) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and pass' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T322 [US6] [O] Add the renderer's pass (S2's "A pass"; D15; D16; FR-044; `contracts/render-commit.md`), as detailed below; its `-k` selector waits for v3f `[J3]` (placement: lane 2's) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and pass' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:245; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T321, T301 and T344.
+  - **Depends on:** SPEC-PR; T321, T301 and T344; lane 2's T270, whose two PC-3 pass tests its verify selects (they fail until T320 to T323, T325 and L4-B13, lane 4's T416, land: T270's Order).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names lane 2's T270 (R1's SHOULD 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1).
   - **Fetch.** It clears the rerun mark, and fetches `origin main` under `LANES_GIT_TIMEOUT`. A failed fetch is recorded with `record_mirror_state`, and nothing is pushed.
   - **Find `m`.**
     - It uses form C, paged with `--skip`, 200 commits a page, and takes the first non-empty `Register-Seq`. It never uses `--grep`. The whole walk is bounded by `LANES_GIT_TIMEOUT`.
@@ -1369,9 +1397,10 @@ changes `lanes-index` and `tests/` only (lane 4's row 10).
   - **The render set** is filtered in code, since git 2.43's `ls-tree` refuses `:(exclude)`.
   - **Push** through T320. A rejection refetches. Where origin then carries `t` or more, that counts as pushed. Otherwise the pass rebuilds, six push attempts in all.
   - It never touches a HEAD, an index or a working tree of the checkout.
-- [ ] T323 [US6] [O] Bound the renderer's progress (F15; FR-046), as detailed below (PC-3, as research.md takes it); its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and progress' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T323 [US6] [O] Bound the renderer's progress (F15; FR-046), as detailed below (PC-3, as research.md takes it); its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and six_lost_races' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:262; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T322.
+  - **Depends on:** SPEC-PR; T322; lane 2's T270, whose six-lost-races test its verify selects (they fail until T320 to T323, T325 and L4-B13, lane 4's T416, land: T270's Order).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names lane 2's T270 (R1's SHOULD 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1); its verify takes T270's six-lost-races test, since `progress` selected nothing and T322 keeps the two PC-3 tests (R1's MUST 2).
   - It makes another pass only after a pass that moved origin's last `Register-Seq` past where that pass found it, or once for each rerun mark it finds after it releases.
   - After 16 passes it releases the lock and re-forks itself once, detached, only if its last pass made progress.
   - Each stop condition ends the renderer with nothing on any HEAD. Those are:
@@ -1381,27 +1410,31 @@ changes `lanes-index` and `tests/` only (lane 4's row 10).
     - a fetch, authentication or six-rejection failure;
     - a failed journal read;
     - the handover.
-- [ ] T324 [US6] [O] Add the two ways out of a divergence (S2's "The two ways out"; FR-047), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_divergence.py -k 'sql_register_divergence' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T324 [US6] [O] Add the two ways out of a divergence (S2's "The two ways out"; FR-047), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_divergence.py -k 'sql_register_divergence' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:273; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T323; T115 (lane 1's loader, for `import --single`).
+  - **Depends on:** SPEC-PR; T323; T115 (lane 1's loader, for `import --single`); lane 2's T271, whose divergence module its verify runs (its tests fail until L1-A6, L1-A15, T322, T324 and T326 land: T271's Order; `test_rollback_works_after_each_way_out` needs T326's rollback).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names lane 2's T271 (R1's SHOULD 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1).
   - **`render --revert <sha>`** journals an entry with no edits, whose message names the stray, through `register commit`. For a `Register-Seq` above the head at `R`, its entry takes `h+1` and names `R`.
   - **`import --single <sha>`** (U7, lane 3's) loads the stray commit's line edits on the render set as one write, through `register commit`, reusing lane 1's loader. It refuses where they no longer apply to SQL's images.
   - Each records the stray as resolved, which clears `diverged at`. Each runs only while the switch is `primary`. Each is in doubt, with D8's rerun, as any write's commit call is.
   - The runbook prefers the revert (PC-4).
-- [ ] T325 [US6] [O] Make `lanes-index reconcile` re-render what the mirror lacks, through T322's pass in the given checkout (FR-048). It imports nothing; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and reconcile' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T325 [US6] [O] Make `lanes-index reconcile` re-render what the mirror lacks, through T322's pass in the given checkout (FR-048). It imports nothing; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_renderer_git.py -k 'sql_register_renderer_git and reconcile' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:278; verify in R28's two-run form. The skeleton's `tests/test_lanes_index.py -k reconcile` part moves into the regression run.
-  - **Depends on:** SPEC-PR; T323; T117 (lane 1's read-only check in `reconcile`).
-- [ ] T326 [US7] [O] Add `rollback`'s render and push, steps 2 to 4 and `--hold-marker` (S5's rollback; operations §2.3; FR-051; `contracts/render-commit.md`), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_rollback.py tests/test_sql_register_drill.py -k 'sql_register_rollback or sql_register_drill' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+  - **Depends on:** SPEC-PR; T323; T117 (lane 1's read-only check in `reconcile`); lane 2's T270, whose reconcile test its verify selects (they fail until T320 to T323, T325 and L4-B13, lane 4's T416, land: T270's Order).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names lane 2's T270 (R1's SHOULD 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1).
+- [ ] T326 [US7] [O] Add `rollback`'s render and push, steps 2 to 4 and `--hold-marker` (S5's rollback; operations §2.3; FR-051; `contracts/render-commit.md`), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_rollback.py tests/test_sql_register_drill.py -k 'sql_register_rollback or sql_register_drill' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:279; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T304 and T323.
+  - **Depends on:** SPEC-PR; T304 and T323; lane 2's T273 and T276, whose rollback and drill modules its verify runs (T273's tests fail until L1-A18, T304 and T326 land, and T276's drill tests until L1-A18, T326 and T327: their Orders).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names lane 2's T273 and T276 (R1's SHOULD 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1).
   - **Step 0's git half.** Right before step 1, it fetches `origin main` again and checks it as T322 recognises a divergence, a `Register-Seq` above the head included. It records a divergence it finds, and refuses with 2.
   - **Step 2.** It renders in-process, in the operator lane's checkout, with `--until k`, under that checkout's render lock, until the mirror holds `k` and its render set's tree id equals a full render's.
   - **Step 3.** `rollback --hold-marker` stops after step 2, for Brett to remove the ruleset. Run again, `rollback` resumes at step 4.
   - **Step 4.** It pushes `k+1` through T320, reads it back, and records it with `record_marker`, setting the marker `absent`. A push it cannot confirm exits 3, and the rerun reads origin back before it acts.
   - It holds no database transaction across a git act (F23; FR-052).
-- [ ] T327 [US7] [O] Add `cutover`'s push, in its first and after-loss forms (S5's cutover, steps 2 and 3; D21; D24; FR-050) (U6, lane 3's; the transaction stays lane 1's T116), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_cutover.py tests/test_sql_register_marker.py -k 'sql_register_cutover or sql_register_marker' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
+- [ ] T327 [US7] [O] Add `cutover`'s push, in its first and after-loss forms (S5's cutover, steps 2 and 3; D21; D24; FR-050) (U6, lane 3's; the transaction stays lane 1's T116), as detailed below; its `-k` selector waits for v3f `[J3]` — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_cutover.py tests/test_sql_register_marker.py -k 'sql_register_cutover or sql_register_marker' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** SK:286; verify in R28's two-run form.
-  - **Depends on:** SPEC-PR; T323, T116 and T344.
+  - **Depends on:** SPEC-PR; T323, T116 and T344; lane 2's T218, T225, T242 and T272, whose cutover and marker tests its verify selects (T272's fail until L1-A14 and T327 land; the marker module's until T303, lane 5's T504 to T508, and L4-B1 and L4-B12: T225's and T242's Orders; T218's until T229).
+  - **Changed at assembly:** lane 3, round B8, 2026-11-09: Depends names lane 2's T218, T225, T242 and T272 (R1's SHOULD 2), and its regression run names `test_lanes_index.py` (R1's SHOULD 1).
   - **Step 2.**
     - It builds the marker commit on origin's tip. D21's fields come from the switch, with the label from `register_label=` alone, and the commit carries the entry's `Register-Seq`.
     - It checks that the tip's `lanes` tree id equals `C`'s.
@@ -1519,7 +1552,7 @@ outside the task list.
 - [ ] T340 [P] [US10] [S] Write "The SQL register" in the manual, part 1: "What changes for a lane" and the mechanisms (U10, lane 3's, assembling each lane's texts; FR-062), as detailed below — files: `../spec/docs/README-lanes.md` — verify: `command grep -q '^## The SQL register' ../spec/docs/README-lanes.md && command grep -q '^### What changes for a lane' ../spec/docs/README-lanes.md && ! command grep -q 'No test creates a real database' ../spec/docs/README-lanes.md`
   - **Source:** SK:331.
   - **Depends on:** SPEC-PR; Checkpoint C, since it describes each mechanism as built; each lane's paragraphs for its own part.
-  - **Changed at assembly:** lane 3, round B5, 2026-11-09: two entries, `lane-start`'s seven read arms (#165 6747281902, point 6) and the keyword-form `url=` (#165 6747313608).
+  - **Changed at assembly:** lane 3, round B5, 2026-11-09: two entries, `lane-start`'s seven read arms (#165 6747281902, point 6) and the keyword-form `url=` (#165 6747313608); lane 3, round B8, 2026-11-09: the exit table's rows for T412's refusals (#165 6747592174; R1's SHOULD 8).
   - **The section** sits beside "The derived index (Amendment 14)", and opens with "What changes for a lane". That part covers:
     - 69, and what to do;
     - 75: nothing was written, and a retry in seconds is safe;
@@ -1531,7 +1564,8 @@ outside the task list.
     - the claim loser's 2 instead of 7;
     - the later `HOLD` or `LANDING` writer's code;
     - `lane-start`'s seven read arms: a 75 or 3 refuses the launch, naming the code (YS:685); lane 4 supplies the paragraph (lane 3, #165 6747281902);
-    - a keyword-form `url=` (not `postgresql://…`) now refuses with 2 at load, naming the URL form; #160's contract was always a libpq URL (`lanes-index:2631–2633`) (lane 3, #165 6747313608).
+    - a keyword-form `url=` (not `postgresql://…`) now refuses with 2 at load, naming the URL form; #160's contract was always a libpq URL (`lanes-index:2631–2633`) (lane 3, #165 6747313608);
+    - the exit table's rows for T412's new refusals, in its copy in this manual; lane 4 supplies them (lane 3, #165 6747592174).
   - **Then:**
     - `mode=primary`;
     - the switch and `lanes/STORE`;
@@ -1575,13 +1609,14 @@ outside the task list.
 
 ## Lane 2's block: the tests, T200 to T279
 
-Lane 2's block, `tasks-block-T2xx.md` from its folder F7 (`2f2dc869…`, 587
-lines, 62 tasks, T200 to T279; `SHA256SUMS-F7` `641ab6f9…`; #165 6746715586),
-follows byte for byte, in this slot of phase B (lane 3, round B5,
-2026-11-09). Its NOTES §13 places it: Table 1 gives each slot item's tasks,
-below, and Table 2 each lane 2 marker's, which the tasks above now name
-as "lane 2's T2xx: <the marker's words>". Its tasks wait as each
-one's **Order** says.
+Lane 2's block, `tasks-block-T2xx.md` from its folder F8b (`8c87cab0…`, 589
+lines, 62 tasks, T200 to T279; `SHA256SUMS-F8b` `5159230a…`; #165
+6748678333), follows byte for byte, in this slot of phase B (lane 3, round
+B5, 2026-11-09, at F7; round B7, at F8b). Its NOTES §13 places it: Table 1
+gives each slot item's tasks, below, and Table 2 each lane 2 marker's, which
+the tasks above now name as "lane 2's T2xx: <the marker's words>". Lane 2's
+placements of #165 6751920725 name the 19 markers that came in at round B2
+(round B8). Its tasks wait as each one's **Order** says.
 
 | Slot item | Lane 2's task |
 | --- | --- |
@@ -2230,8 +2265,9 @@ summarises them by phase and by lane.
 - **The spec PR** gates every landing below (6726556972). Coding starts now.
   Every task's Depends on names `SPEC-PR`, but T101, T102 and T344 ride the
   spec PR.
-- **Phase 0** has no task dependency beyond the spec PR. Lane 2's fixture
-  and switch (L2-0a, L2-0b) block every real-engine verify (L1:507). T101 lands lane 1's contract before
+- **Phase 0** has no task dependency beyond the spec PR. Lane 2's cluster
+  and switch, T200, T201, T205 and T206, block every real-engine verify
+  (L1:507); T227 to T229, the rest of L2-0a, wait on lane 1's tasks. T101 lands lane 1's contract before
   group B codes against it, and T344 lane 3's before group C.
 - **Group A** depends on Phase 0.
   - T103 comes first in `lanes-index` (lane 1's Question 11 PR); T502, the
@@ -2285,18 +2321,19 @@ summarises them by phase and by lane.
   slices 1a and 1b (R23); T409 carries the mode across 1a's `exec`, so it
   lands after 1a. T401 comes first, then T402, T403 and T404, which use
   its verbs. T405 to T408 wait for no lane 4 task; T403 and T408 wait for
-  lane 5's T502, and nothing waits for T509. T409 → T410 → T411 run in
-  `lanes-edit.sh`, one after the other with T401. Every phase 1 task lands
+  lane 5's T502, and nothing waits for T509. T410 lands after T409, and
+  T411 waits for no lane 4 task; with T401, the three land in `lanes-edit.sh`
+  one at a time. Every phase 1 task lands
   after its lane 2 module (L2-N4; L2-N2 for T409).
 - **Phase 2:** the spine T412 → T413 → T414 → T415 → T417 → T418, after 1a
   and 1b. T416 runs beside it after T415 and T321, and no task's gate
   names it. T419 after T409 and 1b; T427 after T410 and 1b; T420, and
-  T424 → T425, after T415 (T424 also after T122); T421 → T422 → T423 after
-  T418; T426 after T409, T504 and T425; T429 to T432 after T410 and T417;
+  T424 → T425, after T415 (T424 also after T122); T421, T422 and T423 each
+  after T418 (T423 also after T504 and T506); T426 after T409, T504 and T425; T429 to T432 after T410 and T417;
   T428 after T427 too; T433 and T434 after T417.
 - **Gates every group B task carries here:** `SPEC-PR`, `SLICE-1A`,
   `SLICE-1B` and lane 1's T111 to T114 (L1:531). `STOP until T101` stays on
-  the 11 tasks whose lines name it. It is met for coding since 2026-11-09:
+  the 12 tasks whose lines name it, T510 among them. It is met for coding since 2026-11-09:
   lane 4 confirmed draft 4.5's §3.1 to §3.5 for group B (6746695468), and
   lane 3 ruled (6746783992). Local branches may code; merging still waits
   for `SPEC-PR` and each task's other gates.
@@ -2342,8 +2379,7 @@ summarises them by phase and by lane.
 ## Coverage: every FR and SC against the tasks
 
 Built by script from each task's text, the blocks' own coverage lists and
-lane 3's reading. A PENDING slot is named where lane 2's block will add
-tasks.
+lane 3's reading. Lane 2's tasks are named by id in the Also column.
 
 | Requirement | Tasks | Also |
 | --- | --- | --- |
@@ -2423,7 +2459,7 @@ tasks.
 | SC-011 | T415, T507, T512 | tests 9 and 10 (lane 2's: T226, T255; T213, T237) |
 | SC-012 | T303, T401, T409, T410, T411, T412, T414, T415, T417, T418, T419, T421, T423, T424, T425, T426, T427, T502, T504, T505, T506, T507, T508, T509, T510, T512, T513 | every task's regression run (`repo_hygiene`); the hygiene rules (lane 2's: T200's last case, T217's dispatcher-arm test, T221's one-number test, and every regression run's `repo_hygiene`) |
 
-**Gaps**, with no task yet: FR-059, FR-060.
+**Gaps:** none. FR-059 is in all 62 of lane 2's task lines, and FR-060 in T200, T201, T205 and T206 (lane 2, #165 6751920725).
 
 ## Coverage outside this task list
 
@@ -2438,26 +2474,27 @@ word.
 | PostgreSQL 16 in the bench images, and the image rebuild | lane 2's openBenches PR; Brett rebuilds | before bench runs need it |
 | v1.2.0's rc1 on TestPyPI, the tag, `release/v1.2`, PyPI and the GitHub Release | lane 3, on Brett's own word | after group C and the service |
 | The workBenches re-vendor, which carries the launcher's window reads (Brett's "5A"; DEC-02) | lane 3 drafts; applied once the code is on `main` | with the release |
-| The codeXfactory prod install, whose private CA issues the endpoint's certificate, and the prod OpenXPKI that re-issues it later (Brett, 2026-11-09, #165 6742844912 and 6746095035) | opsXfactory-6's change `add-codexfactory-prod-register-database`, in Opensoft-Tenant's own `codexfactory` folder, with its own Flux sync entries and reconciler, in the namespace `codexfactory-register` (#165 6743069107); for the prod OpenXPKI, opsXfactory-6 or the lane it names as `OpenXPKI-Install`'s owner (#165 6742844912, 6743069107, 6744967970), which opsXfactory-6 plans (Brett, 2026-11-09: "opsXfactory-6 plans it (Recommended)", #165 6746095035; after #165 6744967970) | before act 3, which waits until that change has landed; the prod OpenXPKI when it and its route exist, since act 3 does not wait for it |
+| The codeXfactory prod install, whose private CA issues the endpoint's certificate, and the prod OpenXPKI that re-issues it later (Brett, 2026-11-09: "add openXPKI to prod and use that. both QA and Prod need openXPKI", 14:38:23Z, #165 6742844912; then "Interim CA now, OpenXPKI later (Recommended)", 16:58:23Z, #165 6746095035) | opsXfactory-6's change `add-codexfactory-prod-register-database`, in Opensoft-Tenant's own `codexfactory` folder, with its own Flux sync entries and reconciler, in the namespace `codexfactory-register` (#165 6743069107); for the prod OpenXPKI, opsXfactory-6 or the lane it names as `OpenXPKI-Install`'s owner (#165 6742844912, 6743069107, 6744967970), which opsXfactory-6 plans (Brett, 2026-11-09: "opsXfactory-6 plans it (Recommended)", #165 6746095035; after #165 6744967970) | before act 3, which waits until that change has landed; the prod OpenXPKI when it and its route exist, since act 3 does not wait for it |
 | The push ruleset | Brett | inside act 4's freeze |
 | Acts 3 and 4, and a real rollback or disaster path | Brett | after the install |
 | The change's archive | lane 3 | after the root bump that carries 007 lands, and after T345 |
 
 ## Notes
 
-**Tasks by lane and tier** (lane 2's block is PENDING):
+**Tasks by lane and tier:**
 
 | Lane | `[O]` | `[S]` | `[H]` | All |
 | --- | --- | --- | --- | --- |
 | L1 | 22 | 0 | 0 | 22 |
+| L2 | 59 | 3 | 0 | 62 |
 | L3 | 16 | 3 | 0 | 19 |
 | L4 | 23 | 11 | 0 | 34 |
 | L5 | 12 | 1 | 0 | 13 |
-| All | 73 | 15 | 0 | 88 |
+| All | 132 | 18 | 0 | 150 |
 
 - **Every task** carries one tier tag, a `files:` list and a `verify:`
   command, and names its source line.
 - **Network:** every verify command is offline. T320's tests use bare-origin
   fixtures.
-- **When lane 2's block comes in,** lane 3 replaces the PENDING section and
-  checks the coverage table again.
+- **Lane 2's block** came in at round B5, and is at F8b since round B7; the
+  coverage table above counts it.

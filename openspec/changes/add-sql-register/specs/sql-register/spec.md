@@ -646,7 +646,7 @@ A reader SHALL say which store answered whenever it is not that workstation's de
 - **THEN** it answers from the database and prints no `read: index` line
 
 ### Requirement: `managed-projection` answers from the database and never says `legacy` for an outage
-`managed-projection` SHALL answer 0, 8 or 1 from the database. An unreachable database SHALL answer 1, UNKNOWN, and never `legacy` or 8. The database-backed answer SHALL wrap `lane_is_managed_owned` from outside the verbatim block ported from `3c26041`, which SHALL stay byte-identical.
+`managed-projection` SHALL answer 0, 8 or 1 from the database. An unreachable database SHALL answer 1, UNKNOWN, and never `legacy` or 8. The database-backed answer SHALL wrap `lane_is_managed_owned` from outside the verbatim block ported from `3c26041`, which SHALL stay byte-identical. Under `LANES_READ_MIRROR=1`, which `lane-handoff` and the handoff skill set at the ownership seam, it SHALL answer from the mirror's marker instead, labelled with the `read: mirror` line, and those callers SHALL still refuse on 0 and 1.
 
 #### Scenario: Valid, malformed and legacy rows
 - **WHEN** `managed-projection` reads a valid, a malformed and a legacy row from SQL
@@ -661,13 +661,13 @@ A reader SHALL say which store answered whenever it is not that workstation's de
 - **THEN** the diff is empty
 
 ### Requirement: `lane-start` with the database unreachable
-On `mode=primary`, `lane-start` SHALL refuse with 69 before anything is renamed or written at the reads that decide state: `managed-projection` (`lane-start:1555`), the row count (`:1609`), `lane-last` (`:2335`) and `canon-lane` (`:1154`). It SHALL refuse with 69 where the write must exist: `request-handoff` (`:2497`) and `add-row` for a new lane (`:3819`). It SHALL print a note and go on where `append-session-id` (`:3848`, `:3869`, `:3906`, `:4019`), `set-row-state LIVE` (`:3985`) and `log STARTED` or `RESUMED` (`:4178`) are refused. The Rule 3 handoff stamp and the sidecars SHALL work as they do today, and the stamp SHALL stay a git commit that never blocks the launch. Once a new lane's row or the session cell, the state and the line are one `start-record` write, its refusals SHALL follow the requirement "`lane-start`'s bind is one write", which keeps these outcomes. Line numbers are those of the code pin `2a057a6d`.
+On `mode=primary`, `lane-start` SHALL refuse before anything is renamed or written: with managed-projection's 1, UNKNOWN (S4), at `:1555`, and with 69 at the row count, `lane-last` and `canon-lane` (`lane-start:1609`, `:2335` and `:1154`). It SHALL refuse with 69 where the write must exist: `request-handoff` (`:2497`) and `add-row` for a new lane (`:3819`). It SHALL print a note and go on where `append-session-id` (`:3848`, `:3869`, `:3906`, `:4019`), `set-row-state LIVE` (`:3985`) and `log STARTED` or `RESUMED` (`:4178`) are refused. The Rule 3 handoff stamp and the sidecars SHALL work as they do today, and the stamp SHALL stay a git commit that never blocks the launch. Once a new lane's row or the session cell, the state and the line are one `start-record` write, its refusals SHALL follow the requirement "`lane-start`'s bind is one write", which keeps these outcomes. Line numbers are those of the code pin `2a057a6d`.
 
 > Brett's answer to Q8(a): round 1's 2A, R3's option A with ADV-C5's `:1154`, #165 6710653292.
 
 #### Scenario: A deciding read fails (agreement test 11)
 - **WHEN** the cluster is stopped and `lane-start` reaches any of the reads above
-- **THEN** it refuses with 69 before any rename or write
+- **THEN** it refuses before anything is renamed or written: with managed-projection's 1, UNKNOWN (S4), at `:1555`, and with 69 at the row count, `lane-last` and `canon-lane`
 
 #### Scenario: A write that must exist
 - **WHEN** the cluster is stopped and `request-handoff` or `add-row` for a new lane is refused
@@ -682,14 +682,14 @@ On `mode=primary`, `lane-start` SHALL refuse with 69 before anything is renamed 
 - **THEN** the launch refuses and no second row is made for a lane already running
 
 ### Requirement: The busy and in-doubt codes refuse the launch at `lane-start`'s seven default read arms
-At the seven read arms of `lane-start` whose default arm notes an unknown code and carries on, or passes it silently (`:1154` `canon-lane`, `:1262` `swapped`, `:1271` `lane-dir`, `:1332` `resolve-home`, `:2184–2186` `session-lane`, `:3079` `lane-transcript` for the row's session cell, `:3430` `lane-transcript` for the last `PAUSED` record's resume id), the busy code or the in-doubt code SHALL refuse the launch, naming the code and saying that nothing was written and a retry in seconds is safe. Every caller's default arm on a read SHALL refuse on the busy code. `lane-start`'s bind is not a read arm: the busy code or the in-doubt code from its `start-record` follows the requirement "`lane-start`'s bind is one write". The manual SHALL list it.
+At the seven read arms of `lane-start` whose default arm notes an unknown code and carries on, or passes it silently (`:1154` `canon-lane`, `:1262` `swapped`, `:1271` `lane-dir`, `:1332` `resolve-home`, `:2184–2186` `session-lane`, `:3079` `lane-transcript` for the row's session cell, `:3430` `lane-transcript` for the last `PAUSED` record's resume id), the busy code or the in-doubt code SHALL refuse the launch, naming the code and saying that nothing was written and a retry in seconds is safe. At the two `lane-transcript` arms (`:3079`, `:3430`), which run after the window is renamed, where `request-handoff` answered 0, the refusal SHALL name what it wrote, the HANDOFF-REQUESTED line or the forced `PAUSED`, in place of saying that nothing was written, and SHALL give the window back its name, as #138 item 3 does. Every caller's default arm on a read SHALL refuse on the busy code. `lane-start`'s bind is not a read arm: the busy code or the in-doubt code from its `start-record` follows the requirement "`lane-start`'s bind is one write". The manual SHALL list it.
 
 #### Scenario: One test per arm
 - **WHEN** the verb at any one of the seven read arms exits the busy code or the in-doubt code
 - **THEN** the launch refuses and the register's rows and log are unchanged
 
 ### Requirement: `lane-handoff` and the handoff skill with the database unreachable
-On `mode=primary`, with the database unreachable, the reads that name the lane before the handoff file is published SHALL read the mirror, labelled with the `read: mirror` line, so that the handoff file is still written (`R-A11-11`). The `PAUSED` record's three writes SHALL exit 69 and then print a note, and the lane SHALL stay `SWAPPING`, an interrupted swap that the existing late `PAUSED` path completes. The handoff commit and the sidecars SHALL work as they do today. The note SHALL name how the `SWAPPING` lane's `PAUSED` record is completed later: the late `PAUSED` path, who runs it, and when.
+On `mode=primary`, with the database unreachable, the reads that name the lane before the handoff file is published SHALL read the mirror, labelled with the `read: mirror` line, so that the handoff file is still written (`R-A11-11`). The `PAUSED` record's three writes SHALL exit 69 and then print a note, and the lane SHALL stay `SWAPPING`, an interrupted swap that the existing late `PAUSED` path completes. The handoff commit and the sidecars SHALL work as they do today. The note SHALL name how the `SWAPPING` lane's `PAUSED` record is completed later: the late `PAUSED` path, who runs it, and when. Under `LANES_READ_MIRROR=1`, the ownership seam, `lane-handoff`'s `managed-projection` read before anything is written, SHALL read the mirror's marker the same way, labelled, and SHALL still refuse on 0 and 1, so that an ownership nobody could establish is never read as legacy.
 
 > Brett's answer to Q8(b): round 1's 2A, R3's option A with P15, #165 6710653292.
 
