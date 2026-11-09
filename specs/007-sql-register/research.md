@@ -317,15 +317,19 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   lane 2's point 42 (6726296119).
 - **Source:** Y:5218.
 
-### ERR-21. The design's "too late" refusal is the prefetch's (B4)
+### ERR-21. The design's "too late" and failed-read refusals are the prefetch's (B4)
 
-- **The erratum:** three passages of the design read as a refusal for any
-  late read of the guard's:
+- **The erratum:** six passages of the design read as a refusal for any
+  late or failed read of the guard's:
   - Y:4185, the parse's start line: "a read, through the service or direct,
     that completes after it is a refusal";
   - Y:4266–4271, the clamp, at the direct read's cap of 3.75 s, or 3.65 s
     under a declaration;
-  - Y:4344, the exit-mapping row that maps a late read to 2.
+  - Y:4344, the exit-mapping row that maps a late read to 2;
+  - Y:4343, the exit-mapping row that maps a failed read, `--for guard`'s 69,
+    to "SVC-12's declared-outage check; otherwise 2";
+  - Y:4346, the row that maps Q6(c)'s 78 to 2;
+  - Y:4445, SVC-12's condition 1: "its database read has failed".
 
   Each holds for form 2, the prefetch, only. Form 4, the guard's second
   read, has B4's ends: 0 with the one log's files written, and every other
@@ -334,7 +338,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   reads no declaration (B5).
 - **Whose:** lane 3's ruling B4, with B5, #165 6738474549, on lane 5's §3.6
   review (6738431117).
-- **Source:** Y:4185; Y:4266–4271; Y:4344.
+- **Source:** Y:4185; Y:4266–4271; Y:4344; Y:4343; Y:4346; Y:4445.
 
 ### ERR-22. A run with no snapshot clock waits on the record's clock (R26, point 36)
 

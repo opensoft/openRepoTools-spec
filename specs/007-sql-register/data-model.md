@@ -103,5 +103,5 @@ does the disaster path (FR-053).
   writer gets nothing there, and the indexer nothing in `lanes_register`
   (Y:2267–2276).
 - **After a restore from a dump:** the roles-only form makes the roles, the
-  admin's membership and the three database-level grants that a dump does
-  not carry (spec:846; research.md's ERR-03).
+  admin's membership and the three database-level statements that a dump
+  does not carry (spec:846; research.md's ERR-03).

@@ -185,7 +185,7 @@ On `mode=primary` the hand-edit `commit` of Rule 9(d) SHALL refuse, with every o
 - **THEN** it refuses on `mode=primary`
 
 ### Requirement: Unreachable or refused is exit 69 with nothing written
-When the database is unreachable, or refuses the transaction for a reason other than the register's own rules, a register write SHALL exit 69, naming the store and the error, with nothing written anywhere and never the files instead. A refusal by the register's own rules (an object or `main` held, a write id that names another write or another generation, an expectation changed, a key that is not a scope) SHALL exit 2, writing nothing, as the requirements that set those rules say. The prompt guard, which may exit only 0 or 2, SHALL refuse with 2. Exit 69 SHALL join the exit table of `lanes-edit.sh`.
+When the database is unreachable, or refuses the transaction for a reason other than the register's own rules, a register write SHALL exit 69, naming the store and the error, with nothing written anywhere and never the files instead. A refusal by the register's own rules (an object or `main` held, a write id that names another write or another generation, an expectation changed, a key that is not a scope) SHALL exit 2, writing nothing, as the requirements that set those rules say. The prompt guard, which may exit only 0 or 2, SHALL refuse with 2 where its prefetch, its first read, cannot read the database. Exit 69 SHALL join the exit table of `lanes-edit.sh`.
 
 #### Scenario: The database is unreachable (agreement test 2)
 - **WHEN** the database is unreachable and any listed write runs, the projection writer's storage-layer entry included

@@ -44,8 +44,13 @@ install", #165 6723925474).
    read-only mount: `lanes-index.conf` with `mode=index`, `reader_url=`,
    `register_url=`, `register_passfile=` and `register_label=`, and the two
    0600 password files. Each file names only its own engineer's logins
-   (ops:207–209).
-5. **The install,** in each host shell: pipx v1.2.0 (ops:218–219).
+   (ops:207–209); `register_passfile=` and `reader_passfile=` name the two
+   files (Y:2326).
+5. **The bench images, once:** one rebuild, then a recreate. The rebuild
+   carries the re-vendor, the configuration mount and `postgresql-16`, and
+   ends every lane in its container, so notice N1 goes out first. Its check
+   is `ready`, below (ops:213–216).
+6. **The install,** in each host shell: pipx v1.2.0 (ops:218–219).
 
 ## An engineer's workstation
 

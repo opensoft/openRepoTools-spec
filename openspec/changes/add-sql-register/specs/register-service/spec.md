@@ -27,7 +27,7 @@ Every answer that decides state SHALL be read from the database for that request
 - **THEN** the second answer includes that write and equals the direct read
 
 #### Scenario: The database is unreachable while the service is up
-- **WHEN** the service is up, the database becomes unreachable, and no outage is declared
+- **WHEN** the service is up, the database becomes unreachable before the prompt, and no outage is declared
 - **THEN** the guard's answer is 2 and never one from text read before, and the other reads refuse with 69
 
 ### Requirement: The service reaches the database only through `psql`
