@@ -11,7 +11,7 @@ description: "Tasks for 007-sql-register: the SQL register under lanes-edit.sh"
 `04a9de6b`, keyed to commit Y (`a6497d00`) of `add-sql-register`.
 
 **Status**: assembly phase B, started early (2026-11-09), with fix rounds B
-and B2. Lanes 1, 3, 4 and 5's tasks are in: lane 1's from its block v4.4,
+and B2. Lanes 1, 3, 4 and 5's tasks are in: lane 1's from its block v4.5,
 and lane 4's from its revision w11, keyed to Y (#165 6742584818). Lane 2's
 block is PENDING (due 2026-11-09 18:00Z). Each slot is marked where it
 sits.
@@ -20,7 +20,7 @@ sits.
 
 | Tag | Source | sha256 | Record |
 | --- | --- | --- | --- |
-| L1 | lane 1's block v4.4, T101 to T122, keyed to Y; it keeps v4.2's line numbers | `a4ce9e3b…` | #165 6742356416 |
+| L1 | lane 1's block v4.5, T101 to T122, keyed to Y; it keeps v4.2's line numbers | `4d740972…` | #165 6745214166 |
 | L5 | lane 5's block v5, T501 to T513, keyed to W `bb08d080` (its `W:` lines stand, as below), with its §3.6 review's section D (keyed to Y) (`e26a91e6…`) and lane 5's #165 6739068493 applied, then lane 5's fold-ready edits (#165 6742056462, edit 22 as #165 6742096448 corrects it); `v5:<n>` is the same block (v5 = L5) | `5d427c42…` | lane 5's review, #165 6738431117 |
 | L4 | lane 4's block, revision w11, T401 to T434, keyed to Y, with its group B plan (`801274de…`) and its changes since `b95a1ff9` (`ad9a3857…`) | `a7c58603…` | #165 6742584818; its independent check, RV11, says READY |
 | SK | lane 3's task skeleton, keyed to W, re-keyed here | `43b01027…` | — |
@@ -35,8 +35,8 @@ lines of the change's two spec files on this branch, at `ad82c2f4`; `Y:<n>`,
 `ops:<n>` and `clar:<n>` are lines at Y. Inside a block's detail, the
 block's own citations stand: lanes 1 and 4 cite Y, and lane 5 cites W
 (`W:<n>`, W being `bb08d080`), as its block's Keys define it. Lane 4 cites
-lane 1's contract draft 4.2 and block v4.2, whose line numbers draft 4.4
-and block v4.4 keep.
+lane 1's contract draft 4.2 and block v4.2, whose line numbers draft 4.5
+and block v4.5 keep.
 
 **Marks**, inside the blocks' text:
 
@@ -127,8 +127,8 @@ These are not tasks with a `files:` list.
 - **Line numbers.** The design's are at `2a057a6d`. The code leg's `main` has
   654 lines added and 69 removed in `lanes-edit.sh`, `lanes-index` and
   `lane` since. Find each site by its function's name.
-- **The contract.** `contracts/register-cli.md` is lane 1's draft 4.4
-  (`8600078b…`, 963 lines, #165 6742751889), which keeps draft 4.2's line
+- **The contract.** `contracts/register-cli.md` is lane 1's draft 4.5
+  (`da5a23ce…`, 963 lines, #165 6745394391), which keeps draft 4.2's line
   numbers; it is fixed before group B codes against it.
 
 ---
@@ -140,7 +140,7 @@ the test helpers that every real-engine test needs.
 
 - [ ] T101 [P] [US2] [O] Land `contracts/register-cli.md`, the contract between groups A and B and the readers' forms (FR-017; L1-A1), from the other lane 1 writer's drafts, due 2026-11-09 14:00Z with the readers' §3.6, once lane 4 has confirmed it, lane 5 has reviewed §3.6, and lane 3 has ruled — files: `../spec/specs/007-sql-register/contracts/register-cli.md` — verify: `bash -c 'f=../spec/specs/007-sql-register/contracts/register-cli.md; for h in "lanes-index mode" "register snapshot" "register commit" "journal" "register read" "psql" "write id" "exit codes"; do command grep -qiE "^#{2,4} .*$h" "$f" || { echo "missing: $h"; exit 1; }; done'`
   - **Source:** L1:74.
-  - **Depends on:** SPEC-PR; lane 4's confirmation of group B's sections, lane 5's review of §3.6 (given, #165 6738431117) and lane 3's rulings (L1:503). Draft 4.4 (`8600078b…`) is in the spec branch's `contracts/register-cli.md`; this task lands the final text.
+  - **Depends on:** SPEC-PR; lane 4's confirmation of group B's sections, lane 5's review of §3.6 (given, #165 6738431117) and lane 3's rulings (L1:503). Draft 4.5 (`da5a23ce…`) is in the spec branch's `contracts/register-cli.md`; this task lands the final text.
   - **Changed at assembly:** lane 3, fix round B2, 2026-11-09, item 8: T101 records `--store-line` and `--decide` (draft 4.3:182; lane 5, #165 6741787745).
   - **Its basis** is draft 1 (lane 3's R01). Later drafts answer lane 4's CO-1 to CO-6 and its two notes, and mark CO-2 and CO-6 as lane 1's contract decisions.
   - It fixes argv, stdout, stderr and exits for `lanes-index mode`, the `register` subcommands, `journal` and `act-begin`:
@@ -524,9 +524,9 @@ and test 1's files-mode twin, which shows that nothing changed.
     13. the endpoint's address count against `register_addresses`, by libpq's own lookup.
   - **Output:** one line per check. **Exits:** 0, 2 or 64. It changes nothing.
   - **`[X: hosting]`:**
-    - **check 11** reads `sslmode=verify-full` and an `sslrootcert=` root file, the cert-manager issuer's root. It fails on `system` (C7, Y:2324), as T104 refuses it at load for a host that is not loopback. Each role's own `pg_stat_ssl` row must show `ssl`, and `pg_is_in_recovery()` false. A chain that does not verify against the root file fails the check, naming the role and libpq's error: in lane 1's run, a leaf sent without its intermediate failed.
+    - **check 11** reads `sslmode=verify-full` and an `sslrootcert=` root file, the prod OpenXPKI's root, the trust anchor under openxFactory's `trust-anchor` contract (Brett, 2026-11-09). It fails on `system` (C7, Y:2324), as T104 refuses it at load for a host that is not loopback. Each role's own `pg_stat_ssl` row must show `ssl`, and `pg_is_in_recovery()` false. A chain that does not verify against the root file fails the check, naming the role and libpq's error: in lane 1's run, a leaf sent without its intermediate failed.
     - **check 13** expects the LoadBalancer's one address, `N_a` 1.
-  - **Lane 2's tests:** T224's check-11 test, with the fixture's CA standing for the install's private root and a full chain; and T230, the case for "never `system`" and a `tls.crt` with the leaf and every intermediate, which lane 3 kept (6726725691).
+  - **Lane 2's tests:** T224's check-11 test, with the fixture's CA standing for the prod OpenXPKI's root and a full chain; and T230, the case for "never `system`" and a `tls.crt` with the leaf and every intermediate, which lane 3 kept (6726725691).
 - [ ] T120 [US7] [O] `lanes-index set-mode` and its refusals (Y ops §2.4, `:462`; FR-054; L1-A17) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_operator_tools.py -k 'sql_register_operator_tools and set_mode' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index or repo_hygiene'`
   - **Source:** L1:389.
   - **Depends on:** SPEC-PR; T109 (L1:494); PENDING-L2: L2-N5 (L1:520); PENDING-L2: L2-0a and L2-0b, before any real-engine run (L1:507).
@@ -1791,7 +1791,7 @@ word.
 | PostgreSQL 16 in the bench images, and the image rebuild | lane 2's openBenches PR; Brett rebuilds | before bench runs need it |
 | v1.2.0's rc1 on TestPyPI, the tag, `release/v1.2`, PyPI and the GitHub Release | lane 3, on Brett's own word | after group C and the service |
 | The workBenches re-vendor, which carries the launcher's window reads (Brett's "5A"; DEC-02) | lane 3 drafts; applied once the code is on `main` | with the release |
-| The codeXfactory prod install | the lane Brett names for it | before act 3 |
+| The codeXfactory prod install, and the prod OpenXPKI that issues its certificate (Brett, 2026-11-09) | opsXfactory-6's change `add-codexfactory-prod-register-database`, in Opensoft-Tenant's own `codexfactory` folder, with its own Flux sync entries and reconciler, in the namespace `codexfactory-register` (#165 6743069107); for the prod OpenXPKI, opsXfactory-6 or the lane it names as `OpenXPKI-Install`'s owner (#165 6742844912, 6743069107, 6744967970) | before act 3, which waits until that change has landed and the prod OpenXPKI issues the certificate |
 | The push ruleset | Brett | inside act 4's freeze |
 | Acts 3 and 4, and a real rollback or disaster path | Brett | after the install |
 | The change's archive | lane 3 | after the root bump that carries 007 lands, and after T345 |

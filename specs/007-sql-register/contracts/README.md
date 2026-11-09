@@ -3,22 +3,28 @@
 This directory holds the contract files that plan.md lists. Each is written
 by the lane that owns it, and lands before the code that rests on it.
 
-## `register-cli.md`: lane 1's contract draft 4.4, keyed to Y
+## `register-cli.md`: lane 1's contract draft 4.5, keyed to Y
 
-[register-cli.md](register-cli.md) is lane 1's contract draft 4.4, keyed to
-Y (`a6497d00`), copied here byte for byte by lane 3 at fix round B2 on
-2026-11-09. It replaces draft 4.2, which lane 3 copied in at fix round B in
-place of draft 4.1, which replaced draft 4 at assembly phase A.
+[register-cli.md](register-cli.md) is lane 1's contract draft 4.5, keyed to
+Y (`a6497d00`), copied here byte for byte by lane 3 at round B3 on
+2026-11-09. It replaces draft 4.4, which lane 3 copied in at fix round B2;
+draft 4.2 came in at fix round B, and draft 4.1 at assembly phase A.
 
-- **Source:** lane 1's contract draft 4.4, `contracts-register-cli.v4.4.md`,
-  posted on #165 at 6742751889.
+- **Source:** lane 1's contract draft 4.5, `contracts-register-cli.v4.5.md`,
+  posted on #165 at 6745394391.
 - **sha256:**
-  `8600078b571b36aee39a6346ad479084797ae91bbdb3a4748f8a9c7f4104a0be`, 963
-  lines. The copy here has the same digest. Drafts 4.3 and 4.4 keep every
+  `da5a23ce00bff82413a32288747e60071d676138d8f1455fdaf5eb5a772c7deb`, 963
+  lines. The copy here has the same digest. Drafts 4.3 to 4.5 keep every
   line number of draft 4.2.
-- **What draft 4.4 changes:** it is draft 4.3 with lane 4's log set in
-  §3.6's C2 text (:811) and §8's O21 row (:947): each `lanes/log/<lane>.md`,
-  and 2 for `lanes/log/README.md`; and its status and history lines.
+- **What draft 4.5 changes:** it is draft 4.4 with lane 3's call on the
+  endpoint's name (#165 6745266800): §2.5's `register_url=` row (:273) and
+  §9's Hosting row (:957) keep `<endpoint>`, and say only that Brett makes
+  its one A record by hand once the install reports the load balancer's
+  static IP; and its status and history lines (:5, :12).
+- **What draft 4.4 changes** (`8600078b…`, #165 6742751889): it is draft 4.3
+  with lane 4's log set in §3.6's C2 text (:811) and §8's O21 row (:947): each
+  `lanes/log/<lane>.md`, and 2 for `lanes/log/README.md`; and its status and
+  history lines.
 - **What draft 4.3 changes** (#165 6742023901, `2cf9fd54…`): it is draft
   4.2 with lane 5's 6741787745 taken. `reg_flush` also runs
   `lane_alias_flush` (:815); `journal --last --at <n>` requires
@@ -37,10 +43,11 @@ place of draft 4.1, which replaced draft 4 at assembly phase A.
   (`lane1-tasks-block.v4.1.md`, `53e66ced…`, 644 lines, T101 to T122).
 - **The block in force:** lane 1's block v4.2 (`cad0fa93…`, 660 lines, T101
   to T122), #165 6739714248. It follows lane 3's restore order, the ruling
-  on test-plan open point 41 (#165 6739605144). Block v4.4 (`a4ce9e3b…`,
-  660 lines, #165 6742356416) replaces it for 007's tasks, and keeps its
-  line numbers. The contract, at draft 4.4 as at 4.1, gives no restore
-  order.
+  on test-plan open point 41 (#165 6739605144). Block v4.5 (`4d740972…`,
+  660 lines, #165 6745214166) replaces it for 007's tasks, and keeps its
+  line numbers: it is block v4.4 (`a4ce9e3b…`, #165 6742356416) with T119's
+  check 11 and its tests naming the prod OpenXPKI's root (:386, :388). The
+  contract, at draft 4.5 as at 4.1, gives no restore order.
 - **What draft 4.1 changes:** it is draft 4 (#165 6738871108, `5d6ce7ca…`,
   939 lines) with lane 5's check of draft 4 taken (#165 6739068493). The
   quote of the guard's second read is cited as Y:4160–4161; the change list

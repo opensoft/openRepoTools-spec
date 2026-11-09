@@ -33,8 +33,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.4 (`contracts/register-cli.md`, `8600078b…`,
-#165 6742751889) and its block is v4.4 (`a4ce9e3b…`, #165 6742356416),
+contract is its draft 4.5 (`contracts/register-cli.md`, `da5a23ce…`,
+#165 6745394391) and its block is v4.5 (`4d740972…`, #165 6745214166),
 both keyed to Y, both keeping v4.2's line numbers.
 
 ## Part 1: errata against the frozen text
@@ -290,6 +290,10 @@ both keyed to Y, both keeping v4.2's line numbers.
 - **Whose:** Brett's choice, in his words above, as Y records it; lane 3's
   ruling to record it here, #165 6727022920.
 - **Source:** ops:153; clar:495; Y:2324.
+- **Superseded on 2026-11-09** by Brett's "add openXPKI to prod and use that.
+  both QA and Prod need openXPKI" (14:38:23Z; #165 6742844912): the endpoint's
+  certificate now comes from the prod OpenXPKI, as `operations.md`'s item 4
+  reads since round B3. This record keeps what was decided on 2026-11-08.
 
 ### ERR-18. D1's item 5 keeps the physical backups 30 days
 

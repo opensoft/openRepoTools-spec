@@ -83,7 +83,9 @@ and the only scope it takes, are:
     proposes;
   - **Brett's choices of 19:25Z**, as Y records them (clar:495–505;
     6726078173): "Install's private CA (Recommended)", "lanes-index login
-    (Recommended)" and "Yes, drill at act 3 (Recommended)";
+    (Recommended)" and "Yes, drill at act 3 (Recommended)"; the first is
+    superseded on 2026-11-09 by Brett's "add openXPKI to prod and use that.
+    both QA and Prod need openXPKI" (14:38:23Z);
   - **lane 3's rulings on the lanes' blocks** (6726556972), R01 to R61, with
     their evidence memo, and the rulings after it (6726725691, 6727022920,
     6727201960, 6738474549). research.md records each one this feature
@@ -664,9 +666,9 @@ fixture: tests 7, 8 and 13, P8, D22, and AT-F18.
    - a GRANT out of scope;
    - the constant still in place;
    - tools outside the schema's window;
-   - check 11: a URL without `sslmode=verify-full` and the issuer's root
-     file, or with `sslrootcert=system`, or a chain that does not verify
-     against that root (ops:454; Y:2324);
+   - check 11: a URL without `sslmode=verify-full` and the root file of the
+     issuer, the prod OpenXPKI, or with `sslrootcert=system`, or a chain that
+     does not verify against that root (ops:454; Y:2324);
    - check 13: an endpoint whose address count differs from
      `register_addresses=`, which the install's one A record makes 1
      (ops:456; ops:151).
@@ -1000,11 +1002,12 @@ are lane 3's rulings memo's).
   - On register paths, `PGCONNECT_TIMEOUT` MUST be set, not merely
     defaulted.
   - Sources: Question 11 (Y:4967); SVC-2's mapping (Y:3751).
-- **FR-011**: Every register and reader URL, and the admin's own service,
-  MUST name the install's endpoint and carry `sslmode=verify-full` and an
+- **FR-011**: Every register and reader URL, and the admin's own service, MUST
+  name the install's endpoint and carry `sslmode=verify-full` and an
   `sslrootcert=` that names the root of the issuer that signs the server's
-  certificate, the install's private CA, and never `system` (Y:2324;
-  ops:153). It MUST be enforced in three places (R09):
+  certificate, the prod OpenXPKI (Brett, 2026-11-09 14:38:23Z: "add openXPKI
+  to prod and use that. both QA and Prod need openXPKI"), and never `system`
+  (Y:2324; ops:153). It MUST be enforced in three places (R09):
   - `load_config` refuses, as a refused configuration, a `register_url=` or
     `reader_url=` at a TCP host that is not loopback, unless it carries
     `sslmode=verify-full` and an `sslrootcert=` that names an existing file;
@@ -1370,7 +1373,7 @@ are lane 3's rulings memo's).
   - Passwords are SCRAM verifiers computed on the client.
   - Sources: ops:398; ops:407; ops:437; ops:462; ops:477.
 - **FR-055**: `ready` MUST make §2.4's checks 1 to 13 (ops:444–456). Check 11
-  reads `verify-full` and the issuer's root file, and fails on `system`
+  reads `verify-full` and the prod OpenXPKI's root file, and fails on `system`
   (ops:454); check 13 expects the install's one address, `N_a` 1 (ops:456;
   ops:151).
 - **FR-056**: `outage declare` and `outage clear` MUST write and remove the
