@@ -37,15 +37,19 @@ on:
 
 ### Jobs
 
-- `guard-launch-mode`, `tests` and `tests-no-submodule` stay byte for byte.
-  These are the gate's job ids, and the code leg keeps them (FR-046).
+- `guard-launch-mode` stays byte for byte. `tests` and `tests-no-submodule`
+  did too, until opensoft/openRepoTools#77 made each a gate over a matrix
+  of shard jobs, `tests-shard` and `tests-no-submodule-shard`; the list
+  under "Held by `tests/test_tests_workflow.py`" below says how. The three
+  are the gate's job ids, and the code leg keeps them (FR-046). The release
+  gate reads the ids by name, and no shard job has one of them.
 - `package` is new, with exactly that id and no `name:`. Its steps, in
   order:
 
 1. `actions/checkout` with `submodules: true` and `fetch-depth: 1`.
 2. `actions/setup-python` with `python-version: '3.9'`.
 3. **Git identity**, by environment and never by global config, as the
-   `tests` job sets it.
+   `tests-shard` job sets it.
 4. **The test tools.**
    - First `tomli==2.4.1`, by hash. The step extracts the build lock's
      whole `tomli` entry, the requirement line and every `--hash` line
@@ -356,11 +360,46 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
 
 - `push.branches` is exactly `[main, 'release/v*']`, and the other triggers
   are as above.
-- The four job ids are present.
-- The three existing jobs keep today's `runs-on`, checkout options, Python
-  version and `run:` commands. These are asserted from the file's text, not
+- The jobs are exactly the four job ids and the two shard jobs behind
+  `tests` and `tests-no-submodule`, which are `tests-shard` and
+  `tests-no-submodule-shard`. None of the six has a `name:`. `tests` and
+  `tests-no-submodule` each have `if: ${{ always() }}`, and the other four
+  have no `if:`.
+- `guard-launch-mode`, `tests-shard` and `tests-no-submodule-shard` keep
+  today's `runs-on`, checkout options, Python version and `run:` commands.
+  A shard job carries what `tests` or `tests-no-submodule` carried, with the
+  pytest command replaced by the shard's:
+  `python3 .github/ci/ci_shards.py run --variant tests --shard "$SHARD" --out "$RUNNER_TEMP/shard"`
+  in `tests-shard`, and the same with `--variant tests-no-submodule` in
+  `tests-no-submodule-shard`. These are asserted from the file's text, not
   from history, because CI checks out one commit at `fetch-depth: 1`. The
   pull request's diff review confirms the rest of "unchanged".
+- `tests` and `tests-no-submodule` are each a gate over their shard job:
+  - `needs:` is exactly that shard job, `if:` is `${{ always() }}`, and the
+    job has no `strategy:` and no `continue-on-error`. So the gate runs
+    when a shard fails or is cancelled, and goes red. A skipped job would
+    count as passing for a required check.
+  - Its last step is the one step that runs `ci_shards.py verify`. That
+    step has `if: ${{ always() }}` and no `continue-on-error`. Its `env:`
+    sets `SHARDS_RESULT` to `${{ needs.tests-shard.result }}` in `tests`
+    and to `${{ needs.tests-no-submodule-shard.result }}` in
+    `tests-no-submodule`. Its `run:` is exactly
+    `python3 .github/ci/ci_shards.py verify --variant tests --results "$RUNNER_TEMP/shards" --needs-result "$SHARDS_RESULT"`
+    in `tests`, and the same with `--variant tests-no-submodule` in
+    `tests-no-submodule`.
+  - What `verify` checks is `ci_shards.py`'s own, and
+    `tests/test_ci_shards.py` holds it, not this list.
+- Each shard job's `strategy:` has `fail-fast: false` and one matrix key,
+  `shard`, whose list is the shard list that `.github/ci/ci_shards.py`
+  plans for its gate, in the plan's order: `pytest-1` to `pytest-4` and
+  `shell` for `tests-shard`, and `pytest-1` to `pytest-3` and `shell` for
+  `tests-no-submodule-shard`. A shard in the plan and not in the matrix,
+  or the other way round, fails the test.
+- Each shard job has exactly one `actions/upload-artifact` step, with
+  `if: ${{ always() }}`, and its artifact's `name:` ends in
+  `-${{ matrix.shard }}-a${{ github.run_attempt }}`. So a shard's report
+  is kept whether the shard passed or not.
+- Each shard job has `timeout-minutes: 60`.
 - The `package` job runs on `ubuntu-24.04` with Python `3.9` and
   `submodules: true`, and carries steps 4 to 11 in order. The runner is
   pinned because `ubuntu-latest` became Ubuntu 26.04 on 2026-10-21, where
