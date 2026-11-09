@@ -1229,7 +1229,7 @@ else.
 | 6 | `git add` / `commit` / `push` failed |
 | 7 | another act got there first and this one wrote nothing: `claim`'s `CLAIM-LOST` (another lane's claim landed first), and `set-lane-state` / `set-lane-tree`'s lifecycle fence (openRepoTools#91, below) |
 | 9 | `CLAIM-LOST` — issue #30's own dead-lane verdict could not be reconfirmed before a `--force` takeover's push landed: the source lane resumed, a live session now backs it up, or that could not be read at all (`claim` only). Never 7 — that code is a RIVAL's claim, and this is the same lane the takeover was granted over |
-| 10 | `lane-state`: the lane's lifecycle snapshot is there and could not be read, or is of this schema and not a whole record, so nothing can be read out of it as a snapshot (openRepoTools#91 and #115, below) — never the 8 that means it has none. It was 9 until #61 spent 9 on `claim`. `lane-trees`: the lane's `trees` directory is there and could not be listed (#157 item 4e) — never the 8 that means it recorded no tree |
+| 10 | `lane-state`: the lane's lifecycle snapshot is there and could not be read, or is of this schema and not a whole record, so nothing can be read out of it as a snapshot (openRepoTools#91 and #115, below), or — where no `LANES_LANE_STATE_ROOT` names the control root — the lane's object log could not be read, so where its snapshot is kept is not known (openRepoTools#290, below) — never the 8 that means it has none. It was 9 until #61 spent 9 on `claim`. `lane-trees`: the lane's `trees` directory is there and could not be listed (#157 item 4e) — never the 8 that means it recorded no tree. Both spend it, too, where the record could not even be looked for: its control root, or a directory above it, cannot be searched, or a link on the way cannot be followed (#291) |
 | 8 | no record — and no other meaning |
 | 64 | `swapped`'s own usage error — never the dispatcher's 2 — and the lifecycle arms' own: `set-lane-tree`'s partial observation, a count that is not one, or a field that is only blanks (below) |
 
@@ -1736,7 +1736,7 @@ falls to its next rung there rather than refusing.
 | `lanes-edit.sh session-lane <uuid>` | the lane whose register row's **session cell** names that transcript uuid. Adoption act 0's; it is the read the `SessionStart` hook already made. **0** the lane · **8** no row's cell names it · **64** usage — like every other read in this table, by A11 Addendum 4 ruling 1, which corrects act 0's `2` · **2** a helper predating the read |
 | `lanes-edit.sh last-session <lane>` | the lane's resume target: the last uuid in the published cell **whatever shape it is in**, and failing that the session of its last `PAUSED`/`RESUMED`. This is what `/restart`'s step 4 reads, by A11 Addendum 4 ruling 14, rather than clause (f)'s `register-row` alone — so a lane whose row was never stamped but whose log records the session it paused in still has a resume target |
 | `lanes-edit.sh forks <lane>` | the **live forks** of the lane's transcript — never holders, and a defect to retire |
-| `lanes-edit.sh lanes [--repo\|--dir\|--prefix\|--ws\|--lane\|--here\|--all\|--closed\|--fetch]` | every lane, newest write first, tab-separated: clause (j)'s **ten columns in clause (j)'s order** — name, state, workstation, profile, window, last transcript uuid, directory, held objects, age, the line that binds it — then the read's own three, `home`, the count of live forks, and — since Amendment 18(b) — whether THIS place may pronounce on that binding (`here`, `elsewhere`, or `none` for a row with no binding line at all), which is what `lane-groups` files an `IDLE` row by — then Amendment 19's four: the row's **class** (`closed`, `dormant` or `none`), its `started` cell, its state cell's **head** and the **flag words** in that cell. The last two are carried **for a row with no object log** — 19(a)'s dormant row, whose cell is all this read has to show — and are `none` for a row that has one, which has its log instead: they are free text of up to 280 characters per row and the table the listing joins on is walked once per lane, so carrying them for every row cost the whole estate 3x (42 s against 14 on a register of 132 rows, measured). **No column is ever empty**, because three readers split the row with a tab-IFS `read`, to which an empty field between two tabs is no field at all. **CLOSED and DORMANT rows are left out unless `--closed` is passed** (19(b)); `--lane <name>` is never filtered, because its caller has named the lane. `lanes` and `lane` each render the subset their surface needs (A11 Addendum 4 ruling 7), and column 10 is the read's so the two cannot offer different commands; since Amendment 18 Addendum 2 the word it names is `lane <name>`. **The one read whose default is local**, and `--lane <lane>` answers about one without walking the estate. `--prefix <repo>` is the LABEL fallback the checkout narrowing and `lane-start <repo>` both ask for, used only where a lane has neither a home nor a `dir` |
+| `lanes-edit.sh lanes [--repo\|--dir\|--prefix\|--ws\|--lane\|--here\|--all\|--closed\|--fetch]` | every lane, newest write first, tab-separated: clause (j)'s **ten columns in clause (j)'s order** — name, state, workstation, profile, window, last transcript uuid, directory, held objects, age, the line that binds it — then the read's own three, `home`, the count of live forks, and — since Amendment 18(b) — whether THIS place may pronounce on that binding (`here`, `elsewhere`, or `none` for a row with no binding line at all), which is what `lane-groups` files an `IDLE` row by — then Amendment 19's four: the row's **class** (`closed`, `dormant` or `none`), its `started` cell, its state cell's **head** and the **flag words** in that cell. The last two are carried **for a row with no object log** — 19(a)'s dormant row, whose cell is all this read has to show — and are `none` for a row that has one, which has its log instead: they are free text of up to 280 characters per row and the table the listing joins on is walked once per lane, so carrying them for every row cost the whole estate 3x (42 s against 14 on a register of 132 rows, measured). **No column is ever empty**, because three readers split the row with a tab-IFS `read`, to which an empty field between two tabs is no field at all. **Column 7, the directory, is escaped** the way `lane-worktrees`' porcelain escapes a field (#301): a backslash is written `\\`, a TAB `\t`, a newline `\n` and a carriage return `\r`, so a directory holding a TAB is still one column and the row still seventeen. `lanes`, `lane` and `worktrees` decode it before they show it or take it for a path, and a directory holding none of the four is printed as it is. **CLOSED and DORMANT rows are left out unless `--closed` is passed** (19(b)); `--lane <name>` is never filtered, because its caller has named the lane. `lanes` and `lane` each render the subset their surface needs (A11 Addendum 4 ruling 7), and column 10 is the read's so the two cannot offer different commands; since Amendment 18 Addendum 2 the word it names is `lane <name>`. **The one read whose default is local**, and `--lane <lane>` answers about one without walking the estate. `--prefix <repo>` is the LABEL fallback the checkout narrowing and `lane-start <repo>` both ask for, used only where a lane has neither a home nor a `dir` |
 | `lanes-edit.sh lane-groups [<ws>]` | **the rows on STDIN**, each with the group the pick puts it in: `available` (PARKED, or a binding that workstation **and container** prove dead), `live`, `elsewhere` — an `IDLE` row whose binding is another container on this same host is **elsewhere**, because IDLE means this host saw no live record and across that seam the pid it would have read is in another namespace (Amendment 18(b)). Closed and dormant rows are DROPPED (Amendment 19). It reads nothing itself — the caller has already paid for `lanes`, and two surfaces computing one partition is how they come to disagree |
 | `lanes-edit.sh next-free <repo>` | **the rows on STDIN plus every row of this checkout's register and of `lanes/archive/LANES-retired.md`** (Amendment 19(b) and (d): the rows the listing hides and the rows `archive-rows` has moved out still hold their positions), and the LOWEST position no lane of that repository HAS EVER held — `ENDED` and `RETIRED` rows reserve theirs, because a lane's identity is its name and its object log `lanes/log/<lane>.md` is append-only, so a second lane at a retired position would write its life into the first one's file. The name before the position is compared whole, so `repo-foo-1` is no lane of `repo`. `lanes`'s footer and `lane`'s `f` answer both read it, so the two cannot offer different positions |
 | `lanes-edit.sh binding <lane>` | where the lane is bound, and whether this place may pronounce on it: `<host> <container> <window> <utc> <session> <os> <here\|elsewhere> <live\|gone\|unknown>` (Amendment 18(b)). **0** bound · **8** free · **1** the log could not be read, which is never "this lane is free" |
@@ -3246,9 +3246,9 @@ beside the register (so `lanes --closed` still shows those rows) and so does
 every reader of the next free position — and a published archive that cannot be
 *rendered* is a REFUSAL that says so, never a fallback to this checkout's copy,
 which may lack a retired position the published one holds: read as absent, or
-from that copy, it would put a retired position back on offer. Five more reads
+from that copy, it would put a retired position back on offer. Six more reads
 fail closed rather than answer, and for the same reason. The first three refuse
-(exit **1**); the listing withholds the class for the last two:
+(exit **1**); the listing withholds the class for the last three:
 * a local archive path that is there and not a regular file;
 * a register path that renders empty (a zero-byte register, or a broken
   symlink);
@@ -3257,7 +3257,17 @@ fail closed rather than answer, and for the same reason. The first three refuse
   an unreadable blob as for an absent path.
 * a published log git cannot read: the listing names it and never classes that
   lane DORMANT;
-* a log directory it cannot list: the listing classes no row DORMANT at all.
+* a log directory it cannot list: the listing classes no row DORMANT at all;
+* the events' own list of the published logs, which their lines are read
+  through, where it could not be made: the listing says that no lane's log is
+  read in it, and classes no row DORMANT at all (#290).
+
+The listing's other list of the logs, the one that names a lane with a log and
+no row, is said where it could not be made: such a lane is missing from the
+listing. And a listing that names no lane where the register, the archive or
+that list could not be read is exit **1**, the listing could not be read,
+after each read that failed is said — never the **8** of no lane, which
+`lanes` printed as *no lane is recorded* (#290).
 
 `add-row` refuses a lane name the archive holds, so `lane-start <repo> <n>`
 cannot reissue one by hand either. It also refuses (exit **1**) where the
@@ -3342,7 +3352,7 @@ RUNNING --/handoff begins--> SWAPPING --record + row + handoff all landed--> SWA
 | `SWAPPED` | yes | inconsistent — a swapped lane has no holder, and neither side is overwritten |
 | `CLOSED` | — | the lane is finished; a dirty or unpushed tree under it is a closure inconsistency and no cleanup is made |
 | any | **unreadable** | `indeterminate`. A holder that could not be established is NOT "no holder" (`R22`, Amendment 7(d)), and no crash is pronounced on a read nobody got. That includes the ids the holder is looked up by: a register row that could not be read — the published one, or this checkout's copy — is never a row naming no session (opensoft/openRepoTools#113). |
-| **unreadable** | — | `indeterminate` again, and for the same rule read one file earlier: a snapshot that IS THERE and cannot be opened is not a lane that has none. `lane-state` exits **10** for it, never the **8** that means *this lane has no snapshot, go on*. |
+| **unreadable** | — | `indeterminate` again, and for the same rule read one file earlier: a snapshot that IS THERE and cannot be opened is not a lane that has none, and nor is one that could not even be looked for — its control root, or a directory above it, cannot be searched, or a link on the way cannot be followed (#291). `lane-state` exits **10** for both, never the **8** that means *this lane has no snapshot, go on*. |
 | **`MALFORMED`** | — | `indeterminate`: a snapshot of this schema that is not a WHOLE record — cut short, or edited by hand (opensoft/openRepoTools#115). `lane-state` exits **10** for it too, and every writer refuses to replace it. |
 | any | — and a worktree read **failed** | `indeterminate`, whatever the snapshot and the holder say: an inventory directory, the checkout's registrations or a lane root that could not be listed hides trees the report never saw (opensoft/openRepoTools#113). |
 | any | — and the lane is **bound elsewhere** | `indeterminate`. Amendment 18(b): liveness is pronounced only from inside the binding's own host and container, and from anywhere else a binding is UNKNOWN, never dead — and this workstation's snapshot is this workstation's alone. The one exception is clause (b)'s own: a binding whose window is gone from this host's tmux is dead, and the local read decides. |
@@ -3378,6 +3388,12 @@ the generation, so this is the one state in which a matching pair names a
 finished operation. An observation filed under no transition is a
 `set-lane-tree` with neither flag.
 
+`lane-state` finds the snapshot under the lane's control root, which its log's
+`dir` places, and reads that log once, with its status: a log git could not
+read is **10** as well — where the snapshot is kept is not known, which is not
+a lane that has none — and `lanes-index` holds such a lane's rows for that
+reason, in `lane-state`'s own words (opensoft/openRepoTools#290).
+
 `RUNNING` is written by the act that CONFIRMS the binding and never by the
 SessionStart hook: `session-start` never writes, never touches the network and
 always exits 0 (Amendment 8, `R-A8-1`), and a hook that writes is a hook that
@@ -3403,6 +3419,13 @@ No rung answering is **8**, *this lane has no control root* — the ordinary
 answer for a lane that has not started under Amendment 11(c), and not a failure.
 Nothing is backfilled (Amendment 7(i)).
 
+A rung is passed over only where its directory is established absent. Where it
+could not be looked for (#291) — a directory on the way cannot be searched, or a
+link on the way cannot be followed — its root is the answer: `lane-state` and
+`lane-trees` exit **10** there, never the **8** that means *none*; the listing
+names the lane `UNREAD`; `lane-reconcile` pronounces `indeterminate`; and every
+write there fails rather than filing under the next rung.
+
 Because the snapshot is filed under NOTHING — never committed, never leaving the
 machine that wrote it — `R-A11-14` does not reach it: a container with no
 `$LANES_WORKSTATION` still keeps a lifecycle it can recover itself from, while
@@ -3424,9 +3447,15 @@ lanes-edit.sh lane-tree-now <worktree path>
 
 A `trees` directory that is there and cannot be listed is `lane-trees`' exit
 **10**, never the **8** of a lane that recorded no tree (opensoft/openRepoTools#157
-item 4e). Every lane's records on this workstation, one row per tree, are `lanes
---worktrees`; the derived index keeps them as its `worktrees` table, which no
-act reads (*The derived index*, below).
+item 4e). So is one that could not even be looked for (#291): under a directory
+this account cannot search, stat fails as it does for a name that is gone, so
+the read walks up to the deepest name that is there and answers **8** only where
+that name could answer for the one below it. `lane-state` answers for the
+snapshot the same way, and a recorded `dir` whose parent could not be looked for
+keeps its own control root rather than falling to `$PROJECTS_ROOT`'s. Every
+lane's records on this workstation, one row per tree, are `lanes --worktrees`;
+the derived index keeps them as its `worktrees` table, which no act reads (*The
+derived index*, below).
 
 The full `head` and the `upstream` are why this is not the prose section one
 more time: `%h` is an abbreviation that lengthens as a repository grows, and
@@ -3833,10 +3862,10 @@ lanes-index reconcile --source inventory [--dry-run]
 |---|---|
 | `workstation`, `lane` | the workstation's name (`lanes-edit.sh workstation`) and the lane's canonical one |
 | `owner` | `legacy`, `managed <owner>` or `unknown` — the read `managed-projection` makes, never a parser of the indexer's |
-| `path`, `branch`, `dirty_count`, `unpushed_count`, `last_seen_utc` | the tree's sidecar: the last observation, `detached <sha>` for a detached head, an `unknown` count as NULL. A sidecar that could not be read is `unreadable sidecar`, one of another schema `unknown schema <n>`, each with the record's id where its path would be |
+| `path`, `branch`, `dirty_count`, `unpushed_count`, `last_seen_utc` | the tree's sidecar: the last observation, `detached <sha>` for a detached head, an `unknown` count as NULL. A sidecar that could not be read is `unreadable sidecar`, one of another schema `unknown schema <n>`, and one of this schema that is not whole `malformed sidecar` (#115); each keeps the path it names, and has the record's id where it names none. The lane of a record that could not be read, or that was read and names no absolute path (none, an empty one, or a relative one), is `UNREAD` beside its row, so a sync keeps that lane's rows rather than replace the tree's row with one keyed by the record's id, or by the relative text (#291, #302). One such record holds EVERY row of its lane — the lane's other trees, and any new ones, stop reaching the index until it is put right — while one that names an absolute path keeps its key, is rewritten in place and holds nothing |
 | `base`, `last_commit` | two git reads of the RECORDED head, in the tree or, once it is gone, its recorded checkout: its merge-base with `origin/main` (else `main`, else `origin/HEAD`), and `<sha> <subject>` |
 | `lifecycle`, `generation`, `operation` | the lane's snapshot (`lane-state`): `RUNNING`, `SWAPPING`, `SWAPPED` or `CLOSED` for a **legacy** lane; `INDETERMINATE` for a managed or unknown one, whose lifecycle this tooling does not pronounce on, and for a snapshot that is missing, unreadable or of another schema |
-| `writer_live` | the listing's own LIVE — a session record on this workstation naming one of the row's ids — and NULL where those records could not be read or the lane is bound on another host, from where liveness is unknown and never dead (Amendment 18(b)) |
+| `writer_live` | the listing's own LIVE — a session record on this workstation naming one of the row's ids — and NULL where those records could not be read, the lane is bound on another host, or the register's ids or the lane's log — its binding — could not be read, from where liveness is unknown and never dead (Amendment 18(b), #290) |
 | `pr_number`, `pr_state` | `gh` at sync, best effort, the newest pull request whose head is the branch; NULL wherever it was not asked (`LANES_NO_GITHUB=1`) or did not answer. A MERGED or CLOSED answer is not asked again while the branch and its last commit stand |
 | `provenance`, `indexed_utc` | the generation the TREE'S OWN record was filed under — behind `generation` exactly when the observation predates the lane's current transition — and the sync |
 
@@ -3848,7 +3877,8 @@ that is `lane-reconcile`'s act. Nothing is recomputed: `dirty` and `unpushed`
 are what the handoff saw, and `LAST SEEN` says when.
 
 **Rows follow the inventory.** Keyed by (source, `<lane>:<path>`) — a second
-tree of one lane with the same path (two with no `path:`, say) as
+tree of one lane with the same path (a record that is not whole and names a
+whole one's path, say) as
 `<lane>:<path><US><n>`, numbered from 2 in the read's sorted order, and a lane's
 unread marker as `<lane>:<US>unread` — and versioned by a digest of the row and
 its provenance, so a replay writes nothing (a change that reorders two trees of
@@ -3858,17 +3888,29 @@ the inventory no longer names — removed at landing, or by a sweep's dispositio
 `sync` that reads a lane's lifecycle generation below the one its rows were
 written at (a snapshot moved aside and begun again) writes nothing for that lane
 and says so, and `reconcile --source inventory` is the act that takes the lane
-as it now stands. A lane whose `trees` directory is there and cannot be listed
-keeps its rows — it is not a lane with no worktrees — and gets ONE MARKER ROW,
+as it now stands. A lane whose `trees` directory is there and cannot be listed,
+could not even be looked for, holds a record that could not be read (#291), or
+holds one that was read and names no absolute path (#302: no `path:` line, an
+empty one or a relative one, in a record that is not whole or is of another
+schema — its row is keyed by the record's id or by the relative text, and a
+sync took that for the tree) keeps its rows — it is not a lane with no
+worktrees — and gets ONE MARKER ROW,
 keyed `<lane>:<US>unread`, with no `path` and the `branch` `unreadable inventory
-(<why>)` — the key is what makes it one, because a tree's path can be empty (a
-sidecar with no `path:`) and a hand-made sidecar's branch can read the same —
+(<why>)` — the key is what makes it one, because a hand-made sidecar's branch
+can read the same, and so can an older helper's row for a sidecar with no
+`path:`, which has an empty path —
 which the `--index` read prints as the same `inventory NOT READ` line the sidecars
 give (opensoft/openRepoTools#173): a FIRST sync that cannot read a lane has no
 rows to keep and is still not an empty answer, and rows held over from an
 earlier sync are said to be, on that line. The marker leaves with the first
 sync that reads the lane, and `lanes-index status` counts it apart from the
-worktrees. The schema stays 1, so an indexer from before #173 sharing a
+worktrees. THE HOLD IS THE WHOLE LANE'S: one record that could not be read, or
+that names no absolute path, keeps every row of its lane as the last sync that
+read it left them, so the lane's other trees, and any new ones, stop reaching
+the index until that record is put right. A record that is not whole or is of
+another schema but names an ABSOLUTE path keeps its key and holds nothing: its
+row is rewritten in place as `malformed sidecar` or `unknown schema <n>`, with
+its counts empty. The schema stays 1, so an indexer from before #173 sharing a
 Postgres store reads a marker as a tree: its `export --worktrees` prints it as
 a `TREE` line with an empty path and that branch, and its `status` counts it as
 a worktree. An older and a newer indexer syncing ONE store each converge to their
@@ -3904,7 +3946,18 @@ could not name would have needed a marker for each of them, one for the listing
 itself — a first sync has no rows to hold — and a one-lane `--index` read that
 knew of it. An indexer from before #173's item c1 refuses the line too, as one
 it does not read. A read of one NAMED lane goes by that name, which no listing
-gives, and never prints `PARTIAL`.
+gives, and never prints `PARTIAL`. Nor does a lane the listing DID name and
+could not read — its `trees` directory, its control root or a directory above
+it cannot be listed or searched, a record of its trees cannot be read, or one
+that was read names no absolute path: that is the lane's own `UNREAD` line, and
+only that lane's rows are held (#291, #302).
+The named read reads the lane's log once, and where
+that read fails and no `LANES_LANE_STATE_ROOT` names the root, the lane is one
+`UNREAD <ws> <lane> its object log <path> could not be read, …` line and exit
+**0**, never the **8** of "none"; so is a name whose register read failed
+where no tree was found under it, because the register is what spells it
+(opensoft/openRepoTools#290). `lanes --worktrees <lane>` prints either as
+`inventory NOT READ`.
 
 Where those reads succeed, the listing makes each of them once, except the list
 of the logs, which it makes twice (the review of #289). The register, the
@@ -3923,8 +3976,9 @@ one with none (review r2 of #289). What is still read twice, besides the list
 of the logs: with no `origin` (`LANES_NO_GIT=1`, or a checkout with no
 `origin/<branch>`), the log directory is asked — there and not a directory this
 account can list and search is `PARTIAL` — and is then listed again for the
-names and again for the events, and a log file in it that will not open leaves
-no warning naming it; and the events ask for themselves whether
+names and again for the events; a log file in it that will not open is named,
+as a published log git could not read is, and the logs after it are still
+read (#290); and the events ask for themselves whether
 `origin/<branch>` is there, so a `rev-parse` that failed in that one read alone
 reads this checkout's logs in place of origin's.
 
