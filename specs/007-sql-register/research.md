@@ -104,11 +104,14 @@ both keyed to Y.
   not executable by PUBLIC. No spec delta is left. ops:411 keeps its words,
   so this entry stays its erratum.
 - **The restore's database and order:** lane 3's ruling on test-plan open
-  point 41, 2026-11-09. The admin creates the register's database first, as
-  his own act, through his maintenance connection. Then every `lanes-index`
-  step of a restore runs through one admin service, which names the
-  register's database: `lanes-index` never picks a database. The order:
-  1. the admin creates the database;
+  point 41, 2026-11-09. Its first step is that the register's database
+  exists. Every `lanes-index` step after it runs through one admin service,
+  which names that database: `lanes-index` never picks a database. The
+  order:
+  1. the register's database exists. On a new CNPG Cluster, the install's
+     `initdb` made it when the Cluster was created (ops:190). Where none
+     exists, as on AT-LRMPG's `stoppable_cluster`, the admin creates it
+     through his own maintenance connection;
   2. `bootstrap --roles-only`;
   3. `login add <engineer>` for each engineer, and `login add --dump-job`;
   4. `pg_restore` into the database;
@@ -122,9 +125,10 @@ both keyed to Y.
     the cluster's `postgres` database for the steps before the register's
     database exists and one naming it for the steps after, and runs
     `--roles-only` and `login add` before the admin creates it. It corrects
-    ops §2.3's step 6 (ops:371), which runs `--roles-only` first with no
-    database made, and ops §2.4 (ops:410; ops:486), which give the admin
-    service and the roles-only form and `login add` with no database named.
+    ops §2.3's step 6 (ops:371), which runs `--roles-only` first without
+    naming the database its admin service names, and ops §2.4 (ops:410;
+    ops:486), which give the admin service and the roles-only form and
+    `login add` with no database named.
     Those texts keep their words, so this entry is their erratum.
   - **Whose:** lane 3's ruling, which answers the test plan's open point 41
     (`test-plan.md:9064–9072`). Its record is lane 3's #165 6739605144, and
@@ -440,8 +444,8 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   (Y-svc:124), for any client, and a guard's read that failed was a 2 in
   Y-svc:23, Y-svc:104, Y-svc:124 ("A database that does not answer SHALL be
   a 2 inside the hook"), Y-svc:174 and the declared outage's check
-  (Y-svc:188), and in the sql spec's Y-spec:87 and Y-spec:574. Two commits
-  on this branch after `aa190a7f`, on lane 3's ruling B4:
+  (Y-svc:188), and in the sql spec's Y-spec:87 and Y-spec:574. Three
+  commits on this branch after `aa190a7f`, on lane 3's ruling B4:
   - scope each of those refusals to the guard's prefetch, its first read;
   - add that the second read, started at or past `T0` + 3.75 s whatever a
     declaration says (B5), exits as "too late to verify", and that it fails
@@ -450,7 +454,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   - name the prefetch's direct read in the declaration's sentence;
   - scope the scenarios "A guard that starts too late" and "A read held
     behind a lock" to the prefetch, and add "A second read that starts too
-    late".
+    late" and "A second read that cannot read the database".
 
   No spec delta is left. ERR-21 records the design's three passages that
   still read as a refusal for any late read.

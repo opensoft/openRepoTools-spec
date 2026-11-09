@@ -169,6 +169,10 @@ The client's wait for the service, the fallback's own reads and every database a
 - **WHEN** the guard's prefetch has answered and its second read, for one log at the prefetched head, would start at or above `T0` + 3.75 s, whatever a declaration says
 - **THEN** the client exits as "too late to verify", the guard notes that log as unread, and the prompt is not refused for it
 
+#### Scenario: A second read that cannot read the database
+- **WHEN** the guard's prefetch has answered and the database then stops answering, so that the second read, for one log at the prefetched head, ends 69, or the client crashes
+- **THEN** the guard notes that log as unread and the prompt is not refused for it
+
 ### Requirement: The hook's environment carries no credential
 The hook's environment, and every environment a session inherits, SHALL carry no database URL and no password (Amendment 14(c)).
 
