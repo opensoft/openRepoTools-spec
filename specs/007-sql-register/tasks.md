@@ -11,9 +11,10 @@ description: "Tasks for 007-sql-register: the SQL register under lanes-edit.sh"
 `04a9de6b`, keyed to commit Y (`a6497d00`) of `add-sql-register`.
 
 **Status**: assembly phase B, started early (2026-11-09). Lanes 1, 3 and 5's
-tasks are in. Lane 4's are PROVISIONAL: lane 4's revision, keyed to X,
-replaces them. Lane 2's block is PENDING (due 2026-11-09 18:00Z). Each slot
-is marked where it sits.
+tasks are in. Lane 4's are PROVISIONAL: lane 4's revision w11 (due by
+16:30Z, keyed to Y a6497d00), replaces them (#165 6741093519). Lane 2's
+block is PENDING (due 2026-11-09 18:00Z). Each slot is marked where it
+sits.
 
 **Sources.** Each task names its source line as `<tag>:<line>`:
 
@@ -21,7 +22,7 @@ is marked where it sits.
 | --- | --- | --- | --- |
 | L1 | lane 1's block v4.2, T101 to T122, keyed to Y | `cad0fa93…` | #165 6739714248 |
 | L5 | lane 5's block v5, T501 to T513, keyed to Y, with its §3.6 review's section D (`e26a91e6…`) and lane 5's #165 6739068493 applied | `5d427c42…` | lane 5's review, #165 6738431117 |
-| L4 | lane 4's block, T401 to T434, keyed to W, with its group B plan (`c84caab4…`) | `b95a1ff9…` | PROVISIONAL |
+| L4 | lane 4's block, T401 to T434, keyed to W, with its group B plan (`c84caab4…`) | `b95a1ff9…` | PROVISIONAL; w11, keyed to Y, replaces it (#165 6741093519) |
 | SK | lane 3's task skeleton, keyed to W, re-keyed here | `43b01027…` | — |
 | M | lane 3's rulings memo, R01 to R61 | `b2184b1a…` | #165 6726556972 |
 
@@ -33,8 +34,8 @@ detail, as the block wrote it, and is part of the task.
 lines of the change's two spec files on this branch, at `ad82c2f4`; `Y:<n>`,
 `ops:<n>` and `clar:<n>` are lines at Y. Inside a block's detail, the
 block's own citations stand: lane 1 cites Y; lanes 4 and 5 cite W
-(`W:<n>`), as their blocks' Keys define it; lane 4's revision re-keys its
-own.
+(`W:<n>`), as their blocks' Keys define it; lane 4's revision w11, keyed
+to Y, replaces lane 4's.
 
 **Marks**, inside the blocks' text:
 
@@ -769,18 +770,18 @@ and test 1's files-mode twin, which shows that nothing changed.
     - `worktrees` (`:346`, `:357`) keeps the class T504's table gives it.
   - **The cross-class tests** sit here because this is lane 5's last group A task. Their script rows are lane 4's arms (T402 to T408), hence the gate.
 
-### Implementation for group A: lane 4 (U2 and U3) — PROVISIONAL: lane 4's revision, keyed to X, replaces this
+### Implementation for group A: lane 4 (U2 and U3) — PROVISIONAL: lane 4's revision w11 (due by 16:30Z, keyed to Y a6497d00), replaces this
 
-- [ ] T401 [US4] [O] Add the two read verbs that the lifecycle scripts' direct reads move behind (FR-036; W:4869–4875), `register-text` and `register-grep`, as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-A1, its verbs) (STOP until Q-L5-3, Q-L5-5; lands after L2-N4; its primary branch lands after L5-A5) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and (register_text or register_grep)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
+- [ ] T401 [US4] [O] Add the two read verbs that the lifecycle scripts' direct reads move behind (FR-036; W:4869–4875), `register-text` and `register-grep`, as detailed below, with O21 settled as (a) (#165 6741093519): both answer `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*` and exit 2 for any other path, in every mode; its `-k` selectors wait for v3f `[J3]` (covers L4-A1, its verbs) (STOP until Q-L5-3, Q-L5-5; lands after L2-N4; its primary branch lands after L5-A5) — files: `lanes-edit.sh` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and (register_text or register_grep)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
   - **Source:** L4:51.
   - **Depends on:** SPEC-PR; PENDING-L2: L2-N4 (test_sql_register_readers.py: C5, the arms); T505; PENDING-L5: Q-L5-3 (lane 5 answered L5:500-502: T401 adds the primary branch on T505's reg_image); PENDING-L5: Q-L5-5 (lane 5 agreed L5:506-507: decide class) (block:51-56 / GB:56-64, GB:163-172; L5:289, L5:502, L5:682 (block's L5-A5 = T505)).
-  - **Changed at assembly:** lane 3, applying: O21 (contract draft 4.1 §8; lane 1 block v4.2 :657): C2's (a) or (b) is lane 4's choice; noted on T401, not decided.
+  - **Changed at assembly:** lane 3, applying: O21 is settled as (a) (#165 6741093519), lane 4's choice (contract draft 4.1 §8; lane 1 block v4.2 :657); noted on T401's line.
   - **`register-text <path>`** prints one register file's text: in files and `index` mode, the bytes the scripts read today (`$LANES_FILE` for `lanes/LANES.md`); on primary, the read door's image at its `n`.
   - **`register-grep [-h] -E <ERE> -- <path>…`** prints what `git grep` prints today on `origin/<branch>` in the workspace root; on primary, it greps the read door's images.
-  - **Exits:** 0, or 1 for `register-grep` with no match. 69 when the read fails, in every mode, so that `lane-worktrees` deletes nothing (W:4875). 2 for a usage error, or a path outside the render set.
+  - **Exits:** 0, or 1 for `register-grep` with no match. 69 when the read fails, in every mode, so that `lane-worktrees` deletes nothing (W:4875). 2 for a usage error, or any path but `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*` (O21 (a)).
   - **Wiring:** both verbs join the unknown-subcommand list (`:21428`). Their dispatcher class is `decide` (Q-L5-5). The verb `register-row` (`:20276–20283`) is the pattern to follow.
   - **The 69 row:** add the exit table's 69 row if no earlier task has landed it (Q-L3-6).
-  - **Open, and lane 4's choice (O21):** contract draft 4.1 §8's O21, C2's option (a) or (b), for this task's reader of a render-set path, is lane 4's to make, and this block does not make it. Under (a), `register-text` answers `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*`, and 2 for any other path; lane 1 prefers (a). Under (b), contract draft 5 adds `register read --at <n> --path <p> --cache <file>` (lane 1's block v4.2, "Not settled in v4", item 1).
+  - **O21 is settled as (a)** (lane 4, #165 6741093519): `register-text` answers `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*`, and exits 2 for any other path, in every mode. `register-grep` holds the same set. T401 adds a case for each verb's exit 2 on another path.
 - [ ] T402 [P] [US4] [O] Move `lane-start`'s reads of `$LANES_FILE` behind `register-text`, keeping files mode byte-identical, and set its read arms as "The callers' default arms" give them (W:5669–5696; FR-036), as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-A1) (lands after T401, L2-N4) — files: `lane-start` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_readers.py -k 'sql_register_readers and lane_start' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'lane_start_hardening_138 or a23_lane_start_read or lane_start_row_stamp'`
   - **Source:** L4:57.
   - **Depends on:** SPEC-PR; T401; PENDING-L2: L2-N4 (test_sql_register_readers.py: C5, the arms) (block:57-65, Order block:365 / GB:173-182).
@@ -920,7 +921,7 @@ needs from `lanes-edit.sh`.
 
 - **PENDING-L2: L2-W1 to L2-W6**, in lane 2's block.
 
-### Implementation for group B: lane 4 — PROVISIONAL: lane 4's revision, keyed to X, replaces this
+### Implementation for group B: lane 4 — PROVISIONAL: lane 4's revision w11 (due by 16:30Z, keyed to Y a6497d00), replaces this
 
 - [ ] T412 [US2] [O] [X: backups] Add the write id and the pending-record library (F10; FR-021; W:5118–5173, W:2446–2482), and write `contracts/pending-record.md`, as detailed below; its `-k` selectors wait for v3f `[J3]` (covers L4-B2; objection OB-9) (STOP until T101; lands after L5-A1, L2-W3) — files: `lanes-edit.sh`, `../spec/specs/007-sql-register/contracts/pending-record.md` — verify: `test -s ../spec/specs/007-sql-register/contracts/pending-record.md && command grep -q 'call=' ../spec/specs/007-sql-register/contracts/pending-record.md && command grep -q 'register-done/' ../spec/specs/007-sql-register/contracts/pending-record.md && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh tests/test_sql_register_in_doubt.py -k 'sql_register_in_doubt and (pending_record or claim_chain)' && TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'repo_hygiene'`
   - **Source:** L4:108.
@@ -1531,6 +1532,9 @@ word.
     (#165 6739068493);
   - T502's `test_lanes_accepts_decide_and_reads_as_without_it` (R38, as
     amended).
+- **Lane 4's `-k` selectors** (T401 to T434), each marked `[J3]`: they
+  wait for lane 2's `[J3]` names, which come with lane 2's block at 18:00Z
+  (#165 6741093519). Placement: lane 2's.
 - **With v3f:** proving that each `[J3]` word ran, by one `-k` run per word
   or a check on the collected count, since inside an `or` group a misnamed
   word is skipped silently (lane 1's block, "Not settled in v4", item 3).
@@ -1757,5 +1761,5 @@ word.
 - **Network:** every verify command is offline. T320's tests use bare-origin
   fixtures.
 - **When lane 2's block and lane 4's revision come in,** lane 3 replaces the
-  PENDING and PROVISIONAL sections, re-keys lane 4's tasks, and checks the
-  coverage table again.
+  PENDING and PROVISIONAL sections, the latter with lane 4's w11, keyed to
+  Y, and checks the coverage table again.
