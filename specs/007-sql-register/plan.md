@@ -4,13 +4,15 @@
 
 **Input**: Feature specification from `specs/007-sql-register/spec.md`, keyed
 to commit Y (`a6497d00`) of the change `add-sql-register`, which the spec
-branch merges whole at `066ad8f1`. Citations are spec.md's: `Y:<n>`,
-`spec:<n>`, `svc:<n>`, `ops:<n>` and `clar:<n>` are lines at Y.
+branch merges whole at `066ad8f1`. Citations are spec.md's: `spec:<n>`
+and `svc:<n>` are lines of the change's two spec files on this branch, at
+`ce3fad83`; `Y:<n>`, `ops:<n>` and `clar:<n>` are lines of `design.md`,
+`operations.md` and `clarifications.md`, which are unchanged from Y.
 
 > **Assembly phase A.** This plan, spec.md and research.md are keyed to Y,
 > with lane 3's rulings memo (R01 to R61), lane 3's assembly notes and the
 > rulings since. `tasks.md` is phase B, assembled from the lanes' blocks:
-> lane 1's v4.1, out at 11:42Z (#165 6739202842), lane 5's v5 with its
+> lane 1's v4.2, out at 12:10Z (#165 6739714248), lane 5's v5 with its
 > review's section D, lane 2's at 18:00Z, and lane 4's revision on
 > 2026-11-09.
 >
@@ -172,7 +174,7 @@ one-line install.
   - Measured: from Eagle, whose round trip to Central US is about 86 ms at
     best, 205 ms at the median and 456 ms at the p90, the guard without the
     service takes about 1.2 to 2.1 s, and about 0.5 to 0.7 s through it
-    (lane 5, #165 6725361742; Y:4826). So the service is on the cutover's
+    (lane 5, #165 6725361742; Y:334–337). So the service is on the cutover's
     path, and the v1.2.0 tag waits for it.
   - Lane 2's local figure is about 0.42 to 0.47 s warm (MEASURE.md, (14)).
 - **The hook**: 5 s, with budget lines at `T0 + 3.75 s`, `4.25 s` and
@@ -258,9 +260,9 @@ specs/007-sql-register/
 ├── spec.md              # /speckit.specify, keyed to Y
 ├── plan.md              # this file
 ├── research.md          # Phase 0: every decision and erratum since Y, and PC-1 to PC-16
-├── data-model.md        # Phase 1: the journal entry, the switch, the marker,
-│                        #   the pending record, the bind record, the act base
-├── quickstart.md        # Phase 1: a primary workstation on the fixture, by hand
+├── data-model.md        # Phase 1: the register's schemas, tables, sequences, roles
+│                        #   and grants, from Y; the records are the contracts'
+├── quickstart.md        # Phase 1: the operator's and an engineer's first steps
 ├── contracts/
 │   ├── README.md        # the copy's source and digest, and each contract's owner
 │   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.1, copied in at phase A.
@@ -438,6 +440,8 @@ Later rulings that move a line between lanes:
 ```text
 Phase 0  contracts/register-cli.md [L1, L4 confirms, L5 reviews §3.6]; the fixture and
          the CI switch [L2]; the root switch R1 [L1]
+         Coded now. Each of its pull requests lands after the spec PR, R1 too:
+         Y lists the change's PR first and the root composed.yml PR after it (ops:603–605)
    |
    +--> The spec PR, on Brett's own word, naming its list. No 007 code PR lands before it.
    |
@@ -496,7 +500,7 @@ The tag, v1.2.0, on Brett's own word, after group C and the service ... [L3]:
   which quotes his typed words "4A, 5A, 1 let them stand, 3A"), for lane
   3's option "Build it beside groups A and B, and the tag waits for it". It
   changes his Q29 (a) answer, "the service is built last" (clar:473), and Y
-  records it (clar:524–525; svc:283; Y:4826; Y:3951–3956).
+  records it (clar:524–525; svc:289; Y:4826; Y:3951–3956).
   - Lane 5's T511 can start at once. T512 is coded beside group A and lands
     near its end, after lane 1's T103 to T106, T111, T113, T115 and T117,
     lane 3's T302, and lane 5's T504, T505 and T507. It does not wait for
@@ -668,7 +672,7 @@ Governed already, and unchanged by this feature, which adds no installable:
 | DP-6 | v3f, lane 2's test plan | test names and prefixes for every `verify:` | in J3, and so in Y | every task's `verify:` |
 | DP-7 | Commits X, J3 and Y, and the freeze | this feature keyed to Y | done: frozen at Y | — |
 | DP-8 | The change's spec PR | 007's branches pushed, and its code PRs allowed to land | 007 exists locally; the PR goes to Brett with its list | every 007 code PR |
-| DP-9 | The lanes' blocks: lane 1's v4.1 (`53e66ced…`, 644 lines, T101 to T122), lane 2's (18:00Z), lane 4's revision (2026-11-09); lane 5's v5 with its review's section D | tasks.md | lane 1's v4.1 is out (6739202842); the others are due today | phase B |
+| DP-9 | The lanes' blocks: lane 1's v4.2 (`cad0fa93…`, 660 lines, T101 to T122), lane 2's (18:00Z), lane 4's revision (2026-11-09); lane 5's v5 with its review's section D | tasks.md | lane 1's v4.2 is out (6739714248); the others are due today | phase B |
 | DP-10 | The root's `composed.yml` switch, lane 1's R1 | `exact-pins` refuses a real-engine skip | to open | group A's first PR that needs a database |
 | DP-11 | PostgreSQL 16 in the bench images (openBenches, lane 2's PR) and the image rebuild (Brett's) | real-engine tests run on the benches | open | bench runs only; CI does not wait |
 | DP-12 | Slices 2a, 2b and 3 | act 4 waits for them (Q28(i)) | 2a is code#18; ready by 2026-11-17 | act 4, not 007 |
@@ -704,10 +708,13 @@ Governed already, and unchanged by this feature, which adds no installable:
   `tests/test_tests_workflow.py`.
   - Mitigation: one at a time, and the four check names kept.
 - **R6. Errors in the frozen text.** The change is frozen at Y.
-  - Mitigation: an erratum goes into research.md; a point that contradicts
-    a SHALL goes to Brett as a spec delta. Neither edits the change.
+  - Mitigation: an erratum goes into research.md and leaves the change's
+    text alone. A point that contradicts a SHALL is a spec delta: on lane
+    3's ruling it changes the change's spec files on this branch, as
+    `dabd74bd` and `ce3fad83` do, and goes on the spec PR's list to Brett.
 - **R7. The install's schedule.** Acts 3 and 4, and Q29's figure on each
-  workstation, wait on it, and the cutover may slip (Brett, 16:17:36Z).
+  workstation, wait on it, and the cutover may slip (Brett's "Wait for the
+  install", #165 6723925474).
   - 007 itself does not wait: its tests run on the fixture.
 - **R8. Far workstations.** From Eagle the guard without the service misses
   Brett's 1 s, so the service is on act 4's path (Y:4826).

@@ -2,17 +2,18 @@
 
 Phase 0 of `/speckit.plan`, keyed to commit Y (`a6497d00`) of the change
 `add-sql-register`, which the spec branch merges at `066ad8f1`. The change is
-frozen at Y, so nothing here edits it. This file records what the rulings
-since the freeze decide for 007, and the errors found in the frozen text.
+frozen at Y but for its two spec files, which lane 3's rulings since change
+on this branch (ERR-03; DEC-05). This file records what the rulings since
+the freeze decide for 007, and the errors found in the frozen text.
 
-- **Part 1, the errata** (ERR-01 to ERR-20): a line at Y that 007 reads
-  otherwise. The frozen text keeps its words; the code and the manual follow
-  the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-20): a choice the change leaves
+- **Part 1, the errata** (ERR-01 to ERR-22; ERR-19 is now DEC-21): a line
+  at Y that 007 reads otherwise. The frozen text keeps its words; the code
+  and the manual follow the erratum.
+- **Part 2, the decisions** (DEC-01 to DEC-21): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
-**Each entry gives** the decision, whose it is, and its source lines at Y.
+**Each entry gives** the decision, whose it is, and its source lines.
 Whose is written one of three ways:
 
 - **Brett's:** only with his own words, verbatim, and their source.
@@ -22,13 +23,17 @@ Whose is written one of three ways:
 - **A lane's own:** labelled with that lane, as its author's decision or
   answer.
 
-**Citations** are spec.md's: `Y:<n>` is Y's `design.md`, `spec:<n>` the sql
-spec, `svc:<n>` the service spec, `ops:<n>` `operations.md` and `clar:<n>`
-`clarifications.md`, all at Y. A line of commit X above X:3955 is Y's line
+**Citations** are spec.md's: `spec:<n>` and `svc:<n>` are lines of the sql
+spec and the service spec on this branch, at `ce3fad83`; `Y:<n>` is
+`design.md`, `ops:<n>` `operations.md` and `clar:<n>` `clarifications.md`,
+which are unchanged from Y. `Y-spec:<n>` and `Y-svc:<n>` are the two spec
+files' lines at Y, used only where an entry quotes Y's words that the
+branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.1 (`contracts/register-cli.md`, `df40136e…`) and
-its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
+contract is its draft 4.1 (`contracts/register-cli.md`, `df40136e…`,
+#165 6739202842) and its block is v4.2 (`cad0fa93…`, #165 6739714248),
+both keyed to Y.
 
 ## Part 1: errata against the frozen text
 
@@ -41,7 +46,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   `lanes-index` pull request.
 - **Whose:** lane 3's ruling R12 (#165 6726556972), extended to Y:3494 in
   lane 3's ruling #165 6727022920.
-- **Source at Y:** Y:3494; Y:3804; Question 11 (Y:4967).
+- **Source:** Y:3494; Y:3804; Question 11 (Y:4967).
 
 ### ERR-02. `login rotate` gains `--dump-job` (ops §2.4)
 
@@ -61,7 +66,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   6727022920).
 - **The decision:** lane 3's #165 6726725691, carried by lane 1's T110 and
   its `rotate --dump-job`.
-- **Source at Y:** ops:483; ops:372; ops:482; ops:710. The sql spec already
+- **Source:** ops:483; ops:372; ops:482; ops:710. The sql spec already
   has the dump job's password "rotated" by `lanes-index login` (spec:846).
 
 ### ERR-03. `--roles-only` also runs three database-level statements (the dump route's (a))
@@ -82,14 +87,14 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   carries (a), with its case `dump_restore_privileges`.
 - **Whose:** lane 3's ruling, #165 6727022920, option (a) of lane 1's check
   of X (6726995665).
-- **A confirmation, not a ruling:** lane 1's block v4 reports that Brett chose
-  the option "--roles-only runs them (Recommended)" in a dialog in lane 1's
-  session, answered at 21:01:25Z (#165 6727094958). That dialog was opened on
-  an accepted prompt suggestion, not on text Brett typed, so nothing here
-  rests on it alone. It confirms a ruling already in force.
-- **Source at Y:** ops:411; ops:434; Y:2239; Y:2243–2244; Y:2256–2257.
+- **Not a ruling:** lane 1's block v4 reports a dialog in lane 1's session,
+  answered at 21:01:25Z with the option "--roles-only runs them
+  (Recommended)" (#165 6727094958). That answer was an accepted prompt
+  suggestion in lane 1's session, not Brett's choice, so nothing here rests
+  on it.
+- **Source:** ops:411; ops:434; Y:2239; Y:2243–2244; Y:2256–2257.
 - **The SHALL, changed:** at Y the sql spec's bootstrap requirement said "A
-  roles-only form SHALL make only the roles" (spec:846). Two commits on this
+  roles-only form SHALL make only the roles" (Y-spec:846). Two commits on this
   branch after `aa190a7f`, on lane 3's ruling (a), rewrite that SHALL so the
   roles-only form makes the roles, with the admin's membership in the owner
   and the indexer (Y:2239), which is T109's first part, and these three
@@ -122,8 +127,8 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
     service and the roles-only form and `login add` with no database named.
     Those texts keep their words, so this entry is their erratum.
   - **Whose:** lane 3's ruling, which answers the test plan's open point 41
-    (`test-plan.md:9064–9072`). Its record is "Lane 3's ruling on test-plan
-    open point 41, 2026-11-09", which lane 3 posts on #165.
+    (`test-plan.md:9064–9072`). Its record is lane 3's #165 6739605144, and
+    lane 1's block v4.2 follows it (#165 6739714248).
 
 ### ERR-04. The guard's second read is always direct, at `n` (B7)
 
@@ -140,7 +145,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   Y:4365–4366). If T511's and T512's measurements show that path often out
   of budget, lane 5 brings it back; a request naming `n` would change the
   spec, so it would go to Brett.
-- **Source at Y:** Y:4159–4160; svc:59; Y:4611; Y:4365–4366.
+- **Source:** Y:4159–4160; svc:59; Y:4611; Y:4365–4366.
 
 ### ERR-05. "From the configuration" means from `lanes-index`'s report (R05)
 
@@ -151,7 +156,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   parses no configuration, and `lanes-index` stays its one parser.
 - **Whose:** lane 3's ruling R05 (#165 6726556972), on lane 1's O9 and lane
   5's open point 3.
-- **Source at Y:** Y:5877; D3 (Y:368).
+- **Source:** Y:5877; D3 (Y:368).
 
 ### ERR-06. `commit` on primary: only the carry form is refused (R16)
 
@@ -163,7 +168,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   form is refused with 2; the publish form runs outside the attempt loop.
 - **Whose:** lane 3's ruling R16 (#165 6726556972), on lane 4's Q-L3-1 and
   OB-14.
-- **Source at Y:** Y:5073; spec:169; D10 (Y:508).
+- **Source:** Y:5073; spec:169; D10 (Y:508).
 
 ### ERR-07. Row 43's lock is the workstation's sidecar lock (R19)
 
@@ -175,7 +180,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   under the flag, and `lane_state_rename` runs under `sidecar_try`.
 - **Whose:** lane 3's ruling R19 (#165 6726556972), on lane 4's Q-L3-4
   (F-B1).
-- **Source at Y:** Y:6069; Y:5044; Y:5446; Y:5561.
+- **Source:** Y:6069; Y:5044; Y:5446; Y:5561.
 
 ### ERR-08. `lanes` decides under `--decide` (R38)
 
@@ -187,7 +192,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
 - **Whose:** lane 3's ruling R38 (#165 6726556972), amended by lane 3's
   #165 6726831985: lane 5's T502 accepts `--decide` and ignores it until T509
   gives it meaning, so that T403's and T408's lines land after T502.
-- **Source at Y:** Y:4895; spec:626; spec:634.
+- **Source:** Y:4895; spec:626; spec:634.
 
 ### ERR-09. The `SessionStart` block makes no register call (R39)
 
@@ -196,7 +201,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   and exits 0 (spec:626; Y:4492–4494). So it is in the mirror class with no
   register call.
 - **Whose:** lane 3's ruling R39 (#165 6726556972), on lane 5's open point 2.
-- **Source at Y:** Y:4895; Y:4492–4494; spec:626.
+- **Source:** Y:4895; Y:4492–4494; spec:626.
 
 ### ERR-10. The outer sweeps `timeout`'s group (R47)
 
@@ -209,7 +214,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   group, may die with it, since the next render redoes the mirror.
 - **Whose:** lane 3's ruling R47 (#165 6726556972), taking lane 5's answer to
   lane 2's point 39(a), with lane 4's confirmation (6726296119).
-- **Source at Y:** Y:5401.
+- **Source:** Y:5401.
 
 ### ERR-11. The bind child also unsets `LANES_WRITE_GENERATION` (R52)
 
@@ -218,7 +223,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   rerun's generation must not reach the `lane-start` inside the bind, which
   mints its own write, so the child unsets both.
 - **Whose:** lane 3's ruling R52 (#165 6726556972), on lane 5's open point 21.
-- **Source at Y:** Y:5414.
+- **Source:** Y:5414.
 
 ### ERR-12. AT-F6 has twenty-two cases (R53)
 
@@ -226,7 +231,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   Y:4320, Y:6633 and Y:6738 say twenty. Twenty-two is the count.
 - **Whose:** lane 3's ruling R53 (#165 6726556972), on lane 5's contradiction
   1.
-- **Source at Y:** Y:5563; Y:3672; Y:4320; Y:6633; Y:6738.
+- **Source:** Y:5563; Y:3672; Y:4320; Y:6633; Y:6738.
 
 ### ERR-13. Row 37 carries the service's two-address figures (R57)
 
@@ -236,7 +241,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   too.
 - **Whose:** lane 3's ruling R57 (#165 6726556972), on lane 5's contradiction
   7.
-- **Source at Y:** Y:4770–4776; Y:5462.
+- **Source:** Y:4770–4776; Y:5462.
 
 ### ERR-14. Answer 2's text is "BINDING" (R58)
 
@@ -245,7 +250,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   itself, and "BINDING IN PROGRESS" for each prompt while the bind runs.
 - **Whose:** lane 3's ruling R58 (#165 6726556972), on lane 5's contradiction
   8.
-- **Source at Y:** Y:5389; Y:4660.
+- **Source:** Y:5389; Y:4660.
 
 ### ERR-15. The phase plan cites SVC-8 by name (R59)
 
@@ -255,19 +260,19 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   SVC-8 (Y:4116) and its exit mapping (Y:4336), by name.
 - **Whose:** lane 3's ruling R59 (#165 6726556972), on lane 5's contradiction
   9.
-- **Source at Y:** Y:4896; Y:4939; Y:4116; Y:4336.
+- **Source:** Y:4896; Y:4939; Y:4116; Y:4336.
 
 ### ERR-16. Lane 1's texts in X cite W's lines
 
 - **The erratum:** lane 1's texts, folded into X, cite W's line numbers: 149
   citations shift. The frozen text keeps them. Lane 1 re-cited its own parts
-  against Y, and its contract draft 4.1 and block v4.1 keep Y's numbering.
+  against Y, and its contract draft 4.1 and block v4.2 keep Y's numbering.
   Three citations were already wrong at W: C1's
   `proposal.md:607-611` and `:683-693` (Y:2232), and D2's
   `proposal.md:1810-1813` (ops:190).
 - **Whose:** lane 1's finding (#165 6726995665); lane 3's ruling to record it
   here, #165 6727022920.
-- **Source at Y:** Y:2232; ops:190.
+- **Source:** Y:2232; ops:190.
 
 ### ERR-17. D1's item 4 "suggests" the issuer Brett chose
 
@@ -278,7 +283,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   names its root, never `system` (Y:2324).
 - **Whose:** Brett's choice, in his words above, as Y records it; lane 3's
   ruling to record it here, #165 6727022920.
-- **Source at Y:** ops:153; clar:495; Y:2324.
+- **Source:** ops:153; clar:495; Y:2324.
 
 ### ERR-18. D1's item 5 keeps the physical backups 30 days
 
@@ -287,20 +292,15 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   dump's container keeps 30 days.
 - **Whose:** lane 3's ruling, #165 6726078173, which Y records (Y:624;
   clar:505–506); recorded here by lane 3's ruling #165 6727022920. Lane 1's
-  dialog of 21:01Z (6727094958) confirmed it, with `enablePDB: false` and the
-  dump route's (a); that confirmation is not a new ruling, and nothing rests
-  on it alone.
-- **Source at Y:** ops:155; Y:624; clar:505–506.
+  dialog of 21:01Z (6727094958) also answered it, with `enablePDB: false`
+  and the dump route's (a), but that answer was an accepted prompt
+  suggestion in lane 1's session, not Brett's choice, and nothing rests on
+  it.
+- **Source:** ops:155; Y:624; clar:505–506.
 
-### ERR-19. `outage declare` refuses a `--why` with a line break
+### ERR-19. Moved to DEC-21
 
-- **The erratum:** ops §2.5 lists `outage declare`'s refusals (ops:490) and
-  not this one. `outage declare` refuses with 2 a `--why` that holds a line
-  break, so that the declaration's label, which the guard copies into
-  `.outage`, stays on one line.
-- **Whose:** lane 1's own decision, as the contract's author, taking lane 5's
-  O15 (#165 6738431117): lane 1's block v4, T121.
-- **Source at Y:** ops:490; D20 (Y:599).
+It adds a refusal Y never had, so it is a decision, not an error in Y.
 
 ### ERR-20. Lane 4's live-owner 3 gains its record-less form (R26, point 42)
 
@@ -311,7 +311,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   twice. Lane 4's T417 carries it, with its `_EXIT_3_CAUSES` entry.
 - **Whose:** lane 3's ruling R26 (#165 6726556972), taking lane 4's answer to
   lane 2's point 42 (6726296119).
-- **Source at Y:** Y:5218.
+- **Source:** Y:5218.
 
 ### ERR-21. The design's "too late" refusal is the prefetch's (B4)
 
@@ -330,7 +330,17 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   reads no declaration (B5).
 - **Whose:** lane 3's ruling B4, with B5, #165 6738474549, on lane 5's §3.6
   review (6738431117).
-- **Source at Y:** Y:4185; Y:4266–4271; Y:4344.
+- **Source:** Y:4185; Y:4266–4271; Y:4344.
+
+### ERR-22. A run with no snapshot clock waits on the record's clock (R26, point 36)
+
+- **The erratum:** Y:5236 says "A run with no snapshot clock calls at once".
+  Under DEC-12, a takeover whose own first snapshot failed waits on the
+  record's clock instead; "calls at once" stays for a record from another
+  host. It was part of DEC-12.
+- **Whose:** lane 3's ruling R26 (#165 6726556972), taking lane 4's answer to
+  lane 2's point 36 (6726296119).
+- **Source:** Y:5236.
 
 ## Part 2: decisions
 
@@ -348,7 +358,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   built last" (clar:473), by his own word. Lane 3 had ruled the move first
   (6724332510, 6726078173), and named it on the spec PR's list as a change
   to his answer.
-- **Source at Y:** svc:283; Y:4826; Y:3951–3956; clar:524–525.
+- **Source:** svc:289; Y:4826; Y:3951–3956; clar:524–525.
 
 ### DEC-02. The launcher's window reads are met outside 007 (R41)
 
@@ -360,7 +370,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
 - **Whose: Brett's.** His "5A" in the same words, "4A, 5A, 1 let them stand,
   3A" (#165 6726766577), for lane 3's option "A. Carry it in the v1.2.0
   workBenches re-vendor I'm already drafting (recommended)."
-- **Source at Y:** spec:626.
+- **Source:** spec:626.
 
 ### DEC-03. TLS is enforced at load, at `ready`, and at the server (R09)
 
@@ -381,7 +391,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
 - **Whose:** lane 3's ruling R09 (#165 6726556972) left the load-time check
   to lane 1; lane 1 took it in T104 (its own decision), and lane 3 took
   lane 1's text in #165 6727201960.
-- **Source at Y:** Y:2324; ops:454; ops:144.
+- **Source:** Y:2324; ops:454; ops:144.
 
 ### DEC-04. The guard's second read stays at `n`; every other second read is at `n′` (O17)
 
@@ -401,7 +411,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
 - **Whose:** lane 3's ruling, #165 6727201960. Lane 1 picked form 4's argv
   (6727229519), lane 5 confirmed it with B1 (`--pid`) and B2 (`--cache`) in
   its §3.6 review (6738431117), and lane 1's contract draft 4.1 carries it.
-- **Source at Y:** Y:4159–4161; Y:4900; Y:4834.
+- **Source:** Y:4159–4161; Y:4900; Y:4834.
 
 ### DEC-05. Form 4 fails open on every end but 0 (B4)
 
@@ -423,15 +433,15 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   1's T113 ships the bounds: `--pid`, the cap at `T0` + 3.75 s and D9's
   guard row. Its case `guard_second_read_at` keeps items 1 to 8, and item
   9's ends 69, 78, 1 and 64.
-- **Source at Y:** Y:4269–4271.
+- **Source:** Y:4269–4271.
 - **The SHALLs, changed:** at Y the service spec's budget requirement said
   that a guard's client starting at or past the direct read's cap "SHALL
-  exit as "too late to verify", and the guard SHALL refuse with 2" (svc:124),
-  for any client, and a guard's read that failed was a 2 in svc:23, svc:104,
-  svc:124 ("A database that does not answer SHALL be a 2 inside the hook"),
-  svc:174 and the declared outage's check (svc:188), and in the sql spec's
-  spec:87 and spec:574. Two commits on this branch after `aa190a7f`, on lane
-  3's ruling B4:
+  exit as "too late to verify", and the guard SHALL refuse with 2"
+  (Y-svc:124), for any client, and a guard's read that failed was a 2 in
+  Y-svc:23, Y-svc:104, Y-svc:124 ("A database that does not answer SHALL be
+  a 2 inside the hook"), Y-svc:174 and the declared outage's check
+  (Y-svc:188), and in the sql spec's Y-spec:87 and Y-spec:574. Two commits
+  on this branch after `aa190a7f`, on lane 3's ruling B4:
   - scope each of those refusals to the guard's prefetch, its first read;
   - add that the second read, started at or past `T0` + 3.75 s whatever a
     declaration says (B5), exits as "too late to verify", and that it fails
@@ -456,7 +466,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   `journal --write-id`, keeps the interfaces table's form (Y:4834).
 - **Whose:** lane 1's own decision, as the contract's author, in draft 4
   (#165 6738871108).
-- **Source at Y:** Y:4834; Y:4956, which sends a key outside the class down
+- **Source:** Y:4834; Y:4956, which sends a key outside the class down
   the second-read path.
 
 ### DEC-07. LR004 under the scratch tree (R02)
@@ -468,7 +478,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   comes only when both calls ended definitively.
 - **Whose:** lane 3's ruling R02 (#165 6726556972), taking lane 1's form (its
   O2), with lane 4's CO-4.
-- **Source at Y:** Y:1567; Y:2614; Y:2516.
+- **Source:** Y:1567; Y:2614; Y:2516.
 
 ### DEC-08. `register classify` is a subcommand beyond the interfaces table (R04)
 
@@ -479,7 +489,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   1's T122 adds it, with a parity test, and lane 4's T424 lands after T122.
 - **Whose:** lane 3's ruling R04 (#165 6726556972), on lane 1's O6 and lane
   4's Q-L3-9.
-- **Source at Y:** Y:5116; Y:6247; spec:1001; the interfaces table
+- **Source:** Y:5116; Y:6247; spec:1007; the interfaces table
   (Y:4831–4834), which does not list it.
 
 ### DEC-09. D12 governs register writes (R16)
@@ -491,7 +501,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   4's T420 refuses at the push a commit that changes a path outside
   `handoffs/`.
 - **Whose:** lane 3's ruling R16 (#165 6726556972), on lane 4's Q-L3-1.
-- **Source at Y:** D12 (Y:522); spec:311; spec:169.
+- **Source:** D12 (Y:522); spec:311; spec:169.
 
 ### DEC-10. Where the writers' mode ask runs (R17)
 
@@ -504,7 +514,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   answer. Lane 4's T409 adds the carry, so slice 1a does not change.
 - **Whose:** lane 3's ruling R17 (#165 6726556972), on lane 4's Q-L3-2; the
   carry's place, lane 3's #165 6726831985.
-- **Source at Y:** Y:4983; Y:5452; Y:4858; D12 (Y:522).
+- **Source:** Y:4983; Y:5452; Y:4858; D12 (Y:522).
 
 ### DEC-11. `rename-lane`'s handoff half runs in the parent (R18)
 
@@ -512,7 +522,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   handoff and writes its stamp in `<c>`, outside the flag, as a git commit.
   It is not a second register write, so the one-entry rule holds.
 - **Whose:** lane 3's ruling R18 (#165 6726556972), on lane 4's Q-L3-3.
-- **Source at Y:** spec:369; Y:5092; Y:5097.
+- **Source:** spec:369; Y:5092; Y:5097.
 
 ### DEC-12. A takeover whose snapshot failed waits on the record's clock (R26, point 36)
 
@@ -520,12 +530,12 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   `journal` the clock of the record's newest `call` line as `--clock`, and the
   whole seconds since the record's `updated_utc`, on this host, as
   `--clock-age`. The estimate lags the database's clock, which only lengthens
-  the wait. "Calls at once" stays for a record from another host. It is an
-  erratum on Y:5236's "A run with no snapshot clock calls at once". Lane 1's
-  T114 and contract §3.4 take the two flags.
+  the wait. "Calls at once" stays for a record from another host. ERR-22
+  records the erratum this makes on Y:5236. Lane 1's T114 and contract §3.4
+  take the two flags.
 - **Whose:** lane 3's ruling R26 (#165 6726556972), taking lane 4's answer to
   lane 2's point 36 (6726296119).
-- **Source at Y:** Y:5236.
+- **Source:** Y:5236.
 
 ### DEC-13. The lookup's tries run start to start (R26, point 40)
 
@@ -535,7 +545,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   Y:5250 and keeps Y:5279's worst case. No text changes.
 - **Whose:** lane 3's ruling R26 (#165 6726556972), taking lane 4's answer to
   lane 2's point 40 (6726296119).
-- **Source at Y:** Y:5250; Y:5279.
+- **Source:** Y:5250; Y:5279.
 
 ### DEC-14. A first-snapshot 69 names no id (R26, point 38)
 
@@ -548,7 +558,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   `LANES_WRITE_ID`), or saying that nothing was sent where it has none".
 - **Whose:** lane 3's ruling R26 (#165 6726556972), taking lane 4's answer to
   lane 2's point 38; the spec change is in Y (#165 6727039049).
-- **Source at Y:** spec:318; spec:338.
+- **Source:** spec:318; spec:338.
 
 ### DEC-15. The service's idle check and idle stop have test-only variables (R37)
 
@@ -559,7 +569,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   are set.
 - **Whose:** lane 3's ruling R37 (#165 6726556972), taking lane 5's proposal
   (its open points 24 and 25).
-- **Source at Y:** the reduced environment (Y:3887–3888); the idle check
+- **Source:** the reduced environment (Y:3887–3888); the idle check
   (Y:3994); the idle stop (Y:3912).
 
 ### DEC-16. A sixth class, `writer` (R46)
@@ -569,7 +579,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   ask the mode at the write guard, so they get a sixth label, `writer`,
   beside decide, mirror, guard, projection and none.
 - **Whose:** lane 3's ruling R46 (#165 6726556972), on lane 5's open point 14.
-- **Source at Y:** Y:4892–4898; Y:4858.
+- **Source:** Y:4892–4898; Y:4858.
 
 ### DEC-17. The `LANES_BIND_BODY` seam (R48)
 
@@ -580,7 +590,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   writes do.
 - **Whose:** lane 3's ruling R48 (#165 6726556972), taking lane 5's answer to
   lane 2's point 39(b).
-- **Source at Y:** Y:5397.
+- **Source:** Y:5397.
 
 ### DEC-18. The pipe pair waits for phase 2 (R24, PC-2)
 
@@ -588,7 +598,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   phase 1. Tests 9 and 4 decide it at phase 2; a cached module or lazy
   imports come first.
 - **Whose:** lane 3's ruling R24 (#165 6726556972), which PC-2 settles.
-- **Source at Y:** Y:5868.
+- **Source:** Y:5868.
 
 ### DEC-19. Where lane 2's open points 36, 38, 40 and 42 went
 
@@ -596,7 +606,7 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   6726110116), and took lane 4's four answers: DEC-12, DEC-13, DEC-14 and
   ERR-20. Lane 2's AT-F3, AT-D8 and AT-F10 follow them.
 - **Whose:** lane 3's rulings, #165 6726110116 and R26 (#165 6726556972).
-- **Source at Y:** Y:5236; Y:5250; spec:318; Y:5218.
+- **Source:** Y:5236; Y:5250; spec:318; Y:5218.
 
 ### DEC-20. Never a pooler (R51)
 
@@ -607,7 +617,17 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   open point 20 asked it.
 - **Whose:** lane 3's ruling, "never a pooler" (#165 6726110116), which X
   wrote in.
-- **Source at Y:** Y:1575.
+- **Source:** Y:1575.
+
+### DEC-21. `outage declare` refuses a `--why` with a line break
+
+- **The decision:** `outage declare` refuses with 2 a `--why` that holds a
+  line break, so that the declaration's label, which the guard copies into
+  `.outage`, stays on one line. ops §2.5 lists `outage declare`'s refusals
+  (ops:490), and Y has no such refusal: this adds one. It was ERR-19.
+- **Whose:** lane 1's own decision, as the contract's author, taking lane 5's
+  O15 (#165 6738431117): lane 1's block v4, T121.
+- **Source:** ops:490; D20 (Y:599).
 
 ## Part 3: the choices the design leaves to the plan
 

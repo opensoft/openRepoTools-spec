@@ -17,6 +17,10 @@ Y (`a6497d00`), copied here byte for byte by lane 3 at assembly phase A on
 - **Posted:** #165 comment 6739202842, 2026-11-09T11:42Z, with lane 1's
   block v4.1 (`lane1-tasks-block.v4.1.md`, `53e66ced…`, 644 lines, T101 to
   T122).
+- **The block in force:** lane 1's block v4.2 (`cad0fa93…`, 660 lines, T101
+  to T122), #165 6739714248. It follows lane 3's restore order, the ruling
+  on test-plan open point 41 (#165 6739605144). The contract stays at draft
+  4.1, which gives no restore order.
 - **What draft 4.1 changes:** it is draft 4 (#165 6738871108, `5d6ce7ca…`,
   939 lines) with lane 5's check of draft 4 taken (#165 6739068493). The
   quote of the guard's second read is cited as Y:4160–4161; the change list

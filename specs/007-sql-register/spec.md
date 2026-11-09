@@ -25,11 +25,16 @@ The spec leg's branch `007-sql-register` merges Y whole, at merge commit
 - **The history** W → J3 → X → Y is in the branch:
   `git diff bb08d080..a6497d00 -- openspec/changes/add-sql-register` shows
   every change since lane 3's drafts.
+- **The branch after Y.** Lane 3's rulings since Y change the change's two
+  spec files on this branch, at `dabd74bd` and `ce3fad83`, and the spec PR's
+  list names each change. Every other file of the change is Y's.
 
-**Citations**: `Y:<n>` is a line of Y's `design.md`, `spec:<n>` of
-`specs/sql-register/spec.md`, `svc:<n>` of `specs/register-service/spec.md`,
-`ops:<n>` of `operations.md` and `clar:<n>` of `clarifications.md`, all at Y.
-Each was checked by script against the text it stands for.
+**Citations**: `spec:<n>` is a line of `specs/sql-register/spec.md` and
+`svc:<n>` of `specs/register-service/spec.md`, as this branch has them at
+`ce3fad83`, where lane 3's rulings since Y change them (research.md's ERR-03
+and DEC-05). `Y:<n>` is a line of `design.md`, `ops:<n>` of `operations.md`
+and `clar:<n>` of `clarifications.md`, which are unchanged from Y. Each was
+checked by script against the text it stands for.
 
 **Marks used in this file:**
 
@@ -69,8 +74,10 @@ and the only scope it takes, are:
     returns";
   - **lane 3's rulings of 2026-11-08T16:23Z** on lane 4's speed-up proposal
     (6723967774): group B runs beside group A; 007 is split by file
-    ownership; the design freezes after X and J3; Brett's standing landing
-    word;
+    ownership; the design freezes after X and J3;
+  - **Brett's standing landing word,** his choice "Standing words per group
+    (Recommended)" in a dialog in lane 3's session at 16:21:40Z, which lane
+    3's #165 6723967774 quotes verbatim;
   - **lane 3's 007 call** (6724332510): U1 to U11 and PC-1 to PC-16 as plan.md
     proposes;
   - **Brett's choices of 19:25Z**, as Y records them (clar:495–505;
@@ -154,7 +161,8 @@ The terms used below:
 
 A person on a workstation with no configuration, or with `mode=index`,
 installs the release that carries this feature. Everything reads and writes
-as before, except three named changes.
+as before, except the sql spec's three exceptions (spec:60), which scenario 8
+names, and two refusals:
 
 - A build without the renderer's git half refuses `mode=primary`, and says
   why.
@@ -698,9 +706,10 @@ does not answer. No write depends on it.
 
 **Why this priority**: act 4 waits for the service, since from Eagle the
 guard without it takes about 1.2 to 2.1 s, which misses Brett's 1 s
-(Y:4826). So the service is built beside groups A and B, and the v1.2.0 tag
-waits for it: Brett's "4A" (6726766577; svc:283; Y:3951–3956). It is P2
-because no write depends on it, and every reader still works without it.
+(Y:335–336; Y:4826). So the service is built beside groups A and B, and
+the v1.2.0 tag waits for it: Brett's "4A" (6726766577; svc:289;
+Y:3951–3956). It is P2 because no write depends on it, and every reader
+still works without it.
 
 **Independent Test**: test 10 through the service:
 
@@ -864,7 +873,8 @@ contract (ops:133) and the disaster path (ops:355) at Y.
   switch check, and is removed from the renderer's environment (D12).
 - **A host without `setsid`, such as macOS.** The detached bind falls back to
   python3's `os.setsid`, then to `nohup` alone. Brett accepted the gap, which
-  is macOS without python3 (lane 4's row 40).
+  is macOS without python3 (lane 4's row 40), as recommended (#165
+  6721583757; Y:6364–6372).
 - **A host without `timeout`.** The bind's body leads its own process group,
   and the record says `bounded=no`. Each register call is still bounded by
   its own timer.
@@ -872,7 +882,7 @@ contract (ops:133) and the disaster path (ops:355) at Y.
   covered, and the check says so. The runbook covers it.
 - **A burst at a far workstation.** At 300 ms of RTT, a burst of ten passes
   D7's 30 s. Eagle's round trip to Central US measured 456 ms at the p90
-  (Y:4826).
+  (Y:334–335).
   - Act 3's test 4 at each workstation's own RTT decides.
   - A per-workstation D7 is lane 4's proposal, and goes to 007's tasks or
     to v1.2.1 after the freeze.
@@ -880,7 +890,8 @@ contract (ops:133) and the disaster path (ops:355) at Y.
   2's AT-F13 (j) holds each imported line to F13's condition, or reports it
   as a finding before the cutover.
 - **A stray landing during a rollback,** after its last divergence check.
-  Brett accepted it as S5's remaining gap. No journalled way out exists.
+  Brett accepted it as S5's remaining gap, as recommended (#165 6721583757;
+  Y:6364–6372). No journalled way out exists.
 - **The workstation's link down.** The guard answers 2 until the link
   returns or an outage is declared. This is Brett's "Block until link
   returns".
@@ -971,11 +982,14 @@ are lane 3's rulings memo's).
   - the indexer;
   - the dump job's READER login, `lanes_register_dump`.
 
-  Every login MUST be made, rotated and revoked by `lanes-index login`,
-  through the admin service: Brett's "lanes-index login (Recommended)"
-  (clar:497–498; #165 6726078173). CNPG's declared roles make only the database's owner. The
-  dump job's password MUST be rotated alone by `login rotate --dump-job`
-  (lane 3's ruling, 6726725691). Sources: "The three roles" (spec:1033);
+  Each engineer's two logins and the dump job's login MUST be made, rotated
+  and revoked by `lanes-index login`, through the admin service: Brett's
+  "lanes-index login (Recommended)" (clar:497–498; #165 6726078173).
+  `bootstrap` MUST make the two groups, the owner and the indexer's login
+  (Y:2235–2238). CNPG's `initdb` makes the database's owner, Brett's admin,
+  a role apart from `lanes_register_owner` (Y:2283). The dump job's
+  password MUST be rotated alone by `login rotate --dump-job` (lane 3's
+  ruling, 6726725691). Sources: "The three roles" (spec:1039);
   "The operator's bootstrap is idempotent and holds no secret" (spec:845–846);
   "One engineer's logins" (Y:2285); ops:142; ops:477.
 - **FR-010**: Every connection MUST reach `psql` through `PG*` variables set
@@ -1188,7 +1202,7 @@ are lane 3's rulings memo's).
     once, in the main shell.
   - Off primary, `RULE6_AWK` MUST stay byte-identical.
   - Sources: "A stale `LANDING` is released by
-    `append-line --landing-expired`, on Brett's word" (spec:1000); F13
+    `append-line --landing-expired`, on Brett's word" (spec:1006); F13
     (Y:5099).
 
 #### The readers
@@ -1364,7 +1378,7 @@ are lane 3's rulings memo's).
   `outage declare` refuses with 2 a `--why` that holds a line break, so that
   the declaration's label stays on one line (lane 1's block v4, T121, on
   lane 5's O15).
-  Sources: D20 (Y:599); svc:187; svc:248; ops:490.
+  Sources: D20 (Y:599); svc:193; svc:254; ops:490.
 
 #### The register service
 
@@ -1389,7 +1403,7 @@ are lane 3's rulings memo's).
   stand, 3A"), for "Build it beside groups A and B, and the tag waits for
   it" (clar:524–525). It changes his Q29 (a) answer, "the service is built
   last" (clar:473). Act 4 waits for it too, since the guard measured
-  without it from Eagle is over his 1 s. Sources: svc:283; Y:4826;
+  without it from Eagle is over his 1 s. Sources: svc:289; Y:4826;
   Y:3951–3956.
 
 #### Evidence, CI and the record
@@ -1406,15 +1420,15 @@ are lane 3's rulings memo's).
 - **FR-060**: `tests.yml` MUST set `OPENREPOTOOLS_REQUIRE_PG: '1'` where the
   binaries exist. It MUST keep the four required check names:
   `guard-launch-mode`, `tests`, `tests-no-submodule` and `package`. Source:
-  "Agreement tests run on a real engine in CI" (spec:1047).
+  "Agreement tests run on a real engine in CI" (spec:1053).
 - **FR-061**: The cost of a write (test 9) and the guard's figures (test 10)
   MUST be recorded in the pull-request bodies, never as CI thresholds.
-  Sources: "The cost of a write is measured and recorded" (spec:1063);
-  svc:268.
+  Sources: "The cost of a write is measured and recorded" (spec:1069);
+  svc:274.
 - **FR-062**: `docs/README-lanes.md` MUST gain "The SQL register", as the
   manual's requirement lists. Its server, backup and restore steps follow
   the install contract and the disaster path at Y (ops:133; ops:355).
-  Sources: spec:1084; spec:1091; svc:275.
+  Sources: spec:1090; spec:1097; svc:281.
 - **FR-063**: New bash MUST hold to bash 3.2, and new Python to the standard
   library on Python 3.9 or later. `dependencies = []` MUST stay. Source:
   "New code keeps to the toolchain floor" (svc:51).
@@ -1451,28 +1465,31 @@ are lane 3's rulings memo's).
   the rollback's mark, and `mirror-seq`.
 - **A render commit**: `Register-Seq: <k>` in its final trailer block. It
   changes only the render set, which equals the images at `k`.
-- **The roles**: REGISTER-WRITER and READER, groups that cannot log in; the
-  indexer; the owner; each engineer's writer and reader logins; and the dump
-  job's READER login, all made by `lanes-index login` but the owner, whom
-  CNPG's `initdb` makes (Y:2285).
+- **The roles**: REGISTER-WRITER and READER, groups that cannot log in, the
+  owner, `lanes_register_owner`, which cannot log in, and the indexer's
+  login, all made by `bootstrap` (Y:2235–2238); each engineer's writer and
+  reader logins and the dump job's READER login, made by `lanes-index login`
+  (Y:2285); and the database's owner, Brett's admin, whom CNPG's `initdb`
+  makes (Y:2283).
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
 - **SC-001**: Agreement tests 1 to 14 pass, and so do the council's, the
-  frame's and the schema objects' tests (spec:1047).
+  frame's and the schema objects' tests (spec:1053).
   - In CI's `tests` and `tests-no-submodule` jobs, and in the root's
     `exact-pins`, no real-engine test is skipped: the switch turns a missing
     engine into a failure.
   - The fake-`psql` tests run everywhere.
 - **SC-002**: Q29's figure is measured on the warm p95 of the guard's whole
-  wall time on primary, without the service and through it (svc:283).
+  wall time on primary, without the service and through it (svc:289).
   - The cold walk is recorded beside it, and not judged.
   - Within 007, it is recorded in the PR body on the fixture, both local and
     at the emulated delay of AT-F6 (21).
   - From Eagle the guard without the service already misses Brett's 1 s, at
-    about 1.2 to 2.1 s, and takes about 0.5 to 0.7 s through it (Y:4826).
+    about 1.2 to 2.1 s, and takes about 0.5 to 0.7 s through it
+    (Y:335–337; Y:6286–6287).
     So the v1.2.0 tag and act 4 wait for the service. The figure at each
     workstation as it joins is act 3's, outside 007.
 - **SC-003**: The hook exits 2 inside its 5 s for each of test 10's three
@@ -1482,7 +1499,7 @@ are lane 3's rulings memo's).
   read returns, while a stub bind sleeps 15 s (AT-F6 (1); Y:5563).
 - **SC-005**: The service answers the guard's read in under 50 ms on the
   fixture register, from the client's connect to the last byte of a
-  digest-checked answer (svc:268; SVC-10, Y:4387).
+  digest-checked answer (svc:274; SVC-10, Y:4387).
 - **SC-006**: No write is lost or doubled in the tests (spec:236).
   - Test 12: exactly one journal entry per `write_id`, and exit 0 after a
     clean retry.
@@ -1499,9 +1516,9 @@ are lane 3's rulings memo's).
   build. A writer the rollback missed exits 69 and the journal's count is
   unchanged, in each of test 8's cases (spec:824).
 - **SC-010**: No environment that a session inherits carries a database URL
-  or a password, on a primary workstation (svc:166).
+  or a password, on a primary workstation (svc:172).
 - **SC-011**: The PR bodies record test 9's write cost and test 10's guard
-  figures, beside files mode, on a named host, store and path (spec:1063).
+  figures, beside files mode, on a named host, store and path (spec:1069).
 - **SC-012**: The hygiene suite passes over every new and changed file, under
   its bash-3.2 and standard-library rules (svc:51).
 
@@ -1515,7 +1532,8 @@ are lane 3's rulings memo's).
   removed. The design cites lines at `2a057a6d`, so every task finds its
   function by name.
 - **v1.2.0 carries #165, T017's five fixes, W2 and code#15,** on Brett's
-  words of 2026-11-08:
+  "Land them now, in v1.2.0 (Recommended)", whose option read "v1.2.0 then
+  carries #165, T017's five fixes and these" (lane 3's #165 6723967774):
   - W2 is lane 2's seven fixes, code#8 to code#14;
   - code#15 is lane 1's openRepoShape pin, now on code `main`;
   - on the code leg, whichever is ready first lands first, under Rule 6's
@@ -1533,8 +1551,9 @@ are lane 3's rulings memo's).
   unproven" names count as proven once lane 2's tests hold them. An error
   found in its text since is an erratum in research.md, not an edit.
 - **Brett's standing word lands 007's pull requests and the root bumps:**
-  "land each once its CI is green and lane 3's review passes, by merge
-  commit". Root bumps land by squash.
+  he chose "Standing words per group (Recommended)", whose option gave the
+  word "land each once its CI is green and lane 3's review passes, by merge
+  commit" (lane 3's #165 6723967774). Root bumps land by squash.
   - Every landing rule still holds.
   - The spec PR lands only on his own word, which names the items of its
     list.
