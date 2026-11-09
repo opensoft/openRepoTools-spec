@@ -1,10 +1,11 @@
 # Contract: the bind record, the session's offer file in its bind modes
 
 - Owner: lane openRepoTools-5. Tag: [L5]. Feature 007, `contracts/bind-record.md`, which tasks.md's T501 lands (R50), after the spec PR and before T502. T502, T507 and T510 build on it, lane 4's T412 uses its liveness helper, and lane 2's AT-F6 tests it.
-- **Status: draft 4,** written 2026-11-09T21:27Z by lane 5's build writer for T501, on the local branch `lane5/007-T501-bind-record`. Draft 1, `c405f3f1`, was written at 16:31Z from `722078c9`. Draft 2, `40a2ff78`, written at 17:26Z, folded in lane 3's rulings on all 14 of draft 1's open points (lane 3's ruling, #165 6746215510, 2026-11-09T17:03Z).
+- **Status: draft 5,** written 2026-11-09T21:57Z by lane 5's build writer for T501, on the local branch `lane5/007-T501-bind-record`. Draft 1, `c405f3f1`, was written at 16:31Z from `722078c9`. Draft 2, `40a2ff78`, written at 17:26Z, folded in lane 3's rulings on all 14 of draft 1's open points (lane 3's ruling, #165 6746215510, 2026-11-09T17:03Z).
   - Draft 3, `50429140`, written at 21:12Z, folded in lane 3's rulings on draft 2's points 15 and 16 and on the facts file's two removers (lane 3's ruling, #165 6747528875, 2026-11-09T18:00Z), and lane 3's narrowing of point 15 (lane 3's ruling, #165 6747722621, 18:09Z). It also took round B4's numbers for two of draft 1's errata, ERR-23 and ERR-24 (#165 6747379291), each in the section it changes.
-  - Draft 4 folds in lane 3's rulings on draft 3's points 17 and 18, which also confirm draft 3's two readings as lane 3's (lane 3's ruling, #165 6751772589, 2026-11-09T21:20Z), and lane 3's correction of point 18's question 1, which keeps `bind` the attempt and sets the files' index apart from it (lane 3's correction, #165 6751818233, 21:23Z).
-- What it says: the offer file as the bind's record (section 1), its four modes (section 2), every key with the phase and the process that writes it (section 3), the bound (section 4), the guard's eleven cases in short (section 5), `pid_start_of` and the liveness test (section 6), who reads the record (section 7), its test seams (section 8), where Y differs from W and which rulings this contract follows over Y's text (section 9), the changes from drafts 1, 2 and 3, and its open points (section 10).
+  - Draft 4, `34b59791`, written at 21:27Z, folded in lane 3's rulings on draft 3's points 17 and 18, which also confirm draft 3's two readings as lane 3's (lane 3's ruling, #165 6751772589, 2026-11-09T21:20Z), and lane 3's correction of point 18's question 1, which keeps `bind` the attempt and sets the files' index apart from it (lane 3's correction, #165 6751818233, 21:23Z).
+  - Draft 5 folds in lane 3's ruling on lane 5's reading of draft 4 (#165 6752026548): the facts file is `out=`'s `<offers>/<uuid>.bind.<k>` stem with `.facts`, the outer, the body and the guard's sweep all find it from `out=`, never from `bind`, and where the body cannot read the record itself, the outer hands it that path (lane 3's ruling, #165 6752064118, 2026-11-09T21:35Z).
+- What it says: the offer file as the bind's record (section 1), its four modes (section 2), every key with the phase and the process that writes it (section 3), the bound (section 4), the guard's eleven cases in short (section 5), `pid_start_of` and the liveness test (section 6), who reads the record (section 7), its test seams (section 8), where Y differs from W and which rulings this contract follows over Y's text (section 9), the changes from drafts 1, 2, 3 and 4, and its open points (section 10).
 - It states no value its sources do not give. Draft 1 marked with [read] each writer its sources did not name, as lane 5's reading. Lane 3 confirmed that reading, with its point 4's change (lane 3's ruling, #165 6746215510, point 3), so draft 2 carries no [read] mark.
 
 ## 0. Sources, citations and terms
@@ -27,6 +28,7 @@
 | lane 3's ruling, #165 6747722621 | lane 3's narrowing of point 15, 2026-11-09T18:09Z, upholding lane 4's view of pid `1` (#165 6747648353): lane 5's saved copy of the post, `read-6747722621.md` | `924d636f…` | 14 |
 | lane 3's ruling, #165 6751772589, point `<n>` or reading `<n>` | lane 3's rulings on draft 3's points 17 and 18, confirming draft 3's two readings, 2026-11-09T21:20Z: lane 5's saved copy of the post, `read-6751772589.md`. Its answer to point 18's question 1 is replaced by the correction below | `24abc3b3…` | 20 |
 | lane 3's correction, #165 6751818233 | lane 3's correction of 6751772589's point 18, question 1, 2026-11-09T21:23Z, answering lane 5's question (#165 6751803196) with its (a): lane 5's saved copy of the post, `read-6751818233.md` | `dbfb5dca…` | 14 |
+| lane 3's ruling, #165 6752064118 | lane 3's ruling on how the outer, the body and the guard's sweep find the facts file, 2026-11-09T21:35Z, answering lane 5's reading of draft 4 (#165 6752026548): lane 5's saved copy of the post, `read-6752064118.md` | `75540676…` | 9 |
 | `research:<n>` | round B4's `specs/007-sql-register/research.md`, spec `6fe94d17` (#165 6747379291), which numbers lane 3's errata on draft 1's points | `67441862…` | 807 |
 
 - **W and Y.** In "Answer 2's detached bind, and the bind as one verb", W:5336–5512 and Y:5387–5563, Y's line is W's plus 51, and the text is W's but for two lines of the bound's sum (section 9). So T501's W:5372–5383 is Y:5423–5434, and its W:5442–5456 is Y:5493–5507. W:5149 is Y:5200, unchanged. This contract cites Y, the branch's change, and follows it.
@@ -69,8 +71,9 @@
   - **It is not the attempt.** `bind` stays the attempt count, 1 to 3 per offer (Y:5429), and `bind=k+1` at the next `2` counts attempts only (section 3). The `k` of `bind=k` is the attempt, and the `<k>` of the files' names is the index: two numbers. After a case 11, the next offer's attempts count from 1 again, while their files' index runs on above the leftover files' (lane 3's correction, #165 6751818233).
   - The outer's stdout and stderr go to it, with its children's (Y:5394, Y:5408).
   - It is 0600: the hook forks under `( umask 077; … )` (Y:5394), and Y:5408 has "stdout and stderr to one 0600 file per attempt" (also Ytp:5970).
-  - The record's `out` names it (Y:5431): the attempt's own file. The outer and the guard find it there, not by `bind`, and the facts file sits beside it (lane 3's correction, #165 6751818233). It is kept after a failure (Y:5487).
-- **The per-attempt facts file,** `<offers>/<uuid>.bind.<k>.facts`, 0600, beside the `.out` that the record's `out` names, with the same `<k>` (lane 3's ruling, #165 6746215510, point 6; lane 3's correction, #165 6751818233):
+  - The record's `out` names it (Y:5431): the attempt's own file. The outer and the guard find it there, not by `bind`, and the facts file sits beside it (lane 3's correction, #165 6751818233). It is kept after a failure (Y:5487). The outer, the body and the guard's sweep all find the facts file from `out=` too, never from `bind` (lane 3's ruling, #165 6752064118; below).
+- **The per-attempt facts file,** `<offers>/<uuid>.bind.<k>.facts`, 0600, beside the `.out` that the record's `out` names, with the same `<k>`: it is `out=`'s `<offers>/<uuid>.bind.<k>` stem with `.facts` (lane 3's ruling, #165 6746215510, point 6; lane 3's correction, #165 6751818233; lane 3's ruling, #165 6752064118):
+  - **The outer, the body and the guard's sweep** all find it from `out=`, never from `bind`. Where the body cannot read the record itself, the outer hands it that path (lane 3's ruling, #165 6752064118).
   - The body creates it, empty, before its first step. A missing file then means the body never ran (lane 3's ruling, #165 6747528875, point 16(a)).
   - The body writes `why=` and `note=` to it.
   - The outer folds them into the record where the body ended on its own, or writes Y:5488's `why` where the body was stopped, and then removes the file.
@@ -211,14 +214,15 @@ The check is a branch of its own at the offer site, after 18(h)'s count and befo
 
 ## 7. Who reads the record
 
-- **The guard,** at the offer site, at each prompt of the session (Y:5493–5507): `mode`, the identity, `host`, `container`, `pid`, `pidstart`, `bounded`, `bound_s`, `started_utc`, `deadline_epoch`, `bind`, `rc`, `why` and the `note=` lines, for section 5's cases. It also reads `detach`, for section 6's session test (lane 3's ruling, #165 6746215510, point 8), and finds the attempt's own file by `out`, not by `bind` (lane 3's correction, #165 6751818233). It never reads `utc` (lane 3's ruling, #165 6746215510, point 12). `guard_answer` reads a `mode=name-drift` record as today (pin:11076–11093). In phase 2, at the stale row, it also reads `start-record`'s pending record for the five copies (Y:5431).
+- **The guard,** at the offer site, at each prompt of the session (Y:5493–5507): `mode`, the identity, `host`, `container`, `pid`, `pidstart`, `bounded`, `bound_s`, `started_utc`, `deadline_epoch`, `bind`, `rc`, `why` and the `note=` lines, for section 5's cases. It also reads `detach`, for section 6's session test (lane 3's ruling, #165 6746215510, point 8), and finds the attempt's own file by `out`, not by `bind` (lane 3's correction, #165 6751818233). Its sweep finds the facts file from `out=` too, never from `bind` (lane 3's ruling, #165 6752064118). It never reads `utc` (lane 3's ruling, #165 6746215510, point 12). `guard_answer` reads a `mode=name-drift` record as today (pin:11076–11093). In phase 2, at the stale row, it also reads `start-record`'s pending record for the five copies (Y:5431).
 - **The hook's helper,** for case 1's `<bound_s>` and its `mode=binding` rewrite: `c`, `n_a` and `w_s_ms`, or `LANES_BIND_BOUND_S` (tasks:604, :616; lane 3's ruling, #165 6746215510, point 4).
 - **`guard-bind`:**
   - The outer refuses unless the record says `mode=binding` (Y:5396), and sums `bound_s` from its `c`, `n_a` and `w_s_ms` (CLI44:304; tasks:616).
   - It reads only the offer file before `lane-start`: its read-door class is `none` (Y:5399; tasks:605).
-  - At its end it reads the body's facts file, folds it into the record and removes it (lane 3's ruling, #165 6746215510, point 6). It finds its own `.out` by the record's `out`, and the facts file beside it (lane 3's correction, #165 6751818233).
+  - At its end it reads the body's facts file, folds it into the record and removes it (lane 3's ruling, #165 6746215510, point 6). It finds its own `.out` by the record's `out`, and the facts file beside it (lane 3's correction, #165 6751818233), from `out=` too, never from `bind` (lane 3's ruling, #165 6752064118).
   - Just before it writes its outcome, it reads the record again, and writes only where the record is still its own `binding`, with its own `pid` and `pidstart` (section 1; lane 3's ruling, #165 6751772589, point 18).
   - In phase 2, T510's child reads `act` for the `set-row-state` on the lane left, with `LANES_EXPECT="row:<from> bind:<from>"` (Y:5398; tasks:1232); the five copies for its lookup (tasks:1224); and `ended_utc`, `c` and `n_a` for its `w₀` wait (tasks:1225).
+  - The body finds its facts file from the record's `out=`, never from `bind`. Where it cannot read the record itself, the outer hands it that path (lane 3's ruling, #165 6752064118).
 - **Lane 4's T412** reads not the record but its liveness helper: the pending record's claims are live by `pid_start_of` (tasks:938; Y:5185).
 - **Lane 2's AT-F6** (Ytp:5957–6259): twenty-two cases (R53; ERR-12), and four for rows the cases do not reach, which "write the offer file's record directly, with a sleeping process standing in for the child where one is needed" (Ytp:6202–6206). Its names are selected by T502's, T507's and T510's verifies (tasks:584, :708, :1215). Its case 15 asserts the signal's code as 143 (lane 3's ruling, #165 6746215510, point 11; Ytp:6130–6134).
 
@@ -258,7 +262,7 @@ The check is a branch of its own at the offer site, after 18(h)'s count and befo
   - point 16: (b) says how Y:5488's "stopped by its bound" is told from the body's own end, refining point 11; (c) gives a `why` where Y:5487's refusal line is missing; (a) and (d) fill gaps (sections 1 and 3);
   - points 6 and 13: the facts file's two removers are one rule, and case 11 leaves `<uuid>.bind.*` (section 1). Y:5507's "dropped" is unchanged.
 - **Lane 3's rulings on draft 3's points** (lane 3's ruling, #165 6751772589, with lane 3's correction, #165 6751818233, replacing its answer to point 18's question 1). Round B8 or B9 records them in `research.md` "as decisions, or as errata where a Y line needs one", and B8 takes the numbers in order (lane 3's ruling, #165 6751772589):
-  - **An erratum to Y:5394, its number pending in B8 or B9** (lane 3's correction, #165 6751818233): Y:5394's `<k>` becomes the files' index, one above the highest index among the uuid's `.bind.*` files and 1 where there are none, and `bind` keeps the attempt, 1 to 3 per offer (Y:5429). `out` is already a key of the record (Y:5431), so the erratum names no new key. This contract follows the erratum (sections 1, 3 and 7);
+  - **An erratum to Y:5394, its number pending in B8 or B9** (lane 3's correction, #165 6751818233): Y:5394's `<k>` becomes the files' index, one above the highest index among the uuid's `.bind.*` files and 1 where there are none, and `bind` keeps the attempt, 1 to 3 per offer (Y:5429). `out` is already a key of the record (Y:5431), so the erratum names no new key. B8 or B9 records with it lane 3's rule that the facts file is `out=`'s `<offers>/<uuid>.bind.<k>` stem with `.facts`, which the outer, the body and the guard's sweep all find from `out=`, never from `bind`, the outer handing the body that path where the body cannot read the record itself (lane 3's ruling, #165 6752064118). That rule names no new key either. This contract follows the erratum (sections 1, 3 and 7), and the rule with it (sections 1 and 7);
   - point 17: Y sets no length for a `pid`. The ruling takes `pid_start_of`'s cap of 10 digits into the record's rule (sections 5 and 6);
   - point 18, question 2: Y:5396 and Y:5486–5488 have the outer write its outcome. The ruling has it read the record again first, and write only over its own `binding` (section 1);
   - the two readings: lane 3 confirms both, the record with `pid` alone (section 5) and point 16(b) sorting only the `why` (section 4). Neither changes a Y line.
@@ -299,6 +303,14 @@ Each is lane 3's ruling, #165 6751772589, by point or reading, unless lane 3's c
 - **Sections 6 and 7:** the record's rule takes `pid_start_of`'s cap (17); the guard and the outer find the attempt's file by `out` (#165 6751818233); the outer's read before its outcome (18, question 2).
 - **Sections 9 and 10:** the erratum to Y:5394, its number pending in B8 or B9 (#165 6751818233); how draft 3's ruled points stand beside Y; points 17 and 18 ruled, and the readings confirmed.
 
+## Changes from draft 4
+
+Each is lane 3's ruling, #165 6752064118, on lane 5's reading of draft 4 (#165 6752026548):
+- **Header and section 0:** the status at draft 5; lane 3's ruling as a source.
+- **Section 1:** the facts file's path, `out=`'s `<offers>/<uuid>.bind.<k>` stem with `.facts`; the outer, the body and the guard's sweep all find it from `out=`, never from `bind`; where the body cannot read the record itself, the outer hands it that path.
+- **Section 7:** the guard's sweep, the outer and the body find the facts file from `out=`, never from `bind`, and the outer hands the body that path where the body cannot read the record itself.
+- **Sections 9 and 10:** B8 or B9 records the rule with the erratum to Y:5394, and it names no new key; no point is left open at draft 5.
+
 ## 10. Open points, for lane 3
 
 **Draft 1's points 1 to 14 are ruled by lane 3 (6746215510); see sections 1 to 9:**
@@ -337,4 +349,4 @@ Each is lane 3's ruling, #165 6751772589, by point or reading, unless lane 3's c
 | 18, question 2 | yes: just before its outcome the outer reads the record again, and writes only over its own `binding`; its `.out` still carries the outcome; the temporary file and `mv` leave one window, milliseconds wide (6751772589) | sections 1, 2, 7 and 9 |
 | readings 1 and 2 | confirmed: a record with `pid` alone reads as one with no `pid`; point 16(b) sorts only the `why`, and the sweep keeps tasks:610's trigger | sections 3, 4, 5 and 9 |
 
-No point is left open at draft 4.
+No point is left open at draft 5.
