@@ -3,7 +3,7 @@
 - Owner: lane 3. Tag: [L3]. Feature 007, `contracts/render-commit.md`, which tasks.md's T344 lands, and T320, T322, T326 and T327 build on.
 - Source: design.md at Y, commit `a6497d00`, with operations.md at the same commit.
 - Citations: `Y:<n>` is a line of design.md and `ops:<n>` of operations.md, both at Y.
-- Where Y leaves a point to the plan or to a lane, this contract says so and does not decide it.
+- Where Y leaves a point to the plan or to a lane, this contract says so. Section 5 records lane 3's choices where lane 3 has made them.
 
 ## 1. The render commit (D15)
 
@@ -155,5 +155,5 @@
 - The batch and cap: "The 64 and the 16 are the design's values, unmeasured" (Y:2904–2905); "six races lost to handoff pushes leave the last write unrendered until the next write anywhere, or `reconcile`" (Y:2905–2907). Y leaves to lane 3 "the two values, and whether to accept the gap after six lost races" (Y:6029). Lane 3 took them in its 007 call: 64 seqs a pass, 16 passes, and the gap accepted, which `reconcile` closes (research.md's PC-3).
 - F29 pins not probed: the inherited environment (Y:5955), mode and path bytes on macOS (Y:5956), the object format (Y:5957). The message rules: "The git rules above are read, not probed; the test proves them" (Y:5968).
 - A forged trailer beyond the head: "The forged-trailer case with a seq beyond the head was not probed" (Y:6075).
-- F29's table still lists a pin that runs `interpret-trailers` (Y:5954); "So `lanes-index` composes the message itself and never runs `interpret-trailers`" (Y:5961). This contract follows D15 (Y:559).
-- Y:6031–6032 list the `commit.gpgSign` and `interpret-trailers` texts as awaiting lane 3, while the composition "is ruled: `lanes-index` composes the message itself" (Y:6473–6474).
+- F29's table still lists a pin that runs `interpret-trailers` (Y:5954); "So `lanes-index` composes the message itself and never runs `interpret-trailers`" (Y:5961). This contract follows D15 (Y:559): D15 governs (lane 3, fix round B, 2026-11-09), and T345 marks the row superseded before the archive.
+- Y:6031–6032 list the `commit.gpgSign` and `interpret-trailers` texts as awaiting lane 3, while the composition "is ruled: `lanes-index` composes the message itself" (Y:6473–6474). D15 governs, since it now carries both fixes (lane 3, fix round B, 2026-11-09), and T345 marks rows 5 and 6 as applied before the archive.

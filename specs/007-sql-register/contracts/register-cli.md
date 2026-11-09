@@ -2,13 +2,14 @@
 
 **What this is.** `contracts/register-cli.md` for feature 007: the contract between group A (`lanes-index`, lane 1) and group B (the write path in `lanes-edit.sh`, lane 4), and, in §3.6, between group A and the readers, the guard and the renderer. Group B codes against it, and its tests' fake `psql` and stub `lanes-index` stand in for it (FR-017). Lane 1 writes it, lane 4 confirms group B's sections, lane 5 reviews §3.6 (R06), and lane 3 rules (lane 3's post, #165 6724332510).
 
-**Status:** Draft 4.1: draft 4 plus lane 5's check (#165 6739068493). By lane openRepoTools-1, 2026-11-09, and still keyed to commit Y, `a6497d00`. Lane 5 found all 16 items of its review folded in, and took L1-D1. Draft 4.1 takes its two NITs, and lane 1's note on an empty `--lane=` in form 2 ("Changes from draft 4", below).
+**Status:** Draft 4.2: draft 4.1 plus O21 closed by lane 4's (a) (#165 6741093519). By lane openRepoTools-1, 2026-11-09, and still keyed to commit Y, `a6497d00`. Draft 4.2 takes that one answer, as lane 3 asked (#165 6741231506), and changes nothing else of substance ("Changes from draft 4.1", below).
+- Draft 4.1 (`contracts-register-cli.v4.1.md`, `df40136e…`), by lane openRepoTools-1, 2026-11-09, was draft 4 plus lane 5's check (#165 6739068493), keyed to commit Y, `a6497d00`. Lane 5 found all 16 items of its review folded in, and took L1-D1. Draft 4.1 took its two NITs, and lane 1's note on an empty `--lane=` in form 2.
 - Draft 4 (`contracts-register-cli.v4.md`, `5d6ce7ca…`), by lane openRepoTools-1, 2026-11-09, folded in form 4, the guard's second read, and lane 5's review of §3.6, both whole, keyed to commit Y, `a6497d00`.
 - **Form 4:** lane 1 picked its argv (#165 6727229519) after lane 3's O17 ruling (#165 6727201960).
-- **Lane 5's review** (#165 6738431117) is taken item by item as lane 1 decided it, as the contract's author: B1 to B8, C1 to C14, and O14 to O18. Lane 3 then ruled B4 and B7 (#165 6738474549), which closes O19 and O20. Only O21, lane 4's, stays open.
+- **Lane 5's review** (#165 6738431117) is taken item by item as lane 1 decided it, as the contract's author: B1 to B8, C1 to C14, and O14 to O18. Lane 3 then ruled B4 and B7 (#165 6738474549), which closes O19 and O20. O21, lane 4's, is closed by lane 4's (a) (#165 6741093519).
 - **L1-D1,** lane 1's own decision in draft 4: `--lane` and `--log-key` take their value in the `=` form.
 - Draft 3, by lane openRepoTools-1, 2026-11-08, took lane 3's rulings of 20:15Z (#165 6726556972: R01, R02, R04, R05, R06, R08 and R09, with R17 and R45 as context) and lane 4's answers 36 and 40 (#165 6726296119, Q-L1-1), and was keyed to commit Y, `a6497d00`, X's child, as lane 3 now keys 007 (#165 6727039049). Draft 4 keeps all of it.
-- Draft 1 (`contracts-register-cli.md`, `867ce650…`) is T101's basis (R01). Draft 2 (`contracts-register-cli.v2.md`, `745a4b38…`), draft 3 (`contracts-register-cli.v3.md`, `54807ad0…`) and draft 4 (`contracts-register-cli.v4.md`, `5d6ce7ca…`) stay beside it.
+- Draft 1 (`contracts-register-cli.md`, `867ce650…`) is T101's basis (R01). Draft 2 (`contracts-register-cli.v2.md`, `745a4b38…`), draft 3 (`contracts-register-cli.v3.md`, `54807ad0…`), draft 4 (`contracts-register-cli.v4.md`, `5d6ce7ca…`) and draft 4.1 (`contracts-register-cli.v4.1.md`, `df40136e…`) stay beside it.
 - Its date is 2026-11-09 14:00Z, for group B's sections and for §3.6 alike: lane 1 names the contract's own date as §3.6's (R06).
 
 ## 0. Basis, and how to read it
@@ -56,6 +57,14 @@
 - **[Q-L1-1]:** lane 4's answers 36 and 40, taken by lane 1 (§3.4).
 - **[B<n>], [C<n>]:** lane 5's review item of that id (#165 6738431117), as lane 1 took it. [O14] to [O18] mark the open points that review closed.
 - **[L1-D1]:** lane 1's own decision in draft 4, as the contract's author: the `=` form of `--lane` and `--log-key` (§3.6).
+
+## Changes from draft 4.1, made in draft 4.2
+
+Draft 4.2 takes lane 4's answer to O21 (#165 6741093519), and nothing else of substance.
+
+| Change | Where | Point |
+|---|---|---|
+| O21 is closed by lane 4's (a): T401's `register-text` and `register-grep` answer `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*`, and 2 for any other path, so no reader form returns an arbitrary render-set path. §8's O21 row says it is closed, §3.6's "Not settled here" note says that nothing in §3.6 is left unsettled, and the two other places that held O21 unsettled now say it is closed: C2's text in §3.6 and the header's note on lane 5's review. The status line and its history name draft 4.1 and its digest | §3.6, C2's text and "Not settled here"; §8, O21's row; header | lane 4's (a), #165 6741093519; lane 3's request, #165 6741231506 |
 
 ## Changes from draft 4, made in draft 4.1
 
@@ -799,7 +808,7 @@ Under `--for guard`, the first stderr line on a 69 is the cause the guard quotes
   - **Exits** [C13]: 0; 2 for a refused configuration, Q6(c)'s refusal included, at load (Y:4872); 69 for checks 3 and 4, a database it cannot reach, or a failed read; 64.
   - It is the image cache's form. Group B takes images through `--tree`, and the readers through `register read`.
 
-**No reader form returns an arbitrary render-set path** [C2]. Under option (a), which lane 1 prefers, T401's `register-text` answers `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*`, and 2 for any other path. Option (b) would be a reader form, `register read --at <n> --path <p> --cache <file>`. The choice is lane 4's (O21). If lane 4 picks (b), draft 5 adds it.
+**No reader form returns an arbitrary render-set path** [C2]. Option (a), which lane 1 preferred and lane 4 chose (O21, closed by lane 4's (a), #165 6741093519), holds: T401's `register-text` answers `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*`, and 2 for any other path. Option (b) would have been a reader form, `register read --at <n> --path <p> --cache <file>`, and this contract has none.
 
 **The flush helper** is `reg_flush` (lane 5's Q-L5-4 answer, #165 6726077268).
 - It drops what Y:4958 lists: Y:4958 "- **The family.** `.log.<lane>` is the first per-lane sibling of `.register`". That is `.register`, `.aliases`, `.archive`, `.paths`, `.log.*` and `.logpath.*`. It also empties `LANES_REGISTER_CACHE`, as Y:4958 says and `code/lanes-edit.sh:11063` does at pin `2a057a6d` (C6).
@@ -810,7 +819,7 @@ Under `--for guard`, the first stderr line on a 69 is the cause the guard quotes
   - At the pin, `guard_bound_check` reads only the register and aliases (`code/lanes-edit.sh:11063–11065`, `:11180`).
 - After `committed`, the child's tail reads take D17's path through the read family that `reg_flush` drops (lane 4's Q11).
 
-**Not settled here:** only O21, C2's (a) or (b), which is lane 4's (§8). Lane 5's review closed O14 to O18 (#165 6738431117), and lane 3's ruling closed O19 and O20 (#165 6738474549).
+**Not settled here:** nothing in §3.6 is left unsettled, since O21, C2's (a) or (b), was closed by lane 4's (a) (#165 6741093519; §8). Lane 5's review closed O14 to O18 (#165 6738431117), and lane 3's ruling closed O19 and O20 (#165 6738474549).
 
 ### 3.7 `lanes-index render --checkout <c>`
 
@@ -935,7 +944,7 @@ Lane 4's reply (#165 6725230285), lane 3's rulings of 20:15Z (#165 6726556972), 
 | O18 | A log key outside `check_lane_name`'s class, which Y:4956 sends down the second-read path, and which cannot name a cache file | lane 5 | draft 3: one shared slot, never counted as cached. Draft 4: lane 5's design, `--log-key=<key>`, with `.log.%<hex>` and `.logpath.%<hex>` (§3.6) | **Closed by lane 5's review** (#165 6738431117), which objected to the one shared slot: `--files` is comma-separated, and two concurrent second reads would overwrite it (Y:4127–4129, Y:4890). Forms 1 and 2 skip a key outside the class and refuse nothing; form 4's `--lane=<key>` takes any key |
 | O19 | Form 4's "too late": noted as a log that could not be read, as lane 5's B4 has it, or a 2 that refuses the prompt | lane 3 | lane 5's B4 text (§3.6) | **Closed by lane 3's ruling** (#165 6738474549): B4 word for word, "too late" included. Form 4 fails open on every end but 0, and the prefetch, form 2, keeps its "too late" refusal (Y:4269–4271) |
 | O20 | Form 4 never goes through the service (B7), against Y:4159–4160's "direct if the flag file exists", since the service's request carries only file names (register-service spec:59; Y:4611) | lane 3 | record the departure in `research.md`, or amend spec:59 | **Closed by lane 3's ruling** (#165 6738474549): form 4 always reads directly, and spec:59 stands. Lane 3's `research.md` erratum on Y:4159 makes its "direct if the flag file exists" read "always direct, at `n`". Lane 3 adds that lane 5 brings the point back if T511 and T512 show that path often running out of budget, and that a request naming `n` would be a spec change, for Brett |
-| O21 | C2: no reader form returns an arbitrary render-set path. (a): T401's `register-text` answers `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*`, and 2 for any other path. (b): a reader form, `register read --at <n> --path <p> --cache <file>` | lane 4, for T401 | (a), lane 1's preference (§3.6) | **Open,** new in draft 4. If lane 4 picks (b), draft 5 adds the form |
+| O21 | C2: no reader form returns an arbitrary render-set path. (a): T401's `register-text` answers `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*`, and 2 for any other path. (b): a reader form, `register read --at <n> --path <p> --cache <file>` | lane 4, for T401 | (a), lane 1's preference (§3.6) | **Closed by lane 4's (a)** (#165 6741093519): `register-text` and `register-grep` answer `lanes/LANES.md`, `lanes/aliases.tsv` and `lanes/log/*`, and 2 for any other path, so no reader form returns an arbitrary render-set path |
 
 ---
 

@@ -31,8 +31,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.1 (`contracts/register-cli.md`, `df40136e…`,
-#165 6739202842) and its block is v4.2 (`cad0fa93…`, #165 6739714248),
+contract is its draft 4.2 (`contracts/register-cli.md`, `dea51e43…`,
+#165 6741494851) and its block is v4.2 (`cad0fa93…`, #165 6739714248),
 both keyed to Y.
 
 ## Part 1: errata against the frozen text
