@@ -87,14 +87,43 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   session, answered at 21:01:25Z (#165 6727094958). That dialog was opened on
   an accepted prompt suggestion, not on text Brett typed, so nothing here
   rests on it alone. It confirms a ruling already in force.
-- **Source at Y:** ops:411; ops:434; Y:2243–2244; Y:2256–2257.
+- **Source at Y:** ops:411; ops:434; Y:2239; Y:2243–2244; Y:2256–2257.
 - **The SHALL, changed:** at Y the sql spec's bootstrap requirement said "A
-  roles-only form SHALL make only the roles" (spec:846). The commit after
-  `aa190a7f` on this branch, on lane 3's ruling (a), rewrites that SHALL so
-  the roles-only form makes the roles and these three statements and nothing
-  else, keeps its reason clause, and adds the scenario "A dump restored after
-  the roles-only form". No spec delta is left. ops:411 keeps its words, so
-  this entry stays its erratum.
+  roles-only form SHALL make only the roles" (spec:846). Two commits on this
+  branch after `aa190a7f`, on lane 3's ruling (a), rewrite that SHALL so the
+  roles-only form makes the roles, with the admin's membership in the owner
+  and the indexer (Y:2239), which is T109's first part, and these three
+  statements, and nothing else. They keep its reason clause, and add the
+  scenario "A dump restored after the roles-only form", whose THEN also
+  checks lane 1's case 5: a function the owner makes after the restore is
+  not executable by PUBLIC. No spec delta is left. ops:411 keeps its words,
+  so this entry stays its erratum.
+- **The restore's database and order:** lane 3's ruling on test-plan open
+  point 41, 2026-11-09. The admin creates the register's database first, as
+  his own act, through his maintenance connection. Then every `lanes-index`
+  step of a restore runs through one admin service, which names the
+  register's database: `lanes-index` never picks a database. The order:
+  1. the admin creates the database;
+  2. `bootstrap --roles-only`;
+  3. `login add <engineer>` for each engineer, and `login add --dump-job`;
+  4. `pg_restore` into the database;
+  5. `bootstrap`, which prints `unchanged`.
+
+  Under (a) the database must exist first: the `REVOKE` and the `GRANT …
+  ON DATABASE :"db"` name it, and `ALTER DEFAULT PRIVILEGES` holds only in
+  the database the connection names.
+  - **It corrects** the test plan's restore from the dump, AT-LRMPG's
+    (`test-plan.md:5346–5362`), which holds two admin services, one naming
+    the cluster's `postgres` database for the steps before the register's
+    database exists and one naming it for the steps after, and runs
+    `--roles-only` and `login add` before the admin creates it. It corrects
+    ops §2.3's step 6 (ops:371), which runs `--roles-only` first with no
+    database made, and ops §2.4 (ops:410; ops:486), which give the admin
+    service and the roles-only form and `login add` with no database named.
+    Those texts keep their words, so this entry is their erratum.
+  - **Whose:** lane 3's ruling, which answers the test plan's open point 41
+    (`test-plan.md:9064–9072`). Its record is "Lane 3's ruling on test-plan
+    open point 41, 2026-11-09", which lane 3 posts on #165.
 
 ### ERR-04. The guard's second read is always direct, at `n` (B7)
 
@@ -284,6 +313,25 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   lane 2's point 42 (6726296119).
 - **Source at Y:** Y:5218.
 
+### ERR-21. The design's "too late" refusal is the prefetch's (B4)
+
+- **The erratum:** three passages of the design read as a refusal for any
+  late read of the guard's:
+  - Y:4185, the parse's start line: "a read, through the service or direct,
+    that completes after it is a refusal";
+  - Y:4266–4271, the clamp, at the direct read's cap of 3.75 s, or 3.65 s
+    under a declaration;
+  - Y:4344, the exit-mapping row that maps a late read to 2.
+
+  Each holds for form 2, the prefetch, only. Form 4, the guard's second
+  read, has B4's ends: 0 with the one log's files written, and every other
+  end a log that could not be read, which the guard notes and does not
+  refuse for. Its cut is `T0` + 3.75 s whatever a declaration says, since it
+  reads no declaration (B5).
+- **Whose:** lane 3's ruling B4, with B5, #165 6738474549, on lane 5's §3.6
+  review (6738431117).
+- **Source at Y:** Y:4185; Y:4266–4271; Y:4344.
+
 ## Part 2: decisions
 
 ### DEC-01. The service is built beside groups A and B, and the v1.2.0 tag waits for it (R35)
@@ -376,15 +424,26 @@ its block is v4.1 (`53e66ced…`), both keyed to Y (#165 6739202842).
   guard row. Its case `guard_second_read_at` keeps items 1 to 8, and item
   9's ends 69, 78, 1 and 64.
 - **Source at Y:** Y:4269–4271.
-- **The SHALL, changed:** at Y the service spec's budget requirement said
+- **The SHALLs, changed:** at Y the service spec's budget requirement said
   that a guard's client starting at or past the direct read's cap "SHALL
   exit as "too late to verify", and the guard SHALL refuse with 2" (svc:124),
-  for any client. The commit after `aa190a7f` on this branch, on lane 3's
-  ruling B4, scopes that SHALL to the guard's prefetch, adds a SHALL that the
-  second read started at or past the same cap exits as "too late to verify"
-  while the guard notes that log as unread and does not refuse for it, names
-  the prefetch's direct read in the declaration's sentence, and adds the
-  scenario "A second read that starts too late". No spec delta is left.
+  for any client, and a guard's read that failed was a 2 in svc:23, svc:104,
+  svc:124 ("A database that does not answer SHALL be a 2 inside the hook"),
+  svc:174 and the declared outage's check (svc:188), and in the sql spec's
+  spec:87 and spec:574. Two commits on this branch after `aa190a7f`, on lane
+  3's ruling B4:
+  - scope each of those refusals to the guard's prefetch, its first read;
+  - add that the second read, started at or past `T0` + 3.75 s whatever a
+    declaration says (B5), exits as "too late to verify", and that it fails
+    open on every end but 0, in B4's words: every other end is a log that
+    could not be read, which the guard notes and does not refuse for;
+  - name the prefetch's direct read in the declaration's sentence;
+  - scope the scenarios "A guard that starts too late" and "A read held
+    behind a lock" to the prefetch, and add "A second read that starts too
+    late".
+
+  No spec delta is left. ERR-21 records the design's three passages that
+  still read as a refusal for any late read.
 
 ### DEC-06. `register read`'s keys take the `=` form (L1-D1)
 
