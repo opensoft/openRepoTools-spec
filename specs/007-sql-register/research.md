@@ -85,10 +85,14 @@ block is v4 (`203794ec…`), both keyed to Y.
   session, answered at 21:01:25Z (#165 6727094958). That dialog was opened on
   an accepted prompt suggestion, not on text Brett typed, so nothing here
   rests on it alone. It confirms a ruling already in force.
-- **Source at Y:** ops:411; ops:434; Y:2243–2244; Y:2256–2257. The sql spec's
-  bootstrap requirement says "A roles-only form SHALL make only the roles"
-  (spec:846); this entry decides nothing about that SHALL, which lane 3 has
-  as a possible spec delta.
+- **Source at Y:** ops:411; ops:434; Y:2243–2244; Y:2256–2257.
+- **The SHALL, changed:** at Y the sql spec's bootstrap requirement said "A
+  roles-only form SHALL make only the roles" (spec:846). The commit after
+  `aa190a7f` on this branch, on lane 3's ruling (a), rewrites that SHALL so
+  the roles-only form makes the roles and these three statements and nothing
+  else, keeps its reason clause, and adds the scenario "A dump restored after
+  the roles-only form". No spec delta is left. ops:411 keeps its words, so
+  this entry stays its erratum.
 
 ### ERR-04. The guard's second read is always direct, at `n` (B7)
 
@@ -362,11 +366,16 @@ block is v4 (`203794ec…`), both keyed to Y.
   an advisory read, which today's guard does not refuse over; failing open
   answers a handoff request one prompt late; and the cap ends form 4 before
   the hook's 5 s.
-- **Source at Y:** Y:4269–4271. The service spec's budget requirement says
+- **Source at Y:** Y:4269–4271.
+- **The SHALL, changed:** at Y the service spec's budget requirement said
   that a guard's client starting at or past the direct read's cap "SHALL
-  exit as "too late to verify", and the guard SHALL refuse with 2" (svc:124);
-  lane 3's ruling reads that as the prefetch's. Lane 3 has the reading as a
-  possible spec delta.
+  exit as "too late to verify", and the guard SHALL refuse with 2" (svc:124),
+  for any client. The commit after `aa190a7f` on this branch, on lane 3's
+  ruling B4, scopes that SHALL to the guard's prefetch, adds a SHALL that the
+  second read started at or past the same cap exits as "too late to verify"
+  while the guard notes that log as unread and does not refuse for it, names
+  the prefetch's direct read in the declaration's sentence, and adds the
+  scenario "A second read that starts too late". No spec delta is left.
 
 ### DEC-06. `register read`'s keys take the `=` form (L1-D1)
 
