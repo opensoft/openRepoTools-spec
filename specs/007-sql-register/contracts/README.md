@@ -3,24 +3,36 @@
 This directory holds the contract files that plan.md lists. Each is written
 by the lane that owns it, and lands before the code that rests on it.
 
-## `register-cli.md`: lane 1's contract draft 4.5, keyed to Y
+## `register-cli.md`: lane 1's contract draft 4.6, keyed to Y
 
-[register-cli.md](register-cli.md) is lane 1's contract draft 4.5, keyed to
-Y (`a6497d00`), copied here byte for byte by lane 3 at round B3 on
-2026-11-09. It replaces draft 4.4, which lane 3 copied in at fix round B2;
-draft 4.2 came in at fix round B, and draft 4.1 at assembly phase A.
+[register-cli.md](register-cli.md) is lane 1's contract draft 4.6, keyed to
+Y (`a6497d00`), copied here byte for byte by lane 3 at round B4 on
+2026-11-09. It replaces draft 4.5, which lane 3 copied in at round B3;
+draft 4.4 came in at fix round B2, draft 4.2 at fix round B, and draft 4.1
+at assembly phase A.
 
-- **Source:** lane 1's contract draft 4.5, `contracts-register-cli.v4.5.md`,
-  posted on #165 at 6745394391.
+- **Source:** lane 1's contract draft 4.6, `contracts-register-cli.v4.6.md`,
+  posted on #165 at 6746620707.
 - **sha256:**
-  `da5a23ce00bff82413a32288747e60071d676138d8f1455fdaf5eb5a772c7deb`, 963
-  lines. The copy here has the same digest. Drafts 4.3 to 4.5 keep every
+  `028937e66f9bce3ffdeb6130cafdcd5111bd25050756676ba5f609080a810f5d`, 963
+  lines. The copy here has the same digest. Drafts 4.3 to 4.6 keep every
   line number of draft 4.2.
-- **What draft 4.5 changes:** it is draft 4.4 with lane 3's call on the
-  endpoint's name (#165 6745266800): §2.5's `register_url=` row (:273) and
-  §9's Hosting row (:957) keep `<endpoint>`, and say only that Brett makes
-  its one A record by hand once the install reports the load balancer's
-  static IP; and its status and history lines (:5, :12).
+- **What draft 4.6 changes:** it is draft 4.5 with lane 1's answers to T511's
+  open points for lane 1 (T511's §13, #165 6745670828), inside existing lines
+  of §3.6 (:653, :665, :673, :730, :764 and :767): `register read` reads the
+  switch and the readers' schema window, with the 69's cause line fixed
+  (OP-4); names its members to the service (OP-5); has the service resolve a
+  log's case (OP-6); finds form 3's changes by digests and asks the service
+  first (OP-7); and prints the fallback line whenever it falls back (OP-11).
+  Its status and basis lines change too (:5, :12). Its §3.1 to §3.5 are
+  byte-identical to draft 4.5's, so lane 4's confirmation holds (lane 3, #165
+  6746783992).
+- **What draft 4.5 changes** (`da5a23ce…`, #165 6745394391): it is draft 4.4
+  with lane 3's call on the endpoint's name (#165 6745266800): §2.5's
+  `register_url=` row (:273) and §9's Hosting row (:957) keep `<endpoint>`,
+  and say only that Brett makes its one A record by hand once the install
+  reports the load balancer's static IP; and its status and history lines (:5,
+  :12).
 - **What draft 4.4 changes** (`8600078b…`, #165 6742751889): it is draft 4.3
   with lane 4's log set in §3.6's C2 text (:811) and §8's O21 row (:947): each
   `lanes/log/<lane>.md`, and 2 for `lanes/log/README.md`; and its status and
@@ -47,7 +59,7 @@ draft 4.2 came in at fix round B, and draft 4.1 at assembly phase A.
   660 lines, #165 6745214166) replaces it for 007's tasks, and keeps its
   line numbers: it is block v4.4 (`a4ce9e3b…`, #165 6742356416) with T119's
   check 11 and its tests naming the prod OpenXPKI's root (:386, :388). The
-  contract, at draft 4.5 as at 4.1, gives no restore order.
+  contract, at draft 4.6 as at 4.1, gives no restore order.
 - **What draft 4.1 changes:** it is draft 4 (#165 6738871108, `5d6ce7ca…`,
   939 lines) with lane 5's check of draft 4 taken (#165 6739068493). The
   quote of the guard's second read is cited as Y:4160–4161; the change list
@@ -72,9 +84,10 @@ draft 4.2 came in at fix round B, and draft 4.1 at assembly phase A.
   `--lane` and `--log-key` only. Group B's `--lane <lane>`, on
   `register snapshot`, `register commit` and `journal --write-id`, keeps the
   form of the phase plan's interfaces table (Y:4834).
-- **Its landing:** lane 1's T101 lands the contract's final text at this
-  path. A later draft replaces this copy, with its own source and digest
-  here.
+- **Its landing:** tasks.md's T101 rides the spec PR, since its output is
+  this file, in the spec branch at draft 4.6 (lane 3, #165 6745826156). A
+  later draft replaces this copy as a fix before the spec PR leaves draft,
+  with its own source and digest here.
 
 ## `render-commit.md`: lane 3's contract, written from Y
 
@@ -98,13 +111,15 @@ sections 1 to 4 add nothing Y does not say.
 
 ## The other contracts
 
-Each owner writes its file at this directory's path. Of these, only lane 3's
-`render-commit.md` is in:
+Each owner writes its file at this directory's path. Of these, lane 3's
+`render-commit.md` is in since phase B, and lane 1's `exit-codes.md` and
+`config.md` since round B4, from lane 1's commits `31196cd9` and `eca2da3d`;
+tasks.md's T102 rides the spec PR (lane 3, #165 6745826156):
 
 | File | Owner | Task |
 | --- | --- | --- |
-| `exit-codes.md` | lane 1, for the `lanes-index` rows | T102 |
-| `config.md` | lane 1 | T102 |
+| `exit-codes.md` | lane 1, for the `lanes-index` rows; in at round B4 | T102 |
+| `config.md` | lane 1; in at round B4 | T102 |
 | `pending-record.md` | lane 4 (R34) | T412 |
 | `bind-record.md` | lane 5 (R50) | T501 |
 | `socket-api.md` | lane 5 (R50) | T511 |

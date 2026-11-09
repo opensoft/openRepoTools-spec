@@ -8,10 +8,10 @@ Secret, corrected after Y on lane 1's word (#165 6742453803). This file
 records what the rulings since the freeze decide for 007, and the errors found
 in the frozen text.
 
-- **Part 1, the errata** (ERR-01 to ERR-22; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-30; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-22): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-23): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -33,8 +33,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.5 (`contracts/register-cli.md`, `da5a23ce…`,
-#165 6745394391) and its block is v4.5 (`4d740972…`, #165 6745214166),
+contract is its draft 4.6 (`contracts/register-cli.md`, `028937e6…`,
+#165 6746620707) and its block is v4.5 (`4d740972…`, #165 6745214166),
 both keyed to Y, both keeping v4.2's line numbers.
 
 ## Part 1: errata against the frozen text
@@ -356,6 +356,93 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   lane 2's point 36 (6726296119).
 - **Source:** Y:5236.
 
+### ERR-23. Cases 7 and 9 rename the window back to `<from>` (point 7)
+
+- **The erratum:** the "Record after" cells of Y:5503, the failure on the
+  third attempt, and of Y:5505, the stale record, add "window renamed back to
+  `<from>`" (Y:5502), as the failure below the third attempt has it. Y:5506's
+  record from another host or container renames nothing. T502's cases 7 and 9
+  follow it in `tasks.md`.
+- **Whose:** lane 3's ruling on lane 5's T501 point 7, #165 6746215510.
+- **Source:** Y:5502; Y:5503; Y:5505; Y:5506.
+
+### ERR-24. Two code citations in the bind's record and case table (point 14)
+
+- **The erratum:** Y:5507's citation of today's text for an unreadable record,
+  `:11097–11101`, reads `:11091–11094`. Y:5428's citation of the offer's
+  identity, `:10965–10973`, reads `:10963–10971`.
+- **Whose:** lane 3's ruling on lane 5's T501 point 14, #165 6746215510.
+- **Source:** Y:5507; Y:5428.
+
+### ERR-25. The service's connect timeout is `c` (OP-1)
+
+- **The erratum:** Y:3892's "which the service overrides with 2", said of
+  `PGCONNECT_TIMEOUT`, reads "which the service, as every register path, sets
+  to `c` (SVC-6)". Every other place in Y already says `c`.
+- **Whose:** lane 3's ruling on T511's OP-1, #165 6746215510.
+- **Source:** Y:3892.
+
+### ERR-26. The service's answer names the register generation it read (OP-2)
+
+- **The erratum:** Y:4064–4066's "The answer is `text <n>`" reads: the answer
+  is "`text <n>` with the register generation that transaction read", as
+  `register read` reports both (Y:4833). Its bytes stay lane 5's OP-3, and
+  lane 1 confirms the form.
+- **Whose:** lane 3's ruling on T511's OP-2, #165 6746215510.
+- **Source:** Y:4064–4066; Y:4833.
+
+### ERR-27. An owner file from another pid namespace or boot means the service is unavailable, and starts none (OP-8)
+
+- **The erratum:** Y:3881–3883's start list drops "another namespace or". A
+  client starts `serve` where it finds no socket (`ENOENT`), a dead one
+  (`ECONNREFUSED`), or an owner file from another install, unless a failure
+  stamp is fresh; the last is what Y:3914–3918's `unavailable restarting`
+  covers. An owner file from another pid namespace or another boot means the
+  service is unavailable: the client reads directly and starts none, as SVC-2
+  says (Y:3782–3788). `ENOENT` and `ECONNREFUSED` still start one, whatever
+  the owner file says.
+- **Whose:** lane 3's ruling on T511's OP-8, as corrected in #165 6746655077,
+  which replaces the OP-8 line of 6746215510 and of its analysis.
+- **Source:** Y:3881–3883; Y:3914–3918; Y:3782–3788.
+
+### ERR-28. `dir-check` is never stamped (OP-9)
+
+- **The erratum:** Y:3927–3929 lists `dir-check` among the causes that `serve`
+  stamps. It is never stamped: `serve` exits 2 naming the directory and writes
+  nothing in it, and `lanes-index status` reports the failure itself
+  (Y:3761–3768). Lane 1 reviews that `status` line (R44), and lane 1's commit
+  `eca2da3d` gives `contracts/exit-codes.md`'s run-directory row the same
+  reading.
+- **Whose:** lane 3's ruling on T511's OP-9, #165 6746215510.
+- **Source:** Y:3927–3929; Y:3761–3768.
+
+### ERR-29. D9 gains a row for the service's background whole-file fetch (OP-15)
+
+- **The erratum:** D9 (Y:502), whose table is at Y:3501, gains a row for the
+  service's background whole-file fetch: `SET LOCAL lock_timeout = '1000ms'`
+  and `statement_timeout = '10s'`, the renderer's row (Y:3527), with an 11 s
+  timer. On expiry the fetch is dropped, and the next miss retries.
+- **Whose:** lane 3's ruling on T511's OP-15, #165 6746655077, accepting lane
+  1's answer in 6746620707.
+- **Source:** Y:502; Y:3501; Y:3527.
+
+### ERR-30. `LANES_READ_MIRROR=1` covers every read that names the lane in a handoff (lane 4's item 1)
+
+- **The erratum:** Y:4895's mirror row and Y:4928 name only `window-lane` and
+  `swapped`, and `test-plan.md:2198–2204` has `canon-lane` exit 69 with the
+  variable set. With it set, these read the mirror: in `lane-handoff`,
+  `window-lane`, `swapped`, `register-row`, `canon-lane`, `last-session`,
+  `lane-state`, `set-lane-state`, `handoff-path` and `write-handoff`; in the
+  handoff skill, `publish-handoff`. Only `who` and `lane-last` still exit 69
+  under it. No register write rests on those answers: `PAUSED`, the `LANES.md`
+  line and the row still exit 69 with their notes, and the lane stays
+  `SWAPPING`. spec:692 already requires it.
+- **Whose:** lane 3's ruling on lane 4's item 1, #165 6746035594. The
+  ownership seam in an outage is Brett's, PENDING-BRETT (spec:648–649 against
+  `lane-handoff:1728–1741` at code `ddc972d`), his spec-PR list item 9.
+- **Source:** Y:4895; Y:4928; `test-plan.md:2198–2204`; spec:692;
+  spec:648–649.
+
 ## Part 2: decisions
 
 ### DEC-01. The service is built beside groups A and B, and the v1.2.0 tag waits for it (R35)
@@ -579,10 +666,12 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **The decision:** `LANES_REGISTER_SERVE_IDLE_CHECK_S`, default 60, and
   `LANES_REGISTER_SERVE_IDLE_STOP_S`, default 900, each honoured only where
   set, with a floor of 1 s, and the check capped below the load balancer's
-  240 s idle reset. The starter's reduced environment keeps both where they
-  are set.
+  240 s idle reset. A value that is not a positive whole number is ignored,
+  and the default kept (OP-14). The starter's reduced environment keeps both
+  where they are set.
 - **Whose:** lane 3's ruling R37 (#165 6726556972), taking lane 5's proposal
-  (its open points 24 and 25).
+  (its open points 24 and 25), and lane 3's ruling on T511's OP-14 (#165
+  6746215510) for a value under the floor.
 - **Source:** the reduced environment (Y:3887–3888); the idle check
   (Y:3994); the idle stop (Y:3912).
 
@@ -661,6 +750,36 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   figures count. It models no slow start and no loss: lane 5's netem run and
   act 3's rows cover those.
 - **Source:** the test plan's open point 23 at Y (section 5.6); T510.
+
+### DEC-23. The bootstrap renders migration 1 for the configured schema (T107's scratch schema)
+
+- **The decision:** the bootstrap renders migration 1 for the configured
+  `register_schema=` (Y:2323), and Y's bytes stay the template (Y:1039–1040),
+  so no erratum is needed.
+  - Only whole identifier tokens are substituted, in `CREATE SCHEMA`, every
+    `search_path` and every `lanes_register.` qualifier.
+  - The three role names, `lanes_register_owner`, `_writer` and `_reader`,
+    stay as they are.
+  - After rendering, the bootstrap refuses with 2 if `lanes_register` remains
+    as anything but those three roles.
+  - `register_schema=` is a plain lowercase identifier,
+    `[a-z_][a-z0-9_]{0,62}`; anything else is the configuration's own refusal.
+  - The migrations table keeps Y's template digest as `script_sha256`, and the
+    bootstrap prints the rendered script's digest beside it; no column is
+    added (lane 1's 6746948770, its suggestion A, which lane 3 takes). Y's
+    `migrations` table (Y:1051–1056) has only `version`, `script_sha256`,
+    `applied_utc`, `by_lane` and `by_ws`, and a new column would change
+    migration 1's digest. A run on `lanes_register` renders to the same bytes,
+    so the two digests are equal.
+- **Whose:** lane 3's ruling (a), #165 6746655077, on lane 1's question in
+  6746601663; its last condition is lane 1's suggestion A in 6746948770, which
+  lane 3 takes.
+- **Why:** it keeps Y:2323, :3175 and :6035 as they stand, and the rehearsal
+  stays in the same database as Y planned. Option (b) would need three errata
+  and drop `register_schema=`. Lane 2's `schema` module pins the rendering
+  both ways.
+- **Source:** Y:2323; Y:1039–1040; Y:1051–1056; T109, whose task text block
+  v4.7 carries.
 
 ## Part 3: the choices the design leaves to the plan
 
