@@ -2,7 +2,7 @@
 
 - **Owner of the `lanes-index` section:** lane 1 (`[L1]`), task T102. Each other lane adds its callers' arms in a section of its own below that section (plan.md's tree; [README.md](README.md)). A change to a `lanes-index` row goes through lane 1.
 - **Keyed to commit Y, `a6497d00`.** `Y:<n>` is a line of Y's `design.md`, and `ops:<n>` a line of Y's `operations.md` (the contract writes `Y-ops:<n>`). `code/lanes-index:<n>` is the code leg at the pin Y cites.
-- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.12, which keeps every section, and every line to :637; from :638 on each line is one below draft 4.11's. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
+- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.13, which keeps every line of draft 4.12; draft 4.12 keeps every section, and every line to :637, and from :638 on each line is one below draft 4.11's. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
 - **By lane openRepoTools-1, 2026-11-09.** It answers PC-10 (research.md's Part 3; plan.md) and the test plan's open point 1, "The tests read the design's constant".
 
 **The marks:**
@@ -78,13 +78,13 @@ These rows restate the contract's exits, one row per code. The contract's text g
 | `register snapshot --files` or `--all`, with `--out <dir>` | 64 | usage | contract §3.6 | T111 |
 | `register commit` | 0 | `committed <seq>`; or `already <seq>` on LR006 | contract §3.3; Y:4832 | T112 |
 | `register commit` | 2 | LR005, LR007, LR009 or LR010; a malformed attempt directory; a refused configuration; nothing sent, or nothing written | contract §3.3 | T112 |
-| `register commit` | 3 | every end of its `psql` but 0 and an exit 3 with a SQLSTATE: exit 1 or 2, a signal, the timer `C`, or an exit 0 whose answer it cannot read; the same for LR004's retry | contract §2.7, §3.3 (CO-6, CO-4) | T112 |
-| `register commit` | 69 | LR002, LR003, LR004 after its one retry, or any other SQLSTATE, each under `psql`'s exit 3; a `psql` that cannot be started or is too old. An unreachable database is 3 here, never 69 | contract §3.3 (CO-5, CO-6) | T112 |
+| `register commit` | 3 | every end of its `psql` but 0 and an exit 3 with a SQLSTATE: exit 1 or 2, a signal, the timer `C`, or an exit 0 whose answer it cannot read; LR004 makes one re-read and no resend, so no second call (lane 3, #165 6755615338) | contract §2.7, §3.3 (CO-6) | T112 |
+| `register commit` | 69 | LR002, LR003, LR004 after its one re-read, or any other SQLSTATE, each under `psql`'s exit 3; a `psql` that cannot be started or is too old. An unreachable database is 3 here, never 69. After LR004, one re-read and no resend: a moved head is 75; a base that differs is 69, naming the image cache; equal bases are 69, naming the entry and LR004's own message; and a re-read that fails is 69 (lane 3, #165 6755386771, reading 2) | contract §2.7, §3.3 (CO-5, CO-6); lane 3's ruling, #165 6755615338 | T112 |
 | `register commit` | 75 | LR001, 40001, 40P01, 55P03 or LR008: a lost turn, nothing written | contract §2.7, §3.3; D7 | T112 |
 | `register commit` | 64 | usage; group B reads it as an internal error | contract §2.7 (CO-5) | T112 |
 | `journal --write-id` (the in-doubt lookup) | 0 | `found <seq>` with its rows, or `absent` with the lock held | contract §3.4 | T114 |
 | `journal --write-id` | 2 | LR007 only, and Q6(c)'s refusal | contract §3.4 (CO-3) | T114 |
-| `journal --write-id` | 3 | LR011; no try in the window took the lock; any other SQLSTATE; a refused configuration other than Q6(c)'s, the TLS refusal included; a crash or a code outside the contract's, with the record kept | contract §2.7, §3.4 (CO-2, CO-3); Y:3524 | T114 |
+| `journal --write-id` | 3 | LR011; no try in the window took the lock; any other SQLSTATE but 55P03 and 57014, which are tried again in the window; a refused configuration other than Q6(c)'s, the TLS refusal included; no `psql`, or one older than 15, with nothing sent; a crash or a code outside the contract's, with the record kept | contract §2.7, §3.4 (CO-2, CO-3); Y:3524; lane 3's ruling, #165 6755922262 (reading 3, and 57014 for lane 4) | T114 |
 | `journal --write-id` | 64 | usage | contract §2.7 | T114 |
 | `register classify` | 0 | one line out for each line in | contract §3.5 | T122 |
 | `register classify` | 2 | a refused configuration, Q6(c)'s included | contract §3.5 | T122 |
@@ -108,14 +108,14 @@ These rows restate the contract's exits, one row per code. The contract's text g
 | `journal --since <m>` | 64 | usage | contract §3.6 | T114 |
 | `journal --last` | 0 | read, with or without a `seq=` line | contract §3.6 (C7) | T114 |
 | `journal --last` | 2 | a refused configuration, Q6(c)'s included | contract §3.6 | T114 |
-| `journal --last` | 69 | a failed read; with `--at <n>`, an `n` above the head or a generation that differs | contract §3.6 (C8) | T114 |
-| `journal --last` | 64 | usage; `--at` without `--generation` | contract §3.6 (C8) | T114 |
+| `journal --last` | 69 | a failed read; with `--at <n>`, an `n` above the head or a generation that differs; a replay mismatch | contract §3.6 (C8); lane 3's ruling, #165 6755922262 (reading 5) | T114 |
+| `journal --last` | 64 | usage; `--at` without `--generation`; `--generation` without `--at`, an empty `--grep`, and an empty `--path` or one holding a control character | contract §3.6 (C8); lane 3's ruling, #165 6755922262 (reading 5) | T114 |
 | `render --images --at <k> --out <dir>` | 0 | the images at `k` written, with `file=` rows | contract §3.6 | lane 3's T301 |
 | `render --images` | 2 | a refused configuration, Q6(c)'s included | contract §3.6 | T301 |
 | `render --images` | 69 | a failed read; an image that could not be written under `<dir>`, which is left as it was; and [P] a `k` it cannot render, above the head or before the latest import's baseline, which tasks.md's T301 leaves to this file. It is 69 as form 4 and `journal --last --at` end 69 for an `--at` outside the generation's seqs. [P] An image whose path holds U+0000–U+001F or U+007F cannot be a `file=` row, and ends 69. | contract §3.6 | T301 |
 | `render --images` | 64 | usage | contract §3.6 | T301 |
 | `render --checkout`, before T321 | 64 | a form this build does not have | contract §3.6; lane 3's ruling, #165 6754819099 (choice 4) | group C (lane 3) |
-| `render --checkout <c>`, in phase 2, from T321 on | 69 | "git half not installed", on a copy with the constant flipped | contract §3.6, §3.7 | group C (lane 3) |
+| `render --checkout <c>`, in group B's phase-2 tests | 69 | "git half not installed": the answer of group B's test stub, T207's `contract_stub`, which stands in for the form in group B's phase-2 tests; not an answer of the real `lanes-index` | contract §3.6, §3.7; lane 3's ruling, #165 6755449007, item 1 | lane 2's T207 |
 | `render --checkout <c>`, from T321 on | 2 | Q6(c)'s refusal, at load, before any answer | contract §3.6 (C13); Y:4872 | group C (lane 3) |
 
 #### 3.2 The operator commands: `import`, `cutover`, `rollback` and `outage`

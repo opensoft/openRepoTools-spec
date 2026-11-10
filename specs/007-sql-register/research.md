@@ -65,10 +65,10 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.12 (`contracts/register-cli.md`, `7211b9f1…`,
-#165 6755305741) and its block is v4.11 (`625a0b84…`, #165 6754645319),
+contract is its draft 4.13 (`contracts/register-cli.md`, `0a914e14…`,
+#165 6766798190) and its block is v4.11 (`625a0b84…`, #165 6754645319),
 both keyed to Y. The block keeps v4.2's line numbers; the draft keeps them
-to :637 and moves each later line down one.
+to :637 and moves each later line down one, as draft 4.12 does.
 
 ## Part 1: errata against the frozen text
 
@@ -613,7 +613,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   the writer's and reader's connections built from `register_url=` and
   `reader_url=`, the direct read, and lane 5's `serve` through `pg_url_env`.
   The admin path keeps `PGSERVICE=<service>`, as T109's `--admin-service`
-  sets it, and nothing else inherited. Contract draft 4.12's §2.2 states
+  sets it, and nothing else inherited. Contract draft 4.13's §2.2 states
   both, the register paths' rule and the five that #160's index paths drop
   too (:214).
 - **Whose:** lane 3's ruling, (a), #165 6747611042, on lane 1's question in
@@ -691,7 +691,8 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   snapshot is one `COPY` of tagged rows, with no `BEGIN`", reads the same:
   the fake's `psql --version` at 14 gives 69, one `--version` call and no
   request. Lane 2's `[snapshot-psql-14]` case (T257) follows it in F9, and
-  contract drafts 4.11 and 4.12 state it at their :234.
+  contract drafts 4.11 to 4.13 state it at their :234; draft 4.13 states
+  the lookup's 3 at its :618.
 - **Whose:** lane 3's ruling, #165 6752697506, on lane 1's point 1 in
   6752661856.
 - **Why:** no SHALL in the change's spec requires the fallback, spec.md's
@@ -815,7 +816,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
     alike, since S4 answers from the row's own text; otherwise the column
     would change between the import and the first write;
   - the import keeps a NULL workstation rather than take the
-    `--workstation` fallback, which files mode allows (Y:1273).
+    `--workstation` fallback, since files mode allows the NULL (Y:1273).
 - **Also in reading 7,** and not errata: `repo_key` takes Rule 6's order,
   the shipped `repos.tsv` and then the per-wip one, the last row winning,
   as `rule6_aliases` reads them, so that F13's equality (Y:1989) cannot
@@ -1330,15 +1331,15 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   because the family holds it, and that now matches two logs, is dropped
   from the family: its `.log.<key>` and `.logpath.<key>` are removed, so the
   first read that asks for it ends 69. Contract draft 4.11 states it at its
-  :673, and draft 4.12, in the branch since round B10, at its :674; lane
-  5's T511 draft follows at its D4:565.
+  :673, and drafts 4.12 and 4.13, in the branch since rounds B10 and B11,
+  at their :674; lane 5's T511 draft follows at its D4:565.
 - **Whose:** lane 3's ruling, #165 6752360829, on N-g of lane 1's U5
   re-check of T511's draft 4 (6752336451).
 - **Why:** a read should not fail on a member it never asked for, and the
   ambiguity still surfaces at the first read that does ask. Y gives no rule
   for a cached member that turns ambiguous, so this is a decision, not an
   erratum.
-- **Source:** contract §3.6 (draft 4.12's :674, C11).
+- **Source:** contract §3.6 (draft 4.13's :674, C11).
 
 ### DEC-31. `serve` with a `psql` older than 15 stamps `no-psql` (OP-10)
 
