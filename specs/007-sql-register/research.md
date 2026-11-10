@@ -40,10 +40,10 @@ So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number.
 
-- **Part 1, the errata** (ERR-01 to ERR-49; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-50; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-32): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-33): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -818,6 +818,21 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   6754969723.
 - **Source:** Y:1222; Y:1254; Y:1197; Y:1396; Y:1273; Y:1989; Y:1231.
 
+### ERR-50. The in-doubt lookup is four statements, not three (T114)
+
+- **The erratum:** `test-plan.md:3716–3717` and `:7338–7339` spell the
+  lookup as three statements, `BEGIN`, `find_write` and `ROLLBACK`. Y makes
+  it four, sent as one request (Y:5235): `BEGIN`, `find_write`, the `COPY`
+  of the found seq's `journal_files`, which the client reads "in the same
+  transaction" (Y:5300), and `ROLLBACK`. A one-statement join would read
+  `journal_files` in a snapshot taken before `find_write`'s wait, and miss
+  an orphan's rows committed during it, so the four are required, not only
+  allowed. Lane 2's T257 `[lookup]` case expects four.
+- **Whose:** lane 3's ruling, #165 6755922262, reading 2, on lane 1's
+  6755628366.
+- **Source:** Y:5235; Y:5300; `test-plan.md:3716–3717`;
+  `test-plan.md:7338–7339`.
+
 ## Part 2: decisions
 
 ### DEC-01. The service is built beside groups A and B, and the v1.2.0 tag waits for it (R35)
@@ -952,13 +967,14 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 
 ### DEC-07. LR004 under the scratch tree (R02)
 
-- **The decision:** on LR004, `register commit` re-reads each path's base
-  from SQL, bypassing the image cache, and resends once only where that base
-  equals the scratch tree's. Otherwise it exits 69, naming the image cache.
-  The retry's second call is read by the commit's exit table in full, so 69
-  comes only when both calls ended definitively.
+- **The decision:** on LR004, `register commit` re-reads each base from SQL,
+  bypassing the image cache, and resends nothing. A moved head is 75; a base
+  that differs, of any file the entry reads from `tree/`, is 69, naming the
+  image cache; equal bases are 69, naming the entry and LR004's own message.
 - **Whose:** lane 3's ruling R02 (#165 6726556972), taking lane 1's form (its
-  O2), with lane 4's CO-4.
+  O2), with lane 4's CO-4. The resend is dropped by lane 3's 6755615338, on
+  lane 1's 6755590769: the rebuilt entry was the first byte for byte, so with
+  the head still at `n` it could only meet LR004 again.
 - **Source:** Y:1567; Y:2614; Y:2516.
 
 ### DEC-08. `register classify` is a subcommand beyond the interfaces table (R04)
@@ -1366,6 +1382,28 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   Whether a test of lane 2's asserts either exit for a reader outside the
   version window is not checked here.
 - **Source:** `test-plan.md:4476–4509` (AT-VER); T221's line.
+
+### DEC-33. The lookup's retried ends, its `psql` check and its cap (T114)
+
+- **The decision:** the in-doubt lookup, `journal --write-id` (Y:5235):
+  - tries again, beside Y:5250's three ends (a failed connect, a try cut
+    by `T_L`, and a 55P03), on exit 1, a signal, an exit 3 with no
+    SQLSTATE, an exit 0 whose answer cannot be read, and 57014;
+  - ends 3 at once, with nothing sent, where `psql` is missing or older
+    than 15;
+  - cuts its wait at `C` + 2 s, counted from `journal`'s start;
+  - does not try LR011 again, which is an answer (Y:5254).
+- **Whose:** lane 3's ruling, #165 6755922262 (readings 1, 3 and 4, and
+  57014 for lane 4), on lane 1's 6755628366.
+- **Why:** under Y:5250, a try that ends without an answer is made again,
+  and each of the extra ends is no answer. No retry can mislabel a write:
+  an answer comes only from a try whose `find_write` took the head-row
+  lock past `<n>`, and once a try holds it no call of the write can commit
+  (Y:5264). 57014 is the server ending the lookup at its own bound
+  (Y:3524), and its transaction ends and frees the lock. The cap never cuts
+  a legitimate wait, since `not_after` is the clock plus `C` + 2 s; without
+  it, a bogus `<n>` would wait without end.
+- **Source:** Y:5235; Y:5250; Y:5254; Y:5264; Y:3524.
 
 ## Part 3: the choices the design leaves to the plan
 
