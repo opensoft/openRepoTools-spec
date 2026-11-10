@@ -132,8 +132,9 @@ goal: two builds of one commit are one file.
   added on top once `~/projects/xFactory/lanes-edit.sh` answers `guard`
   (#237).
 - 1 console script.
-- 4 CI jobs in `tests.yml`. 4 jobs in `release.yml`, with 3 install-check
-  legs.
+- 4 CI jobs in `tests.yml`, the release gate's ids, and since
+  opensoft/openRepoTools#77 two shard jobs behind two of them. 4 jobs in
+  `release.yml`, with 3 install-check legs.
 - 12 positive and 5 negative pipx fixtures.
 
 ## Constitution Check
