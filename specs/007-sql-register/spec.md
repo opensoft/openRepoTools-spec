@@ -1045,9 +1045,11 @@ are lane 3's rulings memo's).
     `repos.tsv` blob id with its alias sets;
   - carry `not_after`;
   - exit 0 with `committed <seq>`, or 75, 69, 2 or 3;
-  - on LR004, retry once only where each path's base, re-read from SQL,
-    equals the scratch tree's, and otherwise exit 69 naming the image cache;
-    the retry's second call is read by the commit's exit table in full (R02).
+  - on LR004, re-read each base from SQL, bypassing the image cache, and
+    resend nothing: a moved head is 75; a base that differs, of any file the
+    entry reads from `tree/`, is 69, naming the image cache; equal bases are
+    69, naming the entry and LR004's own message; and a failed re-read or
+    recompute gives 69 (R02; DEC-07).
 
   Sources: the interfaces table (Y:4832); LR004's row (Y:1567; Y:2614).
 - **FR-015**: `lanes-index register read` MUST return the text at a head

@@ -43,7 +43,7 @@ branch holds the newer text at the same number.
 - **Part 1, the errata** (ERR-01 to ERR-50; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-33): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-34): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -613,10 +613,13 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   the writer's and reader's connections built from `register_url=` and
   `reader_url=`, the direct read, and lane 5's `serve` through `pg_url_env`.
   The admin path keeps `PGSERVICE=<service>`, as T109's `--admin-service`
-  sets it, and nothing else inherited. Contract draft 4.10's §2.2 states it
-  (:214).
+  sets it, and nothing else inherited. Contract draft 4.12's §2.2 states
+  both, the register paths' rule and the five that #160's index paths drop
+  too (:214).
 - **Whose:** lane 3's ruling, (a), #165 6747611042, on lane 1's question in
-  6747565816. It narrows only the new register paths, inside FR-010.
+  6747565816. Its rule that drops every `PG` variable narrows only the new
+  register paths, inside FR-010; since round B9, every path, #160's index
+  paths included, drops the five.
   `PGSERVICE` among the five: lane 1's account of T103 (#165 6752086222),
   which lane 3 accepted (6752115241). `PGAPPNAME`: lane 1's (6752336451),
   which lane 3 accepted (6752360829).
@@ -682,7 +685,8 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   which prints only a Query's last result, reads the parts instead as one
   `COPY` of tagged rows", is not built. A `psql` older than 15 is refused
   with 69, naming its version, and nothing is sent, as FR-012, `plan.md:110`
-  and T106's line require. The test plan's oracle at
+  and T106's line require, except `journal --write-id`'s lookup, which ends
+  3 at once with nothing sent (DEC-33). The test plan's oracle at
   `test-plan.md:3719–3721`, "With the fake's `psql --version` at 14, the
   snapshot is one `COPY` of tagged rows, with no `BEGIN`", reads the same:
   the fake's `psql --version` at 14 gives 69, one `--version` call and no
@@ -768,8 +772,10 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   those rows for every line of its path. A `rename` deletes the old path's
   `object_holds`, and moves `log_lines.file` and `log_lines.lane` to the new
   file's lane. Step 7 then inserts what the entry sends. An entry carries
-  no deletes." Step 5a still runs first, so the scopes do not change. T107
-  writes it, and T112 no longer relies on the order it sends rows in.
+  no deletes." Step 7 (Y:1464) and the entry's `object_holds` comment
+  (Y:1610–1611) change with it (#165 6755386771). Step 5a still runs first,
+  so the scopes do not change. T107 writes it, and T112 no longer relies on
+  the order it sends rows in.
 - **Why:** without it, every `rename-lane` on primary ends 69. Y:1193's
   `DEFERRABLE INITIALLY DEFERRED` binds only the `REFERENCES` clause, so
   `row_line_id`'s `UNIQUE` is checked row by row, and the rewritten row
@@ -794,7 +800,8 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   1's 6754969723. It changes no SHALL, and it makes spec:147–166 hold. It
   moves no ratified decision, since `commit_write` stays free of verb rules
   (Q7's A″), and migration 1 exists on line R only, so it changes in place.
-- **Source:** Y:1463; Y:1825; Y:1481; Y:1193; Y:1185; Y:1496.
+- **Source:** Y:1463; Y:1464; Y:1610–1611; Y:1825; Y:1481; Y:1193; Y:1185;
+  Y:1496.
 
 ### ERR-49. Four of Y's lines on the derived rows, read as T112 and T115 build them (T112's reading 7)
 
@@ -970,11 +977,13 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **The decision:** on LR004, `register commit` re-reads each base from SQL,
   bypassing the image cache, and resends nothing. A moved head is 75; a base
   that differs, of any file the entry reads from `tree/`, is 69, naming the
-  image cache; equal bases are 69, naming the entry and LR004's own message.
+  image cache; equal bases are 69, naming the entry and LR004's own message;
+  and a failed re-read or recompute gives 69.
 - **Whose:** lane 3's ruling R02 (#165 6726556972), taking lane 1's form (its
   O2), with lane 4's CO-4. The resend is dropped by lane 3's 6755615338, on
   lane 1's 6755590769: the rebuilt entry was the first byte for byte, so with
-  the head still at `n` it could only meet LR004 again.
+  the head still at `n` it could only meet LR004 again. A failed re-read or
+  recompute gives 69 by lane 3's 6755386771, reading 2.
 - **Source:** Y:1567; Y:2614; Y:2516.
 
 ### DEC-08. `register classify` is a subcommand beyond the interfaces table (R04)
@@ -1377,8 +1386,9 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   and the two ways out".
   `managed-projection`'s 1 is T504's class list, "projection: 1,
   UNKNOWN", and T506's `managed-projection` line, "1, UNKNOWN, on a
-  failed read". Lane 4's T402 is a caller of the second: `lane-start`
-  passes `managed-projection`'s 1, UNKNOWN, at `:1555` (DEC-27; ERR-46).
+  failed read". Lane 4's T402 is a caller of the second: at `:1555`,
+  `lane-start` refuses `managed-projection`'s 1, not "pass the code": it
+  exits 1, UNKNOWN (S4; DEC-27; ERR-46).
   Whether a test of lane 2's asserts either exit for a reader outside the
   version window is not checked here.
 - **Source:** `test-plan.md:4476–4509` (AT-VER); T221's line.
@@ -1404,6 +1414,30 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   a legitimate wait, since `not_after` is the clock plus `C` + 2 s; without
   it, a bogus `<n>` would wait without end.
 - **Source:** Y:5235; Y:5250; Y:5254; Y:5264; Y:3524.
+
+### DEC-34. Brett's four answers on Opensoft-Tenant#276, recorded for 007
+
+- **The decision:** none for 007. Brett's four answers to #276's open
+  decisions agree with `operations.md` item 8, the server's size
+  (ops:164–178), and with its access line, a public load balancer whose
+  source ranges are the engineers' addresses (ops:193), so nothing else in
+  007 changes.
+- **Whose: Brett's.** He was asked by interactive multiple choice in lane
+  opsXfactory-6's session, and his answers were observed at
+  2026-11-10T11:29:15Z. His answers, verbatim, as that lane's #165
+  6766195257 quotes them:
+  1. the engineers' source ranges (D7, task 6.1):
+     "QA's 108.208.120.119/32 now (Recommended)";
+  2. sizing (D12, task 5.1): "Contract example: 120 (Recommended)";
+  3. where the Azure resources live (D14, tasks 2.1 and 3.1):
+     "Security RG, beside Keycloak (Recommended)";
+  4. the images (D15, tasks 5.1 and 5.2):
+     "Import PG16 under codexfactory/ (Recommended)".
+
+  That they agree with 007 is lane 3's reading, #165 6766219958. Lane
+  opsXfactory-6's post says they are not a ratification of #276, or a
+  merge word.
+- **Source:** ops:164–178; ops:193; #165 6766195257; #165 6766219958.
 
 ## Part 3: the choices the design leaves to the plan
 
