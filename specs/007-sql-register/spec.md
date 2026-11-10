@@ -1048,8 +1048,8 @@ are lane 3's rulings memo's).
   - on LR004, re-read each base from SQL, bypassing the image cache, and
     resend nothing: a moved head is 75; a base that differs, of any file the
     entry reads from `tree/`, is 69, naming the image cache; equal bases are
-    69, naming the entry and LR004's own message; and a failed re-read or
-    recompute gives 69 (R02; DEC-07).
+    69, naming the entry and LR004's own message; and a failed re-read
+    gives 69 (R02; DEC-07).
 
   Sources: the interfaces table (Y:4832); LR004's row (Y:1567; Y:2614).
 - **FR-015**: `lanes-index register read` MUST return the text at a head
@@ -1114,9 +1114,10 @@ are lane 3's rulings memo's).
   Each writer process MUST ask the mode once, before slice 1a's routing. On
   primary it MUST NOT enter the lane checkout by 1a's routing: it takes `<c>`
   from `lane_checkout_path`, with no S3 work, and refuses with 2, naming
-  `lane-worktrees`, where that checkout does not exist (R17). Sources: "How
-  an attempt runs the verb" (Y:4981); the primary branch (Y:4983); D7
-  (Y:455); D12 (Y:522).
+  `lanes-edit.sh lane-checkout <lane> --create`, which makes it, as
+  `lane-start` does at a launch, where that checkout does not exist (R17;
+  lane 3, #165 6769061039). Sources: "How an attempt runs the verb"
+  (Y:4981); the primary branch (Y:4983); D7 (Y:455); D12 (Y:522).
 - **FR-019**: The commit seam's primary branch MUST keep every content check,
   and MUST refuse with 2 any staged path outside the write's pathspecs or
   the render set. It MUST collect the change set and never commit, pull or
@@ -1166,13 +1167,16 @@ are lane 3's rulings memo's).
   of Rule 9(d), MUST be refused with 2, as every other direct write to the
   files is (D10). The publish of queued commits MUST stay, outside the
   attempt loop, with its fence narrowed to `handoffs/`; a queued commit under
-  `lanes/` MUST be refused as a divergence; and a push whose commit changes a
-  path outside `handoffs/` MUST be refused with 2 at the push (R16).
+  `lanes/` MUST be refused as a divergence, unless it touches only
+  `lanes/repos.tsv` or `lanes/log/README.md`, which the publish act MUST let
+  through; and a push whose commit changes a path outside `handoffs/` MUST
+  be refused with 2 at the push (R16).
   - A git act whose paths are all under `handoffs/` keeps S3's fetch: D12
     governs register writes (R16).
   - `register-row-local` MUST read the database (D11).
   - Sources: "Direct writes to the files refuse on `mode=primary`"
-    (spec:168–169); D10 (Y:508); D11 (Y:515).
+    (spec:168–169), whose two-file allow-list is Brett's "Allow those two
+    files" (#165 6769217709); D10 (Y:508); D11 (Y:515).
 - **FR-027**: After COMMIT, the parent MUST:
   - fork `lanes-index render --checkout <c>`, detached, without
     `LANES_NO_FETCH`;

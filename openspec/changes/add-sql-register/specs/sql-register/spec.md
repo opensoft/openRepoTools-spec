@@ -166,7 +166,7 @@ On a `mode=primary` workstation each of `claim`, `release`, `log` (every verb), 
 - **THEN** the projection lands in SQL first and the mirror, once rendered, is byte-identical to a full render from SQL
 
 ### Requirement: Direct writes to the files refuse on `mode=primary`
-On `mode=primary` the hand-edit `commit` of Rule 9(d) SHALL refuse, with every other direct write to the files: the pre-existing and concurrent captures, `add-row`'s compensating commit, and the branch-wide push that publishes any queued local commit. The publish of queued commits that Amendment 23's S4 keeps SHALL stay, with its fence narrowed to `handoffs/`, and a queued commit under `lanes/` SHALL be refused as a divergence. Each refusal SHALL change neither the register nor the files; the code each refuses with is the design's.
+On `mode=primary` the hand-edit `commit` of Rule 9(d) SHALL refuse, with every other direct write to the files: the pre-existing and concurrent captures, `add-row`'s compensating commit, and the branch-wide push that publishes any queued local commit. The publish of queued commits that Amendment 23's S4 keeps SHALL stay, with its fence narrowed to `handoffs/`, and a queued commit under `lanes/` SHALL be refused as a divergence, unless it touches only `lanes/repos.tsv` or `lanes/log/README.md`, which the publish act SHALL let through. Each refusal SHALL change neither the register nor the files; the code each refuses with is the design's.
 
 #### Scenario: A hand edit through `commit`
 - **WHEN** a lane runs `commit` over a hand edit of a file under `lanes/`
@@ -177,7 +177,7 @@ On `mode=primary` the hand-edit `commit` of Rule 9(d) SHALL refuse, with every o
 - **THEN** the publish act still publishes it
 
 #### Scenario: A queued commit under `lanes/`
-- **WHEN** a queued local commit changes a path under `lanes/`
+- **WHEN** a queued local commit changes a path under `lanes/` other than `lanes/repos.tsv` and `lanes/log/README.md`
 - **THEN** the publish act refuses it as a divergence
 
 #### Scenario: A branch-wide push

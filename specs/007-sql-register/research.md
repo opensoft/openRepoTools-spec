@@ -772,9 +772,11 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   `line_id`, and `object_holds` by `(file, ordinal)`. A `remove` deletes
   those rows for every line of its path. A `rename` deletes the old path's
   `object_holds`, and moves `log_lines.file` and `log_lines.lane` to the new
-  file's lane. Step 7 then inserts what the entry sends. An entry carries
-  no deletes." Step 7 (Y:1464) and the entry's `object_holds` comment
-  (Y:1610–1611) change with it (#165 6755386771). Step 5a still runs first,
+  file's lane. A `rename` also moves a lane-kind object to `lane:` and the
+  new file's lane, as `parse_log` derives it. Step 7 then inserts what the
+  entry sends. An entry carries no deletes." Step 7 (Y:1464) and the
+  entry's `object_holds` comment (Y:1610–1611) change with it (#165
+  6755386771). Step 5a still runs first,
   so the scopes do not change. T107 writes it, and T112 no longer relies on
   the order it sends rows in.
 - **Why:** without it, every `rename-lane` on primary ends 69. Y:1193's
@@ -798,7 +800,9 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   its top would be about 6,600 replaces under the commit call's 5 s
   timeout. T324's runbook already prefers the revert (PC-4).
 - **Whose:** lane 3's ruling, (c), as an erratum, #165 6755386771, on lane
-  1's 6754969723. It changes no SHALL, and it makes spec:147–166 hold. It
+  1's 6754969723; its `rename` clause for a lane-kind object is lane 1's
+  point 1 on erratum (c), `5e04dec`, which lane 3 accepted (#165
+  6768006915). It changes no SHALL, and it makes spec:147–166 hold. It
   moves no ratified decision, since `commit_write` stays free of verb rules
   (Q7's A″), and migration 1 exists on line R only, so it changes in place.
 - **Source:** Y:1463; Y:1464; Y:1610–1611; Y:1825; Y:1481; Y:1193; Y:1185;
@@ -979,12 +983,13 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   bypassing the image cache, and resends nothing. A moved head is 75; a base
   that differs, of any file the entry reads from `tree/`, is 69, naming the
   image cache; equal bases are 69, naming the entry and LR004's own message;
-  and a failed re-read or recompute gives 69.
+  and a failed re-read gives 69.
 - **Whose:** lane 3's ruling R02 (#165 6726556972), taking lane 1's form (its
   O2), with lane 4's CO-4. The resend is dropped by lane 3's 6755615338, on
   lane 1's 6755590769: the rebuilt entry was the first byte for byte, so with
-  the head still at `n` it could only meet LR004 again. A failed re-read or
-  recompute gives 69 by lane 3's 6755386771, reading 2.
+  the head still at `n` it could only meet LR004 again. A failed re-read
+  gives 69 by lane 3's 6755386771, reading 2; lane 3's 6768006915 trims "or
+  recompute" from it, after lane 1's T112 follow-up.
 - **Source:** Y:1567; Y:2614; Y:2516.
 
 ### DEC-08. `register classify` is a subcommand beyond the interfaces table (R04)
@@ -1015,12 +1020,15 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **The decision:** each writer process asks the mode once, before slice
   1a's routing. On primary it skips `lane_checkout_enter`, takes `<c>` from
   `lane_checkout_path` with no S3 work, and refuses with 2, naming
-  `lane-worktrees`, where that checkout does not exist. In files and `index`
-  mode it routes as today, and carries the answer across 1a's `exec` as
-  `LANES__MODE`, with the `LANES__PID` check. `reg_open` takes the same
-  answer. Lane 4's T409 adds the carry, so slice 1a does not change.
+  `lanes-edit.sh lane-checkout <lane> --create`, which makes it, as
+  `lane-start` does at a launch, where that checkout does not exist. In
+  files and `index` mode it routes as today, and carries the answer across
+  1a's `exec` as `LANES__MODE`, with the `LANES__PID` check. `reg_open`
+  takes the same answer. Lane 4's T409 adds the carry, so slice 1a does not
+  change.
 - **Whose:** lane 3's ruling R17 (#165 6726556972), on lane 4's Q-L3-2; the
-  carry's place, lane 3's #165 6726831985.
+  carry's place, lane 3's #165 6726831985; the command the refusal names,
+  lane 3's #165 6769061039, T415's question 2.
 - **Source:** Y:4983; Y:5452; Y:4858; D12 (Y:522).
 
 ### DEC-11. `rename-lane`'s handoff half runs in the parent (R18)
@@ -1228,11 +1236,14 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 
   R49 is unchanged: `pid_start_of`'s exit 2 still counts as live, for every
   caller. T417's exit 3 gains a form for an untested claim at the deadline,
-  which names the claim file and the UTC after which a run may take it. T412
+  one from another host or container included (Y:5220), which names the
+  claim file and the UTC after which a run may take it. T412
   changes `wr_claim_create`, `wr_claim_live` and `wr_claim_take`; the
   contract's §4.1 and §4.3 rows change, and its §9's G10 row closes, citing
   ERR-42 and DEC-25.
-- **Whose:** lane 3's ruling on T412's G10, #165 6750702819.
+- **Whose:** lane 3's ruling on T412's G10, #165 6750702819; a claim from
+  another host or container in T417's exit 3, lane 3's #165 6769061039,
+  T417's question 2.
 - **Why:** as built, an empty claim counted as live for ever. Every later run
   of its command waited to its deadline and stopped, and on `start-record`'s
   digest it blocked every bind of the session (Y:5515). Nothing cleared it.
@@ -1348,9 +1359,11 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   exits 2, as it does with no `psql`. The client then reads directly, as
   after any stamp, and that direct read's own check refuses with 69,
   naming the version, and sends nothing (ERR-44), so the operator still
-  sees the version. The check is T511's §8.6, lane 5's.
+  sees the version. T511's §8.6 states the check, and T512 builds it in
+  `serve`, both lane 5's.
 - **Whose:** lane 3's assembly reading, (a), which was lane 5's
-  suggestion, #165 6754338646, on lane 5's 6754249002.
+  suggestion, #165 6754338646, on lane 5's 6754249002. T512 builds it, by
+  lane 3's #165 6768050756, point 3, on lane 5's 6767221832.
 - **Why:** Y:3926–3931 stamps only the causes that make `serve` exit
   before it listens, from a fixed list, with "the UTC and that fixed
   cause, and no other text" (Y:3930–3931). A `psql` that cannot join a
