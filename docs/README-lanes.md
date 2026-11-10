@@ -3430,6 +3430,14 @@ lanes-edit.sh lane-tree-now <worktree path>
 # <branch> <head> <upstream> <dirty> <unpushed>   — what git says about one tree NOW
 ```
 
+The handoff's READY block counts the records it WROTE:
+`inventory: N worktree(s) recorded` where every polled tree was recorded, and
+`inventory: N of M polled worktree(s) recorded` where an observation refused,
+`set-lane-tree` refused or the handoff withheld a tree
+(opensoft/openRepoTools#117), so the number is the one `lane-trees` holds for it.
+The `inventory:` line is printed where the lane has a lifecycle, under the READY
+line.
+
 A `trees` directory that is there and cannot be listed is `lane-trees`' exit
 **10**, never the **8** of a lane that recorded no tree (opensoft/openRepoTools#157
 item 4e). So is one that could not even be looked for (#291): under a directory
@@ -3482,9 +3490,12 @@ and `updated` for a snapshot; `lane`, `tree`, `path`, `checkout`, `branch`,
 `observed` for a tree — with a snapshot's `state` one of the four words, every
 `generation` a number, a tree's `dirty` a number and its `unpushed` a number or
 `unknown`, its `path` absolute, and its `tree` the id its file is named for.
-Both writers have written exactly these keys since #97 landed. A record that
-fails is taken the way an unknown schema is: every writer refuses it (exit
-**1**, nothing written), `lane-state` answers **10** and `lane-reconcile` reads
+Both writers have written these keys since #97 landed, and a tree record may
+also carry `repo`, its path's git common directory
+(opensoft/openRepoTools#116). It is optional, so a record without one is still
+whole. A record that fails is taken the way an unknown schema is: every writer
+refuses it (exit **1**, nothing written), `lane-state` answers **10** and
+`lane-reconcile` reads
 the snapshot as `MALFORMED`, and `lane-trees` carries a tree record as a row of
 its own named by its file under the schema `<malformed>`, keeping the path the
 record names — so the tree is still named once, though that path is the record's
@@ -3514,11 +3525,12 @@ lanes-edit.sh lane-reconcile <lane>
 ```
 
 It recomputes branch, HEAD, upstream, dirty and unpushed for every inventoried
-tree, reads `git worktree list --porcelain` in the lane's checkout and the
+tree, compares the repository a record names with the one git answers for at its
+path now, reads `git worktree list --porcelain` in the lane's checkout and the
 directories under both lane roots, and prints one `TREE` line per tree with a
 classification: `ok`, `dirty`, `unpushed`, `unpushed-unknown`,
 `dirty+unpushed`, `dirty+unpushed-unknown`, `missing`, `possible-loss`,
-`not-a-checkout`, `unreadable`, `unreadable-sidecar`, `malformed-sidecar`,
+`not-a-checkout`, `wrong-repository`, `unreadable`, `unreadable-sidecar`, `malformed-sidecar`,
 `unknown-schema`, `unmanaged`, `stale-registration`. Every one of those reads has
 a status, and a read that FAILED is never an empty answer (opensoft/openRepoTools
 #113): an inventory directory that cannot be listed (`lane-trees`' **10**), a
@@ -3574,10 +3586,37 @@ NOTHING (`AGENTS.md` rule 1), so this read runs `git status`, `git log @{u}..`,
   checkouts through a `projects` symlink is reported twice, the second time as a
   tree nobody manages;
 * a **stale-registration** names the `git worktree prune` that clears it, and
-  prunes nothing itself;
+  prunes nothing itself. A tree a sidecar records whose directory is gone while
+  its recorded checkout or the lane's `dir` still registers it is ONE row, its
+  `missing` or `possible-loss`, and that row names the same prune
+  (opensoft/openRepoTools#117). The registrations of its recorded checkout,
+  then of the lane's `dir`, are asked for its path under the recorded spelling
+  and its parent's physical one: the remedy is named where one of those reads
+  finds it, a failed read names no prune (the sweep reads again and says so),
+  and a tree one of them finds is never named twice through a symlinked
+  spelling. A gone tree that only another repository registers, in a lane with
+  no legs (whose recorded `checkout` is the lane's `dir`, even for a tree of
+  another repository), is plain `missing` or `possible-loss`, with no prune
+  named and no stale-registration row beside it: neither of those reads finds
+  it, and the sweep asks only the lane's `dir` and its legs;
 * an **unreadable** tree is one git answers in and cannot be read through —
   nothing is assumed about it, in either direction, and the line names the
   `git -C <path> status` a person runs;
+* a **wrong-repository** tree is one whose path git now answers for a different
+  repository than the one its record names (`repo`, the path's git common
+  directory, which `set-lane-tree` records). An independent clone, a checkout
+  moved onto the path or a restored backup, on the same branch at the same
+  commit, used to read `ok` (opensoft/openRepoTools#116) and now reads
+  `wrong-repository` only where the common directory git answers for differs
+  from the recorded one. A recorded tree that is itself a clone records
+  `<path>/.git`, which its path alone decides, so another clone put at that
+  path, or a restored backup of one, on the same branch at the same commit,
+  still reads `ok`. Nothing else of the record is compared against it, it counts
+  toward recovery, and it is left exactly as it is. A record with no `repo`, as
+  every one written before this has, is not compared, and an identity git cannot
+  give now is `unreadable`, never a match. The recorded `checkout` is not
+  compared: for a lane with no legs it is the lane's `dir`, even for a tree of
+  another repository;
 * an **unreadable-sidecar** is a tree record that IS there and could not be
   read — a permission, an I/O error, a dangling link. The tree it recorded is
   NOT known, in any field; it counts toward recovery, the line names the file a
