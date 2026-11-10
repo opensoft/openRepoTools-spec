@@ -32,15 +32,18 @@ place, so every line of `design.md`, `operations.md`, `clarifications.md` and
 - **Round B9, part 1:** Brett's label "Job + storage in prod sub
   (Recommended)" quoted whole, as clar:503 records it (#165 6722593397), at
   design:621 and :6403 and ops:191.
+- **Round B9, part 1c:** Brett's labels "Dump both (Recommended)" and
+  "Count both (Recommended)" quoted whole, as clar:500 records them (#165
+  6722541787), at design:621, :625, :3283, :6403 and :6406 and ops:191.
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number.
 
-- **Part 1, the errata** (ERR-01 to ERR-44; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-46; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-30): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-32): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -62,8 +65,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.10 (`contracts/register-cli.md`, `e2b51782…`,
-#165 6748303517) and its block is v4.10 (`fe74285f…`, #165 6748303517),
+contract is its draft 4.11 (`contracts/register-cli.md`, `60b397f9…`,
+#165 6754645319) and its block is v4.11 (`625a0b84…`, #165 6754645319),
 both keyed to Y, both keeping v4.2's line numbers.
 
 ## Part 1: errata against the frozen text
@@ -568,10 +571,11 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 ### ERR-37. `next-free`'s two arms join `lane`'s row (T408)
 
 - **The erratum:** Y:5740's `lane` row gains `next-free`'s two arms, `go_new`
-  and the listing's note, in phase 1. They pass 69, 75 and 3, since Y:3022
-  makes `next-free` a 69 reader. T408 owns them.
-- **Whose:** lane 3's ruling on T408, #165 6747422030.
-- **Source:** Y:5740; Y:3022.
+  and the listing's note, in phase 1. They pass 69, 75 and 3, since Y:3014
+  makes `next-free` a 69 reader (spec:599–600). T408 owns them.
+- **Whose:** lane 3's ruling on T408, #165 6747422030. Its source is Y:3014,
+  not Y:3022, by lane 3's ruling #165 6754439281, item 1.
+- **Source:** Y:5740; Y:3014; spec:599–600.
 
 ### ERR-38. The printed rerun's `LANES_SESSION` is the value the digest took (T412's G2)
 
@@ -657,10 +661,14 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   a key at Y:5431, names the attempt's own file, where the outer and the
   guard find it and the facts file sits beside it. Case 11's check of
   `bind`, the guard's three attempts per offer (Y:5503–5504) and `bind=k+1`
-  at the next `2` are unchanged.
+  at the next `2` are unchanged. The facts file is `out=`'s
+  `<offers>/<uuid>.bind.<k>` stem with `.facts`. The outer, the body and the
+  guard's sweep all find it from `out=`, never from `bind`; where the body
+  cannot read the record itself, the outer hands it that path.
 - **Whose:** lane 3's ruling, (a), #165 6751818233, on lane 5's 6751803196.
   It corrects lane 3's 6751772589, point 18, question 1, which had tied the
-  files' index to `bind`. T501's draft 4 records it.
+  files' index to `bind`. T501's draft 4 records it. The facts file's name:
+  lane 3's ruling, #165 6752064118, on lane 5's 6752026548.
 - **Source:** Y:5394; Y:5429; Y:5431; Y:5503–5504.
 
 ### ERR-44. A `psql` older than 15 is refused (T106)
@@ -674,14 +682,53 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   snapshot is one `COPY` of tagged rows, with no `BEGIN`", reads the same:
   the fake's `psql --version` at 14 gives 69, one `--version` call and no
   request. Lane 2's `[snapshot-psql-14]` case (T257) follows it in F9, and
-  contract draft 4.11 aligns its :234 in round B9's part 2.
+  contract draft 4.11, in the branch since round B9's part 1c, states it at
+  its :234.
 - **Whose:** lane 3's ruling, #165 6752697506, on lane 1's point 1 in
   6752661856.
 - **Why:** no SHALL in the change's spec requires the fallback, spec.md's
   assumptions already have `psql` 15 or later on every workstation, and
   `ready`'s check 2 asks for 16 (ops:445), so the fallback could only serve
   a workstation that fails `ready`.
+- **Beside it:** `serve` with a `psql` older than 15 stamps `no-psql` and
+  exits 2 before it listens, as with no `psql` (DEC-31, OP-10); and the
+  test plan's no-`psql` oracle reads the same (ERR-45).
 - **Source:** Y:1417; `test-plan.md:3719–3721`; ops:445.
+
+### ERR-45. With no `psql`, `serve` exits before it listens (OP-10's open half)
+
+- **The erratum:** `test-plan.md:2028–2030` says that
+  `test_the_service_reaches_the_database_only_through_psql` checks that,
+  "with no `psql` on its `PATH` it answers `refuse`". It reads: "with no
+  `psql` on its `PATH`, `serve` stamps `no-psql` and exits 2 before it
+  listens, and the client reads directly". So lane 2's T237 keeps the
+  test's first half, every answer from the database a call in the fake's
+  log; its no-`psql` half asserts the stamp and the exit before any socket
+  exists, then the client's direct read answering.
+- **Whose:** lane 3's assembly reading, #165 6754633102, on lane 2's
+  6754620468. It changes no SHALL.
+- **Why:** Y:3926–3931 names `no-psql` among the causes that make `serve`
+  exit before it listens, so a `serve` with no `psql` never answers; DEC-31
+  reads `no-psql` as "no usable `psql`".
+- **Not covered:** a `psql` lost after the start. Y gives it no answer,
+  and no SHALL needs one, so 007 adds no case for it. If lane 5's T511
+  states a behaviour for it, T237 may follow in a later round.
+- **Source:** `test-plan.md:2028–2030`; Y:3926–3931.
+
+### ERR-46. `lane-start:1555` refuses `managed-projection`'s 1, not "pass the code" (Y:5730)
+
+- **The erratum:** Y:5730's row and the test plan's list of "the arms that
+  already refuse, which pass the code" (`test-plan.md:2832`) both name
+  `lane-start:1555`. That arm reads `managed-projection`, a
+  projection-class verb, whose failed read answers 1, so `lane-start`
+  exits 1, UNKNOWN, as T402 is built. It is never 69. So
+  `lane-start:1555` moves from "pass the code" to "refuses 1, UNKNOWN (S4;
+  DEC-27)". The rest of the row and of the list stands. Lane 2's cases
+  drop the stubbed 69, 75 and 3 at `:1555` and drive its real 1 (T217,
+  T275).
+- **Whose:** lane 3's ruling, #165 6754439281, item 6, on lane 2's NOTES
+  30. It applies DEC-27 with spec:626 and spec:692, and it adds no SHALL.
+- **Source:** Y:5730; `test-plan.md:2832`.
 
 ## Part 2: decisions
 
@@ -1170,9 +1217,8 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   because the family holds it, and that now matches two logs, is dropped
   from the family: its `.log.<key>` and `.logpath.<key>` are removed, so the
   first read that asks for it ends 69. Contract draft 4.11 states it at its
-  :673, and lane 5's T511 draft follows at its D4:565; draft 4.11 comes in
-  round B9's part 2, and until then the branch's contract :673 keeps "forms
-  3 and 4 exit 69".
+  :673, in the branch since round B9's part 1c, and lane 5's T511 draft
+  follows at its D4:565.
 - **Whose:** lane 3's ruling, #165 6752360829, on N-g of lane 1's U5
   re-check of T511's draft 4 (6752336451).
 - **Why:** a read should not fail on a member it never asked for, and the
@@ -1180,6 +1226,58 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   for a cached member that turns ambiguous, so this is a decision, not an
   erratum.
 - **Source:** contract §3.6 (:673, C11).
+
+### DEC-31. `serve` with a `psql` older than 15 stamps `no-psql` (OP-10)
+
+- **The decision:** `serve` checks `psql --version` once, at start, before
+  it listens. Where the version is older than 15, it stamps `no-psql` and
+  exits 2, as it does with no `psql`. The client then reads directly, as
+  after any stamp, and that direct read's own check refuses with 69,
+  naming the version, and sends nothing (ERR-44), so the operator still
+  sees the version. The check is T511's §8.6, lane 5's.
+- **Whose:** lane 3's assembly reading, (a), which was lane 5's
+  suggestion, #165 6754338646, on lane 5's 6754249002.
+- **Why:** Y:3926–3931 stamps only the causes that make `serve` exit
+  before it listens, from a fixed list, with "the UTC and that fixed
+  cause, and no other text" (Y:3930–3931). A `psql` that cannot join a
+  request's statements (contract :234) cannot serve, so `no-psql` reads
+  "no usable `psql`", and Y's cause list stays as it is. Not (b), a new
+  cause word, which would change Y's fixed list. Not (c), under which
+  every request would fail late and the service's `unavailable` would
+  hide the cause.
+- **A decision, not an erratum:** Y:3929's list keeps its words, and Y
+  gives `no-psql` no meaning past its name. Once ERR-44 drops Y:1417's
+  fallback, Y says nothing of `serve` with an older `psql`, so lane 3
+  chose among three options, as DEC-30 does where Y gives no rule.
+- **Open:** whether one of lane 2's `serve` tests gains an older-`psql`
+  case, and which task holds it, is lane 2's to say (6754338646).
+- **Source:** Y:3926–3931; Y:1417; contract §2.3 (:234); ERR-44.
+
+### DEC-32. T221's three departures from the test plan (lane 2's)
+
+- **The decision:** lane 2's T221, `tests/test_sql_register_schema.py`
+  (AT-MIR's phase-N cases, AT-VER and AT-LR010), departs from the test
+  plan in three ways:
+  - it sends its own migration 2 through an admin `psql` session in §1.5
+    step 3's form, so that it can hold the migration open;
+  - it does not cover AT-VER's "the guard exits 2, and
+    `managed-projection` 1" (`test-plan.md:4491`), which belong to lanes
+    4 and 5;
+  - it makes two logins of its own, `t221_register_writer` and
+    `t221_register_reader`, members of the two groups, which T228 may
+    replace.
+- **Whose:** lane 2's own, #165 6754462442, recorded here for round B9.
+- **Where AT-VER's two exits are held** (round B9's check of tasks.md):
+  both are lane 5's. The guard's 2 is in T507's side of the prefetch's
+  exit mapping, "69: SVC-12's check, else 2 naming the store, the cause
+  and the two ways out".
+  `managed-projection`'s 1 is T504's class list, "projection: 1,
+  UNKNOWN", and T506's `managed-projection` line, "1, UNKNOWN, on a
+  failed read". Lane 4's T402 is a caller of the second: `lane-start`
+  passes `managed-projection`'s 1, UNKNOWN, at `:1555` (DEC-27; ERR-46).
+  Whether a test of lane 2's asserts either exit for a reader outside the
+  version window is not checked here.
+- **Source:** `test-plan.md:4476–4509` (AT-VER); T221's line.
 
 ## Part 3: the choices the design leaves to the plan
 
