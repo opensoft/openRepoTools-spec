@@ -35,12 +35,17 @@ place, so every line of `design.md`, `operations.md`, `clarifications.md` and
 - **Round B9, part 1c:** Brett's labels "Dump both (Recommended)" and
   "Count both (Recommended)" quoted whole, as clar:500 records them (#165
   6722541787), at design:621, :625, :3283, :6403 and :6406 and ops:191.
+- **Round B12b:** case 6a (lane 3's ruling, #165 6771318480): design:1464
+  and :1482, in place; and Brett's two-file allow-list worded to its letter
+  (lane 3, #165 6770820384): spec:169 in place, and one scenario added under
+  its requirement, so the sql spec's lines after that scenario sit five
+  below their `ad82c2f4` numbers.
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number.
 
-- **Part 1, the errata** (ERR-01 to ERR-50; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-53; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
 - **Part 2, the decisions** (DEC-01 to DEC-34): a choice the change leaves
@@ -65,8 +70,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.13 (`contracts/register-cli.md`, `0a914e14…`,
-#165 6766798190) and its block is v4.11 (`625a0b84…`, #165 6754645319),
+contract is its draft 4.14 (`contracts/register-cli.md`, `34f343cd…`,
+#165 6769472222) and its block is v4.11 (`625a0b84…`, #165 6754645319),
 both keyed to Y. The block keeps v4.2's line numbers; the draft keeps them
 to :637 and moves each later line down one, as draft 4.12 does.
 
@@ -566,8 +571,13 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   (Y:5737). `log`'s `commit_push` dies 3 in files mode (`:2374`, `:2751`,
   `:2823`), as `request-handoff`'s arm does (ERR-33). This entry does not
   rule on those two.
-- **Whose:** lane 3's ruling on T408, #165 6747422030.
-- **Source:** Y:5722; Y:5746.
+- **The write arms** (lane 3's ruling, #165 6770733371): at a write's arm
+  that exits a fixed code (`lane-handoff:2817`, `lane`'s and `lane-start`'s
+  `request-handoff` arms), 69, 75 and 3 pass in every mode and every other
+  code keeps today's exit; `lane-end:2490` exits with any code (Y:5735).
+- **Whose:** lane 3's ruling on T408, #165 6747422030; the write arms,
+  lane 3's ruling on T429's question 3, #165 6770733371.
+- **Source:** Y:5722; Y:5746; Y:5735.
 
 ### ERR-37. `next-free`'s two arms join `lane`'s row (T408)
 
@@ -776,9 +786,14 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   new file's lane, as `parse_log` derives it. Step 7 then inserts what the
   entry sends. An entry carries no deletes." Step 7 (Y:1464) and the
   entry's `object_holds` comment (Y:1610–1611) change with it (#165
-  6755386771). Step 5a still runs first,
-  so the scopes do not change. T107 writes it, and T112 no longer relies on
-  the order it sends rows in.
+  6755386771). Where step 6 deletes a lane's hold and the entry sends no
+  hold on that object (case 6a), step 7 still re-marks `superseded_by` on
+  every stored row of the object, as for an object the entry sends, and
+  stamps no `seq` or `mode`; step 5a adds `objects:` for every lane holding
+  an object whose hold sits on a line the entry replaces, deletes, removes
+  or renames, so that the flip is reported (lane 3's ruling, #165
+  6771318480). Step 5a still runs first, so the scopes do not change. T107
+  writes it, and T112 no longer relies on the order it sends rows in.
 - **Why:** without it, every `rename-lane` on primary ends 69. Y:1193's
   `DEFERRABLE INITIALLY DEFERRED` binds only the `REFERENCES` clause, so
   `row_line_id`'s `UNIQUE` is checked row by row, and the rewritten row
@@ -802,9 +817,11 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Whose:** lane 3's ruling, (c), as an erratum, #165 6755386771, on lane
   1's 6754969723; its `rename` clause for a lane-kind object is lane 1's
   point 1 on erratum (c), `5e04dec`, which lane 3 accepted (#165
-  6768006915). It changes no SHALL, and it makes spec:147–166 hold. It
-  moves no ratified decision, since `commit_write` stays free of verb rules
-  (Q7's A″), and migration 1 exists on line R only, so it changes in place.
+  6768006915); case 6a: lane 3's ruling, #165 6771318480, on lane 1's
+  6767113440, point 2. It changes no SHALL, and it makes spec:147–166 hold.
+  It moves no ratified decision, since `commit_write` stays free of verb
+  rules (Q7's A″), and migration 1 exists on line R only, so it changes in
+  place.
 - **Source:** Y:1463; Y:1464; Y:1610–1611; Y:1825; Y:1481; Y:1193; Y:1185;
   Y:1496.
 
@@ -844,6 +861,49 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   6755628366.
 - **Source:** Y:5235; Y:5300; `test-plan.md:3716–3717`;
   `test-plan.md:7338–7339`.
+
+### ERR-51. A launch with no transcript uuid is not yet a bind (T428)
+
+- **The erratum:** spec:318's bind is the act that writes the `STARTED` or
+  `RESUMED` line; until then W1, or W2–W6, stay separate verbs with
+  Y:5650–5653's expectations. spec:318 is unchanged.
+- **Why:** at lane 4's `692dea2`, a `lane-start` launch whose `lane_sid` is
+  no transcript uuid writes no `STARTED` or `RESUMED` line (Amendment 7(b)),
+  and the line and the stamp go to the first act that knows the uuid. Each
+  of W1, or W2 to W6, carries its own expectation and its arm until then.
+  Were spec:318's bind read as covering that launch, the exception would be
+  Brett's.
+- **Whose:** lane 3's ruling, #165 6770733371, T428's question 1.
+- **Source:** spec:318; Y:5650–5653.
+
+### ERR-52. `lane-worktrees:508–524` exits 2, naming the read's code (N1)
+
+- **The erratum:** `test-plan.md:2901–2902` has `lane-end:930–938` and
+  `lane-worktrees:508–524` refuse 69, 75 and 3 with the verb's own code. At
+  `lane-worktrees:508–524`, `canon_lane`'s arm instead exits 2, naming the
+  read's code, and never passes it. `lane-end:930–938` is unchanged.
+- **Why:** Y:5722 defines "Pass the code", and Y:5739 says only that the arm
+  refuses 69, 75 and 3, where `lane-start:1154`'s row adds passing the code.
+  A passed-through 3 would read as "something to retire" at `lane-end`'s
+  gate (`lane-end:2102–2106`).
+- **Whose:** lane 3's ruling on lane 2's N1, #165 6770688147. T404 carries
+  it, and lane 4 changes nothing.
+- **Source:** Y:5722; Y:5739; `test-plan.md:2901–2902`.
+
+### ERR-53. A slot line Rule 6 cannot pair, and a `LANDED` naming no repository (T112, T115)
+
+- **The erratum:** Y:1409's no-slot-role rule extends to every slot kind for
+  a missing lane or repository, and to a landing slot with no PR. A
+  repo-less `LANDED` is stored with its pair's `repo_key`, by Y:3383.
+- **Why:** in brett-wip `c445b07` (`LANES.md` blob `aff13af6`), 375 slot
+  lines name no repository: 356 `LANDED`, 6 `HOLD` and 13 `HOLD` closes, the
+  last on 2026-10-10. As built, an import of it would end 23514 at line 142.
+  Without the pairing, by lane 3's model, which was not run on PostgreSQL,
+  an import leaves 286 `LANDING`s open on 14 repositories, where `RULE6_AWK`
+  at `12ff809` leaves none; with it, none stay open.
+- **Whose:** lane 3's ruling, #165 6771569269, on lane 1's 6771151979. It
+  keeps Y:3383's parity, so it is not Brett's.
+- **Source:** Y:1258; Y:1269–1270; Y:1409; Y:3383; Y:5141.
 
 ## Part 2: decisions
 

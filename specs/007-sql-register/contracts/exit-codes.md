@@ -2,7 +2,7 @@
 
 - **Owner of the `lanes-index` section:** lane 1 (`[L1]`), task T102. Each other lane adds its callers' arms in a section of its own below that section (plan.md's tree; [README.md](README.md)). A change to a `lanes-index` row goes through lane 1.
 - **Keyed to commit Y, `a6497d00`.** `Y:<n>` is a line of Y's `design.md`, and `ops:<n>` a line of Y's `operations.md` (the contract writes `Y-ops:<n>`). `code/lanes-index:<n>` is the code leg at the pin Y cites.
-- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.13, which keeps every line of draft 4.12; draft 4.12 keeps every section, and every line to :637, and from :638 on each line is one below draft 4.11's. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
+- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.14 (sha256 `34f343cd…`), which keeps every line of drafts 4.13 and 4.12; draft 4.12 keeps every section, and every line to :637, and from :638 on each line is one below draft 4.11's. Its §2.7 75 row (:337) still marks an LR004's moved head [P], which lane 3 has since ruled (#165 6771318480), and draft 4.15 drops the mark. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
 - **By lane openRepoTools-1, 2026-11-09.** It answers PC-10 (research.md's Part 3; plan.md) and the test plan's open point 1, "The tests read the design's constant".
 
 **The marks:**
@@ -77,14 +77,14 @@ These rows restate the contract's exits, one row per code. The contract's text g
 | `register snapshot --files` or `--all`, with `--out <dir>` | 69 | checks 3 and 4; a database it cannot reach; a failed read | contract §3.6 | T111 |
 | `register snapshot --files` or `--all`, with `--out <dir>` | 64 | usage | contract §3.6 | T111 |
 | `register commit` | 0 | `committed <seq>`; or `already <seq>` on LR006 | contract §3.3; Y:4832 | T112 |
-| `register commit` | 2 | LR005, LR007, LR009 or LR010; a malformed attempt directory; a refused configuration; nothing sent, or nothing written | contract §3.3 | T112 |
+| `register commit` | 2 | LR005, LR007, LR009 or LR010; a malformed attempt directory; a shipped `repos.tsv` that exists but cannot be read; a refused configuration; nothing sent, or nothing written | contract §3.3; lane 3's NIT, #165 6768006915 (item 4) | T112 |
 | `register commit` | 3 | every end of its `psql` but 0 and an exit 3 with a SQLSTATE: exit 1 or 2, a signal, the timer `C`, or an exit 0 whose answer it cannot read; LR004 makes one re-read and no resend, so no second call (lane 3, #165 6755615338) | contract §2.7, §3.3 (CO-6) | T112 |
 | `register commit` | 69 | LR002, LR003, LR004 after its one re-read, or any other SQLSTATE, each under `psql`'s exit 3; a `psql` that cannot be started or is too old. An unreachable database is 3 here, never 69. After LR004, one re-read and no resend: a moved head is 75; a base that differs is 69, naming the image cache; equal bases are 69, naming the entry and LR004's own message; and a re-read that fails is 69 (lane 3, #165 6755386771, reading 2) | contract §2.7, §3.3 (CO-5, CO-6); lane 3's ruling, #165 6755615338 | T112 |
-| `register commit` | 75 | LR001, 40001, 40P01, 55P03 or LR008: a lost turn, nothing written | contract §2.7, §3.3; D7 | T112 |
+| `register commit` | 75 | LR001, 40001, 40P01, 55P03 or LR008, or an LR004 whose one re-read finds the head moved: a lost turn, nothing written | contract §2.7, §3.3; D7; FR-014; DEC-07; lane 3's rulings, #165 6755386771 (reading 1) and #165 6771318480 | T112 |
 | `register commit` | 64 | usage; group B reads it as an internal error | contract §2.7 (CO-5) | T112 |
 | `journal --write-id` (the in-doubt lookup) | 0 | `found <seq>` with its rows, or `absent` with the lock held | contract §3.4 | T114 |
 | `journal --write-id` | 2 | LR007 only, and Q6(c)'s refusal | contract §3.4 (CO-3) | T114 |
-| `journal --write-id` | 3 | LR011; no try in the window took the lock; any other SQLSTATE but 55P03 and 57014, which are tried again in the window; a refused configuration other than Q6(c)'s, the TLS refusal included; no `psql`, or one older than 15, with nothing sent; a crash or a code outside the contract's, with the record kept | contract §2.7, §3.4 (CO-2, CO-3); Y:3524; lane 3's ruling, #165 6755922262 (reading 3, and 57014 for lane 4) | T114 |
+| `journal --write-id` | 3 | LR011; no try in the window gave an answer; any other SQLSTATE but 55P03 and 57014, which are tried again in the window; a refused configuration other than Q6(c)'s, the TLS refusal included; no `psql`, or one older than 15, with nothing sent; a crash or a code outside the contract's, with the record kept | contract §2.7, §3.4 (CO-2, CO-3); Y:3524; lane 3's ruling, #165 6755922262 (reading 3, and 57014 for lane 4); lane 3's NIT, #165 6768006915 (item 5) | T114 |
 | `journal --write-id` | 64 | usage | contract §2.7 | T114 |
 | `register classify` | 0 | one line out for each line in | contract §3.5 | T122 |
 | `register classify` | 2 | a refused configuration, Q6(c)'s included | contract §3.5 | T122 |
@@ -129,7 +129,7 @@ Each runs with `LANES_LANE=<operator lane>`, through that lane's checkout (D24, 
 | `import --at <C>` | 2 | a refused configuration; Q6(c) | section 2 | T115 |
 | `import --at <C>` | 69 | the database cannot be reached or refuses, or the 330 s timer expires: nothing is swapped in | D9 (Y:3530); T115 | T115 |
 | `import --at <C>` | 64 | usage | section 2 | T115 |
-| `cutover`, in every form | 0 | the entry committed, its marker commit pushed as a fast-forward and confirmed by read-back, and the marker recorded `present` | Y:3185–3196 | T116; lane 3's T327 |
+| `cutover`, in every form | 0 | the entry committed, its marker commit pushed as a fast-forward and confirmed by read-back, and the marker recorded `present`. Until T327, T116's 0 is the transaction alone: nothing pushed, the marker `adding` [T] | Y:3185–3196; lane 3's ruling, #165 6770600106 (T116's point 1) | T116; lane 3's T327 |
 | `cutover` | 2 | `EXIT_CUTOVER_ABORTED`, PC-10's code: the abort, once it has completed (section 4) | Y:3197–3203; D24 (Y:653); T102, T116 [T, the code] | T116; T327 |
 | `cutover` | 2 | its label refusals (N4, S-2): a file with no `register_label=`, before it connects; at `files`, a `register_label=` that is not the switch's label, before it sends anything; at `primary`, an entry whose label does not differ from the switch's, which the transaction refuses with LR004 | ops:379 | T116 |
 | `cutover` | 2 | a schema that is not a scratch schema, while the constant is unset | Y:4872; T116 | T116 |
@@ -196,12 +196,12 @@ The index half keeps #160's codes, 0, 1, 2 and 64, and `export` its 3 (`code/lan
 | Subcommand | Code | When | Source | Task |
 |---|---|---|---|---|
 | `status` | 0 | read: the switch, `n`, the generation, the mirror's last `Register-Seq` and the lag, `diverged at`, the pending records and a declaration left in place | Y:4853; T117 | T117 |
-| `status` | 69 | the register cannot be read, or its timer expires; it still prints the lag from git where it can read it | D9 (Y:3528) | T117 |
+| `status` | 69 | the register cannot be read, or its timer expires; it still prints the lag from git where it can read it; 69 whatever #160's half gave, and where the register reads, `status` keeps #160's own 0 or 1 | D9 (Y:3528); lane 3's ruling, #165 6770600106 (T117's point 1) | T117 |
 | `status` | 2 | a refused configuration; Q6(c) | section 2 | T117 |
 | `reconcile` | 0 | the read-only check done. [P] A mirror that differs from SQL is reported on stdout with exit 0, as `status` reports a lag and #160's `reconcile --dry-run` its counts; Y fixes no code for it. T325's re-render, in phase 3, puts it right | Y:4854; `code/lanes-index:2563` | T117; lane 3's T325 |
 | `reconcile` | 69 | the register cannot be read, or its timer expires | D10 (Y:511–512); D9 (Y:3527) | T117 |
 | `reconcile` | 2 | a refused configuration; Q6(c) | section 2 | T117 |
-| `sync --source register`, on primary | 0 | nothing done, and it says so | Y:4854 | T117 |
+| `sync` of the register's source (none, `register`, or this workstation's `register:<owner/repo>`), on primary | 0 | nothing done, and it says so | Y:4854; lane 3's ruling, #165 6770600106 (T117's point 2) | T117 |
 | `export` | 0, 1, 2, 3, 64 | #160's, unchanged | `code/lanes-index:72–76` | — |
 
 #### 3.5 Other lanes' `lanes-index` subcommands

@@ -1165,18 +1165,25 @@ are lane 3's rulings memo's).
   Source: "The bind as one verb" (Y:5521).
 - **FR-026**: On primary, `lanes-edit.sh commit`'s carry form, the hand edit
   of Rule 9(d), MUST be refused with 2, as every other direct write to the
-  files is (D10). The publish of queued commits MUST stay, outside the
-  attempt loop, with its fence narrowed to `handoffs/`; a queued commit under
-  `lanes/` MUST be refused as a divergence, unless it touches only
-  `lanes/repos.tsv` or `lanes/log/README.md`, which the publish act MUST let
-  through; and a push whose commit changes a path outside `handoffs/` MUST
-  be refused with 2 at the push (R16).
+  files is (D10). On primary, `commit` also refuses 2, before S3, over a
+  pending edit of any rendered file (`cp_seam_render_path`), as spec:171–173
+  says; `lanes/repos.tsv` and `lanes/log/README.md` are not rendered
+  (Y:5049). The publish of queued commits MUST stay, outside the attempt
+  loop, with its fence narrowed to `handoffs/`; a queued commit under
+  `lanes/` MUST be refused as a divergence, unless its every path is
+  `lanes/repos.tsv` or `lanes/log/README.md`, added or modified as a regular
+  file, which the publish act MUST let through, and a commit holding either
+  beside any other path MUST be refused with 2; and a push whose commit
+  changes a path outside `handoffs/` MUST be refused with 2 at the push
+  (R16).
   - A git act whose paths are all under `handoffs/` keeps S3's fetch: D12
     governs register writes (R16).
   - `register-row-local` MUST read the database (D11).
   - Sources: "Direct writes to the files refuse on `mode=primary`"
     (spec:168–169), whose two-file allow-list is Brett's "Allow those two
-    files" (#165 6769217709); D10 (Y:508); D11 (Y:515).
+    files" (#165 6769217709), worded to its letter, with the refusal of a
+    pending edit of a rendered file, by lane 3 (#165 6770820384, T420 S2);
+    D10 (Y:508); D11 (Y:515).
 - **FR-027**: After COMMIT, the parent MUST:
   - fork `lanes-index render --checkout <c>`, detached, without
     `LANES_NO_FETCH`;
@@ -1211,8 +1218,10 @@ are lane 3's rulings memo's).
   `CLAIM-LOST` is unreachable on primary. Source: "A claim's comment cites
   the register sequence" (spec:377).
 - **FR-032**: `append-line --landing-expired` MUST copy the holder's
-  `LANDING` fields byte for byte, and MUST refuse with 2 before the lock in
-  every case F13 lists.
+  `LANDING` fields byte for byte, and MUST refuse with 2, sending nothing,
+  in every case F13 lists: its argument and mode checks before the lock, its
+  open-`LANDING` and age checks on each attempt's snapshot, before `ready`
+  (Y:5114; spec:1007; lane 3, #165 6770688147, T425 Q1).
   - On primary, `RULE6_PRIMARY` MUST add `RULE6_EXPIRED_AWK` to `RULE6_AWK`
     once, in the main shell.
   - Off primary, `RULE6_AWK` MUST stay byte-identical.
