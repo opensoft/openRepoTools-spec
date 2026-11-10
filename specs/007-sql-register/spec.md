@@ -225,7 +225,7 @@ database:
    - answer 2's bind runs detached (User Story 5);
    - `lane-start`'s three register writes are one, `start-record` (User
      Story 5);
-   - `wip init` refuses wherever any file under `lanes/` exists (scenario 7).
+   - `wip init` refuses in scenario 7's narrowed form (FR-005).
 
 **OpenSpec requirements**:
 

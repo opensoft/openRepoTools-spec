@@ -5,10 +5,10 @@ Phase 0 of `/speckit.plan`, keyed to commit Y (`a6497d00`) of the change
 frozen at Y but for the edits below. This file records what the rulings since
 the freeze decide for 007, and the errors found in the frozen text.
 
-**The edits to Y's files since Y,** by round. All but the first and round
-B13's `design.md` fold are made in place, so every line of `operations.md`,
-`clarifications.md` and `proposal.md`, and of `design.md` to design:1192,
-keeps Y's number:
+**The edits to Y's files since Y,** by round. All but the first, round
+B13's `design.md` fold and round B14's test-plan edits are made in place, so
+every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
+`design.md` to design:1192, keeps Y's number:
 
 - **Round B4, the two spec files** (`dabd74bd`, `ce3fad83`, `ad82c2f4` and
   `04a9de6b`; lane 3's rulings B4, #165 6738474549, and (a), 6727022920): the
@@ -52,11 +52,25 @@ keeps Y's number:
   its archive (lane 3, #165 6768052557); ops:466, :470 and :473,
   `set-mode`'s one added ground, and a file that already says the mode (lane
   3's rulings, #165 6769217709, reading 1, and #165 6778959652).
+- **Round B14:** lane 2's three test-plan edits in its F13b (#165
+  6779583168; `edits-F13b-test-plan.json`, `39f8ca8a…`): AT-3's `wip init`
+  oracle at test-plan.md:819 and :827, and the readers' arms at :2901, so
+  `test-plan.md` is `bed85d82…`, 9,147 lines; its lines from :820 to :2900
+  sit one below Y's numbers, and those from :2903 two below. And, in place,
+  FR-005's dependents, narrowed to its words by Brett's "Narrow it
+  (Recommended)" (2026-11-10T16:50:07Z, as lane 3 relays it, #165
+  6773442813): spec:60, :135 and :144, with :137's note of his answer;
+  design:142–146, :156–158 and :249–253, each re-wrapped to its own lines,
+  and design:722's row, which keeps his Q14(a) and adds that FR-005 narrows
+  it; and proposal:149–152 and :2275–2277, re-wrapped the same way.
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number, except in `design.md` after
-design:1192, which round B13's fold moved up to 46 lines down.
+design:1192, which round B13's fold moved up to 46 lines down. A
+`test-plan.md:<n>` or `TP:<n>` citation is likewise Y's line; in the branch,
+round B14's edits put the plan's lines from :820 to :2900 one line down, and
+those from :2903 two.
 
 - **Part 1, the errata** (ERR-01 to ERR-54; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code

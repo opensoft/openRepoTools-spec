@@ -146,10 +146,10 @@ the guard's answer 2, whose bind runs detached in every mode, the fix for two
 defects in today's guard (design, "Known defects in today's code";
 opensoft/openRepoTools#347); `lane-start`'s bind, whose three register writes
 become one write, `start-record`, in every mode; and `openRepoTools wip init`'s
-refusal wherever any file under `lanes/` exists, in every mode (Q14(a)). Lane 3
-confirmed the first two (#165 6710770304), and the third is Brett's answer to
-Q14 (#165 6710653292). Each item names the
-test that checks it; the agreement tests are listed together at the end.
+refusal wherever `lanes/STORE` exists, in every mode, and, where a tree carries another file under `lanes/`, wherever its
+seed would write under `lanes/`: where that tree lacks `lanes/LANES.md` or `lanes/log/README.md` (Q14(a), narrowed by Brett's
+"Narrow it (Recommended)", #165 6773442813). Lane 3 confirmed the first two (#165 6710770304), and the third is Brett's
+answer to Q14 (#165 6710653292). Each item names the test that checks it; the agreement tests are listed together at the end.
 
 ### The configuration and the estate switch (S1)
 
@@ -2272,6 +2272,6 @@ change `skip-no-lane-guard`, not yet archived) is kept unchanged, not modified.
   read and the marker check. There are three exceptions, in every mode: the
   guard's answer 2, whose bind runs detached; `lane-start`'s bind, whose three
   register writes become one, `start-record`; and `openRepoTools wip init`'s
-  refusal wherever any file under `lanes/` exists (Q14(a)). **Unchanged
-  everywhere:** the ledger half; the
-  handoffs; Rules 1–10 as rules; Amendment 7's grammar.
+  refusal wherever `lanes/STORE` exists, in every mode, and, where a tree carries another file under `lanes/`, wherever its seed would
+  write under `lanes/`: where that tree lacks `lanes/LANES.md` or `lanes/log/README.md` (Q14(a), narrowed by Brett's "Narrow it
+  (Recommended)", #165 6773442813). **Unchanged everywhere:** the ledger half; the handoffs; Rules 1–10 as rules; Amendment 7's grammar.

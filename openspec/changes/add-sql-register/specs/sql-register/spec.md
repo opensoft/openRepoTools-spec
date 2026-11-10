@@ -57,7 +57,7 @@ Every act-2 writer, in every mode, SHALL read `lanes/STORE`; a files-mode writer
 - **THEN** every write that workstation tries after its fetch exits 69 and writes nothing
 
 ### Requirement: Nothing changes where the marker is absent
-While `lanes/STORE` is absent, the output and exit codes of every `mode=index` and every unconfigured workstation SHALL be unchanged; each writer gains the configuration read and the marker check and nothing else. There SHALL be three exceptions. The first SHALL be the prompt guard's answer 2, which in every mode runs its bind detached and answers from the bind's record, as the register service's requirement on the guard's 5 s budget sets out, because today's answer 2 is cut down by the hook's timeout partway through its bind. The second SHALL be `lane-start`'s bind, whose three register writes become one write verb, `start-record`, in every mode, as the requirement "`lane-start`'s bind is one write" sets out, so that in files mode they are one register commit and one push. The third SHALL be `openRepoTools wip init`'s refusal wherever any file under `lanes/` exists, in every mode, as the requirement on `wip init` sets out. The ledger half, the handoffs, Rules 1 to 10 as rules and Amendment 7's grammar SHALL be unchanged in every mode.
+While `lanes/STORE` is absent, the output and exit codes of every `mode=index` and every unconfigured workstation SHALL be unchanged; each writer gains the configuration read and the marker check and nothing else. There SHALL be three exceptions. The first SHALL be the prompt guard's answer 2, which in every mode runs its bind detached and answers from the bind's record, as the register service's requirement on the guard's 5 s budget sets out, because today's answer 2 is cut down by the hook's timeout partway through its bind. The second SHALL be `lane-start`'s bind, whose three register writes become one write verb, `start-record`, in every mode, as the requirement "`lane-start`'s bind is one write" sets out, so that in files mode they are one register commit and one push. The third SHALL be `openRepoTools wip init`'s refusal wherever `lanes/STORE` exists, in every mode, and, where a tree carries another file under `lanes/`, wherever its seed would write under `lanes/`: where that tree lacks `lanes/LANES.md` or `lanes/log/README.md`, as the requirement on `wip init` sets out. The ledger half, the handoffs, Rules 1 to 10 as rules and Amendment 7's grammar SHALL be unchanged in every mode.
 
 #### Scenario: An unconfigured workstation writes as today
 - **WHEN** a workstation with no `lanes-index.conf` makes a register write and `lanes/STORE` is absent
@@ -132,16 +132,16 @@ Where the organisation's plan supports it, a push ruleset whose only bypass is a
 - **THEN** the renderer's push still goes over SSH to the repository it fetched, with the renderer identity's key alone, and the checkout's configuration is unchanged
 
 ### Requirement: `wip init` and the `LANES.md` link on a SQL estate
-`openRepoTools wip init` SHALL refuse once `lanes/STORE`, or any file under `lanes/`, exists, so that its seed commit is never a stray commit under `lanes/STORE`. The `~/projects/xFactory/LANES.md` link SHALL stay for reading only, as Amendment 23's S5 already rules.
+`openRepoTools wip init` SHALL refuse wherever `lanes/STORE` exists, in every mode, and, where a tree carries another file under `lanes/`, wherever its seed would write under `lanes/`: where that tree lacks `lanes/LANES.md` or `lanes/log/README.md`, so that its seed commit is never a stray commit under `lanes/STORE`. The `~/projects/xFactory/LANES.md` link SHALL stay for reading only, as Amendment 23's S5 already rules.
 
-> Brett's answer to Q14: option (a), #165 6710653292.
+> Brett's answer to Q14: option (a), #165 6710653292; narrowed by his "Narrow it (Recommended)", 2026-11-10T16:50:07Z, as lane 3 relays it (#165 6773442813).
 
 #### Scenario: `wip init` on a SQL estate
 - **WHEN** `openRepoTools wip init` runs in a workspace repository whose tree carries `lanes/STORE`
 - **THEN** it refuses and commits nothing
 
 #### Scenario: `wip init` where a `lanes/` file exists
-- **WHEN** it runs where any file under `lanes/` exists
+- **WHEN** it runs where a file under `lanes/` other than `lanes/STORE` exists, in a tree that lacks `lanes/LANES.md` or `lanes/log/README.md`
 - **THEN** it refuses and commits nothing
 
 ### Requirement: Every register write is one transaction

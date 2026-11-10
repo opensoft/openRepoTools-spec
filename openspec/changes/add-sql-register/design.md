@@ -139,11 +139,11 @@ the fourth beside files mode (P5).
   fix two defects ("Known defects in today's code";
   opensoft/openRepoTools#347); `lane-start`'s bind, whose three register
   writes become one, `start-record`, with one commit and push in files mode
-  (D5); and `openRepoTools wip init`'s refusal wherever any file under
-  `lanes/` exists, in every mode (Q14(a)), as `specs/sql-register/spec.md`'s
-  "Nothing changes where the marker is absent" has it. Lane 3 confirmed the
-  first two (#165 6710770304), and the third is Brett's answer to Q14 (#165
-  6710653292).
+  (D5); and `openRepoTools wip init`'s refusal wherever `lanes/STORE` exists, in every mode, and, where a
+  tree carries another file under `lanes/`, wherever its seed would write under `lanes/`: where that tree
+  lacks `lanes/LANES.md` or `lanes/log/README.md` (Q14(a), narrowed by Brett's "Narrow it (Recommended)",
+  #165 6773442813), as `specs/sql-register/spec.md`'s "Nothing changes where the marker is absent" has it.
+  Lane 3 confirmed the first two (#165 6710770304), and the third is Brett's answer to Q14 (#165 6710653292).
 
 **Non-Goals:**
 
@@ -153,9 +153,9 @@ the fourth beside files mode (P5).
 - Building Amendment 23's act 2, or changing files mode beyond the marker check
   and the three exceptions: the guard's detached answer 2 ("Known defects in
   today's code"; opensoft/openRepoTools#347), `start-record` (D5), and
-  `wip init`'s refusal wherever any file under `lanes/` exists (Q14(a)). Lane
-  3 confirmed the first two (#165 6710770304); the third is Brett's answer to
-  Q14 (#165 6710653292).
+  `wip init`'s refusal wherever `lanes/STORE` exists, in every mode, and, where a tree carries another file under `lanes/`, wherever its
+  seed would write under `lanes/`: where that tree lacks `lanes/LANES.md` or `lanes/log/README.md` (Q14(a), narrowed by Brett's "Narrow it
+  (Recommended)", #165 6773442813). Lane 3 confirmed the first two (#165 6710770304); the third is Brett's answer to Q14 (#165 6710653292).
 - Moving handoffs into SQL, or replacing `git log` as the audit trail.
 - A cache that answers a deciding read on its own.
 - `tasks.md` and the Speckit handoff, which follow this file.
@@ -246,11 +246,11 @@ he named on 2026-11-08 ("Values Brett named on 2026-11-08", in Open questions).
    `rename-lane`. Under (b), the handoff move and stamp commit first, and a
    refused transaction leaves the handoff moved while the register names the
    old lane; the repair then reruns only the transaction.
-9. **Q14: (a) for `wip init` and (a) for the link.** `wip init` refuses once
-   `lanes/STORE`, or any file under `lanes/`, exists; the
-   `~/projects/xFactory/LANES.md` link stays, for reading. Under (b) for
-   `wip init`, its seed commit is a stray commit that stops the renderer; under
-   (b) for the link, `link-estates` stops placing it on a primary estate.
+9. **Q14: (a) for `wip init` and (a) for the link.** `wip init` refuses wherever `lanes/STORE` exists, in every mode,
+   and, where a tree carries another file under `lanes/`, wherever its seed would write under `lanes/`: where that tree
+   lacks `lanes/LANES.md` or `lanes/log/README.md` (narrowed by Brett's "Narrow it (Recommended)", #165 6773442813);
+   the `~/projects/xFactory/LANES.md` link stays, for reading. Under (b) for `wip init`, its seed commit is a stray
+   commit that stops the renderer; under (b) for the link, `link-estates` stops placing it on a primary estate.
 10. **Q17, which lines take and release `main`: (B).** S6. Under (A), only
     `HOLD RELEASED` and `LANDED` release, so a withdrawn `HOLD` keeps `main`
     taken. Under (C), `append-line` also refuses every HOLD- or QUEUED-shaped
@@ -719,7 +719,7 @@ puts it to him.
 | D25: `lanes-index cutover` as a command of its own | Amendment 22's S5 and its ratified names | answered: D25, 6721583757: accepted |
 | A release for a stale `LANDING` (S6): lane 1's v2 carries it as the line kind `LANDING EXPIRED`, `register_lines.for_lane` and LR005 (§1.2, §1.3.1), tested on the engine, and written only on Brett's word by `append-line --landing-expired` (lane 4's E1 to E4), whose commit refuses with LR005, naming its reason by a DETAIL token, a `LANDING EXPIRED` that names no open, stale `LANDING` (lane 1's v3.1) | Amendment 10 and Rule 6, under Q17(B) | answered: 6721583757: adopted, on Brett's word |
 | A stray landing during a rollback: the rollback refuses while a divergence is recorded, at its start, after a fresh fetch right before its transaction, and inside that transaction (LR012). So only a stray that lands after that check, once the rollback's entry has set the switch to `files`, has no journalled way out, since S2's two ways out each need `primary` (lane 1's v2; narrowed by its v2.6, R2's S5) | Amendment 22's S5, under Q4(b)(iii) | answered: 6721583757: the gap accepted as S5's remaining gap |
-| Files mode changes, against Amendment 22's scope, "a workstation with `mode=index`, or with no configuration, runs exactly as today": the guard's answer 2 runs its bind detached, and `lane-start`'s bind is one write, `start-record`, in every mode, which lane 3 ruled (#165 6710770304) and Brett was not asked; and `wip init` refuses wherever any file under `lanes/` exists, in every mode, the delta's third exception, which is his Q14(a) | Amendment 22's scope | answered: A, 6721370130: both accepted as recorded departures |
+| Files mode changes, against Amendment 22's scope, "a workstation with `mode=index`, or with no configuration, runs exactly as today": the guard's answer 2 runs its bind detached, and `lane-start`'s bind is one write, `start-record`, in every mode, which lane 3 ruled (#165 6710770304) and Brett was not asked; and `wip init` refuses wherever any file under `lanes/` exists, in every mode, the delta's third exception, which is his Q14(a), since narrowed by FR-005 (his "Narrow it (Recommended)", #165 6773442813) | Amendment 22's scope | answered: A, 6721370130: both accepted as recorded departures |
 | D8's exit 3: a write in doubt that cannot settle exits 3, naming its write id, and may have been written, where S1 has an unreachable database refuse with 69 and write "nothing anywhere"; Q16 was not in round 2 | Amendment 22's S1 | answered: B, 6721370130: exit 3 accepted |
 | Q18(A): the renderer renders the render set only, and a commit under `lanes/` outside it, such as `lanes/repos.tsv`, is part of the tip, where S2 has "a commit under `lanes/` that the renderer did not make" stop the renderer; the round-2 file calls (B) "as Amendment 22 literally reads" | Amendment 22's S2 | answered: Q18, 6710653292 |
 | Q19(A): on primary `claim` prints "register seq `<n>`", where Amendment 7's claim "prints the log commit's sha" | Amendment 7 | answered: Q19, 6710653292 |

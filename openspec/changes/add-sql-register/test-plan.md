@@ -816,7 +816,8 @@ rename.
     `lanes/repos.tsv`. Each runs once per configuration: none, and
     `mode=index`.
 - **Oracle.**
-  - The writer exits 69, and stderr carries the line quoted above.
+  - The writer exits 69, and stderr carries the line quoted above. `wip init`
+    exits 2 and names the path it found, with no `mode=primary` line.
   - These are unchanged: the clone's HEAD, index, working tree and files under
     `lanes/`, and origin's refs.
   - No local commit is queued for the publish act.
@@ -825,7 +826,7 @@ rename.
   - **An unconfigured workstation's readers (Q21(a) (A)).** `who` exits 69,
     the guard 2, and `lanes` prints its `read: mirror` line.
   - **`wip init` where a `lanes/` file exists, with no marker.** It refuses
-    with a non-zero exit and commits nothing: the clone's HEAD is
+    with a 2 exit and commits nothing: the clone's HEAD is
     unchanged, no commit is queued for the publish act, and origin's refs
     are unchanged. The refusal is the same in both configurations, and the
     same for either file.
@@ -2898,8 +2899,9 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     - Stderr names the code, and says that nothing was written and a retry in
       seconds is safe.
     - The rows and logs are unchanged.
-    - `lane-end:930–938` and `lane-worktrees:508–524` refuse 69, 75 and 3
-      with the verb's own code, and write or delete nothing; `lane-end:2490`
+    - `lane-end:930–938` refuses 69, 75 and 3 with the verb's own code, and
+      `lane-worktrees:508–524` refuses them with 2, naming the code; each
+      writes or deletes nothing; `lane-end:2490`
       exits with the code; `lane-handoff:2817` and each arm that already
       refuses pass the code, never 1; the `69)` arm of `lane-handoff:1463`
       and `SKILL.md:112` re-reads from the mirror and prints the
