@@ -3,25 +3,37 @@
 This directory holds the contract files that plan.md lists. Each is written
 by the lane that owns it, and lands before the code that rests on it.
 
-## `register-cli.md`: lane 1's contract draft 4.15, keyed to Y
+## `register-cli.md`: lane 1's contract draft 4.16, keyed to Y
 
-[register-cli.md](register-cli.md) is lane 1's contract draft 4.15, keyed to
+[register-cli.md](register-cli.md) is lane 1's contract draft 4.16, keyed to
 Y (`a6497d00`), copied here byte for byte by lane 3 at round B13, on
-2026-11-10. It replaces draft 4.14, which lane 3 copied in at round B12b;
-draft 4.13 came in at round B11, draft 4.12 at round B10, part 1, draft 4.11
+2026-11-10. It replaces draft 4.15, which lane 3 copied in at round B13's
+first commit (`95c19400`); draft 4.14 came in at round B12b, draft 4.13 at
+round B11, draft 4.12 at round B10, part 1, draft 4.11
 at round B9, part 1c, draft 4.10 at round B6, draft 4.7 at round B5, draft
 4.6 at round B4, draft 4.5 at round B3, draft 4.4 at fix round B2, draft 4.2
 at fix round B, and draft 4.1 at assembly phase A.
 
-- **Source:** lane 1's contract draft 4.15, `contracts-register-cli.v4.15.md`,
-  posted on #165 at 6773756519.
+- **Source:** lane 1's contract draft 4.16, `contracts-register-cli.v4.16.md`,
+  posted on #165 at 6779236253.
 - **sha256:**
-  `b585a2a4060d91b772f608cea720bdb667e2c2a3de36ef1dc56fb5c47950f5f0`, 974
+  `b8376bb1312f960e0ad671c3ead49522bcda95f0ae7fef2f2e92137f51515f75`, 974
   lines. The copy here has the same digest. Drafts 4.3 to 4.11 keep every
   line number of draft 4.2; draft 4.12 keeps them to :637 and moves each
   later line down one; draft 4.13 keeps every line number of draft 4.12,
-  draft 4.14 every line number of draft 4.13, and draft 4.15 every line
-  number of draft 4.14, adding §10's ten lines after the last.
+  draft 4.14 every line number of draft 4.13, draft 4.15 every line number
+  of draft 4.14, adding §10's ten lines after the last, and draft 4.16 every
+  line number of draft 4.15.
+- **What draft 4.16 changes:** it is draft 4.15 (`b585a2a4…`, #165
+  6773756519) with lane 1's edits E1 to E9 (#165 6779236253), each inside an
+  existing line: the lookup's four statements as T114's follow-up 3 builds
+  them, with `workstation=` and `utc=` read in statement 3's `COPY` (:236,
+  E1; lane 3, #165 6774390716); the five readings of lane 5's that lane 1's
+  T111 review accepted, in §3.2 (:409, :410, :414, :415, :440 and :451, E2;
+  #165 6775233959); lane 3's T113 rulings, SHOULD-2 at :733 (E8) and
+  SHOULD-1 at :751 (E9; #165 6778890211); lane 1's four one-line follow-ups
+  (:12, :501, :160 and :279, E3 to E6), which lane 3 takes as written at
+  round B13; and the Status paragraph (:5, E7).
 - **What draft 4.15 changes:** it is draft 4.14 (`34f343cd…`, #165
   6769472222) with lane 1's edits E1 to E8 (#165 6773756519), on lane 3's
   list for it (#165 6772120103), its rulings 6771318480, 6770688147,
@@ -143,7 +155,7 @@ at fix round B, and draft 4.1 at assembly phase A.
   660 lines, #165 6745214166) replaces it for 007's tasks, and keeps its
   line numbers: it is block v4.4 (`a4ce9e3b…`, #165 6742356416) with T119's
   check 11 and its tests naming the prod OpenXPKI's root (:386, :388). The
-  contract, at draft 4.15 as at 4.1, gives no restore order. Block v4.11
+  contract, at draft 4.16 as at 4.1, gives no restore order. Block v4.11
   (`625a0b84…`, 667 lines, #165 6754645319) replaces v4.10 for 007's tasks
   since round B9, part 1c, and keeps its line numbers to :660: it pairs
   with draft 4.11 and takes round B8's changes to lane 1's lines (:142,
@@ -188,7 +200,7 @@ at fix round B, and draft 4.1 at assembly phase A.
   `register snapshot`, `register commit` and `journal --write-id`, keeps the
   form of the phase plan's interfaces table (Y:4834).
 - **Its landing:** tasks.md's T101 rides the spec PR, since its output is
-  this file, in the spec branch at draft 4.15 (lane 3, #165 6745826156). A
+  this file, in the spec branch at draft 4.16 (lane 3, #165 6745826156). A
   later draft replaces this copy as a fix before the spec PR leaves draft,
   with its own source and digest here.
 
