@@ -5,9 +5,10 @@ Phase 0 of `/speckit.plan`, keyed to commit Y (`a6497d00`) of the change
 frozen at Y but for the edits below. This file records what the rulings since
 the freeze decide for 007, and the errors found in the frozen text.
 
-**The edits to Y's files since Y,** by round. All but the first are made in
-place, so every line of `design.md`, `operations.md`, `clarifications.md` and
-`proposal.md` keeps Y's number:
+**The edits to Y's files since Y,** by round. All but the first and round
+B13's `design.md` fold are made in place, so every line of `operations.md`,
+`clarifications.md` and `proposal.md`, and of `design.md` to design:1192,
+keeps Y's number:
 
 - **Round B4, the two spec files** (`dabd74bd`, `ce3fad83`, `ad82c2f4` and
   `04a9de6b`; lane 3's rulings B4, #165 6738474549, and (a), 6727022920): the
@@ -40,12 +41,24 @@ place, so every line of `design.md`, `operations.md`, `clarifications.md` and
   (lane 3, #165 6770820384): spec:169 in place, and one scenario added under
   its requirement, so the sql spec's lines after that scenario sit five
   below their `ad82c2f4` numbers.
+- **Round B13:** lane 1's fold-ready diff for `design.md` (#165 6774804435;
+  `Y-B12b-all-lane1.diff`, `b67378e9…`): ERR-48's step 6 (c1), the index
+  `object_holds_by_line` (idx1) and case 6a (lane 3's ruling, #165
+  6771318480), in §1.2's tables and §1.3.1's `commit_write`, so that both
+  SQL blocks equal lane 1's migration 1 as built. It adds 46 lines, so
+  `design.md`'s lines after design:1192 sit up to 46 below Y's numbers, and
+  round B12b's design:1464 and :1482 are now :1467 and :1485. And, in place:
+  ops:190, where act 3 waits for the install, not for that change's merge or
+  its archive (lane 3, #165 6768052557); ops:466, :470 and :473,
+  `set-mode`'s one added ground, and a file that already says the mode (lane
+  3's rulings, #165 6769217709, reading 1, and #165 6778959652).
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
-branch holds the newer text at the same number.
+branch holds the newer text at the same number, except in `design.md` after
+design:1192, which round B13's fold moved up to 46 lines down.
 
-- **Part 1, the errata** (ERR-01 to ERR-53; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-54; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
 - **Part 2, the decisions** (DEC-01 to DEC-34): a choice the change leaves
@@ -70,8 +83,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.14 (`contracts/register-cli.md`, `34f343cd…`,
-#165 6769472222) and its block is v4.11 (`625a0b84…`, #165 6754645319),
+contract is its draft 4.15 (`contracts/register-cli.md`, `b585a2a4…`,
+#165 6773756519) and its block is v4.11 (`625a0b84…`, #165 6754645319),
 both keyed to Y. The block keeps v4.2's line numbers; the draft keeps them
 to :637 and moves each later line down one, as draft 4.12 does.
 
@@ -792,8 +805,14 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   stamps no `seq` or `mode`; step 5a adds `objects:` for every lane holding
   an object whose hold sits on a line the entry replaces, deletes, removes
   or renames, so that the flip is reported (lane 3's ruling, #165
-  6771318480). Step 5a still runs first, so the scopes do not change. T107
-  writes it, and T112 no longer relies on the order it sends rows in.
+  6771318480). Step 5a still runs first, before step 6 deletes anything: it
+  reads the old side, those holds included, so the scopes gain their lanes'
+  `objects:` keys (case 6a). Where the re-mark leaves two non-exempt claims
+  live on one object (`edge-two-live`), `one_live_claim` refuses with LR005
+  `one-live-claim`, and nothing is written: only an import sets `exempt`
+  (Y:1232, Y:1948). The way out is T324's `render --revert <sha>` (lane 3,
+  #165 6778890211, T107's `edge-two-live`). T107 writes it, and T112 no
+  longer relies on the order it sends rows in.
 - **Why:** without it, every `rename-lane` on primary ends 69. Y:1193's
   `DEFERRABLE INITIALLY DEFERRED` binds only the `REFERENCES` clause, so
   `row_line_id`'s `UNIQUE` is checked row by row, and the rewritten row
@@ -904,6 +923,23 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Whose:** lane 3's ruling, #165 6771569269, on lane 1's 6771151979. It
   keeps Y:3383's parity, so it is not Brett's.
 - **Source:** Y:1258; Y:1269–1270; Y:1409; Y:3383; Y:5141.
+
+### ERR-54. At its 16-pass cap the renderer also re-forks for a rerun mark (T323)
+
+- **The erratum:** Y:2899–2901 and Y:5784 re-fork the renderer at its
+  16-pass cap only if its last pass made progress. It also re-forks once
+  where, after it releases the lock, it finds a rerun mark: T321's promise
+  of a pass after every write, the rerun mark's half of D14's handshake
+  (Y:2896–2897; spec:485), wins.
+- **Why:** lane 3's review of T322 and T323 (its probe H, at `aaef9f4`): 15
+  passes made progress, and during pass 16, which found nothing missing, a
+  write and its mark landed. The holder ended 0 with no re-fork and the mark
+  left, so that write stayed unrendered until the next write anywhere, or
+  `reconcile`.
+- **Whose:** lane 3's ruling on MUST-1 of its review
+  (`REVIEW-007-T322-T323-aaef9f4`), built at lane 3's local `40a1f5e`. It
+  keeps D14's handshake, so it is not Brett's.
+- **Source:** Y:2896–2901; Y:5784; spec:485.
 
 ## Part 2: decisions
 
@@ -1283,10 +1319,11 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 ### DEC-25. A claim whose owner cannot be tested here counts as live for the seam's cap, then dead (T412's G10)
 
 - **The decision:** where Y is silent, a claim whose owner cannot be tested
-  on this host counts as live for the seam's cap, 120 s
-  (`LANES_REGISTER_SEAM_CAP_S`), then as dead. Y:5220 gives a claim from
-  another host or container that cap "since its pid cannot be tested here",
-  and DEC-25 applies the same reason here. It covers two cases:
+  on this host counts as live for the seam's cap, 2×(D+30) s, 120 s at D7's
+  30 s (Y:5001) (`LANES_REGISTER_SEAM_CAP_S`), then as dead. Y:5220 gives a
+  claim from another host or container that cap "since its pid cannot be
+  tested here", and DEC-25 applies the same reason here. It covers two
+  cases:
   - **a claim with no pid, or one that cannot be read:** the cap runs from
     the later of the file's mtime and the record's `updated_utc`;
   - **a claim whose pid lives but whose `pid_start` is empty,** so reuse

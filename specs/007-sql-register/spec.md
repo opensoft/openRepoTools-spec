@@ -216,8 +216,10 @@ database:
    - the guard exits 2;
    - `lanes` and the `SessionStart` block answer from the mirror with the
      `read: mirror` line.
-7. **Given** any file under `lanes/`, **When** `openRepoTools wip init` runs,
-   **Then** it refuses and commits nothing (Q14(a)).
+7. **Given** `lanes/STORE`, or another file under `lanes/` in a tree that
+   lacks `lanes/LANES.md` or `lanes/log/README.md`, **When**
+   `openRepoTools wip init` runs, **Then** it refuses and commits nothing
+   (Q14(a), narrowed: FR-005).
 8. **Given** the three exceptions, **When** they run in any mode, **Then**
    each is exactly what this feature specifies:
    - answer 2's bind runs detached (User Story 5);
@@ -567,8 +569,8 @@ of User Story 1 lifts only with it.
    takes at most two renders, the last write included.
 5. **Given** a pass, **When** it runs, **Then** it renders at most 64 seqs
    and makes at most six push attempts. The renderer re-forks once after 16
-   passes, and only after progress (F15) `[PLAN CHOICE: the renderer's batch
-   and cap]`.
+   passes, only after progress or for a rerun mark it finds after its release
+   (F15; ERR-54) `[PLAN CHOICE: the renderer's batch and cap]`.
 6. **Given** a stray commit to a rendered path, or a `Register-Seq` above the
    head, **When** the renderer meets it, **Then** it stops and records
    `diverged at <sha>`. Then `import --single <sha>` or
@@ -892,6 +894,14 @@ contract (ops:133) and the disaster path (ops:355) at Y.
 - **A `LANDING EXPIRED` typed by hand in files mode, then imported.** Lane
   2's AT-F13 (j) holds each imported line to F13's condition, or reports it
   as a finding before the cutover.
+- **A lane that log lines spell two ways, by case only.** `main_slots`'
+  `lower()` on a close that names its repository, which T112 does not touch,
+  can differ from `RULE6_AWK`, whose lane T112's pairing compares exactly as
+  written (251 of 2,000 made-up registers; lane 1, #165 6774130629). The
+  register refuses case twins as rows (Amendment 15(d)), so the difference
+  can arise only where log lines spell one lane two ways. Under Y:5141, it
+  is a difference the parity check reports before the cutover. It is not a
+  change now (lane 3, #165 6774153594).
 - **A stray landing during a rollback,** after its last divergence check.
   Brett accepted it as S5's remaining gap, as recommended (#165 6721583757;
   Y:6364–6372). No journalled way out exists.
@@ -950,9 +960,13 @@ are lane 3's rulings memo's).
     reads, in the main shell.
   - Sources: "A writer that is not `mode=primary` refuses under the marker"
     (spec:41); F17 (Y:4944).
-- **FR-005**: `openRepoTools wip init` MUST refuse wherever `lanes/STORE`, or
-  any file under `lanes/`, exists, in every mode (Q14(a)). Source: "`wip init`
-  and the `LANES.md` link on a SQL estate" (spec:134).
+- **FR-005**: `openRepoTools wip init` MUST refuse wherever `lanes/STORE`
+  exists, in every mode, and, where a tree carries another file under
+  `lanes/`, wherever its seed would write under `lanes/`: where that tree
+  lacks `lanes/LANES.md` or `lanes/log/README.md` (Q14(a), narrowed by
+  Brett's "Narrow it (Recommended)", 2026-11-10T16:50:07Z; lane 3's words,
+  #165 6773442813). Source: "`wip init` and the `LANES.md` link on a SQL
+  estate" (spec:134).
 
 #### The schema and the database contract
 

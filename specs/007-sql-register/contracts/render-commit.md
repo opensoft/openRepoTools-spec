@@ -45,6 +45,7 @@
 - The message goes to "`commit-tree -F -` with no cleanup" (Y:5966).
 - "It never runs `git interpret-trailers`" (Y:559), since its "parsing and `trailer.*` configuration would make a host's git version an input to the sha" (Y:559–561).
 - The message rules have a test: it "asserts that form C reads `<k>` from each and that two checkouts give one sha" (Y:5968).
+- A journal message holding a scissors line, or whose final trailer block already holds a `Register-Seq`, cannot be rendered. The pass reads each commit it builds back by form C, and where it reads anything but `<k>`, the build ends `build-failed` at that seq with nothing pushed, and stays there until the message is corrected (lane 3's ruling on SHOULD-2 of its review of T322, 2026-11-10).
 
 ## 2. Register-Seq
 
@@ -140,6 +141,7 @@
 - `record_marker` after the read-back, on its timer's expiry: "69: the push stands, and the marker stays `adding` or `removing`, so writes keep refusing" (Y:3534).
 - The renderer ends after "a pass that cannot progress (an authentication failure, a divergence, an operator seq its command has not yet put on origin)" (Y:2897–2899), and the plan's stop conditions include "a fetch, authentication or six-rejection failure, recorded with the mirror state" (Y:5793).
 - "A fetch that fails ends the pass with nothing pushed" (Y:2864); at an operator seq "the pass renders nothing past it, since its command owns it" (Y:2863).
+- At `files` the pass renders nothing and records no divergence, since nothing at `files` can clear one: after finding `m` it ends with the outcome `at-files`, 0 (lane 3's ruling on open point 2 of its review of T322, 2026-11-10).
 - "Killed between `commit-tree` and the push, it leaves only unreferenced objects" (Y:2908–2909).
 
 ## 4. Where Y tests it

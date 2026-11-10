@@ -3,24 +3,37 @@
 This directory holds the contract files that plan.md lists. Each is written
 by the lane that owns it, and lands before the code that rests on it.
 
-## `register-cli.md`: lane 1's contract draft 4.14, keyed to Y
+## `register-cli.md`: lane 1's contract draft 4.15, keyed to Y
 
-[register-cli.md](register-cli.md) is lane 1's contract draft 4.14, keyed to
-Y (`a6497d00`), copied here byte for byte by lane 3 at round B12b, on
-2026-11-10. It replaces draft 4.13, which lane 3 copied in at round B11;
-draft 4.12 came in at round B10, part 1, draft 4.11 at round B9, part 1c,
-draft 4.10 at round B6, draft 4.7 at round B5, draft 4.6 at round B4, draft
-4.5 at round B3, draft 4.4 at fix round B2, draft 4.2 at fix round B, and
-draft 4.1 at assembly phase A.
+[register-cli.md](register-cli.md) is lane 1's contract draft 4.15, keyed to
+Y (`a6497d00`), copied here byte for byte by lane 3 at round B13, on
+2026-11-10. It replaces draft 4.14, which lane 3 copied in at round B12b;
+draft 4.13 came in at round B11, draft 4.12 at round B10, part 1, draft 4.11
+at round B9, part 1c, draft 4.10 at round B6, draft 4.7 at round B5, draft
+4.6 at round B4, draft 4.5 at round B3, draft 4.4 at fix round B2, draft 4.2
+at fix round B, and draft 4.1 at assembly phase A.
 
-- **Source:** lane 1's contract draft 4.14, `contracts-register-cli.v4.14.md`,
-  posted on #165 at 6769472222.
+- **Source:** lane 1's contract draft 4.15, `contracts-register-cli.v4.15.md`,
+  posted on #165 at 6773756519.
 - **sha256:**
-  `34f343cde4e17715f288a52366debac8a7d5c18b9ebd5e4addc600f9252160cb`, 964
+  `b585a2a4060d91b772f608cea720bdb667e2c2a3de36ef1dc56fb5c47950f5f0`, 974
   lines. The copy here has the same digest. Drafts 4.3 to 4.11 keep every
   line number of draft 4.2; draft 4.12 keeps them to :637 and moves each
-  later line down one; draft 4.13 keeps every line number of draft 4.12, and
-  draft 4.14 every line number of draft 4.13.
+  later line down one; draft 4.13 keeps every line number of draft 4.12,
+  draft 4.14 every line number of draft 4.13, and draft 4.15 every line
+  number of draft 4.14, adding §10's ten lines after the last.
+- **What draft 4.15 changes:** it is draft 4.14 (`34f343cd…`, #165
+  6769472222) with lane 1's edits E1 to E8 (#165 6773756519), on lane 3's
+  list for it (#165 6772120103), its rulings 6771318480, 6770688147,
+  6769061039 and 6771569269, and Brett's answer as lane 3 relays it
+  (6773444302). Every edit but E7 sits inside an existing line: ERR-48's
+  case 6a sentence after §3.3's quote (:501); §2.7's 75 row gives the moved
+  head as lane 3's ruling, with no [P] (:337); the found answers carry
+  `workstation=` and `utc=` right after the seq line, in §3.2 (:436, :451),
+  §3.4 (:605, :612) and §7's Q1 and Q3 (:912, :914); with no rows, the
+  caller makes no replay (:518); lane 3's words at :624 and :636; and the
+  Status paragraph (:5). E7 adds §10, check 1's list, after the last line
+  (:965–974).
 - **What draft 4.14 changes:** it is draft 4.13 (`0a914e14…`, #165
   6766798190) with lane 1's edits E1 to E11 (#165 6769472222), on lane 3's
   #165 6768006915 (items 3 to 5), lane 4's Q4 and draft 4.13's three open
@@ -130,7 +143,7 @@ draft 4.1 at assembly phase A.
   660 lines, #165 6745214166) replaces it for 007's tasks, and keeps its
   line numbers: it is block v4.4 (`a4ce9e3b…`, #165 6742356416) with T119's
   check 11 and its tests naming the prod OpenXPKI's root (:386, :388). The
-  contract, at draft 4.14 as at 4.1, gives no restore order. Block v4.11
+  contract, at draft 4.15 as at 4.1, gives no restore order. Block v4.11
   (`625a0b84…`, 667 lines, #165 6754645319) replaces v4.10 for 007's tasks
   since round B9, part 1c, and keeps its line numbers to :660: it pairs
   with draft 4.11 and takes round B8's changes to lane 1's lines (:142,
@@ -175,7 +188,7 @@ draft 4.1 at assembly phase A.
   `register snapshot`, `register commit` and `journal --write-id`, keeps the
   form of the phase plan's interfaces table (Y:4834).
 - **Its landing:** tasks.md's T101 rides the spec PR, since its output is
-  this file, in the spec branch at draft 4.14 (lane 3, #165 6745826156). A
+  this file, in the spec branch at draft 4.15 (lane 3, #165 6745826156). A
   later draft replaces this copy as a fix before the spec PR leaves draft,
   with its own source and digest here.
 

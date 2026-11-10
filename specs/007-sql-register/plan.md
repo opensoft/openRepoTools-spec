@@ -265,7 +265,7 @@ specs/007-sql-register/
 ├── quickstart.md        # Phase 1: the operator's and an engineer's first steps
 ├── contracts/
 │   ├── README.md        # the copy's source and digest, and each contract's owner
-│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.14, copied in at round B12b.
+│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.15, copied in at round B13.
 │   │                    #   THE CONTRACT BETWEEN GROUPS A AND B (FR-013 to FR-017),
 │   │                    #   and the readers' four forms (§3.6, which lane 5 reviews)
 │   ├── exit-codes.md    # [L1] T102: the lanes-index rows; each lane adds its callers' arms
@@ -280,12 +280,12 @@ specs/007-sql-register/
 
 `contracts/register-cli.md` is fixed before group B codes against it. Lane 1
 writes it, lane 4 confirms group B's sections, lane 5 reviews §3.6, and lane
-3 rules (R01, R06). Lane 1's draft 4.14, keyed to Y (`34f343cd…`, 964 lines;
-#165 6769472222), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
+3 rules (R01, R06). Lane 1's draft 4.15, keyed to Y (`b585a2a4…`, 974 lines;
+#165 6773756519), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
 lane 4's (a) (6741093519), then lane 5's 6741787745, lane 4's log set, the
-endpoint's name, lane 1's T511 answers and U5 fixes, B6's, B9's, B10's, B11's and B12b's. Draft 4.1 is
+endpoint's name, lane 1's T511 answers and U5 fixes, B6's, B9's, B10's, B11's, B12b's and B13's. Draft 4.1 is
 draft 4 (6738871108), with form 4, lane 5's review of §3.6, lane 3's B4 and
-B7 and lane 5's check (6739068493). Lane 3 copied draft 4.14 into the path
+B7 and lane 5's check (6739068493). Lane 3 copied draft 4.15 into the path
 byte for byte, and [contracts/README.md](contracts/README.md) names its
 source and digest. Its §8 closes O14 to O21. T101 rides the spec PR (B4).
 
@@ -353,6 +353,8 @@ skills/handoff/SKILL.md         # A [L4] T406 step 1's reads (R25) | B [L4] T431
 skills/restart/SKILL.md         # A [L4] T407 lread's 69 arm under S3
 openRepoTools                   # A [L3] T303 wip_init's refusal under lanes/ (U9);
                                 #   GUARD_COMMAND, GUARD_TIMEOUT and the hook text unchanged
+                                # [L3] T346 --install places check 1's list beside lanes-index
+.github/workflows/release.yml   # [L3] T346 publishes check 1's list as a release asset
 .github/workflows/tests.yml     # 0 [L2] OPENREPOTOOLS_REQUIRE_PG; the four check names kept
 tests/                          # [L2] pgcluster.py, conftest.py, test_sql_register_*.py,
                                 #   test_lanes_index.py (FAKE_PSQL from PG* variables),
@@ -370,6 +372,7 @@ pyproject.toml                  # UNCHANGED: no installable is added
   T417 lands the manual's exit-3 row beside its code PR, and T340 keeps it
   (R21);
 - `docs/release-notes/v1.2.0.md` (T342);
+- `specs/006-release-pypi/contracts/workflows.md`'s `release.yml` list (T346);
 - this feature's directory, with each lane's contract file.
 
 **In the root**, lane 1's acts on the standing word (U11; R13):
