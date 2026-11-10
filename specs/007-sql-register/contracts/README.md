@@ -3,21 +3,31 @@
 This directory holds the contract files that plan.md lists. Each is written
 by the lane that owns it, and lands before the code that rests on it.
 
-## `register-cli.md`: lane 1's contract draft 4.11, keyed to Y
+## `register-cli.md`: lane 1's contract draft 4.12, keyed to Y
 
-[register-cli.md](register-cli.md) is lane 1's contract draft 4.11, keyed to
-Y (`a6497d00`), copied here byte for byte by lane 3 at round B9, part 1c, on
-2026-11-09. It replaces draft 4.10, which lane 3 copied in at round B6;
-draft 4.7 came in at round B5, draft 4.6 at round B4, draft 4.5 at round B3,
-draft 4.4 at fix round B2, draft 4.2 at fix round B, and draft 4.1 at
-assembly phase A.
+[register-cli.md](register-cli.md) is lane 1's contract draft 4.12, keyed to
+Y (`a6497d00`), copied here byte for byte by lane 3 at round B10, part 1, on
+2026-11-10. It replaces draft 4.11, which lane 3 copied in at round B9, part
+1c; draft 4.10 came in at round B6, draft 4.7 at round B5, draft 4.6 at
+round B4, draft 4.5 at round B3, draft 4.4 at fix round B2, draft 4.2 at fix
+round B, and draft 4.1 at assembly phase A.
 
-- **Source:** lane 1's contract draft 4.11, `contracts-register-cli.v4.11.md`,
-  posted on #165 at 6754645319.
+- **Source:** lane 1's contract draft 4.12, `contracts-register-cli.v4.12.md`,
+  posted on #165 at 6755305741.
 - **sha256:**
-  `60b397f992718939a9c36f2897c7ed24bbfc70eee0a8adbc77760ee69480b97c`, 963
+  `7211b9f12be97631d90e07e71c82715471dd84441bf2da63ffff714482e709cf`, 964
   lines. The copy here has the same digest. Drafts 4.3 to 4.11 keep every
-  line number of draft 4.2.
+  line number of draft 4.2; draft 4.12 keeps them to :637 and moves each
+  later line down one.
+- **What draft 4.12 changes:** it is draft 4.11 (`60b397f9…`, #165
+  6754645319) with lane 3's rulings on T424 (#165 6754806910, which accepts
+  lane 1's two [P]s of 6754605207 with one addition) and on its review of
+  T301 (#165 6754819099), nine edits: §3.5 gains the caller's sub-bullet at
+  :638, the one added line; §2.4's `mode` row also names `register
+  classify`, with T424's `timeout -k 1 2` and 124 or 137 as 69 (:253);
+  T301's choice texts go into §3.6 (:800–802); `render --checkout` before
+  T321 is 64 (:804); and the status line changes (:5). Lane 3's answers to
+  its four open points (#165 6755449007) go into draft 4.13.
 - **What draft 4.11 changes:** it is draft 4.10 (`e2b51782…`, #165
   6748303517) with four fixes from lane 1's U5 re-check of T511's draft 4
   (#165 6752336451), which lane 3 accepted (6752360829): a cached set member
@@ -90,7 +100,7 @@ assembly phase A.
   660 lines, #165 6745214166) replaces it for 007's tasks, and keeps its
   line numbers: it is block v4.4 (`a4ce9e3b…`, #165 6742356416) with T119's
   check 11 and its tests naming the prod OpenXPKI's root (:386, :388). The
-  contract, at draft 4.11 as at 4.1, gives no restore order. Block v4.11
+  contract, at draft 4.12 as at 4.1, gives no restore order. Block v4.11
   (`625a0b84…`, 667 lines, #165 6754645319) replaces v4.10 for 007's tasks
   since round B9, part 1c, and keeps its line numbers to :660: it pairs
   with draft 4.11 and takes round B8's changes to lane 1's lines (:142,
@@ -135,7 +145,7 @@ assembly phase A.
   `register snapshot`, `register commit` and `journal --write-id`, keeps the
   form of the phase plan's interfaces table (Y:4834).
 - **Its landing:** tasks.md's T101 rides the spec PR, since its output is
-  this file, in the spec branch at draft 4.11 (lane 3, #165 6745826156). A
+  this file, in the spec branch at draft 4.12 (lane 3, #165 6745826156). A
   later draft replaces this copy as a fix before the spec PR leaves draft,
   with its own source and digest here.
 

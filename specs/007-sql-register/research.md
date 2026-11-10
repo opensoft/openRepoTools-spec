@@ -40,7 +40,7 @@ So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number.
 
-- **Part 1, the errata** (ERR-01 to ERR-47; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-49; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
 - **Part 2, the decisions** (DEC-01 to DEC-32): a choice the change leaves
@@ -65,9 +65,10 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.11 (`contracts/register-cli.md`, `60b397f9…`,
-#165 6754645319) and its block is v4.11 (`625a0b84…`, #165 6754645319),
-both keyed to Y, both keeping v4.2's line numbers.
+contract is its draft 4.12 (`contracts/register-cli.md`, `7211b9f1…`,
+#165 6755305741) and its block is v4.11 (`625a0b84…`, #165 6754645319),
+both keyed to Y. The block keeps v4.2's line numbers; the draft keeps them
+to :637 and moves each later line down one.
 
 ## Part 1: errata against the frozen text
 
@@ -686,8 +687,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   snapshot is one `COPY` of tagged rows, with no `BEGIN`", reads the same:
   the fake's `psql --version` at 14 gives 69, one `--version` call and no
   request. Lane 2's `[snapshot-psql-14]` case (T257) follows it in F9, and
-  contract draft 4.11, in the branch since round B9's part 1c, states it at
-  its :234.
+  contract drafts 4.11 and 4.12 state it at their :234.
 - **Whose:** lane 3's ruling, #165 6752697506, on lane 1's point 1 in
   6752661856.
 - **Why:** no SHALL in the change's spec requires the fallback, spec.md's
@@ -719,7 +719,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   states a behaviour for it, T237 may follow in a later round.
 - **Source:** `test-plan.md:2028–2030`; Y:3926–3931.
 
-### ERR-46. `lane-start:1555` refuses `managed-projection`'s 1, not "pass the code" (Y:5730)
+### ERR-46. `lane-start:1555` and `lane-end:955` refuse `managed-projection`'s 1, not "pass the code" (Y:5730)
 
 - **The erratum:** Y:5730's row and the test plan's list of "the arms that
   already refuse, which pass the code" (`test-plan.md:2832`) both name
@@ -727,12 +727,17 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   projection-class verb, whose failed read answers 1, so `lane-start`
   exits 1, UNKNOWN, as T402 is built. It is never 69. So
   `lane-start:1555` moves from "pass the code" to "refuses 1, UNKNOWN (S4;
-  DEC-27)". The rest of the row and of the list stands. Lane 2's cases
-  drop the stubbed 69, 75 and 3 at `:1555` and drive its real 1 (T217,
-  T275).
+  DEC-27)". `lane-end:955`, beside it in the same list
+  (`test-plan.md:2834`) and in Y:5734's `lane-end` row, moves the same
+  way: its `seam_refuse` has `lane-start`'s shape, 0 refusing as managed,
+  8 passing and every other status dying UNKNOWN. The rest of both rows
+  and of the list stands. Lane 2's cases drop the stubbed 69, 75 and 3 at
+  `:1555` and `lane-end:955`, and drive the real 1 (T217, T275; lane 2's
+  `lane-end-955-1` stays).
 - **Whose:** lane 3's ruling, #165 6754439281, item 6, on lane 2's NOTES
   30. It applies DEC-27 with spec:626 and spec:692, and it adds no SHALL.
-- **Source:** Y:5730; `test-plan.md:2832`.
+  `lane-end:955`: lane 3's ruling, #165 6755040648, on lane 2's 6755019553.
+- **Source:** Y:5730; Y:5734; `test-plan.md:2832–2835`.
 
 ### ERR-47. F17 reads `lanes/STORE` with `git ls-tree`, not `cat-file -e` (Y:4946)
 
@@ -752,6 +757,66 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   to a mechanism and changes no SHALL.
 - **Source:** Y:4946; Y:4948; lane 4's T419 question 4 (#165 6754561694);
   lane 3's ruling 6754806910, item 4; lane 5, 6754850098.
+
+### ERR-48. `commit_write`'s step 6 deletes a changed line's structured rows (T112's gap)
+
+- **The erratum:** Y's §1.3 step 6 (Y:1463) and §1.3.1's step 6 (Y:1825)
+  gain this, as `commit_write` already derives the touched keys (Y:1481):
+  "As a `replace` or `delete` changes a line, delete that line's structured
+  rows: `lanes` by `row_line_id`, `log_lines` and `register_lines` by
+  `line_id`, and `object_holds` by `(file, ordinal)`. A `remove` deletes
+  those rows for every line of its path. A `rename` deletes the old path's
+  `object_holds`, and moves `log_lines.file` and `log_lines.lane` to the new
+  file's lane. Step 7 then inserts what the entry sends. An entry carries
+  no deletes." Step 5a still runs first, so the scopes do not change. T107
+  writes it, and T112 no longer relies on the order it sends rows in.
+- **Why:** without it, every `rename-lane` on primary ends 69. Y:1193's
+  `DEFERRABLE INITIALLY DEFERRED` binds only the `REFERENCES` clause, so
+  `row_line_id`'s `UNIQUE` is checked row by row, and the rewritten row
+  meets 23505 while the old row still holds the line. A rename also left
+  the old lane's `object_holds`, and a `delete` shifted only the holds below
+  the deleted line. Deferring the check, (b), does not fix renames. Deletes
+  a client sends, (a), would have the database trust them, where Y's
+  touched keys are "never sent, so no client can under-report them"
+  (Y:1481).
+- **A backstop,** lane 1's choice in T107: `row_line_id`'s `UNIQUE` made
+  `DEFERRABLE INITIALLY IMMEDIATE`, as `doc_lines_pos` is (Y:1185), only
+  where that constraint is never an `ON CONFLICT` arbiter.
+- **Y's limitation, recorded beside it:** there is no insert op, and none
+  is added, since every replayer of `journal_edits` would need one and no
+  verb adds a line before a file's end. A stray that does rewrites every
+  later line and re-stamps `written_seq`, the mode and the workstation on
+  lines whose text did not change; step 8a then over-reports scopes, which
+  only refuses more (Y:1496). `LANES.md` is 6,716 lines, so a stray near
+  its top would be about 6,600 replaces under the commit call's 5 s
+  timeout. T324's runbook already prefers the revert (PC-4).
+- **Whose:** lane 3's ruling, (c), as an erratum, #165 6755386771, on lane
+  1's 6754969723. It changes no SHALL, and it makes spec:147–166 hold. It
+  moves no ratified decision, since `commit_write` stays free of verb rules
+  (Q7's A″), and migration 1 exists on line R only, so it changes in place.
+- **Source:** Y:1463; Y:1825; Y:1481; Y:1193; Y:1185; Y:1496.
+
+### ERR-49. Four of Y's lines on the derived rows, read as T112 and T115 build them (T112's reading 7)
+
+- **The errata:** T112 and T115 derive the structured rows with one set of
+  helpers, and four of Y's lines read:
+  - Y:1222: `object_holds` holds no `lane:` object, as #160's index does
+    (`code/lanes-index:1594`);
+  - Y:1254: `register_lines` holds the lines that have a kind, not every
+    non-row line; nothing reads a row that has no kind;
+  - Y:1197 and Y:1396: `owner` is sent NULL by the import and by writes
+    alike, since S4 answers from the row's own text; otherwise the column
+    would change between the import and the first write;
+  - the import keeps a NULL workstation rather than take the
+    `--workstation` fallback, which files mode allows (Y:1273).
+- **Also in reading 7,** and not errata: `repo_key` takes Rule 6's order,
+  the shipped `repos.tsv` and then the per-wip one, the last row winning,
+  as `rule6_aliases` reads them, so that F13's equality (Y:1989) cannot
+  answer `expired-none` for an imported `LANDING`; and `spellings` are
+  kept on CLAIMED and TAKEOVER only, as Y:1231 has it.
+- **Whose:** lane 3's ruling, #165 6755386771, reading 7, on lane 1's
+  6754969723.
+- **Source:** Y:1222; Y:1254; Y:1197; Y:1396; Y:1273; Y:1989; Y:1231.
 
 ## Part 2: decisions
 
@@ -1240,15 +1305,15 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   because the family holds it, and that now matches two logs, is dropped
   from the family: its `.log.<key>` and `.logpath.<key>` are removed, so the
   first read that asks for it ends 69. Contract draft 4.11 states it at its
-  :673, in the branch since round B9's part 1c, and lane 5's T511 draft
-  follows at its D4:565.
+  :673, and draft 4.12, in the branch since round B10, at its :674; lane
+  5's T511 draft follows at its D4:565.
 - **Whose:** lane 3's ruling, #165 6752360829, on N-g of lane 1's U5
   re-check of T511's draft 4 (6752336451).
 - **Why:** a read should not fail on a member it never asked for, and the
   ambiguity still surfaces at the first read that does ask. Y gives no rule
   for a cached member that turns ambiguous, so this is a decision, not an
   erratum.
-- **Source:** contract §3.6 (:673, C11).
+- **Source:** contract §3.6 (draft 4.12's :674, C11).
 
 ### DEC-31. `serve` with a `psql` older than 15 stamps `no-psql` (OP-10)
 

@@ -2,7 +2,7 @@
 
 - **Owner of the `lanes-index` section:** lane 1 (`[L1]`), task T102. Each other lane adds its callers' arms in a section of its own below that section (plan.md's tree; [README.md](README.md)). A change to a `lanes-index` row goes through lane 1.
 - **Keyed to commit Y, `a6497d00`.** `Y:<n>` is a line of Y's `design.md`, and `ops:<n>` a line of Y's `operations.md` (the contract writes `Y-ops:<n>`). `code/lanes-index:<n>` is the code leg at the pin Y cites.
-- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.11, which keeps every section and line. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
+- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.12, which keeps every section, and every line to :637; from :638 on each line is one below draft 4.11's. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
 - **By lane openRepoTools-1, 2026-11-09.** It answers PC-10 (research.md's Part 3; plan.md) and the test plan's open point 1, "The tests read the design's constant".
 
 **The marks:**
@@ -112,10 +112,11 @@ These rows restate the contract's exits, one row per code. The contract's text g
 | `journal --last` | 64 | usage; `--at` without `--generation` | contract §3.6 (C8) | T114 |
 | `render --images --at <k> --out <dir>` | 0 | the images at `k` written, with `file=` rows | contract §3.6 | lane 3's T301 |
 | `render --images` | 2 | a refused configuration, Q6(c)'s included | contract §3.6 | T301 |
-| `render --images` | 69 | a failed read; and [P] a `k` it cannot render, above the head or before the latest import's baseline, which tasks.md's T301 leaves to this file. It is 69 as form 4 and `journal --last --at` end 69 for an `--at` outside the generation's seqs | contract §3.6 | T301 |
+| `render --images` | 69 | a failed read; an image that could not be written under `<dir>`, which is left as it was; and [P] a `k` it cannot render, above the head or before the latest import's baseline, which tasks.md's T301 leaves to this file. It is 69 as form 4 and `journal --last --at` end 69 for an `--at` outside the generation's seqs. [P] An image whose path holds U+0000–U+001F or U+007F cannot be a `file=` row, and ends 69. | contract §3.6 | T301 |
 | `render --images` | 64 | usage | contract §3.6 | T301 |
-| `render --checkout <c>`, in phase 2 | 69 | "git half not installed", on a copy with the constant flipped | contract §3.6, §3.7 | group C (lane 3) |
-| `render --checkout <c>` | 2 | Q6(c)'s refusal, at load, before any answer | contract §3.6 (C13); Y:4872 | group C (lane 3) |
+| `render --checkout`, before T321 | 64 | a form this build does not have | contract §3.6; lane 3's ruling, #165 6754819099 (choice 4) | group C (lane 3) |
+| `render --checkout <c>`, in phase 2, from T321 on | 69 | "git half not installed", on a copy with the constant flipped | contract §3.6, §3.7 | group C (lane 3) |
+| `render --checkout <c>`, from T321 on | 2 | Q6(c)'s refusal, at load, before any answer | contract §3.6 (C13); Y:4872 | group C (lane 3) |
 
 #### 3.2 The operator commands: `import`, `cutover`, `rollback` and `outage`
 
