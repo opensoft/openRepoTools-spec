@@ -3587,13 +3587,18 @@ NOTHING (`AGENTS.md` rule 1), so this read runs `git status`, `git log @{u}..`,
   tree nobody manages;
 * a **stale-registration** names the `git worktree prune` that clears it, and
   prunes nothing itself. A tree a sidecar records whose directory is gone while
-  git still registers it is ONE row, its `missing` or `possible-loss`, and that
-  row names the same prune (opensoft/openRepoTools#117). The registrations of
-  its recorded checkout, then of the lane's `dir`, are asked for its path under
-  the recorded spelling and its parent's physical one: the remedy is named
-  wherever that `git worktree list --porcelain` read succeeds, a failed read
-  names no prune (the sweep reads again and says so), and the tree is never
-  named twice through a symlinked spelling;
+  its recorded checkout or the lane's `dir` still registers it is ONE row, its
+  `missing` or `possible-loss`, and that row names the same prune
+  (opensoft/openRepoTools#117). The registrations of its recorded checkout,
+  then of the lane's `dir`, are asked for its path under the recorded spelling
+  and its parent's physical one: the remedy is named where one of those reads
+  finds it, a failed read names no prune (the sweep reads again and says so),
+  and a tree one of them finds is never named twice through a symlinked
+  spelling. A gone tree that only another repository registers, in a lane with
+  no legs (whose recorded `checkout` is the lane's `dir`, even for a tree of
+  another repository), is plain `missing` or `possible-loss`, with no prune
+  named and no stale-registration row beside it: neither of those reads finds
+  it, and the sweep asks only the lane's `dir` and its legs;
 * an **unreadable** tree is one git answers in and cannot be read through —
   nothing is assumed about it, in either direction, and the line names the
   `git -C <path> status` a person runs;
@@ -3601,12 +3606,17 @@ NOTHING (`AGENTS.md` rule 1), so this read runs `git status`, `git log @{u}..`,
   repository than the one its record names (`repo`, the path's git common
   directory, which `set-lane-tree` records). An independent clone, a checkout
   moved onto the path or a restored backup, on the same branch at the same
-  commit, used to read `ok` (opensoft/openRepoTools#116). Nothing else of the
-  record is compared against it, it counts toward recovery, and it is left
-  exactly as it is. A record with no `repo`, as every one written before this
-  has, is not compared, and an identity git cannot give now is `unreadable`,
-  never a match. The recorded `checkout` is not compared: for a lane with no
-  legs it is the lane's `dir`, even for a tree of another repository;
+  commit, used to read `ok` (opensoft/openRepoTools#116) and now reads
+  `wrong-repository` only where the common directory git answers for differs
+  from the recorded one. A recorded tree that is itself a clone records
+  `<path>/.git`, which its path alone decides, so another clone put at that
+  path, or a restored backup of one, on the same branch at the same commit,
+  still reads `ok`. Nothing else of the record is compared against it, it counts
+  toward recovery, and it is left exactly as it is. A record with no `repo`, as
+  every one written before this has, is not compared, and an identity git cannot
+  give now is `unreadable`, never a match. The recorded `checkout` is not
+  compared: for a lane with no legs it is the lane's `dir`, even for a tree of
+  another repository;
 * an **unreadable-sidecar** is a tree record that IS there and could not be
   read — a permission, an I/O error, a dangling link. The tree it recorded is
   NOT known, in any field; it counts toward recovery, the line names the file a
