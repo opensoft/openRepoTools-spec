@@ -40,7 +40,7 @@ So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number.
 
-- **Part 1, the errata** (ERR-01 to ERR-46; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-47; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
 - **Part 2, the decisions** (DEC-01 to DEC-32): a choice the change leaves
@@ -571,10 +571,14 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 ### ERR-37. `next-free`'s two arms join `lane`'s row (T408)
 
 - **The erratum:** Y:5740's `lane` row gains `next-free`'s two arms, `go_new`
-  and the listing's note, in phase 1. They pass 69, 75 and 3, since Y:3014
-  makes `next-free` a 69 reader (spec:599–600). T408 owns them.
+  and the listing's `next-free` read, made before the listing's first line,
+  in phase 1. They pass 69, 75 and 3, since Y:3014 makes `next-free` a 69
+  reader (spec:599–600), so a 69, 75 or 3 leaves with that code and nothing
+  on stdout. T408 owns them.
 - **Whose:** lane 3's ruling on T408, #165 6747422030. Its source is Y:3014,
-  not Y:3022, by lane 3's ruling #165 6754439281, item 1.
+  not Y:3022, and the listing's read comes before its first line (option
+  B), both by lane 3's ruling #165 6754439281, item 1, which lane 4's B9
+  delta writes into T408 (#165 6754773693).
 - **Source:** Y:5740; Y:3014; spec:599–600.
 
 ### ERR-38. The printed rerun's `LANES_SESSION` is the value the digest took (T412's G2)
@@ -729,6 +733,25 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Whose:** lane 3's ruling, #165 6754439281, item 6, on lane 2's NOTES
   30. It applies DEC-27 with spec:626 and spec:692, and it adds no SHALL.
 - **Source:** Y:5730; `test-plan.md:2832`.
+
+### ERR-47. F17 reads `lanes/STORE` with `git ls-tree`, not `cat-file -e` (Y:4946)
+
+- **The erratum:** "Y:4946: F17 reads `lanes/STORE` with `git ls-tree`, not
+  `cat-file -e`. A tip git cannot read is a failed read, never 'no marker',
+  and ends by class as for a marker (Y:4948)." `git cat-file -e` returns 128
+  both for an absent `lanes/STORE` and for a tree git cannot read, so F17 as
+  Y words it reads a failed read as "no marker", which fails open. Ending
+  by class as for a marker is decide 69, guard 2, mirror reads on with its
+  line, and projection 1. T504's F17 shares T419's `ls-tree` read, and
+  whichever of T419 and T504 lands first defines it, as R45 has it for
+  `REG_MODE`.
+- **Whose:** lane 3's erratum, #165 6754859418, on lane 5's 6754850098,
+  after lane 3's ruling #165 6754806910, item 4, on lane 4's T419 question
+  4 (#165 6754561694). It keeps Y's own rule that a failed read is never an
+  answer (Amendment 7(d)) and Y:4948's ends by class, so it is an erratum
+  to a mechanism and changes no SHALL.
+- **Source:** Y:4946; Y:4948; lane 4's T419 question 4 (#165 6754561694);
+  lane 3's ruling 6754806910, item 4; lane 5, 6754850098.
 
 ## Part 2: decisions
 
