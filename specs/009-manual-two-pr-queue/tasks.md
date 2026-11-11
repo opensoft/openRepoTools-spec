@@ -24,7 +24,7 @@ T004–T006 paths are code-relative; T007 spec-relative; T008 assembly-relative.
 - [x] T005 [O] Test accepted code and state/base/check/path refusals — files: `tests/test_ci_pilot_queue.py` — verify: `bash tests/run.sh -k ci_pilot_queue`
 - [x] T006 [S] Update shared instructions, operator procedure and amendment — files: `AGENTS.md`, `.github/ci/task-set-delivery.md`, `.github/ci/batching-pilot.md`, `features/009-manual-two-pr-queue/openspec/general-code-queue.md` — verify: `bash tests/run.sh -k ci_pilot_queue`
 - [x] T007 [O] Reconcile current behavior and evidence while preserving original decisions — files: `specs/009-manual-two-pr-queue/`, `openspec/changes/manual-two-pr-queue/` — verify: `openspec validate manual-two-pr-queue --strict`
-- [ ] T008 [O] Add root pointers to the one pinned shared workflow and retain the lockstep landing procedure — files: `AGENTS.md`, `CLAUDE.md` — verify: `make validate`
+- [x] T008 [O] Add root pointers to the one pinned shared workflow and retain the lockstep landing procedure — files: `AGENTS.md`, `CLAUDE.md` — verify: `make validate`
 
 Exact-head review, full required CI, normal merges and composed CI are separate
 landing evidence. No source change is complete merely because local tests pass.
