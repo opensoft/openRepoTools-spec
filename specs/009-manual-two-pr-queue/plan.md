@@ -43,3 +43,24 @@ Use openRepoShape's bump-leg.py to advance merged legs, gitlinks, recomputed
 digests and workflow SHA references together. Run make validate and composed
 exact-pin CI before refreshing authorized clean local mounts. Do not archive
 until assembly landing, or replace installed lane tools/sessions.
+
+## Coverage-parity preparation — 2026-11-11
+
+Authority: Brett approved implementing the coverage-parity PR first, keeping
+ordinary full CI and lanes 1–5 unchanged. Baselines: merged code d3c55e55aa3516cbaa1d68a77061ddd50191d49a,
+spec 66ba22f429caea8da4c664f04f5567bb924064ac. Reuse the existing clean paired
+feature worktrees; do not change the pinned mounts or active feature selection.
+
+Add workflow_call without modifying the full workflow's jobs/environment/events.
+Add a PR-only same-commit local caller, reviewed baseline, parity/mutation tests,
+and bounded code amendment/operator notes. Run focused workflow/shard/queue
+regressions through tests/run.sh in a disposable resource-limited py-bench image.
+Verify ordinary hosted full CI separately from reusable-call qualification.
+Open code and spec PRs with exact-head Codex requests; do not merge or activate.
+
+Local implementation evidence: code bd56ea742233c76e7aefb2465882facde50d86ab.
+Red-first parity run: 12 failed / 24 passed before the entry point/caller existed.
+Final focused workflow/shard/pilot/parity regression: 419 passed, no skips,
+through tests/run.sh in an offline disposable py-bench image (2 CPUs / 2 GiB).
+Actionlint and strict OpenSpec validation passed. Hosted ordinary/reusable full
+CI, review and eventual landing remain separate pending qualification gates.

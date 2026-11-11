@@ -87,3 +87,20 @@ local activation and preserve lanes 1–5, worktrees, bindings and running bench
 - **WHEN** the authorized clean assembly mounts are refreshed
 - **THEN** no active lane branch, worktree, binding or installed session changes
   and no stash, force, cleanup, app access, bypass or release act is inferred
+
+### Requirement: Coverage parity precedes CI efficiency
+The coverage-parity preparation SHALL retain all existing full-CI events, job
+IDs, commands, shard matrices, dependency modes, environments and aggregation
+checks. It MAY add a parameterless workflow_call entry to tests.yml and a
+PR-only qualification caller executing that exact same local workflow. No fast
+mode, queue trigger, admission or release eligibility SHALL be introduced.
+
+#### Scenario: A reused full job is removed or changed
+- **WHEN** a job, shard, checkout mode, command, environment or aggregation
+  differs from the reviewed baseline
+- **THEN** the parity regression fails rather than accepting reduced coverage
+
+#### Scenario: A full call fails, skips or is cancelled
+- **WHEN** the reusable call does not succeed in its entirety
+- **THEN** its qualification aggregate fails; ordinary full CI still runs and
+  no manually posted success status substitutes for it

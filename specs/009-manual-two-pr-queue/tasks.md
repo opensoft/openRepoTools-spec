@@ -34,3 +34,16 @@ Assembly activation is the landing gate after these implementation tasks: use
 bump-leg.py on merged leg commits, qualify exact pins and then refresh only
 authorized clean mounts. Its merged SHA, composed CI and local readback belong
 on the assembly PR and reconciliation issue #26; no duplicate checklist is made.
+
+## Coverage-parity preparation — 2026-11-11
+
+One code PR owns task set COVERAGE-PARITY-05 (T009–T011); a paired spec PR
+reconciles this approved bounded amendment under issue #26. No later efficiency
+stage is approved by checking these tasks. Paths below are code-relative.
+
+- [x] T009 [O] Make the unchanged full workflow locally reusable and qualify it on CI-related PRs — files: `.github/workflows/tests.yml`, `.github/workflows/full-ci-parity.yml`, `tests/test_tests_workflow.py` — verify: `bash tests/run.sh -k 'tests_workflow or full_ci_coverage_parity'`
+- [x] T010 [O] Freeze complete job/environment coverage and reject reduced/unsuccessful execution — files: `.github/ci/full-ci-baseline.json`, `tests/test_full_ci_coverage_parity.py` — verify: `bash tests/run.sh -k 'full_ci_coverage_parity or ci_shards'`
+- [x] T011 [S] Record the prerequisite and retained boundaries — files: `.github/ci/batching-pilot.md`, `features/009-manual-two-pr-queue/openspec/coverage-parity.md` — verify: `bash tests/run.sh -k full_ci_coverage_parity`
+
+Publication, current-head cloud review/full CI/reuse qualification and subsequent
+merge/assembly landing are separate evidence, not implied by local task completion.

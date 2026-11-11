@@ -64,3 +64,21 @@ one shared code-local reference and advances merged gitlinks/pin digests/workflo
 SHAs in lockstep through bump-leg.py. Qualify composed exact pins before local
 activation. Existing lanes and installed sessions remain unchanged. Reconcile
 the dated as-built evidence under issue #26; preserve original approval history.
+
+## Coverage-parity prerequisite — 2026-11-11
+
+Expose tests.yml through an empty workflow_call event, with no inputs, secrets,
+outputs or conditions that could select reduced coverage. Keep its six job
+definitions (13 expanded jobs), environment and existing events unchanged.
+A local PR-only qualification workflow calls that same file at the caller's
+commit, after parity tests, and fails its aggregate unless the entire call
+succeeds. No queue-branch trigger, dispatch, secret inheritance or status writer
+is introduced. Ordinary full CI remains independent and mandatory.
+
+Freeze the parsed environment/job definitions from merged code baseline
+d3c55e55aa3516cbaa1d68a77061ddd50191d49a in a reviewed JSON inventory. Baseline
+changes require explicit review; future additions to tests are still discovered
+by the existing shard planner, not an enumerated allowlist. Mutation tests reject
+missing/conditional jobs, altered steps, matrices, checkout modes and aggregators.
+Keep the current missing-report, failed/cancelled-shard and collection-parity
+regressions. This is source/hosted reuse qualification, not a live queue test.
