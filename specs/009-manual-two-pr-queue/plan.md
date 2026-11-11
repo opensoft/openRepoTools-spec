@@ -64,3 +64,28 @@ Final focused workflow/shard/pilot/parity regression: 419 passed, no skips,
 through tests/run.sh in an offline disposable py-bench image (2 CPUs / 2 GiB).
 Actionlint and strict OpenSpec validation passed. Hosted ordinary/reusable full
 CI, review and eventual landing remain separate pending qualification gates.
+
+## Trusted shadow-classifier preparation — 2026-11-11
+
+Authority: Brett approved the shadow-classifier PR next, ordinary full CI and
+lanes 1–5 preserved. Merged baselines: code a16ac8f7a5d14c8dc215a1b82832bc6e9a9e40ca,
+spec 476dadc5172be2f88a2a0cd21c744c35b9521d58. Reuse the clean isolated paired
+feature worktrees without changing active feature selection or pinned mounts.
+
+Implement a separate ci-shadow workflow, bounded read-only observer, mocked API
+and real local-Git tests, plus code-local notes/amendment. Port proof patterns
+from OpenBenches stack-ci.py/project-stack-ci.py, not their live skip authority.
+Test read failures, stale refs, main moving during observation, third-party edits,
+post-merge stale retarget metadata, closed/dequeued/candidate events, unknown
+payloads, topology, paths/modes and non-execution of untrusted content. Run focused
+workflow/parity/shard/pilot/queue regressions offline through tests/run.sh in the
+resource-limited py-bench image. Validate OpenSpec and workflow lint. Open PRs,
+request exact-head Codex review and retain full ordinary hosted CI. No merge.
+
+Local qualification: 76 new observer/contract vectors passed; 495 focused tests
+passed with no skips across shadow, original pilot/queue, workflow, coverage-parity
+and shard-accounting regressions. Native Git fixtures and mocked APIs ran offline
+through tests/run.sh in a disposable py-bench image limited to 2 CPUs / 2 GiB.
+Workflow lint, strict OpenSpec and whitespace checks passed. The initial red test
+failed before shadow_scope.py existed. Bootstrap policy-unavailable is expected
+on the preparation PR and is not a live positive-scope/candidate qualification.

@@ -56,3 +56,12 @@ no-workflow-edit preparation boundary; no existing trigger or job is removed.
 Fast-only classification, queue changes/admission, canaries, merges, ruleset/app
 changes, releases, tags, assembly pins and active lane/session changes remain
 outside this delivery. Reconcile this amendment under the existing issue #26.
+
+## Accepted trusted shadow-classifier preparation — 2026-11-11
+
+Brett approved the next shadow-classifier PR only. Retain ordinary full CI and
+lanes 1–5; no canary, queue commands, ruleset changes/bypass, app access or release
+changes. Add an independent trusted-main observer beside feature 008's unchanged
+head-owned advisory pilot. It reports conservative event observations, never
+skip decisions, admission, reviewed status or release eligibility. Reconcile
+this bounded prerequisite under issue #26; no merge or assembly advancement.

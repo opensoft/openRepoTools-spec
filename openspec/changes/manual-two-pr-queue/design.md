@@ -82,3 +82,36 @@ by the existing shard planner, not an enumerated allowlist. Mutation tests rejec
 missing/conditional jobs, altered steps, matrices, checkout modes and aggregators.
 Keep the current missing-report, failed/cancelled-shard and collection-parity
 regressions. This is source/hosted reuse qualification, not a live queue test.
+
+## Trusted shadow observer — 2026-11-11
+
+Add a separate read-only ci-shadow workflow. Its observer checks out main with
+complete Git history and credentials not persisted, then executes only the
+main-owned shadow_scope.py. If that policy is absent during bootstrap, report
+policy-unavailable/full CI; never execute the PR's classifier as a fallback.
+An independent head-owned offline contract job has no API token in its test
+environment. Existing ci-pilot, tests.yml, reusable qualification, verify,
+Mergify configuration, full-job baseline and release workflows remain unchanged.
+
+Port OpenBenches' conservative proof patterns, not its skip outputs or component
+allowlists: fixed claude-current/test pair, modified regular files with unchanged
+modes, live API head/base/ref identity, main checked before and after observation,
+and immutable local Git evidence. Explicit CI-Shadow: claude-current declares
+intent only. Initial open-PR scope is independent main-based work; dependencies
+stay full until separately qualified. Read API errors, missing objects, stale
+policy/main/branch/PR snapshots, mixed/empty/unsafe diffs and unsupported events
+fall back to full. Requests and Git reads are bounded; no writes or retries.
+
+Recognize edited already-merged metadata only from same source head, a live merged
+PR, an exact two-parent merge on current main ancestry, and the allowlisted landed
+diff. Ignore stale event base/test-merge metadata only in that proved observation.
+Other editors gain no authority. Candidate-shaped PR/push events and main pushes
+report candidate-proof-required / landing-proof-required with full scope: heavy
+receipts and candidate/landing qualification belong to the next stage. Do not
+invent tested-candidate evidence or broad bot/prefix exemptions in shadow mode.
+
+All results keep mode=shadow, required_ci=full, skip_ci=false and
+queue_admission=false. No GITHUB_OUTPUT skip flag, custom status, queue command or
+consumer is added. First-PR bootstrap fallback and offline source tests are not
+live positive-scope or candidate acceptance. PR/push metadata and error regressions
+include third-party edits, closed/dequeued events and changing main identities.
