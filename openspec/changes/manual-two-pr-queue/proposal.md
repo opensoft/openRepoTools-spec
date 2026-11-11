@@ -43,3 +43,16 @@ manual-batch-queue capability, not fast-only CI or automated review authority.
 Reconcile amendments under spec issue #26, using feature 009's sole task list.
 No unrelated enqueue/merge, bypass, app access, paid upgrade, release change,
 native stack object or lane takeover is authorized. Archive after assembly land.
+
+## Accepted coverage-parity preparation — 2026-11-11
+
+Brett approved only the first CI-efficiency prerequisite: implement and open
+coverage-parity PRs while ordinary full CI continues. Add a parameterless local
+reusable entry point to the existing full workflow, plus a PR-only qualification
+caller and an explicit job/shard/environment baseline. Execute the existing jobs,
+not a second integration implementation. This narrowly extends the earlier
+no-workflow-edit preparation boundary; no existing trigger or job is removed.
+
+Fast-only classification, queue changes/admission, canaries, merges, ruleset/app
+changes, releases, tags, assembly pins and active lane/session changes remain
+outside this delivery. Reconcile this amendment under the existing issue #26.

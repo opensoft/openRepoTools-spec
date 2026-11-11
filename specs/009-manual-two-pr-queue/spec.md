@@ -44,3 +44,17 @@ changes, not unrelated merges or live canaries. Reconciliation: spec issue #26.
 Do not flatten dependent stacks into this main-only queue. Preserve lanes 1–5,
 worktrees, bindings and running benches. No automatic enqueue, bypass, app
 access, paid upgrade, release/tag or installed-session change is authorized.
+
+## Accepted coverage-parity prerequisite — 2026-11-11
+
+- FR-011: add only a parameterless reusable entry to the existing full workflow.
+  Preserve ordinary PR/main/release-branch/nightly/manual events and all six job
+  definitions: guard, five normal shards, four no-submodule shards, their two
+  fail-closed aggregators and full package checks (13 expanded jobs).
+- FR-012: a separate PR-only qualification caller runs the same local workflow
+  at the caller commit and rejects any unsuccessful call. A reviewed inventory
+  and mutation regressions prove environment/job/matrix/step parity. No selector
+  or conditional skip input is exposed; discovered new tests still run.
+- FR-013: this delivery opens source/governance PRs only. No merge, fast-only CI,
+  authoritative classifier, queue command, live canary, ruleset/app/release change,
+  assembly pin bump or lane/session modification is authorized.
