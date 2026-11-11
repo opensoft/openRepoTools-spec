@@ -81,11 +81,14 @@ every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
   (lane 3's batch 12, B1 and A3, #165 6808010497); design:5257 and :5264
   (Y:5211, Y:5218), the lane a rerun's text names and a record with no
   `call` line, and design:5759 (Y:5713), the hang row's timer (lane 3's
-  batch e, Q106, Q107 and Q90, #165 6808937880); ops:129 and :219–220, which
-  name v1.3.0 as 007's release, v1.2.0 being the way back (Brett's "v1.2.0
-  now, 007 later (Recommended)", 2026-11-10T13:22:23Z); and ops:247 and
-  :252, act 4's steps 1 and 3, which carry the holders' notice (Brett's
-  "Holders release + check (Recommended)", #165 6782534165).
+  batch e, Q106, Q107 and Q90, #165 6808937880); design:3564 (Y:3518) again,
+  the guard row's exception, which a rollback's declaration does not take,
+  and design:4272 (Y:4226), the cost note's second connect (lane 3's R07,
+  round B15, #165 6809568632); ops:129 and :219–220, which name v1.3.0 as
+  007's release, v1.2.0 being the way back (Brett's "v1.2.0 now, 007 later
+  (Recommended)", 2026-11-10T13:22:23Z); and ops:247 and :252, act 4's steps
+  1 and 3, which carry the holders' notice (Brett's "Holders release + check
+  (Recommended)", #165 6782534165).
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the

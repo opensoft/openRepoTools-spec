@@ -1569,7 +1569,9 @@ are lane 3's rulings memo's).
   code#3 to code#7, which moved those three files: 654 lines added and 69
   removed. The design cites lines at `2a057a6d`, so every task finds its
   function by name.
-- **v1.2.0 carries #165, T017's five fixes, W2 and code#15,** on Brett's
+- **v1.2.0 carried T017's five fixes, W2 and code#15, but not #165,** which
+  Brett's "v1.2.0 now, 007 later (Recommended)" moved to v1.3.0
+  (2026-11-10T13:22:23Z; #165 6768477034). The three landed on Brett's
   "Land them now, in v1.2.0 (Recommended)", whose option read "v1.2.0 then
   carries #165, T017's five fixes and these" (lane 3's #165 6723967774):
   - W2 is lane 2's seven fixes, code#8 to code#14;

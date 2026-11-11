@@ -3561,7 +3561,7 @@ trip and starts, and never below the figure the row gives; a figure at `c` =
 
 | Path | `connect_timeout` | `lock_timeout` | `statement_timeout` | Client timer | On expiry |
 |---|---|---|---|---|---|
-| the guard's direct read | `c` | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s, or to `T0 + 3.65 s` where an unexpired declaration names this database (SVC-8, SVC-12) | 2, also where a lost SYN, or a whole-file fetch, at a remote RTT reaches the cut (SVC-8); but where an unexpired declaration names this database, a read cut at its cap, `T0 + 3.65 s`, is 69 with `.outage`, so that the mirror path starts by `T0 + 3.75 s` (SVC-12; the floor below gives that read at least 0.5 s; contract §3.6 :776; lane 3, #165 6807694145) |
+| the guard's direct read | `c` | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s, or to `T0 + 3.65 s` where an unexpired declaration names this database (SVC-8, SVC-12) | 2, also where a lost SYN, or a whole-file fetch, at a remote RTT reaches the cut (SVC-8); but where an unexpired declaration that is not a rollback's names this database, a read cut at its cap, `T0 + 3.65 s`, is 69 with `.outage`, so that the mirror path starts by `T0 + 3.75 s` (SVC-12; the floor below gives that read at least 0.5 s; contract §3.6 :776; lane 3, #165 6807694145) |
 | the service's connection, per request | `c`, in the background only, outside any share (SVC-6) | 150 ms | 180 ms | 200 ms, or the workstation's round trip plus 100 ms where it is over 100 ms (SVC-6), inside the client's wait, the timer plus 100 ms | `unavailable`, and the client reads directly (SVC-8); `refuse db <cause>` only where the refusal is definitive (SVC-7) |
 | the guard's answer 2 | — | — | — | nothing on the hook's time: the guard records the bind in the session's offer file, starts it as a `setsid` child, `guard-bind`, and exits 2 with "BINDING"; the bind runs with a writer's bounds and D7's deadline, the whole bind, `guard-bind`'s body under one `timeout`, bounded by the phase plan's computed sum, `bound_s`: 500 s at `c` = 2 and 530 s at `c` = 3 with one address, and 550 s and 610 s with two (560 s and 620 s with the service) (SVC-8; the phase plan's "Answer 2's detached bind") | as a writer's; the guard reports the outcome from the offer file's record, by the phase plan's eleven-case table |
 | the mode query, `lanes-index mode`, which reads only the configuration (D3) | — | — | — | 2 s | the query is killed, and the verb runs in files mode with a warning naming the timeout (F8); on a SQL estate the marker check then refuses with 69 (lane 3's ruling, #165 6711028142) |
@@ -4269,7 +4269,7 @@ the line, so the guard answers 2. Answering 2 refuses that prompt: it is not
 sent, and the person sends it again. The connect, the query and a whole-file
 fetch are about 16 round trips, so a direct read that must fetch a whole file
 meets the line at about 165 ms of RTT, and past it only the service's answer
-comes in time (SVC-9); the fetch the line cuts still fills the cache (below).
+comes in time (SVC-9); the fetch the line cuts still fills the cache (below), and since it is a call of its own, its `lanes-index` start and second connect bring that RTT lower (lane 1's R07, #165 6809169664; lane 3, #165 6809568632).
 The direct read takes `c` rather than 2 s because the timer, not the connect
 bound, keeps the hook's budget: the read never ends after `T0 + 3.75 s`,
 whatever `c` or the endpoint's address count.
