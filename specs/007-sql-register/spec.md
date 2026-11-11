@@ -93,7 +93,7 @@ and the only scope it takes, are:
   - **Brett's own word on R35 and R41**, typed in lane 3's session at about
     2026-11-08T20:33Z: "4A, 5A, 1 let them stand, 3A" (#165 6726766577). 4A
     builds the service beside groups A and B, and the release tag waits for
-    it; 5A carries the launcher's window reads in the v1.2.0 workBenches
+    it; 5A carries the launcher's window reads in the v1.3.0 workBenches
     re-vendor.
 
 **What this feature builds**: what lands by pull request in
@@ -173,7 +173,7 @@ names, and two refusals:
   its acts and its guard, and lists from the mirror.
 
 **Why this priority**: every pull request of groups A and B lands on the code
-leg's `main`, and ships in v1.2.0, weeks before act 4. Each must leave every
+leg's `main`, and ships in v1.3.0, weeks before act 4. Each must leave every
 estate exactly as it is.
 
 **Independent Test**: files-mode tests on bare origins and clones, with no
@@ -712,7 +712,7 @@ does not answer. No write depends on it.
 **Why this priority**: act 4 waits for the service, since from Eagle the
 guard without it takes about 1.2 to 2.1 s, which misses Brett's 1 s
 (Y:335–336; Y:4826). So the service is built beside groups A and B, and
-the v1.2.0 tag waits for it: Brett's "4A" (6726766577; svc:293;
+the v1.3.0 tag waits for it: Brett's "4A" (6726766577; svc:293;
 Y:3951–3956). It is P2 because no write depends on it, and every reader
 still works without it.
 
@@ -1435,7 +1435,7 @@ are lane 3's rulings memo's).
   never goes through it (B7). Sources: SVC-1 (Y:3701); "The service serves
   the reads and the guard, and writes do not depend on it" (svc:9).
 - **FR-058**: The service MUST be built beside groups A and B, not after
-  them, and the v1.2.0 tag MUST wait for it. This is Brett's own word,
+  them, and the v1.3.0 tag MUST wait for it. This is Brett's own word,
   "4A", typed in lane 3's session at about 2026-11-08T20:33Z (lane 3's #165
   comment 6726766577, which quotes his typed words "4A, 5A, 1 let them
   stand, 3A"), for "Build it beside groups A and B, and the tag waits for
@@ -1612,7 +1612,7 @@ are lane 3's rulings memo's).
   a real rollback or disaster path. They follow 007, and wait on the install
   and on slices 2a, 2b and 3 (Q28(i)).
 - **The launcher's bare window reads** (spec:626): a change in workBenches,
-  carried by the v1.2.0 workBenches re-vendor, by Brett's "5A" (6726766577).
+  carried by the v1.3.0 workBenches re-vendor, by Brett's "5A" (6726766577).
 - **v1.2.1's items**:
   - the 34 issues of milestone v1.2.1;
   - lane 5's v1.2 chain, after v1.2.0's tag;

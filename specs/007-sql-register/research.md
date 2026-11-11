@@ -68,19 +68,23 @@ every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
   "with exit 2", :5313–5314's bare `check 12: ok`, and :8442 in FR-005's
   narrowed words. Then lane 3's texts on the plan, which lane 2 asked lane 3
   to fold: its batch 11's (#165 6783909985) at TP:1405–1408, :1507–1508,
-  :3610, :3625–3626, :3641–3642, :4303–4304, :5386–5387 and :5433–5434, and
-  its batch 12's (#165 6808010497) at TP:3603, :4492–4493 and :5877–5879, so
-  `test-plan.md` is `d2641bb1…`, 9,160 lines, and its lines sit below B14's
+  :3610, :3625–3626, :3641–3642, :4303–4304, :5386–5387 and :5433–5434, its
+  batch 12's (#165 6808010497) at TP:3603, :4492–4493 and :5877–5879, and
+  its L2-6 to L2-8 (#165 6809045090) at TP:1293, :1319, :1343 and :1358, so
+  `test-plan.md` is `acb9416c…`, 9,160 lines, and its lines sit below B14's
   numbers: from B14's :1409, three below; from B14's :3643, five below; from
   B14's :4305, eight below; from B14's :4494, nine below; from B14's :5388,
   twelve below; from B14's :5880, thirteen below. And, in place: design:2363
   (Y:2317), the READER row, which no longer names the `SessionStart` block
   (ERR-09; the T341 draft's item 4); design:3564 (Y:3518), D9's guard row's
   "On expiry" cell, and design:5715 (Y:5669), the close-out gate's sentence
-  (lane 3's batch 12, B1 and A3, #165 6808010497); ops:129 and :219–220,
-  which name v1.3.0 as 007's release, v1.2.0 being the way back (Brett's
-  "v1.2.0 now, 007 later (Recommended)", 2026-11-10T13:22:23Z); and ops:247
-  and :252, act 4's steps 1 and 3, which carry the holders' notice (Brett's
+  (lane 3's batch 12, B1 and A3, #165 6808010497); design:5257 and :5264
+  (Y:5211, Y:5218), the lane a rerun's text names and a record with no
+  `call` line, and design:5759 (Y:5713), the hang row's timer (lane 3's
+  batch e, Q106, Q107 and Q90, #165 6808937880); ops:129 and :219–220, which
+  name v1.3.0 as 007's release, v1.2.0 being the way back (Brett's "v1.2.0
+  now, 007 later (Recommended)", 2026-11-10T13:22:23Z); and ops:247 and
+  :252, act 4's steps 1 and 3, which carry the holders' notice (Brett's
   "Holders release + check (Recommended)", #165 6782534165).
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
@@ -95,7 +99,7 @@ above says.
 - **Part 1, the errata** (ERR-01 to ERR-55; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-35): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-36): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -1628,6 +1632,42 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 
   That none of them changes 007 is lane 3's reading, #165 6807694145.
 - **Source:** #165 6784524017; #165 6779237137; #165 6807694145.
+
+### DEC-36. Brett's three answers of 2026-11-11, recorded for 007
+
+- **The decision:** by his third answer, T346 takes the draft flow, and
+  round B15 adds its two 006 files and its draft-flow bullet. His first and
+  second answers need no tasks.md text.
+- **Whose: Brett's.** He typed them in lane openRepoTools-3's session
+  (pyBench-openRepoTools-3, window `@3`, pane `%3`), received by
+  2026-11-11T22:42:44Z, answering lane 3's three numbered questions. His
+  message, verbatim: "1a 2a 3a". Each answer is the option he chose, with
+  its words as lane 3's reply showed them:
+  1. "A standing landing word for 007 code PRs once spec#17 lands, each
+     landing on an independent READY plus green CI through a merge queue.":
+     "a. Yes (Recommended)";
+  2. "Lane hours a day.": "a. about 18 h with prompt swaps (Recommended)";
+  3. "T346's release flow. Feature 006 says each GitHub Release is made by
+     hand, but T346 has the workflow create a draft holding the list, which
+     you then publish.": "a. Accept the draft flow, and amend FR-034, FR-042
+     and `data-model.md` (Recommended)"; its longer form, from the 01:49Z
+     UPDATE: "Accept the draft flow, and amend FR-034, FR-042 and
+     `data-model.md` in T346's spec PR (Recommended)".
+
+  Lane 3's readings, its own and not Brett's:
+  - 1a: It applies once spec#17 has landed. It covers each 007 code PR that
+    has an independent review reading READY and every check green, landed
+    through a merge queue. It is NOT a word to land spec#17 itself.
+  - 2a: Lane 3 reads it as lanes working about 18 hours a day, across
+    account swaps by prompt.
+  - 3a: T346's spec PR amends feature 006's FR-034 and FR-042
+    (`specs/006-release-pypi/spec.md`) and
+    `specs/006-release-pypi/data-model.md`, including its job table's
+    `asset` row. T346's `files:` in 007's tasks.md gains those two files, in
+    round B15. Step 5 of the release procedure says to re-run `asset` before
+    publishing if it failed, and never to publish without the list. That is
+    the review's decision 3, which lane 3 had already accepted.
+- **Source:** #165 6808879327; `RULINGS-brett-20261111-1a-2a-3a.md`.
 
 ## Part 3: the choices the design leaves to the plan
 

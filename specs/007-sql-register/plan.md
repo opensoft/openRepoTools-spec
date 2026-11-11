@@ -683,7 +683,7 @@ Governed already, and unchanged by this feature, which adds no installable:
 | DP-12 | Slices 2a, 2b and 3 | act 4 waits for them (Q28(i)) | 2a is code#18; ready by 2026-11-17 | act 4, not 007 |
 | DP-13 | The GitHub plan's facts: a push ruleset with a deploy-key bypass on the render set and `lanes/STORE`; git 2.32 or later everywhere; whether `ready` can prove the key's right | the push function's `render_key=` branch, and the ruleset | facts still to find; Q21(b)'s scope is on the spec PR's list | group C's push function, which works without `render_key=` |
 | DP-14 | The install itself, by a codexFactory lane Brett names | act 3, the restore drill, and Q29's figure on each workstation | lane 3's kickoff for opsXfactory-6 awaits Brett's word | acts 3 and 4, not 007 |
-| DP-15 | The v1.2.0 workBenches re-vendor | the launcher's bare window reads, spec:626 (R41) | lane 3 drafts it | the tag, not 007's code |
+| DP-15 | The v1.3.0 workBenches re-vendor | the launcher's bare window reads, spec:626 (R41) | lane 3 drafts it | the tag, not 007's code |
 
 ## Risks
 

@@ -1290,7 +1290,7 @@ rename.
     - `lanes-index import --single <sha>` adds exactly one journal entry,
       through S1's commit call. Its line edits equal the stray commit's diff.
     - It refuses where the edits no longer apply to SQL's images, which is a
-      case of its own.
+      case of its own (T271's `[stray-no-longer-applies]`).
     - The database's mirror-state row no longer records `diverged at` (D16).
     - The renderer resumes, and the pending seqs reach origin in order.
     - `status` then shows a lag of 0 and no divergence.
@@ -1316,7 +1316,7 @@ rename.
       nothing, and the renderer exits. `mirror_state.diverged_sha` is the
       commit's sha.
     - `status` prints `diverged at <sha>`, with the full sha, naming that
-      commit, and a lag of at least 1.
+      commit, and no lag: its `m` is past `n` (Y:2850), as `status` says.
     - `lanes-index render --revert <sha>`, on a person's word, journals one
       entry with no edits whose message names the commit. `diverged at`
       clears.
@@ -1340,7 +1340,7 @@ rename.
     other path under `lanes/`, `lanes/repos.tsv` and `lanes/log/README.md`
     among them, which the delta's gate requirement leaves to a person's
     commit.
-    - `test_a_server_side_gate_refuses_the_stale_writers_push[<path>]`, for
+    - `test_a_server_side_gate_refuses_the_stale_writers_push[lanes-md|log-lane|aliases-tsv|archive|store]`, for
       each guarded path: it shows the stale writer's exit and an unchanged
       origin.
     - `test_the_gate_model_lets_a_push_to_an_unguarded_path_through[repos-tsv|log-readme]`:
@@ -1355,7 +1355,7 @@ rename.
   - `test_the_single_write_import_resumes_the_renderer_and_reconcile_passes`;
   - `test_the_renderers_revert_resumes_it_and_reconcile_passes`;
   - `test_rollback_works_after_each_way_out[import|revert]`;
-  - `test_commits_outside_the_render_set_do_not_stop_the_renderer[<commit>]`;
+  - `test_commits_outside_the_render_set_do_not_stop_the_renderer[cutover-store|repos-tsv|handoff]`;
   - `test_a_register_seq_above_the_head_stops_the_renderer_at_primary_and_the_revert_resumes_it`
     (R2's N6, at `primary`; its twin at `files` is AT-5's).
 - **Run time.** Eight cases at 2–4 s each, so 16–32 s, and the gate model's

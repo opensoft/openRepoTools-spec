@@ -5254,14 +5254,14 @@ All five are given by `--raw` plus the images.
   - **Of another generation,** it does not reuse the id, does not replace the record, and runs no tail of it.
     - **It refuses with 2 at its first snapshot,** sending nothing: "a pending record of this command, write `<id>` made at `<created_utc>` against register generation `<g>`, is here, and this register is generation `<g′>`.
     - **The refusal goes on:** That write may already be in it: an import carries every write the mirror held (D22), and a restored database holds every write up to its backup. Nothing was sent.
-    - **The effect check:** Look for its effect in the register as it stands: `lanes-edit.sh history <lane> --since <created_utc>` for a log line, or `lanes-edit.sh register-row <lane>` for a row.
+    - **The effect check:** Look for its effect in the register as it stands: `lanes-edit.sh history <lane> --since <created_utc>` for a log line, or `lanes-edit.sh register-row <lane>` for a row. `<lane>` is the lane the write is made for, `write_lane_of`'s, which the record's digest fixes with its arguments, not the writer's `LANES_LANE` (lane 3, #165 6808937880, batch e Q106).
     - **The owed steps:** If it is there, its after-COMMIT steps may be owed: `<owed>`. Do by hand any that did not run.
     - **The new write:** If it is not there, run the same command with `LANES_WRITE_ID=new`, which mints a new id and replaces this record."
     - **`<owed>`** is the record's verb's row of F14's table, as "The tail, once" names it, with the command that does each step by hand. Where the record's `tail` is `sent` or `done`, the text says instead that they may have run, or ran, at its `<utc>`.
     - **The record is left as it is,** whatever its age, until `LANES_WRITE_ID=new`, and `lanes-index status` lists it meanwhile. `LANES_WRITE_ID=new` is the one new value of that variable, and only it replaces a record of another generation.
   - **With a live owner** (R2's N2), the pid in the highest claim file, it waits while that owner lives, up to D7's deadline from its own start.
     - If the owner ends first, it reads the claims and the record again and goes on as above.
-    - If the pid still lives at the deadline, it exits **3**, sends nothing, and leaves the record as it is: "an identical write is still running in pid `<p>` (write `<id>`, started `<utc>`); this run sent nothing, and that write's outcome is not known. Once pid `<p>` has ended, look it up (`lanes-index journal --write-id <id>`), or run `LANES_WRITE_ID=<id> LANES_WRITE_GENERATION=<generation> LANES_LANE=<lane> LANES_SESSION=<uuid> lanes-edit.sh <the same arguments>`, which finds it or writes it once."
+    - If the pid still lives at the deadline, it exits **3**, sends nothing, and leaves the record as it is: "an identical write is still running in pid `<p>` (write `<id>`, started `<utc>`); this run sent nothing, and that write's outcome is not known. Once pid `<p>` has ended, look it up (`lanes-index journal --write-id <id>`), or run `LANES_WRITE_ID=<id> LANES_WRITE_GENERATION=<generation> LANES_LANE=<lane> LANES_SESSION=<uuid> lanes-edit.sh <the same arguments>`, which finds it or writes it once." Where the record holds no `call` line, the lookup has no `<n>` for its `--not-after` (§3.4; LR011), so the text names the rerun alone (lane 3, #165 6808937880, batch e Q107).
 - **A run under `LANES_WRITE_ID`** waits for a live owner in the same way, since two live runs must never share an id.
 - **A claim from another host or container** counts as live for 120 s, the seam's cap, from the later of its own UTC and the record's `updated_utc`, since its pid cannot be tested here.
 
@@ -5756,7 +5756,7 @@ No caller of a write verb has a `3)` arm (`lane-end:2266`'s is the close-out gat
 | a `lanes-index` too old to have `mode` | 64 (`:2691`) → files mode, with a warning |
 | `lanes-index` or `python3` missing | 127 → files mode, with a warning |
 | a crash; a signal | 1; 128+n → files mode, with a warning |
-| a hang, such as a stale mount under Q23(a) | the query's client timer, 2 s (D9) → files mode, with a warning |
+| a hang, such as a stale mount under Q23(a) | the query's client timer, 2 s (D9) → files mode, with a warning; on a host with no `timeout` the query has no timer and waits, as `git_net` does (lane 3, #165 6808937880, batch e Q90) |
 | exit 0 with stdout that is not exactly one line, `index` or `primary` | files mode, with a warning |
 | any other code, 69, 75 and 3 included | files mode, with a warning |
 | 78 | exit 69, writing nothing |
