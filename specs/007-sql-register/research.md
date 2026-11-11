@@ -86,9 +86,12 @@ every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
   and design:4272 (Y:4226), the cost note's second connect (lane 3's R07,
   round B15, #165 6809568632); ops:129 and :219–220, which name v1.3.0 as
   007's release, v1.2.0 being the way back (Brett's "v1.2.0 now, 007 later
-  (Recommended)", 2026-11-10T13:22:23Z); and ops:247 and :252, act 4's steps
-  1 and 3, which carry the holders' notice (Brett's "Holders release + check
-  (Recommended)", #165 6782534165).
+  (Recommended)", 2026-11-10T13:22:23Z); ops:242, :244, :617 and :636, which
+  name v1.3.0, and at :636 `release/v1.3`, as the release that carries 007
+  or waits for its service (Brett's "v1.2.0 now, 007 later (Recommended)"
+  (2026-11-10T13:22:23Z; #165 6768477034)); and ops:247 and :252, act 4's
+  steps 1 and 3, which carry the holders' notice (Brett's "Holders release +
+  check (Recommended)", #165 6782534165).
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
@@ -1660,7 +1663,9 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   Lane 3's readings, its own and not Brett's:
   - 1a: It applies once spec#17 has landed. It covers each 007 code PR that
     has an independent review reading READY and every check green, landed
-    through a merge queue. It is NOT a word to land spec#17 itself.
+    through a merge queue. It is NOT a word to land spec#17 itself. Before
+    1a, no merge word existed for the spec PR (lane 3's 11-10 note), and 1a
+    gives none.
   - 2a: Lane 3 reads it as lanes working about 18 hours a day, across
     account swaps by prompt.
   - 3a: T346's spec PR amends feature 006's FR-034 and FR-042

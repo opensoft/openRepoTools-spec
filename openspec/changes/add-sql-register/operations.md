@@ -239,9 +239,9 @@ Brett's ruling (#165 6723925474): the register's database is "CNPG in the instal
 
 **The gate.** The coordinator checks each item and posts the list:
 
-- 007's code PRs, the root bump and v1.2.0 have landed (`r3c/REPLY.md:153`);
+- 007's code PRs, the root bump and v1.3.0 have landed (`r3c/REPLY.md:153`);
 - under Q28 (i), Amendment 23's slices 1a, 1b, 2a, 2b and 3 have landed and are installed (`proposal.md:1946-1954`);
-- under Q29 (a), the service is on the gate only if the guard, measured without it, is over Brett's budget, 1 s (`proposal.md:1973-1976`), and it is: from Eagle that guard takes about 1.2 to 2.1 s (lane 5, #165 6725361742), so the service, and v1.2.0 with it, is on the gate (lane 3's ruling, #165 6724332510 and 6726078173);
+- under Q29 (a), the service is on the gate only if the guard, measured without it, is over Brett's budget, 1 s (`proposal.md:1973-1976`), and it is: from Eagle that guard takes about 1.2 to 2.1 s (lane 5, #165 6725361742), so the service, and v1.3.0 with it, is on the gate (lane 3's ruling, #165 6724332510 and 6726078173);
 - act 3's steps 6 and 8 have passed.
 
 1. **The window.** Brett names it, and the coordinator posts notice N2 (2.6) on each coordination issue before it opens (`proposal.md:940-941`). N2 asks each lane that holds a `HOLD` to write its own `HOLD RELEASED` before the freeze, since `cutover` refuses, listing them, while any `HOLD` over 30 minutes old stays open (step 7; Brett's "Holders release + check (Recommended)", 2026-11-10T22:58:57Z, #165 6782534165).
@@ -614,7 +614,7 @@ Every PR lands on Brett's typed word, by merge commit (Q25(a) (i), `proposal.md:
 
    This part places here too P8's three tools and the `outage` verbs, which write only DDL and the configuration directory, and the guard's read of the declaration, which is a reader.
 
-   Under Q29 (a) the service would be 007's last slice and could trail (`proposal.md:1973-1976`), but its condition is met: from Eagle the guard without the service misses Brett's 1 s (lane 5, #165 6725361742), so the cutover and the v1.2.0 tag wait for the service, which is built beside groups A and B, not last (lane 3's ruling, #165 6724332510 and 6726078173).
+   Under Q29 (a) the service would be 007's last slice and could trail (`proposal.md:1973-1976`), but its condition is met: from Eagle the guard without the service misses Brett's 1 s (lane 5, #165 6725361742), so the cutover and the v1.3.0 tag wait for the service, which is built beside groups A and B, not last (lane 3's ruling, #165 6724332510 and 6726078173).
 
    **The refusal of `mode=primary`:** from group A's first PR, `lanes-index mode` and `register read`, in both its forms, refuse `mode=primary` with 78 (`EX_CONFIG`), Q6(c)'s code, never 2 (F8), and test 14's text; the other `lanes-index` commands refuse it with 2, as the configuration parser does; and `lanes-edit.sh` fails closed on it with 69 (`proposal.md:1380-1388`). That is agreement test 14's first state, and `ready` fails any environment in it (`proposal.md:913-921`).
 6. **Group B, the write path,** after Amendment 23's #282 (1a) and #307 (1b) are re-homed and land in the code leg: S1's transaction at the commit seam, M4's refusals, S6's pre-check and hold order, and the marker check after S3's fetch (`proposal.md:1374-1376`).
@@ -633,7 +633,7 @@ Every PR lands on Brett's typed word, by merge commit (Q25(a) (i), `proposal.md:
 
    R3c has one rehearsal. This part proposes one per group, each costing 64 to 87 minutes of `exact-pins` (`proposal.md:1067-1068`).
 9. **After group C:**
-   1. the release commit proven, the v1.2.0 notes, a TestPyPI rc1, the tag and `release/v1.2` (`r3c/REPLY.md:142-147`);
+   1. the release commit proven, the v1.3.0 notes, a TestPyPI rc1, the tag and `release/v1.3` (`r3c/REPLY.md:142-147`);
    2. the hosts reached (Q24, `r3c/REPLY.md:148-151`);
    3. act 3;
    4. act 4, which under Q28 (i) also waits for Amendment 23's 2a, 2b and 3 (`proposal.md:1946-1954`);

@@ -30,10 +30,12 @@ at fix round B, and draft 4.1 at assembly phase A.
   number of draft 4.17.
 - **What draft 4.19 changes:** it is draft 4.18 (`09be7c2c…`, #165
   6784210333) with lane 1's E1 and E2 (#165 6798746256), each inside an
-  existing line, and the Status paragraph (:5): where `.head` is missing or out of form, form 3 rewrites the whole family whatever `--since` says, and `--since 0` is accepted (:734, E2);
-  and, under an unexpired declaration that names this database, a cut at the declared cap is 69 with `.outage`, so the guard takes the mirror path by `T0` + 3.75 s,
-  outside a declaration MUST-2 standing (:776, E1), which lane 3 rules for
-  (#165 6807694145).
+  existing line, and the Status paragraph (:5): where `.head` is missing or
+  out of form, form 3 rewrites the whole family whatever `--since` says, and
+  `--since 0` is accepted (:734, E2); and, under an unexpired declaration
+  that names this database, a cut at the declared cap is 69 with `.outage`,
+  so the guard takes the mirror path by `T0` + 3.75 s, outside a declaration
+  MUST-2 standing (:776, E1), which lane 3 rules for (#165 6807694145).
 - **What draft 4.18 changes:** it is draft 4.17 (`25dd93e8…`, #165
   6783140790) with edits inside five lines (#165 6784210333): §2.4's
   `guard-fetch` row for the guard's whole-file fetch (:256; lane 3, #165
