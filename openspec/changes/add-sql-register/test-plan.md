@@ -826,7 +826,7 @@ rename.
   - **An unconfigured workstation's readers (Q21(a) (A)).** `who` exits 69,
     the guard 2, and `lanes` prints its `read: mirror` line.
   - **`wip init` where a `lanes/` file exists, with no marker.** It refuses
-    with a 2 exit and commits nothing: the clone's HEAD is
+    with exit 2 and commits nothing: the clone's HEAD is
     unchanged, no commit is queued for the publish act, and origin's refs
     are unchanged. The refusal is the same in both configurations, and the
     same for either file.
@@ -1402,10 +1402,13 @@ rename.
       (Q18 (A));
     - a lane whose log file's name differs from the lane's in case, and a
       lane with no log file, for the sidecar `.logpath.<lane>`.
-  - **The differences** C' adds, each its own case:
-    - a line ending the renderer cannot reproduce (CRLF);
-    - a trailing blank in a table row;
-    - a line of a kind the parser does not know.
+  - **The difference** C' adds, its own case: a line ending the renderer
+    cannot reproduce (CRLF), since a line's text holds no `\r` (Y:1181).
+  - **Two lines that are no difference,** each a case of the success
+    oracle: a trailing blank in a table row, and a line of a kind the parser
+    does not know. Each is stored as it stands (Y:1176, Y:1467) and rendered
+    back unchanged (Y:1300–1304), so the import exits 0 and the proof holds
+    (lane 3's batches 9 and 11).
   - **Q4(c)(i)'s case.** The operator's clone holds one local, unpushed line.
   - **The cutover's abort.** Another clone pushes a commit under `lanes/` after
     C. For the tree-id rule, a third clone pushes a commit under `handoffs/`.
@@ -1504,8 +1507,8 @@ rename.
 - **Options.**
   - D21 settles the marker's fields, which P588–590 left to the design.
 - **Tests.** In `code/tests/test_sql_register_import.py`:
-  - `test_import_at_a_commit_proves_a_byte_identical_render`;
-  - `test_import_refuses_on_a_difference_and_loads_nothing[<difference>]`;
+  - `test_import_at_a_commit_proves_a_byte_identical_render[at-c|trailing-blank|unknown-kind]`;
+  - `test_import_refuses_on_a_difference_and_loads_nothing[crlf]`;
   - `test_import_answers_every_read_as_the_files_do[<read>]`;
   - `test_a_reimport_replaces_seq_0`;
   - `test_word_lines_with_milliseconds_import_verbatim_and_flagged`;
@@ -3600,14 +3603,14 @@ lane 3's ruling 6 (#165 comment 6578020193).
   | a writer's commit, F3 | 2000 ms `lock_timeout` per attempt | 55P03 at about 2 s, a new attempt, then 75 at the deadline (`LANES_REGISTER_DEADLINE_S=3` here) | from the first snapshot call's start: at most the deadline, then one attempt's `S` and `C`, 3 + 8 + 8 = 19 s; no snapshot call starts after the deadline, 3 s |
   | the in-doubt lookup, `find_write` (D9's lookup row) | `c`, 2 s here, the connect; 2000 ms `lock_timeout`; 6000 ms `statement_timeout`; `T_L`, `N_a`·`c` + 7 s, 9 s here, a try, the tries starting within the 10 s window | 3, naming the id, the record kept, since no try took the lock and answered. A failed connect (F1), a try cut by its timer (F2) and a 55P03 (F3) are each tried again at least 1 s after the last, while a try can still start inside the window | from the first lookup try's start: at most `R` + `T_L` = 10 + 9 = 19 s, and at least one try; no try starts after the window, 10 s from the first's start |
   | a whole write | 30 s before a new attempt; 10 s to reconnect in doubt; at most `T_write` in all | 75 (test 4's case (d)); 3 (test 12) | for 75 with no call in doubt, from the first attempt's start, at most the deadline + `S` + `C`, and no attempt starts after the deadline; for 75 after a lookup that answers, only after the database's clock passes `<n>`, the snapshot's clock plus 10 s (AT-F3, AT-11); for 3, the commit's F2 row; in no case over the design's `T_write`, 62.5 + 3`N_a`·`c` s, 68.5 s here (lane 4's section, "The in-doubt rule (F3, D8)") |
-  | a reader | `N_a`·`c` + 4 s: 6 s here | 69, with nothing on stdout | 6 s |
+  | a reader | `N_a`·`c` + 4 s: 6 s here | 69, with nothing on stdout past its first line, `mode primary` (contract §3.6) | 6 s |
   | the renderer's reads, and `reconcile` | 15 s | the render ends, and `status` then shows the lag; `reconcile` exits 69 | 15 s |
   | `import` | 330 s | FP only, since a 330 s timer is not run: the call carries `PGCONNECT_TIMEOUT=2`, `c` here, and sets `lock_timeout=2000` and `statement_timeout=300s` at connect, and the client timer is 330 s; on expiry, 69 and nothing is swapped in | none run |
   | `status` | 8 s | 69, with the lag from git | 8 s |
   | `rollback`, each call | 15 s | 69. Where step 1's call expires, the rollback reads the switch again and never goes on to step 2 on an unknown switch. Where step 1's call ends in a lost turn (40001, 40P01, 55P03 or LR001), it reads the head afresh and tries again, and at D7's deadline across its tries it exits 75, with nothing written and the switch still `primary` (V3's NIT 2) | one call, 15 s. Where step 1's call and the switch's re-read both expire, 15 + 15 = 30 s. For 75 under F3 (`lock_timeout` 5000 ms, `LANES_REGISTER_DEADLINE_S=6` here), from the rollback's start: at most the deadline, then one more try, its check and its call's 5 s, so 6 s plus one check plus 5 s, where the check is the fetch of `origin main` and the head read, timed from the `git` wrapper's and the shim's logs; no check starts after the deadline |
   | a migration | its own `lock_timeout` | refused, and a rerun succeeds once the reader's transaction ends. A new plain read is not held longer than that `lock_timeout` | the migration's `lock_timeout` |
   | `cutover`, its transaction | 2 s; 5000 ms `lock_timeout`; 10 s `statement_timeout`; 15 s, carrying `not_after` (D24) | 69, with the switch unknown and nothing pushed. A rerun after the fault is removed reads the switch and the journal first, and goes on from its own entry where it finds one (F12) | one call, 15 s; under F3, its 5000 ms `lock_timeout`, 5 s |
-  | `switch_to_files`, the cutover's abort, either form | 2 s; 5000 ms; 10 s; 15 s | 69. The rerun reads the switch: at `files`, or back at the restored generation with the head at `b`, the abort is done and it sends nothing; otherwise it runs again | 15 s |
+  | `switch_to_files`, the cutover's abort, either form | 2 s; 5000 ms; 10 s; 15 s | 69. The rerun reads the switch: at `files`, or back at the restored generation with the head at `b`, the abort is done, and it does not run that abort again; otherwise it runs again | 15 s |
   | `record_marker`, after an operator entry's read-back | 2 s; 5000 ms; 10 s; 15 s | 69. The push stands and the marker stays `adding` or `removing`, so a writer's commit still refuses; the rerun reads origin back and records it again (F12) | 15 s |
   | `outage declare`'s database probe (§2.5) | 2 s; 2000 ms; 5000 ms; 8 s | on a person's word, the declaration is written, since the database does not answer from this host. In the `--rollback` form, 2 and no file, the switch being unread. Where the probe does read the switch, AT-D20 owns the rules | 8 s |
   | `import --single <sha>` and `render --revert <sha>`, their commit call | 2 s; 2000 ms; 5000 ms; 8 s a call, under D7's 30 s deadline | in doubt, as a writer's commit: the lookup, then 3 | the commit's F2 row, and no call starts after the deadline |
@@ -3623,7 +3626,7 @@ lane 3's ruling 6 (#165 comment 6578020193).
   "The signals a writer gets"). The slow statement sits where the row's call
   works:
   - a trigger on `journal` for a writer's commit, the cutover and its abort,
-    and the two ways out of a divergence;
+    the rollback's step 1, and the two ways out of a divergence;
   - a trigger on `register_switch` for `record_marker`;
   - a policy on `register_head` for the readers, and on `register_switch` for
     the probe's REGISTER-WRITER;
@@ -3639,7 +3642,9 @@ lane 3's ruling 6 (#165 comment 6578020193).
     fails. Its call meets the fault. Once the fault is removed, after the
     shim's `before` mode (not landed) the rerun runs the abort again, and
     after its `timer` mode (landed) the rerun reads the switch at `files` and
-    sends nothing.
+    runs no abort for that entry: at `files` with the marker `absent` it goes on
+    as a first cutover would (Y:1531), so its first write call is `commit_write`,
+    never `switch_to_files` (lane 3's batch 11 (7)).
   - **`record_marker`:** reached after the cutover's push and read-back. The
     fault takes its call. The marker reads `adding`, a writer's commit
     refuses with 69, and the rerun records the marker once.
@@ -4300,8 +4305,11 @@ and `ready`'s checks 11 and 12.
   `lanes/repos.tsv`. Claims through the real writer.
 - **Oracle.** `spellings` is a `text[]` whose order §1.2 does not fix, so it
   is compared as a set.
-  - L1's claim typed as X: its `object_holds` row has `object = O`, and
-    `spellings` holds the set {X, O, Y}.
+  - L1's claim typed as X, which `claim` writes as O (Y:3402–3403): its
+    `object_holds` row has `object = O`, and `spellings` holds the set {X, O, Y}.
+    Where `register commit` takes a line naming X as written (phase N, T231),
+    the row keeps its line's object, `object = X` (Y:1224, Y:1252), with the
+    same set (lane 3's batch 11 (2)).
   - L1's claim typed as O: the same set.
   - After L1 releases O, L2's claim of X commits, and its row holds the same
     set.
@@ -4490,7 +4498,8 @@ and `ready`'s checks 11 and 12.
   - A writer below `writers_from`, or above `version`, gets LR003 on its
     commit and exits 69, naming both numbers and the remedy, with nothing
     written. A reader outside `readers_from` to `version` exits 69 with
-    nothing on stdout; the guard exits 2, and `managed-projection` 1.
+    nothing on stdout past its first line, `mode primary` (contract §3.6);
+    the guard exits 2, and `managed-projection` 1.
   - **A migration and an older writer snapshot,** in two cases. Held: the
     migration's transaction holds the head row (`UPDATE register_head SET
     seq = seq`) uncommitted, the writer's commit call is seen waiting on it,
@@ -5311,7 +5320,7 @@ texts that W folded (#165 6722314667 and 6722693446).
     `idle_in_transaction_session_timeout` 0, and
     `default_transaction_read_only` off (lane 1's run).
   - **Check 12** (§2.4). With e1's logins in the configuration, check 12
-    passes and prints each login's floors. With `lanes_w_bare` as
+    passes, `check 12: ok`. With `lanes_w_bare` as
     `register_url=`'s user, it fails, naming the login and each floor it
     lacks, and the run exits 2.
   - **`rotate`** (§2.4). `lanes-index login rotate e1` prints new lines. A
@@ -5383,8 +5392,11 @@ texts that W folded (#165 6722314667 and 6722693446).
     the session cluster's Unix socket, where libpq ignores `sslmode` and
     `pg_stat_ssl` shows `ssl` false. And it fails against the TLS cluster
     restarted in recovery, with a `standby.signal` file in its data
-    directory, where `pg_is_in_recovery()` is true; the readiness poll
-    takes `standby` in place of `ready` for that start.
+    directory, where `pg_is_in_recovery()` is true; that start polls for
+    `ready`, as every start does, then fails unless `pg_is_in_recovery()`
+    is true: a hot standby writes `ready` to `postmaster.pid`, and
+    `standby` only with `hot_standby` off, where no session connects
+    (PostgreSQL 16; lane 3's batch 11 (1)).
   - **`target_session_attrs`** (M5): `lanes_r_e1`'s `psql` with
     `target_session_attrs=primary` in its URL connects and reads
     `register_head`; with `read-write`, the connection is refused with
@@ -5430,8 +5442,8 @@ texts that W folded (#165 6722314667 and 6722693446).
   each, two dumps, two restores, the `login` runs under the pty, and a few
   writes; the mid-commit case waits about 18 s for its lookup's window.
 - **Flakiness.** None: each case is a command's exit and a catalog, row or
-  log comparison, and the recovery case waits on the server's own `standby`
-  state.
+  log comparison, and the recovery case waits on the server's own `ready`
+  state, then reads `pg_is_in_recovery()`.
 
 ### Tests for the frame review's findings
 
@@ -5875,8 +5887,9 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     read after a W8 wait, and refuses on a change
     outside the state cell; the skill's step 4 re-derives the lane's
     identity and refuses if it differs from step 1's; `lane-end`'s gate
-    inherits `LANES_ACT`, so its `NOTED` writes do not refuse W13. One case
-    each.
+    inherits `LANES_ACT` and, being a dry run, writes nothing; a `NOTED`
+    line written after the base yields only `sid:`, so it refuses neither
+    W13 nor W14. One case each.
   - **Re-basing** (lane 4's section, "The acts and their expectations"):
     `act-begin --rebase` keeps the id and takes a new seq and generation
     from one snapshot, only after a deliberate wait for another place's
@@ -8439,7 +8452,7 @@ nine have none or only a partial one (below).
 | `mode=` selects the register's store ¶ | 14 (`mode`, 78 for Q6(c), D3; SQLite refused); P8 (the flip; `test_the_readiness_check_10_compares_register_label_with_the_switch_label[<case>]`, and the `register_label=` line the bootstrap prints); AT-F8 (every failure of the mode query, and the marker check's 69 on a SQL estate); AT-LRLABEL (the key's parse: `test_lanes_index_accepts_the_register_label_key`, and `cutover`'s two refusals: `test_cutover_without_register_label_is_refused_2_before_it_connects`, `test_cutover_at_files_with_a_label_not_the_switchs_is_refused_2_before_it_sends[<case>]`) |
 | The estate switch is a database row and the marker `lanes/STORE` | 2; 7 (the cutover, D21); 8; AT-SET (the marker's states); AT-F2 (the operator entries) |
 | A writer that is not `mode=primary` refuses under the marker | 3 (a files-mode writer, and a `mode=index` one between the marker and the flip); 2 (a primary writer that meets a switch not `primary`, with the same text: `test_each_write_exits_69_when_the_switch_is_not_primary[<verb>]`); 8 (c) (the writes that make no fetch, stopped by the switch whatever they fetched, with the same text: `test_a_missed_primary_writer_is_refused_after_rollback[<case>]`); AT-F8 (a failed mode query, refused on a SQL estate) |
-| Nothing changes where the marker is absent ‡ ¶ | the existing files-mode suite, unchanged but for the delta's three exceptions: answer 2's bind detached in every mode, files mode included, and `lane-start`'s bind as one `start-record` write, one register commit and one push in files mode, both in AT-F6 (Brett's A, comment 6721370130); and `wip init`'s refusal wherever any file under `lanes/` exists, in AT-3 (`test_wip_init_refuses_where_a_lanes_file_exists_with_no_marker[<configuration>-<file>]`, with no configuration and with `mode=index`); 14 (D3: no configuration, no `lanes-index` call) |
+| Nothing changes where the marker is absent ‡ ¶ | the existing files-mode suite, unchanged but for the delta's three exceptions: answer 2's bind detached in every mode, files mode included, and `lane-start`'s bind as one `start-record` write, one register commit and one push in files mode, both in AT-F6 (Brett's A, comment 6721370130); and `wip init`'s refusal under `lanes/STORE`, and where its seed would write under `lanes/` beside another file there, in a tree that lacks `lanes/LANES.md` or `lanes/log/README.md` (FR-005, narrowed by Brett's "Narrow it (Recommended)", #165 6773442813), in AT-3 (`test_wip_init_refuses_where_a_lanes_file_exists_with_no_marker[<configuration>-<file>]`, with no configuration and with `mode=index`); 14 (D3: no configuration, no `lanes-index` call) |
 | Every row records the mode that wrote it last | 1 |
 | Readers on a workstation that is not `mode=primary` once `lanes/STORE` exists | 3 (`test_an_unconfigured_workstations_acts_refuse_and_listings_read_the_mirror`; the refusal names the ref's age; a marker on the read ref alone) |
 | A build without the renderer's git half refuses `mode=primary` † ¶ | 14 (the refusal in place and lifted; `test_register_read_exits_78_under_the_refusal[<form>]`; `test_the_refusal_constant_is_true_exactly_when_render_checkout_exists`); P8; readers under the refusal, where `register read` exits 78 and a read that decides 69, the listings and the `SessionStart` block read the mirror with a note, the guard exits 2 and `managed-projection` answers 1: `test_readers_under_the_refusal_answer_the_78_as_a_failed_read[<read>]` |

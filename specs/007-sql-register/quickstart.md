@@ -31,7 +31,7 @@ install", #165 6723925474).
      string (ops:410).
    - A second run prints `unchanged` for every object (ops:203).
 3. **The logins,** for each engineer, human or AI host, and for the dump
-   job (ops:206):
+   job (ops:206), each through `--admin-service`, as the bootstrap connects (ops:481); the flag's position is left to T110:
 
    ```sh
    lanes-index login add <engineer>
@@ -50,7 +50,7 @@ install", #165 6723925474).
    carries the re-vendor, the configuration mount and `postgresql-16`, and
    ends every lane in its container, so notice N1 goes out first. Its check
    is `ready`, below (ops:213–216).
-6. **The install,** in each host shell: pipx v1.2.0 (ops:218–219).
+6. **The install,** in each host shell: pipx v1.3.0 (ops:218–219).
 
 ## An engineer's workstation
 

@@ -92,7 +92,7 @@ and the only scope it takes, are:
     takes;
   - **Brett's own word on R35 and R41**, typed in lane 3's session at about
     2026-11-08T20:33Z: "4A, 5A, 1 let them stand, 3A" (#165 6726766577). 4A
-    builds the service beside groups A and B, and the v1.2.0 tag waits for
+    builds the service beside groups A and B, and the release tag waits for
     it; 5A carries the launcher's window reads in the v1.2.0 workBenches
     re-vendor.
 
@@ -113,7 +113,7 @@ release notes, in opensoft/openRepoTools-spec.
   - the tests and their real-engine fixture;
   - `tests.yml`'s real-engine switch.
 - **In the spec leg:** `docs/README-lanes.md`'s section "The SQL register",
-  the v1.2.0 release notes, and this feature's directory.
+  the v1.3.0 release notes, and this feature's directory.
 
 No 007 code pull request lands before the spec PR does (lane 3's rule,
 6726556972). A lane may build, open pull requests and run CI before then.
@@ -133,7 +133,7 @@ lane makes them on his word:
   re-vendor. The re-vendor also carries the launcher's bare window reads of
   spec:626, by Brett's "5A" (6726766577), so that half of the requirement is
   met outside 007;
-- **the v1.2.0 release:** the rc1, the tag and the upload;
+- **the v1.3.0 release:** the rc1, the tag and the upload;
 - **the root pull requests:** `composed.yml`'s real-engine switch, the root
   `AGENTS.md`'s account of the suite, and the pin bumps, which are lane 1's
   under Q25(b). Lane 3 reads them as feature 007's pull requests under
@@ -1354,10 +1354,10 @@ are lane 3's rulings memo's).
 
 #### Import, cutover, rollback and the disaster path
 
-- **FR-049**: `import --at <C>` MUST load into a staging schema, prove the
-  render byte-identical by R3's three-part proof, and only then swap it in.
-  It takes origin only, and keeps the 15 `WORD` lines verbatim and flagged.
-  Sources: import (Y:3164); spec:711; spec:722.
+- **FR-049**: `import --at <C>` MUST stage its load in a transaction it rolls
+  back (ERR-55), prove the render byte-identical by R3's three-part proof,
+  and only then swap it in. It takes origin only, and keeps the 15 `WORD`
+  lines verbatim and flagged. Sources: import (Y:3164); spec:711; spec:722.
 - **FR-050**: `cutover` MUST be its own command (D25). In group A it is its
   transaction only, against a scratch schema; group C adds the push.
   - Its label MUST come only from `register_label=`.
@@ -1528,7 +1528,7 @@ are lane 3's rulings memo's).
   - From Eagle the guard without the service already misses Brett's 1 s, at
     about 1.2 to 2.1 s, and takes about 0.5 to 0.7 s through it
     (Y:335–337; Y:6286–6287).
-    So the v1.2.0 tag and act 4 wait for the service. The figure at each
+    So the release tag and act 4 wait for the service. The figure at each
     workstation as it joins is act 3's, outside 007.
 - **SC-003**: The hook exits 2 inside its 5 s for each of test 10's three
   failure shapes. The budget's last line, `T0 + 4.4 s`, is below

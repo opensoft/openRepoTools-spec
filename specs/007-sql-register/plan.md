@@ -84,7 +84,7 @@ never runs `psql`.
   - rollback;
   - `wip init`'s refusal (U9);
   - the constant's flip, last in group C;
-  - the manual and the runbook (U10), and v1.2.0.
+  - the manual and the runbook (U10), and v1.3.0.
 - **The tests** `[L2]`, from v3f:
   - the disposable PostgreSQL 16 fixture;
   - the real-engine, fake-`psql` and files-mode tests;
@@ -175,7 +175,7 @@ one-line install.
     best, 205 ms at the median and 456 ms at the p90, the guard without the
     service takes about 1.2 to 2.1 s, and about 0.5 to 0.7 s through it
     (lane 5, #165 6725361742; Y:334–337). So the service is on the cutover's
-    path, and the v1.2.0 tag waits for it.
+    path, and the release tag waits for it.
   - Lane 2's local figure is about 0.42 to 0.47 s warm (MEASURE.md, (14)).
 - **The hook**: 5 s, with budget lines at `T0 + 3.75 s`, `4.25 s` and
   `4.4 s`.
@@ -265,7 +265,7 @@ specs/007-sql-register/
 ├── quickstart.md        # Phase 1: the operator's and an engineer's first steps
 ├── contracts/
 │   ├── README.md        # the copy's source and digest, and each contract's owner
-│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.16, copied in at round B13.
+│   ├── register-cli.md  # [L1] T101; now lane 1's draft 4.19, copied in at round B15.
 │   │                    #   THE CONTRACT BETWEEN GROUPS A AND B (FR-013 to FR-017),
 │   │                    #   and the readers' four forms (§3.6, which lane 5 reviews)
 │   ├── exit-codes.md    # [L1] T102: the lanes-index rows; each lane adds its callers' arms
@@ -280,12 +280,12 @@ specs/007-sql-register/
 
 `contracts/register-cli.md` is fixed before group B codes against it. Lane 1
 writes it, lane 4 confirms group B's sections, lane 5 reviews §3.6, and lane
-3 rules (R01, R06). Lane 1's draft 4.16, keyed to Y (`b8376bb1…`, 974 lines;
-#165 6779236253), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
+3 rules (R01, R06). Lane 1's draft 4.19, keyed to Y (`43f16aa2…`, 1023 lines;
+#165 6798746256), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
 lane 4's (a) (6741093519), then lane 5's 6741787745, lane 4's log set, the
-endpoint's name, lane 1's T511 answers and U5 fixes, B6's, B9's, B10's, B11's, B12b's and B13's. Draft 4.1 is
+endpoint's name, lane 1's T511 answers and U5 fixes, B6's, B9's, B10's, B11's, B12b's and B13's, and lane 3's batches 7 and 9 (#165 6780364102, 6781033556). Draft 4.1 is
 draft 4 (6738871108), with form 4, lane 5's review of §3.6, lane 3's B4 and
-B7 and lane 5's check (6739068493). Lane 3 copied draft 4.16 into the path
+B7 and lane 5's check (6739068493). Lane 3 copied draft 4.19 into the path
 byte for byte, and [contracts/README.md](contracts/README.md) names its
 source and digest. Its §8 closes O14 to O21. T101 rides the spec PR (B4).
 
@@ -371,7 +371,7 @@ pyproject.toml                  # UNCHANGED: no installable is added
 - `docs/README-lanes.md`'s "The SQL register" (U10, T340 and T341). Lane 4's
   T417 lands the manual's exit-3 row beside its code PR, and T340 keeps it
   (R21);
-- `docs/release-notes/v1.2.0.md` (T342);
+- `docs/release-notes/v1.3.0.md` (T342);
 - `specs/006-release-pypi/contracts/workflows.md`'s `release.yml` list (T346);
 - this feature's directory, with each lane's contract file.
 
@@ -466,8 +466,8 @@ Checkpoint A+B [L3]: group B's tests pass against the real lanes-index (a copy
 Group C, phase 3 ............................... [L3] [L2: tests G]
    |       lanes-index and tests/ only; its last PR flips RENDER_GIT_HALF
    v
-The tag, v1.2.0, on Brett's own word, after group C and the service ... [L3]:
-   :       rc1 on TestPyPI, the tag, release/v1.2, PyPI, the notes, the workBenches
+The tag, v1.3.0, on Brett's own word, after group C and the service ... [L3]:
+   :       rc1 on TestPyPI, the tag, release/v1.3, PyPI, the notes, the workBenches
    :       re-vendor, which also carries the launcher's window reads ("5A")
    :
    :  outside 007: the install (a codexFactory lane) --> act 3 --> act 4,
@@ -498,7 +498,7 @@ The tag, v1.2.0, on Brett's own word, after group C and the service ... [L3]:
   - Its pull requests land once slices 1a and 1b are on code `main` (Q28:
     ready by 2026-11-12) and group A's subcommands have landed.
   - "Group B: lane 4's plan", below, summarises lane 4's order.
-- **Phase 4, the service,** is built beside groups A and B, and the v1.2.0
+- **Phase 4, the service,** is built beside groups A and B, and the release
   tag waits for it. This is Brett's own word, "4A", typed in lane 3's
   session at about 2026-11-08T20:33Z (lane 3's #165 comment 6726766577,
   which quotes his typed words "4A, 5A, 1 let them stand, 3A"), for lane

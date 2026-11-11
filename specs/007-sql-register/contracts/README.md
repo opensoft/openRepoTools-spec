@@ -3,27 +3,56 @@
 This directory holds the contract files that plan.md lists. Each is written
 by the lane that owns it, and lands before the code that rests on it.
 
-## `register-cli.md`: lane 1's contract draft 4.16, keyed to Y
+## `register-cli.md`: lane 1's contract draft 4.19, keyed to Y
 
-[register-cli.md](register-cli.md) is lane 1's contract draft 4.16, keyed to
-Y (`a6497d00`), copied here byte for byte by lane 3 at round B13, on
-2026-11-10. It replaces draft 4.15, which lane 3 copied in at round B13's
-first commit (`95c19400`); draft 4.14 came in at round B12b, draft 4.13 at
+[register-cli.md](register-cli.md) is lane 1's contract draft 4.19, keyed to
+Y (`a6497d00`), copied here byte for byte by lane 3 at round B15, on
+2026-11-11. It replaces draft 4.16, which lane 3 copied in at round B13's
+second commit (`a38d85a9`); draft 4.15 came in at its first commit
+(`95c19400`), draft 4.14 at round B12b, draft 4.13 at
 round B11, draft 4.12 at round B10, part 1, draft 4.11
 at round B9, part 1c, draft 4.10 at round B6, draft 4.7 at round B5, draft
 4.6 at round B4, draft 4.5 at round B3, draft 4.4 at fix round B2, draft 4.2
 at fix round B, and draft 4.1 at assembly phase A.
 
-- **Source:** lane 1's contract draft 4.16, `contracts-register-cli.v4.16.md`,
-  posted on #165 at 6779236253.
+- **Source:** lane 1's contract draft 4.19, `contracts-register-cli.v4.19.md`,
+  posted on #165 at 6798746256, with lane 3's ruling for its E1 (#165
+  6807694145).
 - **sha256:**
-  `b8376bb1312f960e0ad671c3ead49522bcda95f0ae7fef2f2e92137f51515f75`, 974
+  `43f16aa2d30856f452abef91814f63a36e4fcf69b90c47c01a6365a62ab79bfa`, 1023
   lines. The copy here has the same digest. Drafts 4.3 to 4.11 keep every
   line number of draft 4.2; draft 4.12 keeps them to :637 and moves each
   later line down one; draft 4.13 keeps every line number of draft 4.12,
   draft 4.14 every line number of draft 4.13, draft 4.15 every line number
-  of draft 4.14, adding §10's ten lines after the last, and draft 4.16 every
-  line number of draft 4.15.
+  of draft 4.14, adding §10's ten lines after the last, draft 4.16 every
+  line number of draft 4.15, draft 4.17 every line number of draft 4.16,
+  adding §11's 49 lines after the last, and drafts 4.18 and 4.19 every line
+  number of draft 4.17.
+- **What draft 4.19 changes:** it is draft 4.18 (`09be7c2c…`, #165
+  6784210333) with lane 1's E1 and E2 (#165 6798746256), each inside an
+  existing line, and the Status paragraph (:5): where `.head` is missing or out of form, form 3 rewrites the whole family whatever `--since` says, and `--since 0` is accepted (:734, E2);
+  and, under an unexpired declaration that names this database, a cut at the declared cap is 69 with `.outage`, so the guard takes the mirror path by `T0` + 3.75 s,
+  outside a declaration MUST-2 standing (:776, E1), which lane 3 rules for
+  (#165 6807694145).
+- **What draft 4.18 changes:** it is draft 4.17 (`25dd93e8…`, #165
+  6783140790) with edits inside five lines (#165 6784210333): §2.4's
+  `guard-fetch` row for the guard's whole-file fetch (:256; lane 3, #165
+  6783977598); the seam's path check, which refuses with 2, before the store
+  opens, a path holding U+0000–U+001F, U+007F, U+0085, U+2028 or U+2029
+  (:503); the same three characters in `render --images`' `file=` rule and
+  in §11's input rule (:801, :990; line R's merge11, `15d1662b`); and the
+  Status paragraph (:5).
+- **What draft 4.17 changes:** it is draft 4.16 (`b8376bb1…`, #165
+  6779236253) with edits inside existing lines and §11, `import`, after the
+  last line (:975–1023; lane 3's batch 9, #165 6781033556), #165
+  6783140790: form 2's timer is 2, "too late to verify" (:776); `register
+  commit` refuses with 2, before it journals, a message holding a scissors
+  line or whose final trailer block already holds a `Register-Seq` (:495,
+  :543); `ready`'s check 8 named beside check 10 (:279); X1's two 64
+  grounds (:407), as lane 3's post on round B13 asks (#165 6779518728); and
+  batch 7's third exception in §2.3 (:238, :240), `S` bounding both of
+  `register snapshot`'s requests in §2.4 (:259), and `--at <k>` without
+  `--tree` as 64 (:416) (#165 6780364102).
 - **What draft 4.16 changes:** it is draft 4.15 (`b585a2a4…`, #165
   6773756519) with lane 1's edits E1 to E9 (#165 6779236253), each inside an
   existing line: the lookup's four statements as T114's follow-up 3 builds
@@ -155,7 +184,7 @@ at fix round B, and draft 4.1 at assembly phase A.
   660 lines, #165 6745214166) replaces it for 007's tasks, and keeps its
   line numbers: it is block v4.4 (`a4ce9e3b…`, #165 6742356416) with T119's
   check 11 and its tests naming the prod OpenXPKI's root (:386, :388). The
-  contract, at draft 4.16 as at 4.1, gives no restore order. Block v4.11
+  contract, at draft 4.19 as at 4.1, gives no restore order. Block v4.11
   (`625a0b84…`, 667 lines, #165 6754645319) replaces v4.10 for 007's tasks
   since round B9, part 1c, and keeps its line numbers to :660: it pairs
   with draft 4.11 and takes round B8's changes to lane 1's lines (:142,
@@ -200,7 +229,7 @@ at fix round B, and draft 4.1 at assembly phase A.
   `register snapshot`, `register commit` and `journal --write-id`, keeps the
   form of the phase plan's interfaces table (Y:4834).
 - **Its landing:** tasks.md's T101 rides the spec PR, since its output is
-  this file, in the spec branch at draft 4.16 (lane 3, #165 6745826156). A
+  this file, in the spec branch at draft 4.19 (lane 3, #165 6745826156). A
   later draft replaces this copy as a fix before the spec PR leaves draft,
   with its own source and digest here.
 
@@ -228,14 +257,16 @@ sections 1 to 4 add nothing Y does not say.
 
 Each owner writes its file at this directory's path. Of these, lane 3's
 `render-commit.md` is in since phase B, and lane 1's `exit-codes.md` and
-`config.md` since round B4, from lane 1's commits `31196cd9` and `eca2da3d`;
-tasks.md's T102 rides the spec PR (lane 3, #165 6745826156):
+`config.md` since round B4, from lane 1's commits `31196cd9` and `eca2da3d`, and
+lane 4's `pending-record.md` since round B15, byte for byte from lane 4's
+commit `bd871f57` (sha256 `cbe15746…`, #165 6783541041); tasks.md's T102
+rides the spec PR (lane 3, #165 6745826156):
 
 | File | Owner | Task |
 | --- | --- | --- |
 | `exit-codes.md` | lane 1, for the `lanes-index` rows; in at round B4 | T102 |
 | `config.md` | lane 1; in at round B4 | T102 |
-| `pending-record.md` | lane 4 (R34) | T412 |
+| `pending-record.md` | lane 4 (R34); in at round B15, from lane 4's commit `bd871f57` | T412 |
 | `bind-record.md` | lane 5 (R50) | T501 |
 | `socket-api.md` | lane 5 (R50) | T511 |
 | `render-commit.md` | lane 3; in at phase B, from Y (above) | T344 |

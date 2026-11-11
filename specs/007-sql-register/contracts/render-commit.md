@@ -28,7 +28,7 @@
 - Environment: "Every git call starts with the inherited `GIT_*` variables removed, and `LANES_NO_FETCH` dropped (D12)" (Y:5776).
 - F29 gives a pin for each input that could change the sha (Y:5944):
   - blob bytes: "`hash-object --no-filters --stdin`, `-c core.autocrlf=false`" (Y:5948);
-  - replace refs and grafts: `GIT_NO_REPLACE_OBJECTS=1` (Y:5949);
+  - replace refs and grafts: `GIT_NO_REPLACE_OBJECTS=1` (Y:5949), which in git 2.43 does not cover `<git-dir>/info/grafts`, so `render_git_env` also sets `GIT_GRAFT_FILE=/dev/null`, with `advice.graftFileDeprecated=false` beside it as `GIT_CONFIG_COUNT` (`lanes-index:6208–6214` at `40a1f5e`);
   - author and committer name and email: `GIT_AUTHOR_*` and `GIT_COMMITTER_*` from the journal (Y:5950);
   - dates and time zone: `@<epoch> +0000` and `TZ=UTC` (Y:5951);
   - the `encoding` header: `-c i18n.commitEncoding=UTF-8` (Y:5952);
@@ -45,7 +45,7 @@
 - The message goes to "`commit-tree -F -` with no cleanup" (Y:5966).
 - "It never runs `git interpret-trailers`" (Y:559), since its "parsing and `trailer.*` configuration would make a host's git version an input to the sha" (Y:559–561).
 - The message rules have a test: it "asserts that form C reads `<k>` from each and that two checkouts give one sha" (Y:5968).
-- A journal message holding a scissors line, or whose final trailer block already holds a `Register-Seq`, cannot be rendered. The pass reads each commit it builds back by form C, and where it reads anything but `<k>`, the build ends `build-failed` at that seq with nothing pushed, and stays there until the message is corrected (lane 3's ruling on SHOULD-2 of its review of T322, 2026-11-10).
+- A journal message holding a scissors line, or whose final trailer block already holds a `Register-Seq`, cannot be rendered. A scissors line is git's cut line after a comment string and one space, with any prefix, as `core.commentChar` allows; the code reading is line R's `9d68f1e`, whose `register commit` refuses such a message, and one whose final trailer block holds a `Register-Seq` key in any case, with 2 before it opens the store (lane 1, #165 6783051626). The pass reads each commit it builds back by form C, and where it reads anything but `<k>`, the build ends `build-failed` at that seq with nothing pushed, and stays there until the message is corrected (lane 3's ruling on SHOULD-2 of its review of T322, 2026-11-10).
 
 ## 2. Register-Seq
 
@@ -110,7 +110,7 @@
 - The refspec is "`<tip>:refs/heads/main`, never forced" (Y:2867).
 - It "pushes with the renderer identity (D23), to an explicit `ssh://git@github.com/<owner>/<repo>.git`" (Y:2868–2869).
 - `<owner>/<repo>` is "`_norm_repo` of the checkout's own `origin` URL" (Y:2870), "so the push names the repository that was fetched" (Y:2871); the plan adds that "it must equal `source_of`'s" (Y:5798).
-- The push's environment: `GIT_SSH_COMMAND='ssh -i <render_key> -o IdentitiesOnly=yes -o BatchMode=yes'`, `SSH_AUTH_SOCK` removed, `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1`, and `--no-verify` (Y:5799); "Nothing is written to the checkout's config: no `set-url`, no `pushurl`" (Y:5799).
+- The push's environment: `GIT_SSH_COMMAND='ssh -i <render_key> -o IdentitiesOnly=yes -o BatchMode=yes'`, which T320's code runs as `ssh -i <render_key> -o IdentitiesOnly=yes -o BatchMode=yes -F /dev/null -o ControlMaster=no -o ControlPath=none` (`lanes-index:6235–6237` at `40a1f5e`; MUST-2 of lane 3's review of T320), `SSH_AUTH_SOCK` removed, `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1`, and `--no-verify` (Y:5799); "Nothing is written to the checkout's config: no `set-url`, no `pushurl`" (Y:5799).
 - The reason: "A deploy key authenticates only over SSH, and `git push origin` would use the checkout's HTTPS remote and the lane's own credentials, which the ruleset refuses" (Y:2875–2877).
 - The key is "a deploy key in a 0600 file named by `lanes-index.conf`, used only in the push's own environment" (Y:647–648), and `render_key=` names it (Y:2357).
 - "Every push of those paths uses it: the renderer's, and the cutover's and the rollback's commits of `lanes/STORE`" (Y:649–651).
@@ -159,3 +159,7 @@
 - A forged trailer beyond the head: "The forged-trailer case with a seq beyond the head was not probed" (Y:6075).
 - F29's table still lists a pin that runs `interpret-trailers` (Y:5954); "So `lanes-index` composes the message itself and never runs `interpret-trailers`" (Y:5961). This contract follows D15 (Y:559): D15 governs (lane 3, fix round B, 2026-11-09), and T345 marks the row superseded before the archive.
 - Y:6031–6032 list the `commit.gpgSign` and `interpret-trailers` texts as awaiting lane 3, while the composition "is ruled: `lanes-index` composes the message itself" (Y:6473–6474). D15 governs, since it now carries both fixes (lane 3, fix round B, 2026-11-09), and T345 marks rows 5 and 6 as applied before the archive.
+- The message's bytes, lane 3's choice (ruling 4 of its review of T322 and T323, `REVIEW-007-T322-T323-aaef9f4`): trailing blank lines are dropped and the message ends with one LF; a message with no text is refused (69).
+- Temp files instead of stdin (ruling 5): blobs and messages go through 0600 temp files, because `render_git` gives git no stdin; they sit under the git dir and are cleared with the index (its NIT-4).
+- git versions (ruling 12): `--diff-merges` needs git 2.31 or later, and `--no-write-fetch-head` 2.29 or later, inside the 2.32 floor (Y:6429).
+- `--no-verify`, lane 3's choice (ruling 2 of its review of T320 and T321, `REVIEW-007-T320-T321-da3689b`): the push applies `--no-verify`, `GIT_TERMINAL_PROMPT=0` and the removal of inherited `GIT_*` to the plain-origin form too, where Y:5799 lists them under the key form.

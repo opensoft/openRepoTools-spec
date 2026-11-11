@@ -63,6 +63,25 @@ every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
   design:142–146, :156–158 and :249–253, each re-wrapped to its own lines,
   and design:722's row, which keeps his Q14(a) and adds that FR-005 narrows
   it; and proposal:149–152 and :2275–2277, re-wrapped the same way.
+- **Round B15:** lane 2's three test-plan edits in its F13c (#165
+  6783432592; `edits-F13c-test-plan.json`, `5d7231dc…`), in place: :829's
+  "with exit 2", :5313–5314's bare `check 12: ok`, and :8442 in FR-005's
+  narrowed words. Then lane 3's texts on the plan, which lane 2 asked lane 3
+  to fold: its batch 11's (#165 6783909985) at TP:1405–1408, :1507–1508,
+  :3610, :3625–3626, :3641–3642, :4303–4304, :5386–5387 and :5433–5434, and
+  its batch 12's (#165 6808010497) at TP:3603, :4492–4493 and :5877–5879, so
+  `test-plan.md` is `d2641bb1…`, 9,160 lines, and its lines sit below B14's
+  numbers: from B14's :1409, three below; from B14's :3643, five below; from
+  B14's :4305, eight below; from B14's :4494, nine below; from B14's :5388,
+  twelve below; from B14's :5880, thirteen below. And, in place: design:2363
+  (Y:2317), the READER row, which no longer names the `SessionStart` block
+  (ERR-09; the T341 draft's item 4); design:3564 (Y:3518), D9's guard row's
+  "On expiry" cell, and design:5715 (Y:5669), the close-out gate's sentence
+  (lane 3's batch 12, B1 and A3, #165 6808010497); ops:129 and :219–220,
+  which name v1.3.0 as 007's release, v1.2.0 being the way back (Brett's
+  "v1.2.0 now, 007 later (Recommended)", 2026-11-10T13:22:23Z); and ops:247
+  and :252, act 4's steps 1 and 3, which carry the holders' notice (Brett's
+  "Holders release + check (Recommended)", #165 6782534165).
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
@@ -70,12 +89,13 @@ branch holds the newer text at the same number, except in `design.md` after
 design:1192, which round B13's fold moved up to 46 lines down. A
 `test-plan.md:<n>` or `TP:<n>` citation is likewise Y's line; in the branch,
 round B14's edits put the plan's lines from :820 to :2900 one line down, and
-those from :2903 two.
+those from :2903 two; round B15's texts move them further, as its entry
+above says.
 
-- **Part 1, the errata** (ERR-01 to ERR-54; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-55; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
-- **Part 2, the decisions** (DEC-01 to DEC-34): a choice the change leaves
+- **Part 2, the decisions** (DEC-01 to DEC-35): a choice the change leaves
   open, or a ruling that 007 builds on.
 - **Part 3, the plan's choices** (PC-1 to PC-16).
 
@@ -97,8 +117,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.16 (`contracts/register-cli.md`, `b8376bb1…`,
-#165 6779236253) and its block is v4.11 (`625a0b84…`, #165 6754645319),
+contract is its draft 4.19 (`contracts/register-cli.md`, `43f16aa2…`,
+#165 6798746256) and its block is v4.11 (`625a0b84…`, #165 6754645319),
 both keyed to Y. The block keeps v4.2's line numbers; the draft keeps them
 to :637 and moves each later line down one, as draft 4.12 does.
 
@@ -955,6 +975,27 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   keeps D14's handshake, so it is not Brett's.
 - **Source:** Y:2896–2901; Y:5784; spec:485.
 
+### ERR-55. The import stages in a transaction it rolls back (T115)
+
+- **The erratum:** Y:3166–3172, ops:261 and FR-049 load the import "into a
+  staging schema" (Y:3168) and swap "the staged tables in" (Y:3172). As
+  built, the load is staged in one request that rolls back, from origin
+  only, and the swap re-sends the same entry, write id, base and
+  generation, which LR001 refuses if the head moved. Only `not_after` and
+  the line ids differ, and the proof compares neither.
+- **Why:** it cannot be built as worded. Y:2243's `REVOKE ALL ON DATABASE …
+  FROM PUBLIC` takes away PUBLIC's default TEMPORARY. The writer gets back
+  only CONNECT (Y:2244), plus "no INSERT, UPDATE, DELETE or DDL anywhere"
+  (Y:2263). Running the import as the owner would break ops:259, which has
+  the operator lane run it.
+- **Whose:** lane 3's ruling, #165 6781033556, on lane 1's T115 at
+  `abdaab48`. It keeps FR-049's order (load, prove, only then swap), F23
+  (one request ending in ROLLBACK before any git act; Y:3159–3162) and S5,
+  so it is not Brett's.
+- **Source:** Y:2243–2263; Y:3159–3162; Y:3166–3172; ops:259; ops:261;
+  FR-049. Batch 9 cites these lines at `8523aa0c` (design:2289–2309,
+  :3205–3208 and :3212–3218), 46 below Y's.
+
 ## Part 2: decisions
 
 ### DEC-01. The service is built beside groups A and B, and the v1.2.0 tag waits for it (R35)
@@ -1563,6 +1604,30 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   opsXfactory-6's post says they are not a ratification of #276, or a
   merge word.
 - **Source:** ops:164–178; ops:193; #165 6766195257; #165 6766219958.
+
+### DEC-35. Brett's round-2 answers for Opensoft-Tenant feature 045, recorded for 007
+
+- **The decision:** none for 007. Brett's four answers for feature
+  `045-codexfactory-prod-register-database` (draft #290) govern that
+  feature's acts, its IAM and its repository. None of them changes 007's
+  code, its contracts or `operations.md`. His second answer keeps the dump
+  identity at "write alone", which lane openRepoTools-1 confirmed in #165
+  6779237137.
+- **Whose: Brett's.** He was asked by interactive multiple choice in lane
+  opsXfactory-6's session, after an independent review of 045's documents,
+  and his answers were observed by 2026-11-11T01:44:06Z. His answers,
+  verbatim, as that lane's #165 6784524017 quotes them:
+  1. the point-in-time drill runs before act 3 step 2:
+     "Before step 2, as ruled (Recommended)";
+  2. the dump identity gets a custom data role holding only `blobs/write`
+     and `blobs/add/action`: "Switch to a custom role (Recommended)";
+  3. his IAM grants (T2.1) may be applied from phase 1's reviewed, unmerged
+     head: "Yes, with byte proof (Recommended)";
+  4. a CODEOWNERS line `/docs/codexfactory-register/ @brettheap`:
+     "Add CODEOWNERS (Recommended)".
+
+  That none of them changes 007 is lane 3's reading, #165 6807694145.
+- **Source:** #165 6784524017; #165 6779237137; #165 6807694145.
 
 ## Part 3: the choices the design leaves to the plan
 

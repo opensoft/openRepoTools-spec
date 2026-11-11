@@ -126,7 +126,7 @@ Each step gives who acts and where, the command, its check, its refusal and its 
 
 #### Before act 3
 
-- Group C of 2.7 and v1.2.0 have landed, and the hosts are reached (`r3c/REPLY.md:148-153`), so the installed `lanes-index` no longer refuses `mode=primary` (`proposal.md:1380-1394`).
+- Group C of 2.7 and v1.3.0 have landed, and the hosts are reached (`r3c/REPLY.md:148-153`), so the installed `lanes-index` no longer refuses `mode=primary` (`proposal.md:1380-1394`).
   - Act 3's first two steps need only group A's `bootstrap`, so Brett may run them earlier, from a host shell.
 - 1A's PostgreSQL 16 for the bench images (`proposal.md:1121-1122`) rides act 3's one rebuild (step 4).
 
@@ -216,8 +216,8 @@ Brett's ruling (#165 6723925474): the register's database is "CNPG in the instal
    - **Check:** `ready` (step 6).
    - **Way back:** the previous image. The register is unchanged.
 5. **The install elsewhere.** Brett acts, in each host shell.
-   - **Command:** pipx v1.2.0, or the root one-liner as a stopgap (`proposal.md:1840-1853`; `r3c/REPLY.md:53-57`).
-   - **Way back:** reinstall v1.1.0. On `mode=index` nothing changes.
+   - **Command:** pipx v1.3.0, or the root one-liner as a stopgap (`proposal.md:1840-1853`; `r3c/REPLY.md:53-57`).
+   - **Way back:** reinstall v1.2.0. On `mode=index` nothing changes.
 6. **Readiness, in every writing environment.** The operator lane acts.
    - **Command:** `lanes-index ready --expect index` **(new)** (2.4), run in each environment on P19's list (`clarifications.md:127-133`): each bench container on each host, each host shell, Raven's install and each later workstation's, and the Codex lane's tools, through Brett (`proposal.md:984-986`).
    - **Confirming the list:** this step confirms that list, which is Brett's act (`clarifications.md:131-133`).
@@ -244,12 +244,12 @@ Brett's ruling (#165 6723925474): the register's database is "CNPG in the instal
 - under Q29 (a), the service is on the gate only if the guard, measured without it, is over Brett's budget, 1 s (`proposal.md:1973-1976`), and it is: from Eagle that guard takes about 1.2 to 2.1 s (lane 5, #165 6725361742), so the service, and v1.2.0 with it, is on the gate (lane 3's ruling, #165 6724332510 and 6726078173);
 - act 3's steps 6 and 8 have passed.
 
-1. **The window.** Brett names it, and the coordinator posts notice N2 (2.6) on each coordination issue before it opens (`proposal.md:940-941`).
+1. **The window.** Brett names it, and the coordinator posts notice N2 (2.6) on each coordination issue before it opens (`proposal.md:940-941`). N2 asks each lane that holds a `HOLD` to write its own `HOLD RELEASED` before the freeze, since `cutover` refuses, listing them, while any `HOLD` over 30 minutes old stays open (step 7; Brett's "Holders release + check (Recommended)", 2026-11-10T22:58:57Z, #165 6782534165).
 2. **Readiness again.** The operator lane runs `lanes-index ready --expect index` in every environment.
    - **Why again:** the check covers one moment, and a container started after act 3's run escapes it (`proposal.md:618-619`).
    - **Refusal:** any failure stops the window.
 3. **The freeze.** Brett gives the word. The coordinator posts N3, and Brett prompts each pane.
-   - **What lanes do:** every lane reaches a stopping point and writes its `PAUSED` record. Those writes must land before the import (`r3b/REPORT.md:243-244`; `proposal.md:1269-1271`).
+   - **What lanes do:** every lane reaches a stopping point and writes its `PAUSED` record; a lane that holds a `HOLD` writes `HOLD RELEASED` before it (N3; Brett's "Holders release + check (Recommended)", #165 6782534165). Those writes must land before the import (`r3b/REPORT.md:243-244`; `proposal.md:1269-1271`).
    - **Way back:** the thaw (step 10). Nothing has changed yet.
 4. **The quiet check.** The operator lane confirms that the `lanes` tree id on origin is unchanged for 2 minutes, and that no `lanes-edit.sh` or `lane-start` process runs in any container (`r3b/REPORT.md:245`).
    - **Refusal:** if the tree id moves, the 2 minutes start again.
