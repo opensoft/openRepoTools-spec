@@ -6,9 +6,9 @@ the complete existing CI and explicit human authorization boundaries.
 ## ADDED Requirements
 
 ### Requirement: Queue entry is manual and narrowly scoped
-The configuration SHALL define exactly one serial queue with at most two PRs
+The initial documentation pilot SHALL define one serial queue with at most two PRs
 per batch, one active candidate and no automatic enqueue, retry or split.
-Only repository writers SHALL be able to request queue entry, and eligible PRs
+Only repository writers SHALL be able to request queue entry, and pilot PRs
 SHALL be same-repository, open, non-draft, explicitly labeled pilot branches
 changing only the two code-local pilot references. A non-main base SHALL use
 the pilot prefix and carry an explicit predecessor marker.
@@ -41,3 +41,49 @@ changes, bypasses, releases, tags, assembly pins and installed-session updates.
 #### Scenario: Later live preparation encounters an access blocker
 - **WHEN** required Mergify access, plan capability or repository permission is absent
 - **THEN** the operator stops for separate approval rather than widening authority
+
+### Requirement: Approved rollout adds a conservative manual code queue
+Under Brett's 2026-11-11 rollout approval, the configuration SHALL additionally
+provide `openrepotools-code` for same-repository open non-draft PRs targeting main
+and changing known normal code paths only. It SHALL retain full app-qualified
+CI on members/candidate, writer-only manual commands, serial operation, at most
+two members and zero retries/splitting. Control-plane, release-stamp and unknown
+or mixed paths SHALL refuse. Earlier queues SHALL remain unchanged.
+
+#### Scenario: Reviewed normal code is manually requested
+- **WHEN** a repository writer verifies merge authority, current head/base/paths,
+  exact-head Codex review, unresolved threads and all full checks, then requests
+  the named queue
+- **THEN** eligible code can enter combined validation without renaming lane
+  branches, adding a review label or replacing active sessions
+
+#### Scenario: Eligibility alone or a changed source head
+- **WHEN** no command exists, or a queued source head changes
+- **THEN** no automatic admission occurs and changed code requires fresh review,
+  CI and a fresh command; operator attestation is not automated Codex enforcement
+
+### Requirement: Label metadata does not duplicate full CI
+The rollout SHALL remove tests.yml's obsolete labeled trigger while retaining
+unfiltered opened/synchronize/reopened, draft candidates, main/release-branch
+pushes and nightly/manual runs. Required gate names, shards and release workflows
+SHALL remain unchanged. This dated amendment supersedes only the earlier clause
+preserving every trigger, not full acceptance requirements.
+
+#### Scenario: Queued code changes
+- **WHEN** another commit reaches a queued PR
+- **THEN** synchronize still runs full CI regardless of labels
+
+#### Scenario: Only queued label is added
+- **WHEN** Mergify changes a label without changing code
+- **THEN** no full tests.yml run or skipped replacement gates are created
+
+### Requirement: Assembly activation is coherent and preserves lanes
+The approved rollout SHALL pin merged legs with matching gitlinks, recomputed
+digests and workflow SHA references, and point root Claude/Codex sessions to the
+same code-local instructions. It SHALL qualify exact assembled pins before
+local activation and preserve lanes 1–5, worktrees, bindings and running benches.
+
+#### Scenario: Current lane work still exists
+- **WHEN** the authorized clean assembly mounts are refreshed
+- **THEN** no active lane branch, worktree, binding or installed session changes
+  and no stash, force, cleanup, app access, bypass or release act is inferred

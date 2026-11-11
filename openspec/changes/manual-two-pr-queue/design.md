@@ -47,3 +47,20 @@ If later authorized, land by ordinary checks/review, verify existing app access,
 then obtain separate canary approval. No labels/branches/queue commands for a
 canary are created now. Reverting the config removes the queue; no release or
 ruleset configuration requires restoration. Archive only after assembly landing.
+
+## Accepted general-code rollout — 2026-11-11
+
+Append `openrepotools-code`, retaining earlier queues and the same two-member,
+serial, full-CI settings. Only independent same-repository open non-draft PRs
+targeting main and known normal code paths qualify. Control-plane, release-stamp
+and unknown/mixed paths refuse. No branch rename, review label, custom success
+status, autoqueue or installed agent is needed. The writer checks actual
+head/base/review/CI and merge authority before the named command. That is manual
+attestation, not service-enforced Codex proof; a head push requires fresh evidence.
+
+#44 removes only label-triggered duplicate tests.yml runs, never code-update or
+candidate checks. Ordinary post-merge main CI stays. The assembly points into
+one shared code-local reference and advances merged gitlinks/pin digests/workflow
+SHAs in lockstep through bump-leg.py. Qualify composed exact pins before local
+activation. Existing lanes and installed sessions remain unchanged. Reconcile
+the dated as-built evidence under issue #26; preserve original approval history.

@@ -32,3 +32,14 @@ two-PR queue, keeping full CI and preserving lanes 1–5. No canary, enqueue,
 merge, ruleset bypass, app access, paid upgrade, release change or assembly pin
 advance is authorized. The queue becomes available only after separate merge
 authorization and verified service access; configuration is not live acceptance.
+
+## Accepted rollout amendment — 2026-11-11
+
+The original preparation-only authority above is historical. Brett subsequently
+approved the qualified docs and real-code batches (#41/#43), and now approved
+finishing the rollout: merge code #44 after CI, add the general manual code
+queue, and refresh assembly pins and Claude instructions. This extends the same
+manual-batch-queue capability, not fast-only CI or automated review authority.
+Reconcile amendments under spec issue #26, using feature 009's sole task list.
+No unrelated enqueue/merge, bypass, app access, paid upgrade, release change,
+native stack object or lane takeover is authorized. Archive after assembly land.
