@@ -1,0 +1,49 @@
+## Context
+
+Feature 008 supplies advisory classification only. Existing tests.yml runs four
+required full-CI gates on all PR bases, including draft queue candidates. Code
+PR #34 supplies targeted feedback, not integration acceptance. See proposal.md.
+
+## Goals / Non-Goals
+
+Prepare one manual, documentation-only queue for a separately authorized live
+test. Do not implement CI efficiency, an authoritative classifier or new status
+receipts, or touch the existing workflows, lane records or assembly pins.
+
+## Decisions
+
+- Follow the existing OpenBenches manual queue pattern: serial mode, one active
+  candidate, maximum batch size two, 60-second fill window, no automatic retry
+  or failure splitting. Use a 90-minute check budget for the existing full suite.
+- Admit only same-repository, open, non-draft pilot branches with a manual
+  `batch-pilot-reviewed` label and one or both code-local pilot reference files.
+  Bases are main, or the pilot prefix with an explicit Depends-On body marker;
+  Mergify must still recognize the actual chain. This supports ordinary PRs,
+  not GitHub registered stack objects or a cross-repository atomic batch.
+- No auto-merge setting, automation rule, or queue checkbox. Queueing requires
+  an explicit queue command from a repository writer. The label is a maintainer
+  attestation, not machine-verifiable Codex evidence; the operator must verify
+  current heads/bases/reviews and authorization before labeling or queueing.
+- Require guard-launch-mode, tests, tests-no-submodule and package from GitHub
+  Actions before admission and on the combined candidate. The existing PR
+  workflow provides candidate validation; no workflow edit or CI skip is needed.
+- Reset on external merges and refuse externally edited queue branches. Do not
+  impersonate an account or use a direct-ref/fast-forward merge method.
+
+## Risks / Trade-offs
+
+- Batch size is a maximum, not a promise of exactly two -> future operator
+  checks actual membership and candidate identity; singleton/retry is no clean
+  two-PR canary. Full per-PR CI remains in addition to batch CI.
+- A label can survive pushes -> remove it on a changed head/base, verify again,
+  then explicitly requeue. This stage does not claim an automated review gate.
+- Service access/plan/rules may block -> stop for separate approval; a schema
+  validation or green config test proves neither installation nor live queue use.
+
+## Migration Plan
+
+Open the code configuration PR with a spec companion; do not merge or enqueue.
+If later authorized, land by ordinary checks/review, verify existing app access,
+then obtain separate canary approval. No labels/branches/queue commands for a
+canary are created now. Reverting the config removes the queue; no release or
+ruleset configuration requires restoration. Archive only after assembly landing.
