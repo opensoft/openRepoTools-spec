@@ -24,3 +24,22 @@ tests, which ensure the required jobs still run on arbitrary PR bases.
 Review app/ruleset/plan access before any future live test; no permissions or
 feature purchase is inferred from a valid configuration. The current task ends
 with open PRs and exact-head Codex review requests, not merge or activation.
+
+## Accepted rollout — 2026-11-11
+
+The preceding preparation-only scope is the original delivery. Brett now
+approved normal checked merges of #44, the general manual code queue and
+matching spec/assembly pins/instructions. Baselines: code #44 head
+`1a49e7bf3c4609791011e13ecf40e67571413848`, spec main
+`dbfed9ebfe57484c868b8be1a2a79e1f012f4def`, assembly main
+`a29ba3f519a1db386240f7341de479c6a6de63dc`.
+
+Use the existing isolated paired worktrees and a safe-character path allowlist.
+Queue commands attest fresh exact-head review; eligibility never auto-enqueues.
+Do not change the classifier, full jobs, releases or active lane branches.
+Reconcile batches #41/#43, code-local amendments and #44 under spec issue #26.
+Keep historical approval records; record current as-built behavior separately.
+Use openRepoShape's bump-leg.py to advance merged legs, gitlinks, recomputed
+digests and workflow SHA references together. Run make validate and composed
+exact-pin CI before refreshing authorized clean local mounts. Do not archive
+until assembly landing, or replace installed lane tools/sessions.

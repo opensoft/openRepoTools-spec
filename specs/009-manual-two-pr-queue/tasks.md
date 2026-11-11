@@ -10,3 +10,26 @@
 
 Only this file owns executable implementation tasks. Publication, reviews,
 future canary qualification and eventual assembly landing remain distinct gates.
+
+## Accepted rollout tasks — 2026-11-11
+
+| Set | Outcome | Tasks | Predecessor | Fast verification | Safe state |
+| --- | --- | --- | --- | --- | --- |
+| CODE-QUEUE-02 | General manual full-CI queue and shared instructions | T004–T007 | Code #44 | `bash tests/run.sh -k 'ci_pilot_queue or tests_workflow'` | No automatic enqueue or canary |
+| ASSEMBLY-03 | Coherent merged pins and root pointers | T008 | Landed code and reconciled spec | `make validate` | Lanes 1–5 unchanged |
+
+T004–T006 paths are code-relative; T007 spec-relative; T008 assembly-relative.
+
+- [x] T004 [O] Add conservative main-only manual code queue retaining all checks — files: `.mergify.yml` — verify: `bash tests/run.sh -k general_code_queue`
+- [x] T005 [O] Test accepted code and state/base/check/path refusals — files: `tests/test_ci_pilot_queue.py` — verify: `bash tests/run.sh -k ci_pilot_queue`
+- [x] T006 [S] Update shared instructions, operator procedure and amendment — files: `AGENTS.md`, `.github/ci/task-set-delivery.md`, `.github/ci/batching-pilot.md`, `features/009-manual-two-pr-queue/openspec/general-code-queue.md` — verify: `bash tests/run.sh -k ci_pilot_queue`
+- [x] T007 [O] Reconcile current behavior and evidence while preserving original decisions — files: `specs/009-manual-two-pr-queue/`, `openspec/changes/manual-two-pr-queue/` — verify: `openspec validate manual-two-pr-queue --strict`
+- [ ] T008 [O] Add root pointers to the one pinned shared workflow and retain the lockstep landing procedure — files: `AGENTS.md`, `CLAUDE.md` — verify: `make validate`
+
+Exact-head review, full required CI, normal merges and composed CI are separate
+landing evidence. No source change is complete merely because local tests pass.
+
+Assembly activation is the landing gate after these implementation tasks: use
+bump-leg.py on merged leg commits, qualify exact pins and then refresh only
+authorized clean mounts. Its merged SHA, composed CI and local readback belong
+on the assembly PR and reconciliation issue #26; no duplicate checklist is made.
