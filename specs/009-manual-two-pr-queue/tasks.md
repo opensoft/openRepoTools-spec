@@ -15,8 +15,9 @@ future canary qualification and eventual assembly landing remain distinct gates.
 
 | Set | Outcome | Tasks | Predecessor | Fast verification | Safe state |
 | --- | --- | --- | --- | --- | --- |
-| CODE-QUEUE-02 | General manual full-CI queue and shared instructions | T004–T007 | Code #44 | `bash tests/run.sh -k 'ci_pilot_queue or tests_workflow'` | No automatic enqueue or canary |
-| ASSEMBLY-03 | Coherent merged pins and root pointers | T008 | Landed code and reconciled spec | `make validate` | Lanes 1–5 unchanged |
+| CODE-QUEUE-02 | General manual full-CI queue and shared instructions; code PR #45 | T004–T006 | Code #44 | `bash tests/run.sh -k 'ci_pilot_queue or tests_workflow'` | No automatic enqueue or canary |
+| SPEC-RECON-03 | Dated governance reconciliation; spec PR #27 | T007 | Working CODE-QUEUE-02 and prior batch evidence | `openspec validate manual-two-pr-queue --strict` | No archive or source activation |
+| ASSEMBLY-04 | Root pointers and coherent project landing; assembly PR | T008 | Landed code and reconciled spec | `make validate` | Lanes 1–5 unchanged |
 
 T004–T006 paths are code-relative; T007 spec-relative; T008 assembly-relative.
 
