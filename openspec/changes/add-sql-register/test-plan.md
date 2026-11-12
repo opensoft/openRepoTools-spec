@@ -2844,8 +2844,10 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     `lane-handoff` (`:2878–2881`, `:2890–2891` and `:2913–2914`),
     `lane-end:2490`, and the skill (`:738–742`). An `expectation:` 2 at
     `lane-start:4181` dies;
-  - `lane-worktrees`' three direct reads of the register go through a verb,
-    and exit 69 with nothing deleted (`design.md` S3's table).
+  - `lane-worktrees`' three direct reads of the register go through a verb;
+    on the verb's 69 nothing is deleted and the register is named as
+    unreadable, and `lane-worktrees` ends with that site's own code, 0 under
+    `--report` (`design.md` S3's table; T404; lane 3, #165 6812295982).
 - **Phase and kind.** N: the readers' SQL path and the callers' arms. FP,
   except `managed-projection`'s equality with files mode, which is RE (R3's
   N7: a fake cannot fabricate a register's replies faithfully, as AT-14
@@ -6411,9 +6413,10 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     of at most 1.65 s, and the mirror answers as above: a value the client
     sets from the stand-in's age, which can only have grown, so it is
     asserted as stated and is not a time the runner measures. The control is a
-    fourth run, at 3.3 s with no declaration: the cap is then `T0 + 3.75 s`
-    and no floor applies, so the read starts and the guard answers. AT-D20
-    holds no case of the floor.
+    fourth run, at an age of about 3.3 s at the client's check with no
+    declaration (the stand-in's launch age plus the client's own start): the
+    cap is then `T0 + 3.75 s` and no floor applies, so the read starts and
+    the guard answers. AT-D20 holds no case of the floor.
 - **Tests.** In `code/tests/test_sql_register_outage.py`:
   - `test_a_declared_outage_lets_the_guard_read_the_mirror_with_service_and_database_down`;
   - `test_with_no_declaration_the_guard_exits_2_with_service_and_database_down`;
