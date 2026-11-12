@@ -331,3 +331,14 @@ Source acceptance is not post-merge-main CI completion, activation, live savings
 composed/assembly adoption or installed-session acceptance. Keep the policy false,
 all four legacy full requirements, existing shared mounts, lanes 1–5 and releases
 unchanged. Do not archive or advance assembly pins in this source-landing act.
+
+### Final spec-base reconciliation
+
+The final merge guard stopped before issuing the spec merge because spec main
+had advanced to `180c61136f99f0da455a718cdd489f0a44849bf1` through Sonar
+reconciliation PR34. Its six files are disjoint feature010 governance/evidence.
+Merge that main into PR33 without rewriting history, preserve all six files
+exactly from main, and repeat strict validation/local review on the union.
+Code source/landed trees and all exact-head CI qualification remain unchanged;
+no new implementation or policy adjustment is introduced by this docs-only merge.
+Final normal spec landing still requires fresh head/base/check/thread/tree guards.
