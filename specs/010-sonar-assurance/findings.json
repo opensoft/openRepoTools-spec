@@ -108,7 +108,8 @@
       "owner": "opensoft/openRepoShape",
       "repair": "https://github.com/opensoft/openRepoShape/pull/1330",
       "reason": "Add recognized, fully pinned and hashed requirements.txt for git-filter-repo 2.47.0; its wheel has no Requires-Dist dependencies. Retain the separate full build hash lock.",
-      "status": "prepared; pending merged analysis"
+      "status": "Source-owner repair merged; final consumer pins it; root analysis readback pending",
+      "repair_commit": "4bf963f0ca416b142652bb608cafe5c76d893faa"
     },
     {
       "key": "AaFMxvaxjy8gvDmEH5kE",
@@ -136,7 +137,8 @@
       "owner": "opensoft/openRepoShape",
       "repair": "https://github.com/opensoft/openRepoShape/pull/1330",
       "reason": "Require wheels in the source-owned test workflow.",
-      "status": "prepared; pending merged analysis"
+      "status": "Source-owner repair merged; final consumer pins it; root analysis readback pending",
+      "repair_commit": "4bf963f0ca416b142652bb608cafe5c76d893faa"
     },
     {
       "key": "AaDPP3_OrPHmB1oAsIwM",
@@ -148,7 +150,8 @@
       "owner": "opensoft/openRepoShape",
       "repair": "https://github.com/opensoft/openRepoShape/pull/1330",
       "reason": "Install the same runtime dependency from its hashed wheels-only requirements file.",
-      "status": "prepared; pending merged analysis"
+      "status": "Source-owner repair merged; final consumer pins it; root analysis readback pending",
+      "repair_commit": "4bf963f0ca416b142652bb608cafe5c76d893faa"
     },
     {
       "key": "AaDPP35qrPHmB1oAsIwI",
@@ -160,7 +163,8 @@
       "owner": "opensoft/openRepoTools-code",
       "repair": "https://github.com/opensoft/openRepoTools-code/pull/51",
       "reason": "Require wheels; preserve the complete parsed CI job contract.",
-      "status": "prepared; pending merged analysis"
+      "status": "Source-owner repair merged with full CI; root analysis readback pending",
+      "repair_commit": "b227d53c42449eeafbd4a57979cfbd541f74fbd5"
     },
     {
       "key": "AaDPP35qrPHmB1oAsIwJ",
@@ -172,7 +176,8 @@
       "owner": "opensoft/openRepoTools-code",
       "repair": "https://github.com/opensoft/openRepoTools-code/pull/51",
       "reason": "Require wheels; preserve the complete parsed CI job contract.",
-      "status": "prepared; pending merged analysis"
+      "status": "Source-owner repair merged with full CI; root analysis readback pending",
+      "repair_commit": "b227d53c42449eeafbd4a57979cfbd541f74fbd5"
     }
   ]
 }
