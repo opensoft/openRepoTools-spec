@@ -170,8 +170,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.22 (`contracts/register-cli.md`, `83ea7b65…`,
-#165 6814699398) and its block is v4.11 (`625a0b84…`, #165 6754645319),
+contract is its draft 4.23 (`contracts/register-cli.md`, `d172f22d…`,
+#165 6827182600) and its block is v4.11 (`625a0b84…`, #165 6754645319),
 both keyed to Y. The block keeps v4.2's line numbers; the draft keeps them
 to :637 and moves each later line down one, as draft 4.12 does.
 
