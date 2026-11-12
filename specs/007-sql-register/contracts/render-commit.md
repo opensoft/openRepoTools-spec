@@ -135,7 +135,7 @@
 
 - At the destination: "A non-GitHub origin with `render_key=` set is refused with 2" (Y:2879–2880).
 - "A push its read-back cannot confirm takes neither the success nor the abort branch until a later read-back settles it: the command exits 3, and its rerun reads origin back before it acts" (Y:3157–3159).
-  - Cutover: "A push it cannot confirm exits 3, and the rerun reads origin back first" (Y:3195–3196); "A marker found there completes the cutover; a marker proven absent has the rerun push again, as a rerun that finds its own entry goes on to step 2, and the abort comes only where a change under `lanes/` since `C` stops the push" (ops:275).
+  - Cutover: "A push it cannot confirm exits 3, and the rerun reads origin back first" (Y:3195–3196); "A marker found there completes the cutover; a marker proven absent has the rerun push again, as a rerun that finds its own entry goes on to step 2, and step 2's own ends follow, its abort among them" (ops:275).
   - Rollback: "Push the commit removing `lanes/STORE`, seq `k+1`, with the renderer identity, and confirm it by read-back" (Y:3253–3254), and "a push it cannot confirm exits 3" (Y:3255).
   - The abort: "where a push was made, it first proves by read-back that the marker is absent from origin" (Y:3198–3199).
 - `record_marker` after the read-back, on its timer's expiry: "69: the push stands, and the marker stays `adding` or `removing`, so writes keep refusing" (Y:3534).

@@ -6,8 +6,9 @@ frozen at Y but for the edits below. This file records what the rulings since
 the freeze decide for 007, and the errors found in the frozen text.
 
 **The edits to Y's files since Y,** by round. All but the first, round
-B13's `design.md` fold, round B14's test-plan edits and the follow-up's fold of
-T1 are made in place, so every line of `operations.md`, `clarifications.md` and
+B13's `design.md` fold, the test-plan edits that add lines in rounds B14,
+B15 and B16 and in the follow-up, and the follow-up's fold of T1 are made in
+place, so every line of `operations.md`, `clarifications.md` and
 `proposal.md`, and of `design.md` to design:489, keeps Y's number:
 
 - **Round B4, the two spec files** (`dabd74bd`, `ce3fad83`, `ad82c2f4` and
@@ -71,7 +72,7 @@ T1 are made in place, so every line of `operations.md`, `clarifications.md` and
   :3610, :3625–3626, :3641–3642, :4303–4304, :5386–5387 and :5433–5434, its
   batch 12's (#165 6808010497) at TP:3603, :4492–4493 and :5877–5879, and
   its L2-6 to L2-8 (#165 6809045090) at TP:1293, :1319, :1343 and :1358, so
-  `test-plan.md` is `523f78b0…`, 9,162 lines, and its lines sit below B14's
+  `test-plan.md` is `acb9416c…`, 9,160 lines, and its lines sit below B14's
   numbers: from B14's :1409, three below; from B14's :3643, five below; from
   B14's :4305, eight below; from B14's :4494, nine below; from B14's :5388,
   twelve below; from B14's :5880, thirteen below. And, in place: design:2363
@@ -92,6 +93,12 @@ T1 are made in place, so every line of `operations.md`, `clarifications.md` and
   (2026-11-10T13:22:23Z; #165 6768477034)); and ops:247 and :252, act 4's
   steps 1 and 3, which carry the holders' notice (Brett's "Holders release +
   check (Recommended)", #165 6782534165).
+- **Round B16:** lane 2's TX13 on the plan (#165 6812272109, taken in
+  6812295982; `TX13-TEXTS-lane2-for-spec17-6e534355.md`, `c6c2bf52…`):
+  TX13-2, AT-14's render fork, re-wrapped in place at TP:2629–2630, and
+  TX13-4, AT-P3's fixture, where B15's :2995 becomes three lines, so
+  `test-plan.md` is `523f78b0…`, 9,162 lines, and its lines from B15's :2996
+  sit two below B15's numbers.
 - **The follow-up, T345's fold of T1:** T1's 116-column line (design:489) is
   folded at a space into design:489 and :490, word for word, and no other line
   of D8's bullet changes. It adds one line, so `design.md`'s lines after
@@ -109,7 +116,24 @@ T1 are made in place, so every line of `operations.md`, `clarifications.md` and
   AT-F2's rerun after a files-mode write, and :5578, AT-F2's Tests. So
   `test-plan.md` is `f0b734c3…`, 9,170 lines (`fbb9b46e…` before lane 3's draft at TP:2205, which moves no line), and its lines sit below B17's
   numbers: from B17's :2849, two below; from B17's :5569, five below; from
-  B17's :5579, seven below; from B17's :6417, eight below.
+  B17's :5579, seven below; from B17's :6417, eight below. And, in place, in
+  the follow-up: design:2771–2772 (Y:2724–2725), T5's line, folded at a space,
+  word for word; design:5022 (Y:4975), Q29's clause, which reads as settled;
+  design:6001 (Y:5954), F29's `interpret-trailers` row, superseded by D15;
+  and design:6078–6079 (Y:6031–6032), rows 5 and 6, applied in D15 (T345,
+  R61's items 1 and 2; lane 4, #165 6726436890); design:6478–6479
+  (Y:6431–6432) and proposal:2022, Q24's install question, answered as
+  `./setup.sh` (Brett's "1a 2b", typed in lane 3's session at about 04:00Z
+  on 2026-11-12; #165 6814260122); ops:229, act 3 step 8, whose scratch
+  configuration leaves `render_key=` out (lane 3's review of T327, MUST-2);
+  ops:247 and :252, act 4's steps 1 and 3, where `cutover`'s open-`HOLD`
+  check is for only a run that will make step 1, and a `HOLD` with no
+  readable time counts (lane 3, #165 6813195977); ops:275, where a cutover's
+  rerun after a 3 that proves the marker absent pushes again, and step 2's
+  own ends follow (lane 3, #165 6770600106, T116's point 1; T327's review,
+  NIT-1; the follow-up's check, S1); and TP:2205 (Y's :2201), the handoff
+  skill's two naming reads at line R merge20 beside 2a057a6d's (lane 3's
+  draft for lane 2; lane 2, #165 6814402899).
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
