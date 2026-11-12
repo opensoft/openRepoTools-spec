@@ -6,9 +6,9 @@ frozen at Y but for the edits below. This file records what the rulings since
 the freeze decide for 007, and the errors found in the frozen text.
 
 **The edits to Y's files since Y,** by round. All but the first, round
-B13's `design.md` fold and round B14's test-plan edits are made in place, so
-every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
-`design.md` to design:1192, keeps Y's number:
+B13's `design.md` fold, round B14's test-plan edits and the follow-up's fold of
+T1 are made in place, so every line of `operations.md`, `clarifications.md` and
+`proposal.md`, and of `design.md` to design:489, keeps Y's number:
 
 - **Round B4, the two spec files** (`dabd74bd`, `ce3fad83`, `ad82c2f4` and
   `04a9de6b`; lane 3's rulings B4, #165 6738474549, and (a), 6727022920): the
@@ -92,11 +92,21 @@ every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
   (2026-11-10T13:22:23Z; #165 6768477034)); and ops:247 and :252, act 4's
   steps 1 and 3, which carry the holders' notice (Brett's "Holders release +
   check (Recommended)", #165 6782534165).
+- **The follow-up, T345's fold of T1:** T1's 116-column line (design:489) is
+  folded at a space into design:489 and :490, word for word, and no other line
+  of D8's bullet changes. It adds one line, so `design.md`'s lines after
+  design:489 sit one below Y's numbers, and those after design:1192 up to 47
+  below, and round B8's design:620–621 are now :621–622, round B9's
+  design:621 and :625 are now :622 and :626, round B13's design:1467 and :1485
+  (B12b's, as that entry says) are now :1468 and :1486, round B14's design:722
+  is now :723, and round B15's design:2363, :3564, :5715, :5257 and :5264,
+  :5759 and :4272 are now :2364, :3565, :5716, :5258 and :5265, :5760 and :4273.
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number, except in `design.md` after
-design:1192, which round B13's fold moved up to 46 lines down. A
+design:489, which the follow-up's fold of T1 moved one line down, and after
+design:1192, which round B13's fold moved up to 46 more. A
 `test-plan.md:<n>` or `TP:<n>` citation is likewise Y's line; in the branch,
 round B14's edits put the plan's lines from :820 to :2900 one line down, and
 those from :2903 two; round B15's texts move them further, as its entry

@@ -486,7 +486,8 @@ the section that carries it.
   until it has made F3's lookup:** it calls `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)` (§1.3.1),
   `<n>` being the largest `not_after` its commit calls carried (§1.3's step 9,
   LR008), its tries starting within the 10 s reconnect window, which starts
-  when its own wait for `<n>` ends, each running to its own timer, `T_L` = `N_a`·`c` + 7 s (9 s at `c` = 2, D9; the
+  when its own wait for `<n>` ends, each running to its own timer,
+  `T_L` = `N_a`·`c` + 7 s (9 s at `c` = 2, D9; the
   phase plan's "The in-doubt rule"). The function waits until the
   database clock has passed `<n>`, takes the head row's lock, checks the clock
   again under it, and checks the generation and looks the write id up, finding only this write's own entry, else LR007 (R2's S2; V2's NIT 1). Found, it exits 0 and
@@ -2767,8 +2768,8 @@ starts when its own wait for `<n>` ends, each running to its own timer,
    most 2 s ahead, and a `<n>` further ahead is refused with LR011.
 2. **It takes the head row's lock, its tries starting within the 10 s
    reconnect window, which starts when its own wait for `<n>` ends, each
-   running to its own timer, `T_L` = `N_a`·`c` + 7 s, 9 s at `c` = 2 (D9; the phase
-   plan's "The in-doubt rule"),**
+   running to its own timer, `T_L` = `N_a`·`c` + 7 s, 9 s at `c` = 2 (D9; the
+   phase plan's "The in-doubt rule"),**
    inside `find_write`, under the caller's `lock_timeout`. The writer has no UPDATE,
    so its own `FOR UPDATE` would get 42501. Under the lock the function checks
    that the clock has passed `<n>`, the exact complement of step 9's test, and
@@ -5018,7 +5019,7 @@ The lifecycle scripts:
 
 #### Phase 1 under the other options
 
-Under Q26(b), the guard's outage branch and `outage declare` are not built. Under Q26(a), the guard reads the mirror on any failed read. Under Q29(b), phases 1 to 3 do not change; only the service's turn moves before act 4.
+Under Q26(b), the guard's outage branch and `outage declare` are not built. Under Q26(a), the guard reads the mirror on any failed read. Q29 is settled as (a) (Brett, #165 6710653292), and its condition is met (item 4 of "The three phases, and the interfaces between them"), so the service is built beside phases 1 and 2 and act 4 waits for it; had Q29(b) been taken, phases 1 to 3 would not have changed, and only the service's turn would have moved before act 4.
 
 ### Phase 2: the write path
 
@@ -5997,7 +5998,7 @@ A prototype renderer in stdlib Python, the form `lanes-index render` would take,
 | Dates and time zone | `@<epoch> +0000`, `TZ=UTC` | sha differs (`+0530`) |
 | The `encoding` header | `-c i18n.commitEncoding=UTF-8` | sha differs (`encoding ISO-8859-1`) |
 | Signature | `--no-gpg-sign`, `-c commit.gpgSign=false` | **same sha:** 2.43's `commit-tree` ignores `commit.gpgSign`; only `-S` signs (probed: 0 `gpgsig` headers, and 1 with `-S`) |
-| The trailer's place (`trailer.*` config) | `interpret-trailers` run outside any repository, system and global config off, `where`, `ifexists`, `ifmissing` and `separators` given | sha differs (`trailer.where=start`) |
+| The trailer's place (`trailer.*` config) | `interpret-trailers` run outside any repository, system and global config off, `where`, `ifexists`, `ifmissing` and `separators` given | sha differs (`trailer.where=start`); superseded by D15 |
 | Inherited environment (`GIT_DIR`, `GIT_INDEX_FILE`, `GIT_CONFIG_PARAMETERS`/`COUNT`, `GIT_REPLACE_REF_BASE`, …) | all removed | not probed |
 | Mode and path bytes | always `100644`; NUL-separated paths; `-c core.precomposeUnicode=false` | macOS only, not probed |
 | Object format | every lane checkout clones the one origin | not probed |
@@ -6074,8 +6075,8 @@ Every row below waits on the decision it names.
 | 2 | The push goes to an explicit SSH URL in an isolated environment, not `git push origin` (`:1901`) | a deploy key is SSH-only; `insteadOf` and agent keys could defeat it | lane 3; facts for Brett: `GIT_CONFIG_GLOBAL` needs git 2.32 or later in every environment; whether `ready` can prove the key's write right (`git push --dry-run` over SSH) |
 | 3 | F15 adds a 64-seq batch and a 16-pass lifetime cap with one handover re-fork; no `SyncLock`-style re-mark cap | an absolute bound per process without stranding the last write; the values are unmeasured | lane 3: the two values, and whether to accept the gap after six lost races |
 | 4 | [L4-3]'s "at most two renders" holds only for a burst within one pass; "a second push is a no-op" only one after the other; "up to six times" is six attempts in all; the private index's stale `.lock` is cleared under the lock | the prototype | lane 3 |
-| 5 | D15's "(it honours `commit.gpgSign`)" (`:427`) is false for git 2.43 | the probe | lane 3 |
-| 6 | `lanes-index` composes the render commit's message, not `interpret-trailers` as D15 still says (`:428–430`); the mechanics are in "F29" | the git version and `trailer.*` configuration are otherwise inputs to the sha | lane 3 and lane 1 |
+| 5 | D15's "(it honours `commit.gpgSign`)" (`:427`) is false for git 2.43 | the probe | lane 3; applied in D15 |
+| 6 | `lanes-index` composes the render commit's message, not `interpret-trailers` as D15 still says (`:428–430`); the mechanics are in "F29" | the git version and `trailer.*` configuration are otherwise inputs to the sha | lane 3 and lane 1; applied in D15 |
 | 7 | The import way out toggles a line's history; the revert does not | the prototype | lane 3: keep, or prefer the revert |
 | 8 | Agreement test 3's unit form ships in phase 2; the frame puts the test in phase 3 | a phase must land tested (`:106–108`) | lane 3 |
 | 9 | `cutover` and `rollback`'s transactions are phase-1 code, runnable only on a scratch schema; their pushes are phase 3 | they run through no write seam | lane 3 |
