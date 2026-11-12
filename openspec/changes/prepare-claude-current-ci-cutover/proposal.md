@@ -53,3 +53,12 @@ preserve its changes and coordinate/refetch the reviewed baseline before landing
 Brett approved preparing/opening this cutover PR only. No merge, flag enablement,
 live canary, rule application/bypass, app access, paid upgrade, release/tag,
 assembly adoption or lane mutation is authorized by this proposal.
+
+## Subsequent source-landing authority — 2026-11-12
+
+After the repairs qualified, Brett approved updating code PR52 for current main
+after Sonar PR51 (`b227d53`), rerunning CI/local review and normally merging
+PR52/33 once green. This is separate explicit source-merge authority, not an
+inference from the earlier preparation. Retain the disabled flag and all
+activation/canary/settings/release/assembly/lane exclusions. Canonical T031–T032
+record reconciliation and qualification; actual source landings are PR receipts.

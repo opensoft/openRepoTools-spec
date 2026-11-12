@@ -7,7 +7,13 @@
   merging, activation, live queue, settings, releases and running-lane changes.
 
 Implementation is owned only by `specs/009-manual-two-pr-queue/tasks.md`, task
-set CI-CUTOVER-09 (T022–T030, including approved local-review repairs). Follow that checklist and its verification commands;
+set CI-CUTOVER-09 (T022–T032, including approved local-review repairs and current-main reconciliation). Follow that checklist and its verification commands;
 do not create a second executable checklist here. Preparation/opening is the
 current authority boundary. Merge, activation, migration, canary and assembly
 adoption require later approval and are not completion claims of this handoff.
+
+2026-11-12 subsequent authority: reconcile code PR52 with landed Sonar PR51,
+rerun exact-head CI/local review, then normally merge PR52/33 if green. The sole
+executable checklist continues at T031–T032. Preparation-only text above records
+the original approval, not a prohibition on this later approved source landing.
+Activation/canary/settings/release, assembly adoption and lanes remain excluded.

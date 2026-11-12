@@ -193,3 +193,13 @@ Rollback is an ordinary checked change to enabled=false: all original integratio
 jobs resume without changing their commands or manufacturing statuses. Restoring
 legacy required contexts is a separate approved setting change. Installed tools,
 lanes, releases and active plans remain untouched throughout preparation.
+
+### Subsequent approved source landing — 2026-11-12
+
+The user approved normal source merges of PR52/33 only after updating PR52 with
+landed Sonar PR51 and rerunning exact-head full/reuse CI and local review. The
+new code base is `b227d53`; retain its reviewed baseline, collectors and dependency
+pin without regeneration. This approval supersedes leave-open instructions for
+those two source PRs, but changes no routing, review/admission trust, activation,
+settings, release, assembly or lane authority. Do not archive before a separately
+approved coherent assembly landing. Record actual tested/landed trees on the PRs.

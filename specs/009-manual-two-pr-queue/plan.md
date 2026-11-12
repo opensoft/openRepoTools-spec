@@ -265,3 +265,35 @@ quota failure; no official bot approval or future admission receipt is claimed.
 Both PRs remain OPEN, policyfalse and oldfour full requirements unchanged.
 Shared py-bench/cloud-bench assembly still4b3c3f3. No merge/activation/canary,
 settings/app/bypass/paid/release/tag/pin/active-plan or lane changes occurred.
+
+## Approved current-main reconciliation and source landing — 2026-11-12
+
+User authorization now permits reconciling code PR52 with current main and
+merging PR52/33 after fresh CI and local review. Current code main is
+`b227d53c42449eeafbd4a57979cfbd541f74fbd5` (Sonar PR51); spec main remains
+`8813fa9d2bb5901aa75eb4f7afffcf9e69aba29b`. Preserve the historical preparation
+and repair records above, extend this sole checklist with T031–T032, and do not
+archive or advance assembly pins. Existing active lanes remain on their mounts.
+
+Merge current main into the isolated PR52 branch without rewriting its history.
+Preserve Sonar's complete source/coverage collectors, amended full-CI baseline,
+wheel checks and dependency pin. Resolve only coupled contract conflicts; do
+not regenerate baseline hashes or weaken coverage to obtain a green check.
+Qualify focused CI/Sonar regressions as UID1000 in offline disposable2CPU/2GiB
+QA, then ordinary full and reusable qualification on the published exact head.
+Use the mandatory local review panel as authorized; GitHub connector quota is
+not approval or a future candidate receipt. Merge normally with an exact-head
+guard only after the integrated tested tree and current bases are verified.
+
+The disabled flag, four legacy full requirements, every release definition,
+Mergify access/settings and live lanes remain unchanged. Source merges are not
+activation, live efficiency, composed-pin or installed-session acceptance.
+
+Reconciled code94d4659897f8dad8ff86a4ab7a58497dc6e173f5 is a conflict-free
+merge with parents2c6eed1/b227d53. Sonar collectors, amended baseline JSON,
+dependency manifest/gitlink, shard planner/weights, canonical test runner and
+release workflow exactly match current main. No baseline regeneration or
+additional implementation edits were needed. Focused CI/Sonar QA passed836
+tests/no skips (4,289 deselected) through tests/run.sh as UID1000 in offline
+disposable2CPU/2GiB QA at the new dependency pin4bf963f. Actionlint and whitespace
+passed. Fresh hosted ordinary/reuse CI and local review remain pending.

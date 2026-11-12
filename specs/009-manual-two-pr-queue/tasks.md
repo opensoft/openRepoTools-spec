@@ -147,3 +147,18 @@ disabled; this completes the approved repair, not merge or live acceptance.
 
 No archive, activation/canary/settings/app/release/tag, assembly pin, installed
 tool or running-lane changes are authorized by these repairs.
+
+## Approved current-main reconciliation and source landing — 2026-11-12
+
+Brett approved updating code PR52 for current main after Sonar PR51 landed as
+`b227d53c42449eeafbd4a57979cfbd541f74fbd5`, rerunning CI/local review and merging
+PR52/33 only once green. This supersedes the earlier leave-open boundary for
+these two source PRs only. It does not authorize activation, canary, settings,
+release/tag, assembly pins, checkout refresh or changes to lanes 1–5.
+
+- [x] T031 [O] Reconcile code PR52 with current main while preserving landed Sonar collectors, reviewed baseline and dependency pin — files: code `.github/workflows/tests.yml`, `tests/test_tests_workflow.py`, related CI contract tests if required; spec `specs/009-manual-two-pr-queue/`, `openspec/changes/prepare-claude-current-ci-cutover/` — verify: `bash tests/run.sh -k 'ci_cutover or ci_candidate_shadow or ci_delivery or ci_shadow or ci_pilot or full_ci_coverage_parity or tests_workflow or ci_shards or sonar'`
+- [ ] T032 [O] Qualify the exact reconciled head with focused tests, lint, strict governance, full hosted ordinary/reusable CI and local expert review; prepare guarded normal source landings — files: PR52/33 and qualification records — verify: exact-head CI/review and pre-merge identity/policy guards with policy disabled and lane mounts unchanged
+
+Actual normal merges and landed-tree verification are separate external acts
+recorded on PR52/33. T032 completion means qualification and guarded landing
+preparation, not a claim that either PR has already merged.
