@@ -3360,7 +3360,10 @@ lane 3's ruling 6 (#165 comment 6578020193).
     - removes the record.
   - **A second plain rerun** is a new write, under a new id.
   - **A rerun with other arguments** does not take the id.
-  - **`LANES_WRITE_ID`,** set explicitly, wins over a record.
+  - **`LANES_WRITE_ID=<id>`,** set with its generation, takes over the record
+    of the same command line that holds `<id>`, at any age; over one that
+    holds another id it is refused with 2, naming that record's write and its
+    lookup, and nothing is sent (G6).
   - **The killed write's rerun** reuses the id, exits 0, and leaves one row.
   - **`lanes-index status`** lists a pending record, and reports whether its id
     is in the journal.
@@ -3509,7 +3512,8 @@ lane 3's ruling 6 (#165 comment 6578020193).
   - `test_a_plain_rerun_reuses_the_pending_write_id_once_and_says_so`;
   - `test_a_write_killed_by_an_outer_timer_is_retried_under_its_own_id`;
   - `test_a_rerun_with_other_arguments_does_not_take_the_pending_id`;
-  - `test_lanes_write_id_wins_over_a_pending_record`;
+  - `test_lanes_write_id_of_another_write_is_refused_2_and_the_pending_record_kept`;
+  - `test_lanes_write_id_of_the_records_own_write_takes_it_over_past_its_age`;
   - `test_status_lists_and_resolves_pending_records`;
   - `test_a_rerun_that_finds_its_write_committed_runs_the_verbs_after_commit_tail`:
     `rename-lane`'s tail;
