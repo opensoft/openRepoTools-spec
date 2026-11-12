@@ -803,7 +803,7 @@ T240.
     - the detached whole-file fetch the start line cuts, started as `guard-bind` is, a new `lanes-index` call as READER on `reader_url=` under §2.4's `guard-fetch` row (contract :256), with connect `c`, `lock_timeout` 1000 ms, `statement_timeout` 14000 ms, and a client timer of `N_a`·`c` + 15 s (W:4290–4300; §2.4's rule; lane 3, #165 6783977598, (3)), bounded at `N_a`·`c` + 15 s, into T302's image cache (W:4183–4186), for form 4's direct read too (B9);
     - reads, never writes, `.head`'s `c=`, `n_a=` and `w_s_ms=`: forms 1 to 3 write them (T113; contract §3.6; `L1:290`), and `guard_answer` copies them into the record for `bound_s` (below; O15; R05; open point 3);
     - on a 69 under `--for guard`, the cause as stderr's first line, which the guard quotes in AT-P3's refusal (O15).
-  - **The guard's side** of the prefetch's exit mapping, form 2's (W:4291–4299):
+  - **The guard's side** of the prefetch's exit mapping, form 2's (W:4291–4299). Where form 2's stderr holds the fallback line, `guard: direct (service unavailable)`, matched whole (tasks:1612), the guard prints it once, as a line of its own on the hook's stderr, and quotes the rest of form 2's stderr without it, so no refusal or warning below quotes it; where the line is absent, each row runs as written. No exit code and no refusal's own words change (register-service spec:104; AT-10, TP:1846–1847; lane 5's F1 `b38f510`, #165 6836908786; lane 3, #165 6837466317; lane 1, #165 6837561276). The rows:
     - 0: parse, and decide 0 or 2;
     - 69: SVC-12's check, else 2 naming the store, the cause and the two ways out (AT-P3);
     - the late row: 2, "too late";
