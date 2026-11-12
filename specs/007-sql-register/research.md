@@ -71,7 +71,7 @@ every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
   :3610, :3625–3626, :3641–3642, :4303–4304, :5386–5387 and :5433–5434, its
   batch 12's (#165 6808010497) at TP:3603, :4492–4493 and :5877–5879, and
   its L2-6 to L2-8 (#165 6809045090) at TP:1293, :1319, :1343 and :1358, so
-  `test-plan.md` is `acb9416c…`, 9,160 lines, and its lines sit below B14's
+  `test-plan.md` is `523f78b0…`, 9,162 lines, and its lines sit below B14's
   numbers: from B14's :1409, three below; from B14's :3643, five below; from
   B14's :4305, eight below; from B14's :4494, nine below; from B14's :5388,
   twelve below; from B14's :5880, thirteen below. And, in place: design:2363
@@ -100,7 +100,7 @@ design:1192, which round B13's fold moved up to 46 lines down. A
 `test-plan.md:<n>` or `TP:<n>` citation is likewise Y's line; in the branch,
 round B14's edits put the plan's lines from :820 to :2900 one line down, and
 those from :2903 two; round B15's texts move them further, as its entry
-above says.
+above says, and round B16's AT-P3 fixture (lane 2's TX13-4) moves those from B15's :2996 two more.
 
 - **Part 1, the errata** (ERR-01 to ERR-55; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
