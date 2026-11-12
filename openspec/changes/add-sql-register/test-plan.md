@@ -4312,7 +4312,7 @@ and `ready`'s checks 11 and 12.
 - **Proves.** A live claim records its spelling as typed, its canonical key,
   and the aliases its writer's `repos.tsv` maps to that key, and a released
   claim's spellings block nothing.
-- **Fixture.** The imported register, with aliases X and Y mapping to O in
+- **Fixture.** AT-LR006's register, with aliases X and Y mapping to O in
   `lanes/repos.tsv`. Claims through the real writer.
 - **Oracle.** `spellings` is a `text[]` whose order §1.2 does not fix, so it
   is compared as a set.
@@ -4542,7 +4542,7 @@ and `ready`'s checks 11 and 12.
   `lanes/STORE` (F2, D24).
 - **Phase and kind.** W. RE, with the shim's `edit-entry` mode, which
   rewrites one field of the commit call's entry.
-- **Fixture.** The imported register, and `log NOTED` as the write. Per case,
+- **Fixture.** AT-LR006's register, and `log NOTED` as the write. Per case,
   the shim rewrites: one `journal_files` digest to another 64-hex value; an
   edit's `old_sha256`, so the edit does not apply; an edited path left out of
   the entry's `files`; a `write` entry that edits `lanes/STORE`; an operator
