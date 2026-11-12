@@ -5567,7 +5567,10 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     two cases above. The same for the rollback's removal push: `rollback`
     exits 3, the marker stays `removing`, and its rerun reads origin back,
     then records the marker `absent` or pushes the removal again (§2.3,
-    step 4).
+    step 4). A files-mode write that lands on origin after the 3, once the
+    removal is there (§2.3, step 3), changes neither: the rerun finds its
+    removal, pushes nothing, ends 0 with the marker `absent`, and records
+    no divergence (lane 3, #165 6814260122, T326's review MUST-1).
   - Held across git: with the push held on the wrapper's FIFO for 6 s, past
     the writer role's 5 s idle bound, the cutover still completes, since its
     transaction committed before any git step (F23, §2.1).
@@ -5577,7 +5580,9 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - `test_a_cutover_abort_deletes_seq_1_only_when_the_marker_is_proved_absent[not-pushed|pushed]`;
   - `test_an_unconfirmed_operator_push_exits_3_and_its_rerun_reads_origin_first[cutover|rollback]`;
   - `test_no_operator_command_holds_a_transaction_across_git`;
-  - `test_a_render_stops_before_an_operator_seq_not_yet_on_origin[cutover|rollback]`.
+  - `test_a_render_stops_before_an_operator_seq_not_yet_on_origin[cutover|rollback]`;
+  - and, in `code/tests/test_sql_register_rollback.py` (T273),
+    `test_a_rerun_after_an_unconfirmed_removal_and_a_files_mode_write_ends_0_with_the_marker_absent`.
 
 #### AT-F3. A write in doubt at the deadline
 
