@@ -6817,11 +6817,13 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     meets F13's condition by its own UTC and its `LANDING`'s (the holder,
     the PR and `repo_key` equal, more than 30 minutes apart, no close
     between) and carries the word clause. Each of these is a finding, and
-    fails the test: a typed one written 10 minutes after its `LANDING`; one
-    with no word clause; one naming another PR; one whose holder is in
-    another case, which `main_slots` closes and the awk does not. One with
-    no `for lane` imports as a line of no kind (§1.2, "A `LANDING EXPIRED`
-    line's fields").
+    the case shows it: a typed one written 10 minutes after its `LANDING`,
+    one with no word clause, and one naming another PR, each by the test's
+    own check of F13's condition, which names the line, since both readers
+    agree on a typed line (Y:5141); and one whose holder is in another
+    case, by the readers' difference, since `main_slots` closes it and the
+    awk does not. One with no `for lane` imports as a line of no kind
+    (§1.2, "A `LANDING EXPIRED` line's fields").
   - **(k) `who --landing` on primary.** The fake is a `register read`
     prefetch whose text at `n` holds the lines. After a `LANDING EXPIRED`,
     the holder's `LANDING` is not listed, and `none open — …` is printed
