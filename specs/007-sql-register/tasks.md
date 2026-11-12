@@ -2607,7 +2607,7 @@ summarises them by phase and by lane.
 - **Checkpoint A+B** depends on groups A and B.
 - **Group C** starts on T415 and T344. Lane 4's T416, the renderer's
   fork, lands after T321 (L4:247; SK:827 superseded, lane 3, fix round B,
-  2026-11-09). Within group C: T320 comes first; T321 to T323 run in order; T324 to T327 follow T323;
+  2026-11-09). Within group C: T320 comes first; T321 to T323 run in order; T324 to T327 follow T323, and T326 and T327 also follow lane 4's T416, and T326 also lane 4's T420 and T421 (their Depends);
   T328 comes last, after Checkpoint A+B.
 - **The service** (T511 to T513) is built beside groups A and B, not after
   group C (Brett's "4A"; R35). It is coded and tested against the fixture's
@@ -2653,8 +2653,8 @@ summarises them by phase and by lane.
   one at a time. Every phase 1 task lands
   after its lane 2 module (L2-N4; L2-N2 for T409).
 - **Phase 2:** the spine T412 → T413 → T414 → T415 → T417 → T418, after 1a
-  and 1b; T413 also after T409 and T410. T416 runs beside it after T415 and T321, and no task's gate
-  names it. T419 after T409 and 1b; T427 after T410 and 1b; T420, and
+  and 1b; T413 also after T409 and T410. T416 runs beside it after T415 and T321; lane 3's T325 waits
+  for it, and since the follow-up T326 and T327 do too (their Depends). T419 after T409 and 1b; T427 after T410 and 1b; T420, and
   T424 → T425, after T415 (T424 also after T122); T421, T422 and T423 each
   after T418 (T423 also after T504 and T506); T426 after T409, T504 and T425; T429 to T432 after T410 and T417;
   T428 after T427 too; T433 and T434 after T417.
