@@ -23,3 +23,15 @@ Review each original security flow before deciding its disposition. Pipeline-onl
 ## Verification
 
 Use focused unit tests for inventory, classification, source-copy matching, malformed/foreign/out-of-range coverage, failed test results and NONE/ERROR rejection. Verify actual collector smoke cases in an isolated unprivileged container before full CI. Preserve all existing full CI and packaging gates. Verify Sonar's exact revision, indexed command inventory, coverage metrics, original issue dispositions and evaluated main gate. Compare all captured primary checkout/pane receipts before closure.
+
+## Isolated-interpreter startup correction
+
+Coverage 7.17.3 installs an automatic startup hook that also runs with Python
+-I. PYTHONPATH is deliberately ignored there, so the provenance module must be
+importable from the primary test interpreter's normal site-packages. Shared
+root preparation copies only the exact tracked module there, refuses an
+existing different module, and verifies its hash/import with -I before
+measurement begins. This changes only ephemeral CI dependencies and the
+task-owned qualification venv; no installed workstation tools or clean
+test-created venvs are changed. Keep all existing isolation flags, generated
+CLI documentation and strict output assertions unchanged.
