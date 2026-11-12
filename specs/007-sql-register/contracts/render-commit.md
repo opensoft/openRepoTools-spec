@@ -141,7 +141,7 @@
 - `record_marker` after the read-back, on its timer's expiry: "69: the push stands, and the marker stays `adding` or `removing`, so writes keep refusing" (Y:3534).
 - The renderer ends after "a pass that cannot progress (an authentication failure, a divergence, an operator seq its command has not yet put on origin)" (Y:2897–2899), and the plan's stop conditions include "a fetch, authentication or six-rejection failure, recorded with the mirror state" (Y:5793).
 - "A fetch that fails ends the pass with nothing pushed" (Y:2864); at an operator seq "the pass renders nothing past it, since its command owns it" (Y:2863).
-- At `files` the pass renders nothing and records no divergence, since nothing at `files` can clear one: after finding `m` it ends with the outcome `at-files`, 0 (lane 3's ruling on open point 2 of its review of T322, 2026-11-10).
+- At `files` the pass renders nothing and records no divergence, since nothing at `files` can clear one: after finding `m` it ends with the outcome `at-files`, 0 (lane 3's ruling on open point 2 of its review of T322, 2026-11-10). The one exception is a rollback's `files`, with the marker `removing`: its entry `k+1` stands and the marker is still on origin, so the pass renders as at `primary`, up to `k` and never `k+1`, an operator entry (S5's rollback, step 2; ops:337; AT-F2, "A rollback's entry at `k+1`"). N6 does not apply there (Y:2850), and a stray after `R`, or a render set at `R` that is not the images at `m`, ends the pass with nothing rendered and nothing recorded but `last_error` (S5's remaining gap) (lane 3's ruling on T326's point 1).
 - "Killed between `commit-tree` and the push, it leaves only unreferenced objects" (Y:2908–2909).
 
 ## 4. Where Y tests it
