@@ -5601,7 +5601,11 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - Unconfirmed: `cutover` exits 3 and changes nothing more; the switch
     stays `primary` with the marker `adding`, and every write fails with
     LR002. Its rerun reads origin back first: a marker found there completes
-    the cutover, as in "Pushed, reported failed"; a marker proven absent has the rerun push again, as a rerun that finds its own entry goes on to the cutover's step 2, and step 2's own ends follow, its abort among them (`operations.md` §2.2, act 4's step 7; lane 3, #165 6770600106, T116's point 1). The same for the rollback's removal push: `rollback`
+    the cutover, as in "Pushed, reported failed"; a marker proven absent has
+    the rerun push again, as a rerun that finds its own entry goes on to the
+    cutover's step 2, and step 2's own ends follow, its abort among them
+    (`operations.md` §2.2, act 4's step 7; lane 3, #165 6770600106, T116's
+    point 1). The same for the rollback's removal push: `rollback`
     exits 3, the marker stays `removing`, and its rerun reads origin back,
     then records the marker `absent` or pushes the removal again (§2.3,
     step 4). A files-mode write that lands on origin after the 3, once the
@@ -6918,9 +6922,9 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   fakes and test 5's `git` wrapper log their environment.
   `LANES_REGISTER_SEAM_CAP_S=3` for the cap's case.
 - **Oracle.**
-  - Each committed writer's stdout carries its success text exactly once,
-    however many attempts it made, and its stderr only the deciding
-    attempt's lines.
+  - Each committed writer prints its success text (claim's `register seq <s>`
+    line, on stderr) exactly once, however many attempts it made, and its
+    stderr only the deciding attempt's lines.
   - A writer refused at its commit (D18, D19) prints its buffered output,
     then the refusal, and no success text.
   - The fake `tmux` is called once per committed `request-handoff`, after
