@@ -181,3 +181,40 @@ the previous green head confirmed the same nine explained reasons for every
 one of the 169 skips, with no newly introduced missing-context/dependency skip.
 Root make validate and actionlint also passed with the merged consumer and
 its actual nested provider checkout at 4bf963f0ca416b142652bb608cafe5c76d893faa.
+
+## Post-reconciliation isolated-startup diagnostic
+
+The earlier parallel rehearsal at root
+be2eccba4a9603318b5df0af0d5712c5144c9463 finished its old-provider suite with
+88 failures, 16,062 passes and 264 conditional skips. Its completed job log is
+retained. The first failure shows Coverage 7.17.3's a1_coverage.pth automatic
+startup running inside isolated Python, where PYTHONPATH is ignored and the
+configured provenance module cannot be imported. The resulting traceback
+pollutes strict CLI help/output comparisons. A direct local -I help probe
+reproduced this exactly: exit zero with twenty unexpected stderr lines.
+
+This is a collector dependency-registration gap; the source documentation and
+application output contract remain correct. Correct the shared preparation,
+register the exact tracked plug-in only in the ephemeral primary interpreter,
+verify isolated importability, and rerun the original assertions and full
+assembled checks. The current final assembled run uses the same uncorrected
+startup arrangement and cannot serve as acceptance without this correction.
+
+The exact new registration program was run in the disposable Python 3.15.2 /
+Coverage 7.17.3 primary test venv. The installed module's SHA-256 matches the
+tracked final consumer bytes:
+87e021e53f4a0ba7b6e6e65b080bff4c04202be6a949ef5469905945b7f71a80.
+Isolated CLI help then exited zero with empty stderr. All 23 existing
+CLI-reference assertions passed without regenerating source documentation.
+All 24 original supervisor/package-isolation assertions also passed.
+A separately stored isolated (-I) exact-copy probe credited 190 canonical
+Python lines; the modified copy credited zero. Probe data is separate from
+suite coverage.
+
+Preparation is now one root-owned composite action. A parsed comparison
+verified that every existing preparation, complete test/report step, trigger,
+scanner step and final required gate was retained, with only the exact-module
+registration added and explicit composite shell declarations. Actionlint and
+root make validate passed. Both upstream provider and consumer post-merge
+workflows are green (runs 43311293898 and 43318402438). Corrected full assembly
+and actual-main acceptance remain pending.
