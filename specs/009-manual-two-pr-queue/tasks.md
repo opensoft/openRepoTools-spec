@@ -121,3 +121,19 @@ canary, bypass, app/paid access, release/tag, assembly pin or lane change follow
 Published preparation: code PR52 and spec PR33. All five implementation tasks
 are complete as source preparation; exact-head review/hosted CI and any later
 source merge, service migration, live canary or assembly adoption remain distinct.
+
+## Approved local-review repairs — 2026-11-12
+
+The local panel reproduced three defects at code d4b3ae1/spec d3f297a. Brett
+approved repairing them inside PR52/33, revalidating and rerunning local review,
+but leaving both PRs open. These tasks extend the same CI-CUTOVER-09 set, not a
+second executable checklist. Earlier completion records are historical, not
+acceptance of the defective enabled path.
+
+- [x] T027 [O] Acquire the validated synthetic PR merge object independently in both trusted controls, without checkout/ref/credential mutation — files: `.github/ci/delivery_route.py`, `.github/ci/delivery_evidence.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k ci_cutover_repair`
+- [x] T028 [O] Include classic branch protection in activation verification, retaining full on malformed/incomplete/raced evidence with existing read access — files: `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k 'ci_cutover or ci_delivery'`
+- [x] T029 [O] Wait only for authenticated pending fast/admission evidence; return definitive full-only cases immediately and preserve strict admission — files: `.github/ci/delivery_verify.py`, `.github/ci/delivery_evidence.py`, `.github/ci/delivery_route.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k 'ci_cutover or ci_delivery'`
+- [ ] T030 [S] Update matching contracts/runbook, repeat complete focused and hosted ordinary/reuse validation and latest-head local panel, publish fixes in existing PR52/33 without merging — files: this feature, OpenSpec change, `.github/ci/delivery-cutover.md`, PR receipts — verify: focused CI regressions, strict OpenSpec, actionlint, whitespace, exact-head CI/review and OPEN readbacks
+
+No archive, activation/canary/settings/app/release/tag, assembly pin, installed
+tool or running-lane changes are authorized by these repairs.

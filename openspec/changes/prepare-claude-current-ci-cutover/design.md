@@ -26,7 +26,11 @@ Code constants define the scope, provider and check names. Before any omission,
 read all bounded effective-rule pages for main. Require an actual required
 openrepotools-delivery context bound to GitHub Actions (integration15368),
 and reject activation while any old full context is still required. The public
-metadata endpoint was verified anonymously; no administrative scope is needed.
+ruleset endpoint and public branch metadata are both checked: classic protection
+can layer additional required contexts/checks over rulesets. Classic name,
+protected/enabled flags, enforcement level and both arrays must be complete and
+consistent. Any old full context in either mechanism retains full. The existing
+Contents:read grant suffices for branch metadata; no administrative scope is needed.
 Missing, changed or uncertain rule evidence returns full. No ruleset write API.
 
 This is a guard against premature activation, not authorization to migrate.
@@ -56,6 +60,13 @@ release-branch runs always remain full. Direct release eligibility continues to
 require its existing full jobs; historical candidate/landing evidence substitutes
 for no release receipt.
 
+Both trusted-main controls independently ensure the validated GITHUB_SHA commit
+object exists. An explicit-main checkout fetches heads/tags, not refs/pull merges.
+Validate the exact numeric PR ref; retrieve only the immutable SHA from the fixed
+public repository with credentials disabled and no ref/tag/FETCH_HEAD update.
+Check ordered current-main/source parents after retrieval. Never check out or
+execute the event's tree; failed retrieval retains full/fails selected omission.
+
 ### Scoped source route
 
 Require the existing CI-Shadow marker plus a separate exact CI-Delivery:
@@ -66,6 +77,15 @@ wait may allow its current pending run to finish; the existing exact workflow,
 job/current-attempt and base-retarget-history verifier proves success. Recheck
 identities and effective policy before emitting fixed mode/boolean/digest outputs.
 Malformed/unknown sources, missing fast evidence and reads retain full CI.
+Definitive full-only/invalid/unknown outcomes never retry. Only a fully bound
+canonical fast check/run/job that is queued/in_progress with null conclusion
+may raise internal pending evidence after identity/base-history/readback checks;
+default candidate verification remains success-only. Only an authentic current
+live candidate caller with no admission artifact may similarly wait, after fixed
+candidate scope validation. Pending is not acceptance and publishes no skip proof.
+Main permits at most30 ten-second intervals plus bounded reads within the existing
+15-minute job budget. Observed fast run43289185180 took3m19s; retain a realistic
+pending window instead of the inadequate one-minute cap. Exhaustion stays full.
 
 ### Immutable candidate evidence and a distinct landing reader
 

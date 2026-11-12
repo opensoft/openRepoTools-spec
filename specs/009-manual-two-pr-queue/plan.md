@@ -211,3 +211,35 @@ Reported duplicated constants/assertions were repaired too. Lint and whitespace
 passed; hosted security reanalysis and full/reuse CI are not yet claimed green.
 Both GitHub Codex requests returned quota failure, not approval; no paid credits,
 review waiver, security issue dismissal or merge is inferred.
+
+## Approved local-review repairs — 2026-11-12
+
+At coded4b3ae1/specd3f297a, the local master plus nine standard specialist roles
+and CI specialist found three reproducible defects. Brett approved fixes/tests,
+spec updates and renewed validation/local review in existing PR52/33, leaving
+both open. The same CI-CUTOVER-09 checklist continues at T027–T030; no archive,
+new active-plan selection, merge, activation/canary/settings/release or lane change.
+
+Acquire the validated synthetic PR merge object independently in both trusted
+controls using fixed-repository/SHA fetch without credentials, refs/FETCH_HEAD
+or checkout changes. Include classic branch metadata alongside all effective
+ruleset pages with existing read access and fail closed on incomplete/raced data.
+Separate authenticated pending receipts from definitive full-only outcomes;
+only pending may retry, without weakening strict success-only candidate admission.
+Bound pending polling at30 ten-second intervals plus read budgets: actual fast
+run43289185180 took3m19s, longer than the prior one-minute limit. Test delayed
+success, exhaustion, unknown/failed proof and immediate permanent fallback.
+
+Red-first committed regression preparation reproduced all14 initial failure
+vectors against d4b3ae1: both independent clean controls, eight classic context/
+check variants and four permanent-delay cases. Use real separate object databases
+and a mock fixed-URL transport, not preloaded merge objects. Run offline UID1000
+focused CI contracts and strict/lint/whitespace, then exact-head hosted full/reuse
+qualification and the complete local specialist panel. Keep old13 full jobs,
+their baseline JSON, legacy gates, queues, managed review trust and all live
+systems unchanged. PR51 remains independently owned; preserve its Sonar work.
+
+Repair-focused validation:791 passed/no skips through tests/run.sh as UID1000
+in the offline disposable2CPU/2GiB image, including43 new repair cases. Workflow
+actionlint passed. Hosted ordinary/reusable qualification and latest-head local
+panel remain separate pending gates; both PRs must stay open.

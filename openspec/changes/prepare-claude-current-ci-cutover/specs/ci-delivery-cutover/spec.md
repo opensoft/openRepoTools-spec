@@ -22,6 +22,12 @@ SHALL read rules only and SHALL NOT apply settings or use bypasses.
 - **WHEN** the source PR runs with the committed disabled configuration
 - **THEN** every original full job runs and no live canary or setting changes
 
+#### Scenario: Classic protection still requires an old full context
+- **WHEN** the ruleset requires delivery but classic branch protection retains
+  any legacy context in its contexts/checks arrays, or classic evidence is incomplete
+- **THEN** routing remains full and an already-selected omission cannot pass its
+  final gate after such a protection change; no administrative setting is modified
+
 ### Requirement: Source feedback is scoped and is not merge authority
 An enabled fast source route SHALL require the fixed modified regular-file
 scope, explicit delivery opt-in, a current independent main-based same-repository
@@ -40,9 +46,26 @@ under a full-test name or grant direct fast-source merge authority.
   moved base/head, or lacks unambiguous fresh fast evidence
 - **THEN** routing stays full rather than trusting intent, branch or actor alone
 
+#### Scenario: Clean trusted-main checkout lacks the synthetic merge
+- **WHEN** a valid source or candidate PR's immutable event commit is absent
+- **THEN** each control independently retrieves the validated object from the
+  fixed public repository without changing checkout/refs/credentials, validates
+  its exact PR ref and parents, and retains full or fails omission if unavailable
+
+#### Scenario: Outcome is permanently full-only
+- **WHEN** a source lacks opt-in, is unsupported, or the authenticated caller
+  mandates full CI, or evidence is failed/malformed/unknown
+- **THEN** full CI begins without a startup retry delay
+
+#### Scenario: Canonical fast evidence is genuinely pending
+- **WHEN** otherwise eligible source evidence binds the correct check/run/job,
+  head, PR, base history and current attempt but is queued/in_progress
+- **THEN** routing may wait at most30 ten-second intervals plus bounded reads,
+  never qualifies pending evidence, and retains full at the limit; strict candidate
+  admission still requires actual success
+
 ### Requirement: Full coverage and reusable-call semantics are preserved
-All thirteen original integration jobs, matrices, commands, environments,
-checkout modes, artifact accounting and failure checks SHALL be preserved.
+All thirteen original integration jobs SHALL be preserved, including matrices, commands, environments, checkout modes, artifact accounting and failure checks.
 Only exact reviewed routing dependencies/guards and additional control jobs
 SHALL be allowed outside the existing hashed job projection. Reusable calls,
 release branches, nightly and explicit full runs SHALL remain complete.
