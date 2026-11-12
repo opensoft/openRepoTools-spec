@@ -101,6 +101,15 @@ T1 are made in place, so every line of `operations.md`, `clarifications.md` and
   (B12b's, as that entry says) are now :1468 and :1486, round B14's design:722
   is now :723, and round B15's design:2363, :3564, :5715, :5257 and :5264,
   :5759 and :4272 are now :2364, :3565, :5716, :5258 and :5265, :5760 and :4273.
+- **The follow-up, lane 2's test-plan texts:** TX13b-1 and TX13b-6 (#165
+  6813121206; `TX13b-TEXTS-lane2-for-spec17-6e534355.md`, `41cbe18c…`) at
+  TP:2847–2848, `lane-worktrees`' direct reads, and :6414–6416, AT-F7's age
+  at the client's check; and RD14d's two (#165 6814602159;
+  `RD14d-TEXTS-lane2-for-followups-6e534355.md`, `75dc2c80…`) at :5568,
+  AT-F2's rerun after a files-mode write, and :5578, AT-F2's Tests. So
+  `test-plan.md` is `fbb9b46e…`, 9,170 lines, and its lines sit below B17's
+  numbers: from B17's :2849, two below; from B17's :5569, five below; from
+  B17's :5579, seven below; from B17's :6417, eight below.
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
@@ -110,7 +119,7 @@ design:1192, which round B13's fold moved up to 46 more. A
 `test-plan.md:<n>` or `TP:<n>` citation is likewise Y's line; in the branch,
 round B14's edits put the plan's lines from :820 to :2900 one line down, and
 those from :2903 two; round B15's texts move them further, as its entry
-above says, and round B16's AT-P3 fixture (lane 2's TX13-4) moves those from B15's :2996 two more.
+above says, and round B16's AT-P3 fixture (lane 2's TX13-4) moves those from B15's :2996 two more; the follow-up's test-plan texts move them further, as its entry above says.
 
 - **Part 1, the errata** (ERR-01 to ERR-55; ERR-19 is now DEC-21): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
