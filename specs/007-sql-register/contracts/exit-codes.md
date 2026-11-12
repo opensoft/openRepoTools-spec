@@ -234,7 +234,7 @@ Y fixes these codes, and the owner's task fixes the rest. The owner adds or corr
 | `serve` | 2 | unless the configuration says `primary`, Q6(c)'s refusal included | Y:3948–3953; FR-003 | lane 5's T512 |
 | `serve` | 2 | a run directory that fails its check, which is never stamped: `serve` exits 2 naming the directory, and `lanes-index status` reports the failure itself (lane 3's OP-9, #165 6746215510, against Y:3928's `dir-check`); a socket path over 103 bytes, with its stamp, `path-too-long` | Y:3765; Y:3779–3780; Y:3926–3930; OP-9 | lane 5's T512 |
 | `serve` | 2 | [P] the stamp `config-refused`: a refused configuration, or a URL parameter SVC-2 does not map, as every refused configuration is 2 | Y:3812–3815; Y:3928–3929 | lane 5's T512 |
-| `serve` | 2 | [P] the stamp `no-psql`, lane 5's proposal (#165 6746631207), which lane 1 takes: as with `path-too-long`, the directory check and `config-refused`, it is an end before the socket listens. Whether the service ever answers `refuse` without `psql` (`test-plan.md`:2028–2030) stays T511's OP-10, for lanes 2 and 3 | Y:3926–3929 | lane 5's T512 |
+| `serve` | 2 | [P] the stamp `no-psql`, lane 5's proposal (#165 6746631207), which lane 1 takes: as with `path-too-long`, the directory check and `config-refused`, it is an end before the socket listens. `serve` never answers without `psql`, `refuse` included; OP-10 is closed (lane 3, #165 6754633102; T511 draft 8; ERR-45) | Y:3926–3929 | lane 5's T512 |
 
 ### 4. PC-10: the import's refusal and the cutover's abort, each 2
 

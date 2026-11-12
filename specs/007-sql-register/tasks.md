@@ -837,7 +837,7 @@ T240.
   - **The footer** (`lanes:813–829`):
     - on primary, where the register answered, it says the listing is as of the register at seq `<n>`;
     - where the mirror answered, the arm's `read: mirror` line is shown, and the footer says so;
-    - files and `index` mode are byte-identical.
+    - files and `index` mode are byte-identical; where the script has no capture file, it keeps today's footer in every mode, so a primary run on that path still says it read locally; the PR body records it (lane 5, #165 6833182352; lane 3, #165 6833266940).
     - On primary only, and only where the `lanes` script passes `--store-line`, the arm prints `read: register at seq <n>` on stderr, and the script matches it as it matches the fallback sentence today; off primary the flag prints nothing. Both of the arm's usage texts (`:18245`, `:18255`) name it. Where an older `lanes-edit.sh` refuses the flag with 64, the script runs the arm once more without it. `lane`'s `read_rows` passes no such flag, so it stays quiet (R43; Wspec:642).
   - **The script's other reads:**
     - `lanes --closed` (`:631`) is mirror;
