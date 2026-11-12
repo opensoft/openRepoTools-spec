@@ -117,3 +117,31 @@ source consistency boundary and refuse evidence drift, not just head/ref drift.
   PRs only; no merge, live canary, queue command, ruleset/app change, bypass,
   release/tag or assembly/runtime adoption. A positive future observation adds
   full integration, not CI savings. A later cutover requires separate approval.
+
+## Approved cutover preparation — 2026-11-12
+
+Full governing change: `prepare-claude-current-ci-cutover`, capability
+`ci-delivery-cutover`. This amendment supersedes earlier source-preparation-only
+shape constraints only for the following new, disabled implementation:
+
+- FR-025: prepare default-off trusted routing with effective app-bound delivery
+  protection verification; legacy requirements or incomplete reads retain full.
+- FR-026: scoped fast sources require both explicit markers, immutable test-merge
+  identity and genuine fresh fast provenance. Reusable/release/nightly/manual
+  execution stays full. No ordinary event filters or fake full-test green aliases.
+- FR-027: retain all thirteen full jobs through exact reviewed needs/if projection
+  and strict baseline/mutation checks; do not regenerate the separate Sonar baseline.
+- FR-028: bind admission/qualified artifacts to authentic candidate run/repository/
+  SHA/first attempt with bounded archive digest/schema checks and provenance rechecks.
+  Candidate-PR omission requires real live admission and independent live sources.
+- FR-029: add a separate manual scoped queue with fast + delivery source conditions
+  and one top-level heavy result holding integration; preserve old queues, review
+  trust, protection injection, zero retries/splits and serial max2 behavior.
+- FR-030: use a separate historical reader for matching ordered closed/merged
+  source records, tested prefix trees, complete successful jobs and unchanged
+  policy. Missing/uncertain/rerun/lookalike main landings stay full.
+- FR-031: prepare/open only. Keep flag false and current full requirements in force.
+  Document—not apply—migration and its changed GitHub source floor/manual-queue-only
+  operator policy. No merge, live canary, settings/bypass, app/paid access, release/
+  tag, assembly/runtime adoption or lane mutation. Local review of preparation is
+  not a forged managed receipt for later candidate members.

@@ -102,3 +102,78 @@ through tests/run.sh as UID1000 in an offline disposable 2CPU/2GiB bench image.
 Workflow actionlint, strict OpenSpec and whitespace checks passed. Hosted full
 CI/reuse qualification, exact-head review and any merge remain separate pending
 gates; no live observation or one-heavy-run acceptance is claimed.
+
+## Disabled CI-efficiency cutover preparation — 2026-11-12
+
+CI-CUTOVER-09 is one coupled CI-only code PR with a paired governance PR under
+issue26 and `prepare-claude-current-ci-cutover`. Prepare/open only. Paths are
+code-relative except this reconciliation. Preserve Sonar PR51's baseline work.
+
+- [x] T022 [O] Implement strict disabled activation, effective app-bound protection and trusted scoped source/full routing — files: `.github/ci/delivery-policy.json`, `.github/ci/delivery_route.py` — verify: `bash tests/run.sh -k ci_cutover`
+- [x] T023 [O] Bind immutable admission/qualified artifacts, authentic candidate runs and historical ordered landing proofs — files: `.github/ci/delivery_verify.py`, `.github/ci/delivery_evidence.py` — verify: `bash tests/run.sh -k 'ci_cutover or ci_delivery'`
+- [x] T024 [O] Wire exact full-job guards, final delivery verification, held manual queue and top-level heavy check without enabling omissions — files: `.github/workflows/tests.yml`, `.github/workflows/task-set-candidate*.yml`, `.mergify.yml` — verify: `bash tests/run.sh -k 'ci_cutover or ci_candidate_shadow or full_ci_coverage_parity or tests_workflow or ci_pilot_queue'`
+- [x] T025 [O] Prove complete coverage projection and refusal behavior with real Git/mocked read APIs/artifact bytes and actual shell gates — files: `tests/test_ci_cutover.py`, existing CI contract tests — verify: `bash tests/run.sh -k 'ci_cutover or ci_candidate_shadow or ci_delivery or ci_shadow or ci_pilot or full_ci_coverage_parity or tests_workflow or ci_shards'`
+- [x] T026 [S] Document future migration, changed source floor, operator-only queue semantics, rollback and separate acceptance gates; open code/spec PRs and request exact-head reviews — files: `.github/ci/task-set-delivery.md`, `.github/ci/delivery-cutover.md`, `features/009-manual-two-pr-queue/openspec/ci-cutover.md`, this feature and OpenSpec change — verify: workflow lint, strict OpenSpec, whitespace and published PR readback
+
+The flag stays false. No settings write, direct fast-source merge, live queue,
+canary, bypass, app/paid access, release/tag, assembly pin or lane change follows.
+
+Published preparation: code PR52 and spec PR33. All five implementation tasks
+are complete as source preparation; exact-head review/hosted CI and any later
+source merge, service migration, live canary or assembly adoption remain distinct.
+
+## Approved local-review repairs — 2026-11-12
+
+The local panel reproduced three defects at code d4b3ae1/spec d3f297a. Brett
+approved repairing them inside PR52/33, revalidating and rerunning local review,
+but leaving both PRs open. These tasks extend the same CI-CUTOVER-09 set, not a
+second executable checklist. Earlier completion records are historical, not
+acceptance of the defective enabled path.
+
+- [x] T027 [O] Acquire the validated synthetic PR merge object independently in both trusted controls, without checkout/ref/credential mutation — files: `.github/ci/delivery_route.py`, `.github/ci/delivery_evidence.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k ci_cutover_repair`
+- [x] T028 [O] Include classic branch protection in activation verification, retaining full on malformed/incomplete/raced evidence with existing read access — files: `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k 'ci_cutover or ci_delivery'`
+- [x] T029 [O] Wait only for authenticated pending fast/admission evidence; return definitive full-only cases immediately and preserve strict admission — files: `.github/ci/delivery_verify.py`, `.github/ci/delivery_evidence.py`, `.github/ci/delivery_route.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k 'ci_cutover or ci_delivery'`
+- [x] T030 [S] Update matching contracts/runbook, repeat complete focused and hosted ordinary/reuse validation and latest-head local panel, publish fixes in existing PR52/33 without merging — files: this feature, OpenSpec change, `.github/ci/delivery-cutover.md`, PR receipts — verify: focused CI regressions, strict OpenSpec, actionlint, whitespace, exact-head CI/review and OPEN readbacks
+
+Repair acceptance at code2c6eed1: 791 focused passed/no skips; fresh ordinary
+run43309287917 passed all15 jobs and reusable43309287854 passed all17 jobs.
+Both normal variants: 5,080 items reported once,4,911 passed/169 skipped.
+Both deliberate no-submodule variants: 5,080 once,3,562 passed/1,518 skipped.
+All43 new repair cases passed in every variant; no old case removed or skip
+identity changed from qualified d4b3ae1. The local master, nine standard expert
+roles and CI specialist found no remaining actionable issue. GitHub connector
+review requests remained quota-blocked, not approved. PR52/33 remain open and
+disabled; this completes the approved repair, not merge or live acceptance.
+
+No archive, activation/canary/settings/app/release/tag, assembly pin, installed
+tool or running-lane changes are authorized by these repairs.
+
+## Approved current-main reconciliation and source landing — 2026-11-12
+
+Brett approved updating code PR52 for current main after Sonar PR51 landed as
+`b227d53c42449eeafbd4a57979cfbd541f74fbd5`, rerunning CI/local review and merging
+PR52/33 only once green. This supersedes the earlier leave-open boundary for
+these two source PRs only. It does not authorize activation, canary, settings,
+release/tag, assembly pins, checkout refresh or changes to lanes 1–5.
+
+- [x] T031 [O] Reconcile code PR52 with current main while preserving landed Sonar collectors, reviewed baseline and dependency pin — files: code `.github/workflows/tests.yml`, `tests/test_tests_workflow.py`, related CI contract tests if required; spec `specs/009-manual-two-pr-queue/`, `openspec/changes/prepare-claude-current-ci-cutover/` — verify: `bash tests/run.sh -k 'ci_cutover or ci_candidate_shadow or ci_delivery or ci_shadow or ci_pilot or full_ci_coverage_parity or tests_workflow or ci_shards or sonar'`
+- [x] T032 [O] Qualify the exact reconciled head with focused tests, lint, strict governance, full hosted ordinary/reusable CI and local expert review; prepare guarded normal source landings — files: `specs/009-manual-two-pr-queue/tasks.md`, `specs/009-manual-two-pr-queue/plan.md` in the spec leg, PR52/33 qualification records — verify: `gh pr checks 52 --repo opensoft/openRepoTools-code --required`
+
+Actual normal merges and landed-tree verification are separate external acts
+recorded on PR52/33. T032 completion means qualification and guarded landing
+preparation, not a claim that either PR has already merged.
+
+Current-main qualification at code `94d4659`: ordinary `43321898110` passed all
+15 jobs; reusable `43321898191` passed all 17, both first attempts. All four JUnit
+variants reported 5,125 unique cases, with no removed original cases or changed
+skip identities. Normal: 4,956 passed/169 existing skips. Deliberate no-submodule:
+3,607 passed/1,518 existing skips. All 43 repair cases and the 45 inherited Sonar
+additions passed in every variant. Focused QA: 836 passed/no skips. Actionlint,
+strict OpenSpec, SonarCloud, Mergify configuration and local expert review passed.
+
+Code PR52 was normally squash-merged as
+`5173ad25910ca4d7acfd6052090246ccc084f1a1`, parent `b227d53`, at
+2026-11-12T23:21:37Z. Its tree `0ef9640b600b1ffacc542ed40ab79db14e2bca21`
+exactly matches qualified head `94d4659` and actual tested merge `684c21f`.
+The final spec landing and its tree readback are recorded on PR33. No bypass,
+settings, activation/canary, releases, assembly pins or lane changes follow.
