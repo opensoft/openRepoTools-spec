@@ -17,7 +17,7 @@ at fix round B, and draft 4.1 at assembly phase A.
 
 - **Source:** lane 1's contract draft 4.27, `contracts-register-cli.v4.27.md` (#165 6834642319),
   B16's file with lane 1's H1 to H3 and J1 to J4, so with lane 3's ruling for E1 (#165 6807694145), lane 3's two words,
-  F7 `reader_url=` (#165 6813103156) and F6 `Y:5059`, AT-P3's host cap (lane 3, #165 6814260122), and J1 to J4: batch h's text 1 at :379 (#165 6814531692), the guard's quote as built at :768 (lane 3's ruling (a), #165 6826938656), and lane 5's items 30.2 at :451 and 30.4 at :768.
+  F7 `reader_url=` (#165 6813103156) and F6 `Y:5059`, AT-P3's host cap (lane 3, #165 6814260122), and J1 to J4: batch h's text 1 at :379 (#165 6814531692), the guard's quote as built at :768 (lane 3's ruling (a), #165 6826938656), and lane 5's items 30.2 at :451 and 30.4 at :768. Since draft 4.23 it also holds lane 1's F-a, K1 to K3 (draft 4.25; #165 6828035829, 6828734639), K5 and K6 (draft 4.26; lane 1's U5 review of T511's draft 9, #165 6833947627), and K7 and K8 (draft 4.27: `rename-lane`'s move of a lane's log named as a rename the verb makes, at :492 and :932; #165 6834413025, 6834642319).
 - **sha256:**
   `7959603a85d8ab1f01f8d8262ec186a584d7e2a9393ad7769829f57d68e38f3c`, 1023
   lines, lane 1's file as it is. Drafts 4.3 to 4.11 keep every
