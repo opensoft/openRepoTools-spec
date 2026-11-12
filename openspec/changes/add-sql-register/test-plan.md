@@ -5515,10 +5515,10 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - After the import: the rollback runs. While it is held at its push, one
     snapshot through the admin connection shows the switch at `files` with
     the marker `removing`, and the removal entry, an operator entry, as the
-    journal's last seq `k+1`: both or neither. A write tried meanwhile fails
-    with LR002 and journals nothing. On release, the read-back confirms the
-    push, `record_marker` sets the marker `absent`, and the rollback ends
-    with test 8 (a)'s oracle.
+    journal's last seq `k+1`: both or neither. A direct `commit_write` tried
+    meanwhile fails with LR002 and journals nothing. On release, the
+    read-back confirms the push, `record_marker` sets the marker `absent`,
+    and the rollback ends with test 8 (a)'s oracle.
   - A rerun after a kill at the push finds the marker `removing` and its own
     entry as the last seq, declares first (§2.3, step 2, "A rerun"; AT-D20
     holds that case), and goes on from the render.
