@@ -86,3 +86,56 @@ PR receipt explicitly does not claim complete source indexing or overall
 coverage import. Published main must independently prove the full inventory,
 actual imported coverage, server revision, new-code period and evaluated
 80-percent coverage condition before this feature is complete.
+
+The expanded source-flow regressions at provider repair head
+b4f4b5f4ca37ad5f547d0c3eb188808f8fef9ed6 passed 414 cases. Its current YAML
+reader/oracle comparison set passed 625 cases with zero skips under isolated
+Python 3.12 and PyYAML 6.0.2. This supplements the historical 101/350-case
+receipts at original provider 50178305e4229275d18e71c2152403b4e9d3004e.
+
+All reported checks on code 35d60b80f26d497f2f3e706f467620ff10036d35 passed,
+including ordinary full CI and its reusable full-CI caller. The ordinary
+collection verifier accounted for all 4,906 items exactly once: 4,737 passed and
+169 skipped. JUnit skip evidence accounts for all 169: 135 need zsh, 28 need
+assembly/spec context, five require the separately built wheel, and one is the
+platform byte-count case. The composed job supplies zsh and both pinned roots
+and refuses absent provider context. The package job passed all 285 tests with
+zero skips. The intentional no-submodule variant accounted for all 4,906
+items, including expected missing-provider skips. No missing-provider skip
+occurred in the ordinary initialized variant. The provider pin update will
+require complete checks again at its own final consumer head.
+
+The first measured full rehearsal at root 604621b23d637b9831501d3bc38417a9115b9dda
+completed 4,856 tests successfully but failed 16, with six expected skips.
+Twelve failures were the already-corrected missing-coverage diagnostic leaking
+from intentionally clean virtual environments. Four revealed that coverage's
+SIGTERM handler displaced the default signal disposition used by the existing
+process-group supervisor. The collector must preserve application signal
+ownership, so SIGTERM interception is disabled; terminated processes may lose
+unflushed observations and earn no credit for them. The original supervision
+tests and timeouts remain unchanged. This rehearsal is failed diagnostic
+evidence, not a passing measurement or gate receipt.
+
+Disabling collector SIGTERM ownership reproduced the supervisor failure red
+(four failed, eight passed) and then passed all twelve original supervisor cases.
+The twelve package isolation/refusal cases also passed with the corrected
+collector. The focused helper set now passes 41 checks on Python 3.15.2.
+No supervision test, process timeout, source inventory or gate threshold was
+relaxed.
+
+The measured complete composed rehearsal consumed 3h09m before the provider
+suite. The provider's independent uninstrumented run already exceeded 1h40m;
+serial instrumentation risks GitHub's six-hour per-job bound. The complete
+composed and provider suites therefore run in parallel jobs, each at the same
+four exact repository commits. Sonar requires both immutable artifact IDs,
+validates each full report and inventory, and unions only observed line hits
+without dropping any unexecuted source/line. The required exact-pins check
+requires both complete suites and verified analysis to succeed.
+
+The parallel-evidence combination is covered by four additional focused cases:
+both complete reports must match the fresh checkout; a missing, foreign-commit
+or incomplete provider report fails closed. Disjoint real hits combine by boolean
+union rather than summed or invented credit. All 45 focused checks pass under
+the actual Python 3.15 runtime. A parsed workflow comparison confirmed that both
+complete suite steps, all preparation steps and event scope were retained,
+and the required aggregator explicitly requires all three successful results.
