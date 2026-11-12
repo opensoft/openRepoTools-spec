@@ -8859,7 +8859,9 @@ frame do not yet make it. None adds a requirement.
    after the verb returns, the renderer may not yet have started, so a free
    lock proves nothing alone. Every test uses one of two waits, and no other:
    - **Where the lag is expected to reach 0,** a poll of `lanes-index status`
-     every 100 ms until its lag is 0, with a 30 s ceiling.
+     every 100 ms until its lag is 0, with a 30 s ceiling, each poll after a
+     fetch of the W `status` reads (T117), made by the test with plain git:
+     `status` never fetches, and no write on primary fetches W (D12).
    - **Where the lag is expected to stay above 0** (test 5's kill and failed
      render, test 6's stop, test D22's lag), a wait for the renderer's exit.
      Test 5's `git` wrapper logs, at each call, the pid of the
