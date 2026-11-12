@@ -33,19 +33,29 @@ on:
 
 - Lines 29 to 36 are rewritten. They now say that `push` covers `main` and
   every `release/v*` branch, and that every trigger runs the four jobs.
-- Every other comment stays as it is.
+- Every other comment stays as it is. That binds #228's change.
+  opensoft/openRepoTools#77 later reworded the header comment's sentences on
+  what every trigger runs, extended the comment that sat above
+  `tests-no-submodule`, now above `tests-no-submodule-shard`, and added
+  comments above `tests-shard` and inside both shard jobs.
 
 ### Jobs
 
-- `guard-launch-mode`, `tests` and `tests-no-submodule` stay byte for byte.
-  These are the gate's job ids, and the code leg keeps them (FR-046).
+- opensoft/openRepoTools#77 (opensoft/openRepoTools-code#22) leaves
+  `guard-launch-mode` as it is and makes `tests` and `tests-no-submodule`
+  each a gate over a matrix of shard jobs, `tests-shard` and
+  `tests-no-submodule-shard`; the list under "Held by
+  `tests/test_tests_workflow.py`" below says how. `guard-launch-mode`,
+  `tests` and `tests-no-submodule` are among the gate's job ids, and the
+  code leg keeps them (FR-046). The release gate reads the ids by name, and
+  no shard job has one of them.
 - `package` is new, with exactly that id and no `name:`. Its steps, in
   order:
 
 1. `actions/checkout` with `submodules: true` and `fetch-depth: 1`.
 2. `actions/setup-python` with `python-version: '3.9'`.
 3. **Git identity**, by environment and never by global config, as the
-   `tests` job sets it.
+   `tests-shard` job sets it.
 4. **The test tools.**
    - First `tomli==2.4.1`, by hash. The step extracts the build lock's
      whole `tomli` entry, the requirement line and every `--hash` line
@@ -157,7 +167,19 @@ jobs: {build, testpypi, install, pypi}
      `opensoft/openRepoTools` has no pypi.org publisher, which is the
      second line of defence.
    - The `testpypi` and `pypi` environments, the `v*` tag ruleset and the
-     trusted publishers are Brett Heap's to create.
+     trusted publishers are Brett Heap's to create. The header says what the
+     environments and the ruleset must be:
+     - each environment has brettheap as the required reviewer, self-review
+       allowed, administrators not bypassing, and a deployment limit of
+       exactly one rule, of type tag, `v*`;
+     - the ruleset is on the tags `v*`, and only the admin role creates,
+       moves or deletes one.
+
+     The workflow reads that each environment names a required reviewer (any,
+     not brettheap in particular) and the deployment limit, in the build's
+     step 5 and again in each upload job, and nothing else of these.
+     Self-review, administrator bypass and the ruleset are not checked, and
+     the header says so.
 6. **What the workflow never reads**: the release notes, and anything
    outside the code leg (FR-046).
 
@@ -228,6 +250,11 @@ The steps are the model's, in its order. Each is a refusal on failure:
 13. [wheel.md](wheel.md)'s checks 2 to 6, with the stamp as the release's.
     This is a heredoc, which `tests/test_release_workflow.py` extracts and
     runs on synthetic wheels.
+    - It reads every member first. Each one it cannot read, such as a bad
+      CRC, a broken deflate stream, a corrupt LZMA stream (`lzma.LZMAError`)
+      or a compression method `zipfile` does not know, is named in an
+      `::error::` line, and the step exits 1 there, with no traceback and
+      before checks 2 to 6 run (#278).
 14. Record these as job outputs: the wheel's name, its sha256, the digest,
     and step 1's `to-testpypi` and `to-pypi`. Keep the wheel as an
     artifact.
@@ -254,11 +281,25 @@ this run's approvals, and `contents` for the tag, read again.
     the job after an upload that went through;
   - a file of any other name, or the wheel's name at another digest,
     refuses the job before the upload, and so does the verified wheel when
-    it is yanked.
+    it is yanked;
+  - a status other than 200 or 404, a read with no answer or one cut off,
+    and an answer that is not the index's JSON, such as a page or JSON with
+    no file list, refuse the job too, since what the index holds is then not
+    known.
+
+  This check reads the JSON once. Each of its refusals ends in an
+  `::error::` line that names its cause, and never in a traceback (#278).
 - Upload with `pypa/gh-action-pypi-publish@dc37677…` and
   `repository-url: https://test.pypi.org/legacy/`.
 - Then TestPyPI must serve exactly `{wheel: sha256}`. Read it up to 20
-  times, as the model does.
+  times, as the model does. A 404, a server error (5xx) and every failure
+  that carries no HTTP status, whatever its cause, are read again: any
+  `OSError` (a name that does not resolve, a connection refused, reset or
+  broken, a timeout, a TLS error) and any `http.client.HTTPException` (a
+  status line that is not HTTP, too many headers, a body cut short). A
+  status other than 200, 404 and 5xx, and an answer that is not the
+  index's JSON, refuse the job at once, in an `::error::` line that names
+  it (#278).
 
 ### `install` (read only)
 
@@ -286,6 +327,20 @@ The steps:
    `package` job's step 10. The skip line and the count line must be exact.
 6. On macOS only, run step 5 again with `PATH="/bin:$PATH"`, and print
    `BASH_VERSION`, which must begin with `3.2`.
+   - The rerun has a fresh `HOME` and a bin directory of its own, which holds
+     one link, with pipx's link's value, and nothing else. Step 5's
+     directory, pipx's, already holds the sixteen files, so a rerun there
+     would find each of them already installed and place none under 3.2.
+   - The skip line and the count line must be exact for that directory, and
+     the output must hold 16 lines of the form
+     `<file>: installed at <that directory>/<file>`, which are the sixteen
+     files placed (#278).
+   - The rerun then runs `--install` once more into that directory, where
+     the sixteen files are now in place. The output of that second run must
+     hold 16 lines of the form
+     `<file>: already installed at <that directory>/<file> (unchanged)`, so
+     that the installer's already-installed arm, a file in place with its
+     bytes and its mode, also runs under bash 3.2 (#278).
 7. On 3.9 only, compile the installed package's own
    `payload/lanes-index` and `payload/lane-worktrees` with `python3 -c`
    `compile(...)`. The shipped bytes are what must compile on 3.9.
@@ -307,7 +362,8 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
 - Then come the same download, sha256 check, re-reads and empty-index check
   as `testpypi`, against PyPI.
 - The upload uses the same pinned action, with the default index.
-- Then PyPI must serve exactly `{wheel: sha256}`.
+- Then PyPI must serve exactly `{wheel: sha256}`, read up to 20 times with
+  `testpypi`'s retries and refusals.
 
 ### Held by `tests/test_release_workflow.py` (offline)
 
@@ -326,6 +382,17 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
   - one with no `licenses/LICENSE`, which fails, naming `LICENSE`;
   - one with a payload file's byte changed, which fails, naming that file;
   - one with a payload file's mode changed, which fails, naming that file.
+- Step 13's heredoc is also run on four wheels that each hold a member it
+  cannot read: a payload file with a bad CRC, a module with a broken deflate
+  stream, a `.dist-info` file in a compression method `zipfile` does not
+  know and a payload file stored as LZMA with corrupt data. Each fails,
+  naming the member in an `::error::` line that says it cannot be read, with
+  no traceback.
+- Step 13's heredoc and the `package` job's wheel check are each run on six
+  wheels, each with one payload file at a mode that is not the commit's:
+  typed as a symlink, typed as a directory, with no file type, setuid,
+  setgid and sticky. Each check passes the wheel as built and refuses all
+  six, naming the file, with no traceback.
 - Every `uses:` is pinned by 40 hex digits, and the publish action is
   `dc37677…`.
 - Every `pip install` is from a hash lock, with `--require-hashes`.
@@ -346,8 +413,27 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
   `pypi` refuses everything but a final in `opensoft/openRepoTools-code`.
 - `testpypi`'s condition reads `to-testpypi`, and `pypi`'s reads `to-pypi`.
   So in an rc rehearsal `pypi` is skipped.
+- Each upload job's empty-index check and served check are run against a
+  fake index on 127.0.0.1. The empty-index check reads once. The served
+  check reads again after a 404, a server error, a read with no answer and
+  an answer cut off, up to 20 reads. Each refusal of either exits 1 with an
+  `::error::` line that names its cause, and prints no traceback.
 - The install matrix is exactly the three legs. The macOS leg reruns under
   `/bin/bash`, and the 3.9 leg compiles the two Python commands.
+- The offline `--install` and then the macOS rerun are run as one macOS leg,
+  over a real venv that holds the package, with pipx's link to it and a
+  stand-in `/bin` whose `bash` is the host's and answers `BASH_VERSION` as
+  3.2. The first places the sixteen files in pipx's bin directory. The rerun
+  places the same sixteen, each `installed at` and none `already installed`,
+  in a bin directory of its own that its count line names, and leaves
+  pipx's bin directory as it was. Its second `--install`, into that
+  directory, finds the same sixteen each `already installed` and
+  `(unchanged)`; with one of them reported different, it updates that one,
+  counts 15, and the rerun exits 1 naming that count. With the mode of one
+  of them reported as not 755, it says `(mode restored to 755)` of that one,
+  which is `already installed` but not `(unchanged)`, so it counts 15 here
+  too, and the rerun exits 1 naming that count. What Apple's own bash makes
+  of `--install` is the macOS leg's to show.
 - No step reads `docs/`, `openspec/`, `specs/`, `README.md`, `AGENTS.md` or
   `CLAUDE.md`.
 - The header has the RELEASING sections above.
@@ -356,17 +442,78 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
 
 - `push.branches` is exactly `[main, 'release/v*']`, and the other triggers
   are as above.
-- The four job ids are present.
-- The three existing jobs keep today's `runs-on`, checkout options, Python
-  version and `run:` commands. These are asserted from the file's text, not
+- The jobs are exactly the four job ids and `tests-shard` and
+  `tests-no-submodule-shard`, the shard jobs behind `tests` and
+  `tests-no-submodule`. None of the six has a `name:`. `tests` and
+  `tests-no-submodule` each have `if: ${{ always() }}`, and the other four
+  have no `if:`.
+- `guard-launch-mode`, `tests-shard` and `tests-no-submodule-shard` keep
+  today's `runs-on`, checkout options, Python version and `run:` commands.
+  A shard job carries what `tests` or `tests-no-submodule` carried, with the
+  pytest command replaced by the shard's. It gains `timeout-minutes`,
+  `strategy`, an `env:` of `SHARD` on the step that runs the shard, and the
+  step that uploads the shard's report. The shard's command is:
+  `python3 .github/ci/ci_shards.py run --variant tests --shard "$SHARD" --out "$RUNNER_TEMP/shard"`
+  in `tests-shard`, and the same with `--variant tests-no-submodule` in
+  `tests-no-submodule-shard`. These are asserted from the file's text, not
   from history, because CI checks out one commit at `fetch-depth: 1`. The
   pull request's diff review confirms the rest of "unchanged".
+- `tests` and `tests-no-submodule` are each a gate over their shard job:
+  - `needs:` is exactly that shard job, `if:` is `${{ always() }}`, and the
+    job has no `strategy:` and no job-level `continue-on-error`. So the
+    gate runs when a shard fails or is cancelled, and goes red. A skipped
+    job would count as passing for a required check.
+  - Its last step is the one step that runs `ci_shards.py verify`. That
+    step has `if: ${{ always() }}` and no `continue-on-error`. Its `env:`
+    sets `SHARDS_RESULT` to `${{ needs.tests-shard.result }}` in `tests`
+    and to `${{ needs.tests-no-submodule-shard.result }}` in
+    `tests-no-submodule`. Its `run:` is exactly
+    `python3 .github/ci/ci_shards.py verify --variant tests --results "$RUNNER_TEMP/shards" --needs-result "$SHARDS_RESULT"`
+    in `tests`, and the same with `--variant tests-no-submodule` in
+    `tests-no-submodule`.
+  - "No `continue-on-error`" is the job's, and the last step's. The step
+    that downloads the shards' reports has `continue-on-error: true`, and
+    no test holds that. Of the gate's steps the test holds only the last,
+    and that no other step runs `ci_shards.py verify`. The pull request's
+    diff review answers for the rest.
+  - What `verify` checks is `ci_shards.py`'s own, and
+    `tests/test_ci_shards.py` holds it, not this list.
+- Each shard job's `strategy:` has `fail-fast: false` and one matrix key,
+  `shard`, whose list is the shard list that `.github/ci/ci_shards.py`
+  plans for its gate, in the plan's order: `pytest-1` to `pytest-4` and
+  `shell` for `tests-shard`, and `pytest-1` to `pytest-3` and `shell` for
+  `tests-no-submodule-shard`. A shard in the plan and not in the matrix,
+  or the other way round, fails the test.
+- Each shard job has exactly one `actions/upload-artifact` step, with
+  `if: ${{ always() }}`, and its artifact's `name:` ends in
+  `-${{ matrix.shard }}-a${{ github.run_attempt }}`. So a shard's report
+  is kept whether the shard passed or not.
+- Each shard job has `timeout-minutes: 60`.
 - The `package` job runs on `ubuntu-24.04` with Python `3.9` and
   `submodules: true`, and carries steps 4 to 11 in order. The runner is
   pinned because `ubuntu-latest` became Ubuntu 26.04 on 2026-10-21, where
   setup-python has no Python `3.9`.
 - Its `tomli` comes from the build lock's own entry, and the job holds no
   `--hash` of its own.
+- The pipx lock's `tomli` entry is the build lock's: its requirement line,
+  which holds the version and the marker, and every digest. Step 4 installs
+  the build lock's `tomli` and step 7 the whole pipx lock, so the package's
+  tests run on the pipx lock's entry, and a resolution that moves one and not
+  the other fails.
 - Its wheel-check heredoc (step 6) is run on the same four synthetic wheels
-  as the release build's, with the same four outcomes.
+  as the release build's, with the same four outcomes, and on four more, one
+  for each check those four never reach ([wheel.md](wheel.md)'s checks 3, 4
+  and 6, and the check that no member is there twice):
+  - one with a module's byte changed, which fails, naming that module;
+  - one with a line added to the stamp, which fails, naming `_release.py`;
+  - one with a member that is no member `wheel.md` lists, which fails,
+    naming it;
+  - one with a member twice, which fails, naming it.
+
+  Each of these refusals is an `::error::` line, and never a traceback.
+- Its step 10 is run whole, offline, with a stand-in for pipx's link that
+  prints the lines and writes the receipt a case names. The step passes with
+  the skip line and the count line once each and 28 receipt rows. It fails,
+  with an `::error::` line, for a missing skip line, a missing or repeated
+  count line, and a receipt that is not 28 lines, each a row.
 - The header comment names both push branches and four jobs.
