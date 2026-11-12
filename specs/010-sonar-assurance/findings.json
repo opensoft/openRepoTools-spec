@@ -16,7 +16,8 @@
         "tests/test_update_shape_landing.py",
         "tests/test_push_branch_refspec.py"
       ],
-      "status": "source flow reviewed; service update pending"
+      "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
     },
     {
       "key": "AaHNkAShuDHHi52pWjoK",
@@ -32,7 +33,8 @@
         "tests/test_update_shape_landing.py",
         "tests/test_next_refspec_branch_length.py"
       ],
-      "status": "source flow reviewed; service update pending"
+      "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
     },
     {
       "key": "AaHNkAShuDHHi52pWjoJ",
@@ -48,7 +50,8 @@
         "tests/test_next_refspec_branch_length.py",
         "tests/test_push_branch_refspec.py"
       ],
-      "status": "source flow reviewed; service update pending"
+      "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
     },
     {
       "key": "AaHHsu91IZXyb5gijwTS",
@@ -63,7 +66,8 @@
       "regression_sources": [
         "tests/test_adopt_attributes_eol_block.py"
       ],
-      "status": "source flow reviewed; service update pending"
+      "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
     },
     {
       "key": "AaGD6tPOxLux756IlU7J",
@@ -88,9 +92,11 @@
       "reason": "load_yaml is an intentionally caller-selected local YAML reader. The traced CLI callers read --project, a fixed project.yaml below the selected repository root, or the selected local policy. Their explicit purpose is to validate an operator-selected filesystem tree. No network request, lower-privilege principal, confined-directory promise or privileged service is involved; an operator selecting a local input file is not a traversal across an authority boundary.",
       "source_commit": "50178305e4229275d18e71c2152403b4e9d3004e",
       "regression_sources": [
-        "tests/test_repo_shape.py"
+        "tests/test_load_yaml_refusals.py",
+        "tests/test_yaml_reader_spaces.py"
       ],
-      "status": "source flow reviewed; service update pending"
+      "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
+      "regression_result": "350 passed, zero skipped, original provider pin; PyYAML 6.0.2 installed to exercise optional comparison cases"
     },
     {
       "key": "AaFMxuNRjy8gvDmEH5jA",
@@ -117,7 +123,8 @@
       "regression_sources": [
         "tests/test_openreposhape_package.py"
       ],
-      "status": "source flow reviewed; service update pending"
+      "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
     },
     {
       "key": "AaDPP3_OrPHmB1oAsIwL",

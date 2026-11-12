@@ -32,3 +32,12 @@ evidence cache. They record shared root/code/spec/provider revisions, tracked
 diff hashes, worktree registrations and tmux pane identities. No installed
 commands, shared checkout, lane register, session binding or handoff is part of
 this implementation.
+
+
+## Additional isolated verification
+
+- Original-provider source-flow regressions: 101 passed.
+- Original-provider YAML reader and stock-reader comparisons: 350 passed, zero skipped with PyYAML 6.0.2.
+- Upstream repair policy plus existing installer-pin contract: 3 passed.
+- Current code helper and refusal-path checks: 21 passed, zero skipped.
+- Source CI parity, package and fast checks retain their full contracts; hosted complete suites are still running.

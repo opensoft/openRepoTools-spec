@@ -65,7 +65,7 @@ Location: scripts/repo_shape.py:1151.
 
 Disposition: **false-positive**. load_yaml is an intentionally caller-selected local YAML reader. The traced CLI callers read --project, a fixed project.yaml below the selected repository root, or the selected local policy. Their explicit purpose is to validate an operator-selected filesystem tree. No network request, lower-privilege principal, confined-directory promise or privileged service is involved; an operator selecting a local input file is not a traversal across an authority boundary.
 
-Regression sources at the original provider pin: tests/test_repo_shape.py.
+Regression sources at the original provider pin: tests/test_load_yaml_refusals.py, tests/test_yaml_reader_spaces.py.
 
 ## AaFMxuNRjy8gvDmEH5jA — text:S8565
 
@@ -115,3 +115,15 @@ Disposition: **confirmed-fix**. Require wheels; preserve the complete parsed CI 
 
 Repair: [source-owner PR](https://github.com/opensoft/openRepoTools-code/pull/51).
 
+
+## Verified source-flow and policy receipts
+
+At the original provider pin 50178305e4229275d18e71c2152403b4e9d3004e,
+101 targeted branch/refspec/symlink/argv regressions passed. The YAML reader
+checks passed 350 cases with zero skips after installing PyYAML 6.0.2 to run
+the optional stock-reader comparisons. The provider repair's two new policy
+checks plus the existing installer-pin contract passed (3 cases).
+
+All six false-positive dispositions were applied in Sonar with per-issue
+source-flow comments and the immutable triage record link. The six confirmed
+findings remain open until their source-owner repairs are consumed and analyzed.
