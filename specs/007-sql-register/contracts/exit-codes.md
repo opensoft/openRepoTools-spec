@@ -246,12 +246,12 @@ The test plan's open point 1 left both unnamed, and plan.md's PC-10 gives them t
 - **Not 69:** a database that cannot be reached or refuses is 69, as D9's import row says (Y:3530). So the runbook tells "the files and SQL differ" from "the database is away" by the code alone.
 
 **The cutover's abort: 2, `EXIT_CUTOVER_ABORTED`, once the abort has completed.**
-- **What it covers:** the tip's `lanes` tree has moved since `C`, so the cutover pushes nothing; or a push was made, and a read-back proves the marker absent from origin. Then `switch_to_files`, in one transaction, sets the switch back to `files` with the marker `absent`, deletes the cutover's entry and sets the head back to the import's seq (Y:3197–3202). A restore's abort leaves no seq after `b` and changes nothing else (Y:3202–3203; D24).
+- **What it covers:** step 2's read-back finds the entry's commit absent from origin, and this run pushes it no more, on any of these grounds (T327's `operator_entry_push`): the tip's `lanes` tree has moved since `C` (in the restore form, the tip's render set is not the images at `b`); the tip does not descend from `C`; the render lock cannot be taken, or another render holds it past the wait; the commit cannot be built on the tip; the push is refused before it is made; a push was made and failed, and a read-back proves the marker absent from origin; six pushes were rejected, each read back without the commit; or, after a rejected push, whether the tip descends from `C` cannot be read. Then `switch_to_files`, in one transaction, sets the switch back to `files` with the marker `absent`, deletes the cutover's entry and sets the head back to the import's seq (Y:3197–3202). A restore's abort leaves no seq after `b` and changes nothing else (Y:3202–3203; D24).
 - **When it is 2:** only once `switch_to_files` has committed. The operator then reruns the import at the new tip (Y:3202), which is the operator's act to redo, as D10 gives 2 to an act a lane must redo (Y:508–511).
 - **When it is not 2:**
   - a push that its read-back cannot confirm is 3, in either branch, and the rerun reads origin back first (Y:3157–3159; S5);
   - a `switch_to_files` call whose timer expired is 69, and the rerun reads the switch (D9, Y:3533).
-- **Telling it from `cutover`'s other 2s:** its label refusals and its scratch-schema refusal are 2 too (section 3.2). Stderr's first line names the abort and the moved tip [P].
+- **Telling it from `cutover`'s other 2s:** its label refusals and its scratch-schema refusal are 2 too (section 3.2). Stderr's first line names the abort and its ground, the moved tip among them [P].
 
 **Why 2 for both:** each ends with nothing changed in the register: the import swaps nothing in, and the abort undoes the cutover's entry. That is the contract's 2, "a refusal, with nothing written" (§2.7).
 
