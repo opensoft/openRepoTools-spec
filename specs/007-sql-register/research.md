@@ -1524,7 +1524,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   from the family: its `.log.<key>` and `.logpath.<key>` are removed, so the
   first read that asks for it ends 69. Contract draft 4.11 states it at its
   :673, and drafts 4.12 and 4.13, in the branch since rounds B10 and B11,
-  at their :674; lane 5's T511 draft follows at its D4:565.
+  at their :674; lane 5's T511 draft 8 follows at `socket-api.md:470`.
 - **Whose:** lane 3's ruling, #165 6752360829, on N-g of lane 1's U5
   re-check of T511's draft 4 (6752336451).
 - **Why:** a read should not fail on a member it never asked for, and the
