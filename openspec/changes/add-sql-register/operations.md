@@ -280,7 +280,7 @@ Brett's ruling (#165 6723925474): the register's database is "CNPG in the instal
    - **Check:** `lanes-index ready --expect primary` in each environment on each configured workstation.
    - **Meanwhile:** from the marker's push to the last flip, every register write refuses, since a files-mode writer meets the marker (`proposal.md:169-170`; `r3b/REPORT.md:257`).
    - **Way back:** `set-mode index` on each configured workstation, then the rollback.
-9. **The smoke test.** The operator lane writes one `log NOTED` and checks its row in SQL, its mirror commit at the seq after the cutover's entry (`Register-Seq: 2` after a first cutover, `m+2` after a re-import, `b+2` after a restore; `design.md` D24), the read-back, and a lag of 0 in `status` (`proposal.md:944-947`, `:1265-1267`; `r3b/REPORT.md:258`).
+9. **The smoke test.** The operator lane writes one `log NOTED` and checks its row in SQL, its mirror commit at the seq after the cutover's entry (`Register-Seq: 2` after a first cutover, `m+2` after a re-import, `b+2` after a restore; `design.md` D24), the read-back, and a lag of 0 in `status`, after a fetch of W (`lanes-edit.sh refresh-workspace`), since `status` never fetches (`proposal.md:944-947`, `:1265-1267`; `r3b/REPORT.md:258`; lane 3's ruling (a), #165 6833830078).
    - **Refusal:** any miss is a rollback trigger, on Brett's word.
 10. **The thaw.** The coordinator posts N4, and Brett prompts each pane to resume (`r3b/REPORT.md:259`).
 
