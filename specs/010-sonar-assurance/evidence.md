@@ -218,3 +218,9 @@ registration added and explicit composite shell declarations. Actionlint and
 root make validate passed. Both upstream provider and consumer post-merge
 workflows are green (runs 43311293898 and 43318402438). Corrected full assembly
 and actual-main acceptance remain pending.
+
+Suite artifacts now also retain available inventory/probe/report diagnostics
+when a test step fails. A partial diagnostic artifact is never acceptance:
+Sonar still requires both complete suite jobs to succeed and revalidates both
+full reports, and the required exact-pins context still requires all three
+successful results. No failed or skipped suite can provide passing evidence.
