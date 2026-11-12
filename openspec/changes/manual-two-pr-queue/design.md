@@ -115,3 +115,42 @@ queue_admission=false. No GITHUB_OUTPUT skip flag, custom status, queue command 
 consumer is added. First-PR bootstrap fallback and offline source tests are not
 live positive-scope or candidate acceptance. PR/push metadata and error regressions
 include third-party edits, closed/dequeued events and changing main identities.
+
+## Additive fast and candidate proof — 2026-11-11
+
+Add a read-only source PR fast workflow on opened/synchronize/reopened only.
+Validate the actual test-merge checkout and both exact parents, whitespace/syntax,
+the full scoped component regression plus guard/hygiene and delivery-policy tests.
+Run without the candidate API token; this check is feedback/preparation, not
+admission by itself, and does not replace any current full check.
+
+Add a workflow_call-only candidate entry with no input, secret, dispatch or queue
+trigger. Its verifier executes from trusted main with read-only GitHub metadata
+permissions. Only a genuine same-repository Mergify push to the exact queue branch
+and candidate SHA can qualify; main and branch identities must match/recheck.
+Derive one or two ordered merge prefixes rooted exactly at live main. Resolve
+unique open non-draft same-repository main-based source PRs from exact heads;
+reject duplicates, dependent topology, stale/moved identities and mixed paths.
+Each member declares the same observational scope marker but authority comes from
+live evidence: exact-head GitHub Actions fast run at the expected workflow,
+completed clean Codex receipt and no unresolved review threads. Bound all reads
+and reject truncated/ambiguous evidence; do not post statuses or review receipts.
+
+Reuse trusted shadow regular-file/mode/intent primitives; do not change its
+shadow/full/no-skip/no-admission contract. Both member and combined diffs must be
+nonempty and confined to the two approved files. This also forbids candidate
+changes to CI/policy/pins/package/release control. Emit immutable base/head/member/
+prefix/tree proof only after final live rechecks. Candidate/ref/main drift fails.
+Each merge prefix must equal a clean deterministic merge of its previous prefix
+and approved source head. Git merge-tree computes only private immutable objects
+in the disposable CI checkout, never refs/index/worktree/source files. This
+CI-only helper requires the Git merge-tree --write-tree support supplied by the
+Ubuntu24.04 runner; it changes no installed CLI/package runtime requirement.
+The verifier is not a successful heavy-run receipt until integration completes.
+
+After verifier success the candidate entry calls the SAME tests.yml at the
+candidate commit, preserving all thirteen expanded jobs. An always-running named
+aggregate requires verifier and the complete call to succeed, then repeats the
+trusted live verifier so source/ref/main changes during integration cannot qualify;
+failure, cancellation or skip cannot qualify. No existing queue/ruleset consumes the new check. Offline
+fault-injection/Git fixtures qualify preparation; no live candidate is created.

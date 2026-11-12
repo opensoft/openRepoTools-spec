@@ -125,3 +125,25 @@ absence and uncertainty SHALL report full fallback, not run head-owned policy.
 - **WHEN** identities move, reads fail, scope is mixed, a PR is closed/dequeued
   without the narrow metadata proof, or candidate/landing integration is unproved
 - **THEN** the result stays full and grants no exemption based on actor or prefix
+
+### Requirement: Additive fast and candidate preparation preserves full acceptance
+The next preparation SHALL retain all existing full CI, queues, release behavior
+and shadow authority. It MAY add fast PR feedback and a workflow_call-only entry
+that verifies a bounded exact candidate before reusing the complete full suite.
+No queue trigger, admission command, source status writer or ruleset migration
+SHALL be introduced by this preparation.
+
+#### Scenario: An exact reviewed candidate is supplied by a future approved caller
+- **WHEN** current main, queue ref, ordered independent members, scoped Git content,
+  exact-head fast workflow, Codex review and thread evidence all agree
+- **THEN** the reusable entry runs every full-CI job on that exact candidate and
+  qualifies only after verifier and complete integration both succeed
+
+#### Scenario: Evidence is stale, missing, ambiguous or unsuccessful
+- **WHEN** a source/base/ref moves, an API response is incomplete, review/fast
+  evidence is absent, scope/topology is unsupported or any integration job fails
+- **THEN** verification/qualification fails without a bypass or fabricated success
+
+#### Scenario: Preparation is merged but no activation is approved
+- **WHEN** these source files land without a separately approved queue/ruleset change
+- **THEN** ordinary full CI remains required and no live batch or canary starts

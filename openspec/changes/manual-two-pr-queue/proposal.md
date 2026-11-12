@@ -65,3 +65,14 @@ changes. Add an independent trusted-main observer beside feature 008's unchanged
 head-owned advisory pilot. It reports conservative event observations, never
 skip decisions, admission, reviewed status or release eligibility. Reconcile
 this bounded prerequisite under issue #26; no merge or assembly advancement.
+
+## Full-rollout goal: additive fast/candidate preparation — 2026-11-11
+
+Brett set the active goal to implement the full rollout plan. Continue safe
+preparation under the existing prohibitions: no live canary, ruleset changes or
+bypass, app access or release changes. Add fast source feedback and an uninvoked
+reusable candidate verifier/full-integration entry point while all original full
+checks and queues stay unchanged. Initial candidate scope remains the fixed
+claude-current/test pair and at most two independent main-based members.
+Activation, dependent-stack/wider scopes and required-check migration need their
+own qualified change and explicit authority; no current queue consumes this work.

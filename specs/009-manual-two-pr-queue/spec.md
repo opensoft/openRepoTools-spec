@@ -75,3 +75,20 @@ access, paid upgrade, release/tag or installed-session change is authorized.
   all existing full/reusable/verify/release workflows, job baseline and queues.
   Open source/spec PRs only; no merge, canary, ruleset/app change, assembly pins,
   installed tooling or lane/session mutation.
+
+## Full-rollout goal: fast/candidate preparation — 2026-11-11
+
+- FR-018: add exact-checkout fast source feedback and the scoped component/guard/
+  hygiene/policy tests, without replacing required full CI or authorizing admission.
+- FR-019: prepare a parameterless workflow_call-only candidate verifier, no queue/
+  dispatch trigger. Verify genuine Mergify context, live main/ref, one or two unique
+  ordered independent main-based PRs, scoped modified regular content, exact fast
+  Actions workflow, fresh clean Codex and resolved threads. Missing/ambiguous or
+  stale evidence fails; all reads are bounded and metadata permissions read-only.
+- FR-020: after verification reuse the same complete thirteen-job tests.yml on the
+  exact candidate and require both verifier and full call success in its aggregate.
+  No workflow/policy/control changes can be present in a qualifying scoped candidate.
+- FR-021: existing full/reusable/verify/release/shadow workflows, coverage baseline
+  and queues remain unchanged. No live canary/queue, ruleset/app/release change,
+  source success-status writer, dependent-stack/wider-scope activation or lane
+  modification follows from this additive preparation.

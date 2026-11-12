@@ -89,3 +89,30 @@ through tests/run.sh in a disposable py-bench image limited to 2 CPUs / 2 GiB.
 Workflow lint, strict OpenSpec and whitespace checks passed. The initial red test
 failed before shadow_scope.py existed. Bootstrap policy-unavailable is expected
 on the preparation PR and is not a live positive-scope/candidate qualification.
+
+## Additive fast/candidate preparation — 2026-11-11
+
+Continue the full-rollout goal under existing restrictions. Baselines: code
+5fb492f1c49bf0e251795f4d1a3deedc29080ef9 and spec
+ed85f6dc99f95243185138fd4d8ebfc485fe67a1. Task set DELIVERY-PROOF-07 prepares
+source fast feedback, read-only immutable candidate/member/review proofs and a
+reusable complete heavy entry without wiring any existing queue or disabling CI.
+Use existing clean isolated paired worktrees; active lanes and mounted project
+checkouts remain unchanged. No new credentials or app installation.
+
+Test real local Git candidate chains with mocked GitHub metadata: missing/foreign/
+closed members, duplicates, stale main/refs/heads, ambiguous or truncated reads,
+forged/wrong-workflow or old-head fast checks, missing/quota/dirty Codex receipts,
+unresolved threads, mixed modes/paths and unsuccessful aggregates. Validate no
+queue/dispatch trigger, no head-owned token execution and unchanged full/release
+contracts. Normal latest-head CI/review is required before source merge. Keep
+activation and exact required-check proposal separate for user approval.
+
+Local qualification at code 0614ce06ec4e8db54fbcd8068356a06875104803:
+545 focused regressions passed with no skips, including 50 new delivery vectors.
+Native Git candidate fixtures and mocked read APIs ran offline through tests/run.sh
+in a disposable py-bench image limited to 2 CPUs / 2 GiB. Workflow actionlint and
+whitespace checks passed. Original full/reuse/shadow/pilot/release workflows,
+coverage baseline and Mergify configuration are unchanged. Hosted full CI/reuse
+qualification, exact-head Codex, normal source merges and coherent assembly
+adoption remain separate gates; this record is not live canary acceptance.
