@@ -107,7 +107,7 @@ T1 are made in place, so every line of `operations.md`, `clarifications.md` and
   at the client's check; and RD14d's two (#165 6814602159;
   `RD14d-TEXTS-lane2-for-followups-6e534355.md`, `75dc2c80…`) at :5568,
   AT-F2's rerun after a files-mode write, and :5578, AT-F2's Tests. So
-  `test-plan.md` is `fbb9b46e…`, 9,170 lines, and its lines sit below B17's
+  `test-plan.md` is `f0b734c3…`, 9,170 lines (`fbb9b46e…` before lane 3's draft at TP:2205, which moves no line), and its lines sit below B17's
   numbers: from B17's :2849, two below; from B17's :5569, five below; from
   B17's :5579, seven below; from B17's :6417, eight below.
 
