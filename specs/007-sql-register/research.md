@@ -115,7 +115,7 @@ place, so every line of `operations.md`, `clarifications.md` and
   `RD14d-TEXTS-lane2-for-followups-6e534355.md`, `75dc2c80…`) at :5568,
   AT-F2's rerun after a files-mode write, and :5578, AT-F2's Tests. So
   `test-plan.md` is `9393c1b6…`, 9,177 lines, and its lines sit below B17's
-  numbers: from B17's :1521, seven below; from B17's :2849, nine below; from B17's :5569, twelve below; from
+  numbers: from B17's :1521, seven below, by lane 2's TX15-4 (opensoft/openRepoTools#165 6826709932); from B17's :2849, nine below; from B17's :5569, twelve below; from
   B17's :5579, fourteen below; from B17's :6417, fifteen below. And, in place, in
   the follow-up: design:2771–2772 (Y:2724–2725), T5's line, folded at a space,
   word for word; design:5022 (Y:4975), Q29's clause, which reads as settled;
@@ -131,7 +131,7 @@ place, so every line of `operations.md`, `clarifications.md` and
   readable time counts (lane 3, #165 6813195977); and ops:275, where a cutover's
   rerun after a 3 that proves the marker absent pushes again, and step 2's
   own ends follow (lane 3, #165 6770600106, T116's point 1; T327's review,
-  NIT-1; the follow-up's check, S1). TP:2205 (Y's :2201) stays as B17 has
+  NIT-1; the follow-up's check, S1). TP:2212 (B17's :2205; Y's :2201) stays as B17 has
   it: lane 2 withdrew the merge20 point behind lane 3's draft there (lane
   2, #165 6826474591, CF15-1). And TP:5573–5574 (B17's :5564–5565), AT-F2's "Unconfirmed": a cutover's rerun that proves the marker absent pushes again (lane 2's CF15-2, #165 6826474591; ops:275).
 
