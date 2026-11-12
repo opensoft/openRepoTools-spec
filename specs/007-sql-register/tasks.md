@@ -11,12 +11,12 @@ description: "Tasks for 007-sql-register: the SQL register under lanes-edit.sh"
 `04a9de6b`, keyed to commit Y (`a6497d00`) of `add-sql-register`.
 
 **Status**: assembly phase B, started early (2026-11-09), with fix rounds B
-and B2, rounds B3 to B9, round B10's parts 1 to 3, round B11, round B12a, round B12b, round B13, round B14, and round B15. Lanes 1, 3, 4 and 5's tasks are in: lane 1's
+and B2, rounds B3 to B9, round B10's parts 1 to 3, round B11, round B12a, round B12b, round B13, round B14, round B15, round B16 and round B17. Lanes 1, 3, 4 and 5's tasks are in: lane 1's
 from its block v4.11, and lane 4's from its revision w11, keyed to Y (#165
 6742584818). Lane 2's block, T200 to T279, is in since round B5, at F8b
 since round B7 (#165 6748678333), at F9b since round B9 (#165
 6754247161), at F12b since round B12a, by F10b's edits and then
-F12b's (#165 6767185709, 6770190683), at F13b since round B14, by its 29 edits (#165 6779583168), and at F13d since round B15, by F13c's 30 edits and F13d's 16 (#165 6783432592, 6797819623), with lane 3's round B15 rulings on 16 of its lines and one bullet they add, at lane 2's ask. Its Table 2 placed each lane 2 marker it
+F12b's (#165 6767185709, 6770190683), at F13b since round B14, by its 29 edits (#165 6779583168), and at F13d since round B15, by F13c's 30 edits and F13d's 16 (#165 6783432592, 6797819623), with lane 3's round B15 rulings on 16 of its lines and one bullet they add, at lane 2's ask, and since round B16 with TX13's 9 edits (#165 6812272109, 6812295982). Its Table 2 placed each lane 2 marker it
 names; round B8 placed the 19 that came in at round B2, as lane 2 gave
 them (#165 6751920725).
 
@@ -26,7 +26,7 @@ them (#165 6751920725).
 | --- | --- | --- | --- |
 | L1 | lane 1's block v4.11, T101 to T123, keyed to Y; it keeps v4.2's line numbers | `625a0b84…` | #165 6754645319 |
 | L5 | lane 5's block v5, T501 to T513, keyed to W `bb08d080` (its `W:` lines stand, as below), with its §3.6 review's section D (keyed to Y) (`e26a91e6…`) and lane 5's #165 6739068493 applied, then lane 5's fold-ready edits (#165 6742056462, edit 22 as #165 6742096448 corrects it); `v5:<n>` is the same block (v5 = L5) | `5d427c42…` | lane 5's review, #165 6738431117 |
-| L2 | lane 2's block F13d, T200 to T279, 769 lines, keyed to Y, with its NOTES §13's Table 1 and Table 2 placements (`NOTES-T2xx.md`, `ee41728c…`) and T204's `test-map.tsv` (`69144ea8…`, 581 rows); its folder checks against `SHA256SUMS-F13d` (`cc2a5d53…`), on F13c's (`dc686ccd…`) | `d918e777…` | #165 6783432592, 6797819623 |
+| L2 | lane 2's block F13d, T200 to T279, 769 lines, keyed to Y, with its NOTES §13's Table 1 and Table 2 placements (`NOTES-T2xx.md`, `ee41728c…`) and T204's `test-map.tsv` (`69144ea8…`, 581 rows); its folder checks against `SHA256SUMS-F13d` (`cc2a5d53…`), on F13c's (`dc686ccd…`); with lane 3's round B15 rulings and, since round B16, TX13's edits, it is 772 lines here, and the map, `870050a6…` with 582 rows at B16 and B17, is `78aa1e1e…` with 584 since the follow-up spec PR's rows for T211n's and T273d's names | `d918e777…` | #165 6783432592, 6797819623; TX13, #165 6812272109 |
 | L4 | lane 4's block, revision w11, T401 to T434, keyed to Y, with its group B plan (`801274de…`) and its changes since `b95a1ff9` (`ad9a3857…`) | `a7c58603…` | #165 6742584818; its independent check, RV11, says READY |
 | SK | lane 3's task skeleton, keyed to W, re-keyed here | `43b01027…` | — |
 | M | lane 3's rulings memo, R01 to R61 | `b2184b1a…` | #165 6726556972 |
@@ -1751,8 +1751,8 @@ of its `edits-F9b.json`; round B12a, 2026-11-10, at F12b, by the 26 edits of
 round B15, 2026-11-11, at F13d, by the 30 edits of `edits-F13c.json` (#165
 6783432592) and then the 16 of `edits-F13d.json` (#165 6797819623), with
 lane 3's rulings on the lines above: its batches 11 and 12, its batches c and e, its
-L2-6 to L2-8, and lane 2's #165 6808069863). T204's `test-map.tsv` is F13d's
-`test-map-T2xx.tsv`, at `specs/007-sql-register/test-map.tsv`.
+L2-6 to L2-8, and lane 2's #165 6808069863; round B16, 2026-11-12, by TX13's 9 edits, #165 6812272109, which make it 772 lines here). T204's `test-map.tsv` is F13d's
+`test-map-T2xx.tsv` with TX13-7 and TX13-P6 (`870050a6…`, 582 rows, at B16 and B17), and since the follow-up spec PR with the rows for T211n's and T273d's names (`78aa1e1e…`, 584 rows), at `specs/007-sql-register/test-map.tsv`.
 Its NOTES §13 places it: Table 1
 gives each slot item's tasks, below, and Table 2 each lane 2 marker's, which
 the tasks above now name as "lane 2's T2xx: <the marker's words>". Lane 2's
@@ -1826,7 +1826,7 @@ Keyed to Y `a6497d00`, on X `97147aa8`, on J3 `9e3fec36`, which is W `bb08d080` 
 - `[O]`: every task that touches `.github/workflows/tests.yml` or `tests/fixtures/`; the fixture; the switch; every test that pins a contract (the schema, the exit table, the bounds, the hook, the bind record, `LANES_ACT`'s grammar, the operator commands); and the roles, the logins and the secret's reach.
 - `[S]`: the rest.
 
-**Names**: each name of the test plan's is used byte for byte, but one: 512 names in 27 modules, the 26 new `test_sql_register_*.py` modules and the existing `test_tests_workflow.py`. Of the 512, TP:2222's case is renamed by lane 3's ruling (R-L4Q1, #165 6746035594 item 1), from `test_the_read_mirror_variable_lowers_only_window_lane_and_swapped_to_a_mirror_read` (T275). 57 names and some parametrize ids are new since v3f, placed at other lanes' asks and named in the plan's style; `test-map-T2xx.tsv` marks each, with its source.
+**Names**: each name of the test plan's is used byte for byte, but one: 512 names in 27 modules, the 26 new `test_sql_register_*.py` modules and the existing `test_tests_workflow.py`. Of the 512, TP:2222's case is renamed by lane 3's ruling (R-L4Q1, #165 6746035594 item 1), from `test_the_read_mirror_variable_lowers_only_window_lane_and_swapped_to_a_mirror_read` (T275). 72 names and some parametrize ids are new since v3f, placed at other lanes' asks and named in the plan's style; `test-map-T2xx.tsv` marks each, with its source.
 
 - No name or parametrize id holds `guard_launch_mode` or `repo_hygiene`.
 - One name of the plan's holds `test_lanes_index`: `test_lanes_index_accepts_the_register_label_key` (T218). So a regression run's `-k` names the module file, `test_lanes_index.py`, which pytest's `-k` accepts and which selects only that module (lane 1's ask; NOTES).
