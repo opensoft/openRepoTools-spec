@@ -58,3 +58,20 @@ access, paid upgrade, release/tag or installed-session change is authorized.
 - FR-013: this delivery opens source/governance PRs only. No merge, fast-only CI,
   authoritative classifier, queue command, live canary, ruleset/app/release change,
   assembly pin bump or lane/session modification is authorized.
+
+## Accepted trusted shadow-classifier prerequisite — 2026-11-11
+
+- FR-014: add only an independent trusted-main observer with read-only contents/PR
+  access. Missing policy reports full fallback; no PR-owned policy execution with
+  its API token. Source tests run separately and offline without that token.
+- FR-015: validate live main/PR/branch identities and local immutable Git diffs for
+  the fixed modified regular-file claude-current/test pair. Intent is observational,
+  never a review/admission receipt. Recheck main and source identities; uncertainty
+  retains full CI. Unsupported dependent topology remains full.
+- FR-016: observe already-merged edited metadata only with same-head/live merge,
+  parent/ancestry and landed-scope proof. Candidate and main-push observations
+  remain explicitly unproved pending the later heavy/candidate identity stage.
+- FR-017: all results are shadow/full/no-skip/no-admission. Preserve original pilot,
+  all existing full/reusable/verify/release workflows, job baseline and queues.
+  Open source/spec PRs only; no merge, canary, ruleset/app change, assembly pins,
+  installed tooling or lane/session mutation.

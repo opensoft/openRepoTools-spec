@@ -104,3 +104,24 @@ mode, queue trigger, admission or release eligibility SHALL be introduced.
 - **WHEN** the reusable call does not succeed in its entirety
 - **THEN** its qualification aggregate fails; ordinary full CI still runs and
   no manually posted success status substitutes for it
+
+### Requirement: Trusted shadow observations grant no authority
+The preparation SHALL add a separate trusted-main read-only observer without
+changing ordinary full CI, queues, release checks or feature 008's pilot.
+Every result SHALL require full CI, deny skips and deny queue admission. Policy
+absence and uncertainty SHALL report full fallback, not run head-owned policy.
+
+#### Scenario: A current independent scoped PR or source push
+- **WHEN** live API identities, declared intent, current policy/main and regular
+  allowlisted Git content agree
+- **THEN** the observer may report claude-current scope without changing any gate
+
+#### Scenario: Delayed edited metadata after a merge
+- **WHEN** a live merged PR has the same source head and an exact merge/ancestry
+  and scoped landed-diff proof despite stale event base or test-merge metadata
+- **THEN** the observer may report merged scoped metadata but still requires full CI
+
+#### Scenario: Missing evidence or unsupported topology
+- **WHEN** identities move, reads fail, scope is mixed, a PR is closed/dequeued
+  without the narrow metadata proof, or candidate/landing integration is unproved
+- **THEN** the result stays full and grants no exemption based on actor or prefix

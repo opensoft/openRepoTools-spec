@@ -47,3 +47,15 @@ stage is approved by checking these tasks. Paths below are code-relative.
 
 Publication, current-head cloud review/full CI/reuse qualification and subsequent
 merge/assembly landing are separate evidence, not implied by local task completion.
+
+## Trusted shadow-classifier preparation — 2026-11-11
+
+Task set SHADOW-CLASSIFIER-06 (T012–T014) is one code PR with a paired spec
+reconciliation under issue #26. All implementation paths below are code-relative.
+
+- [x] T012 [O] Add bounded trusted-main read-only event observations with full fallback — files: `.github/ci/shadow_scope.py`, `.github/workflows/ci-shadow.yml` — verify: `bash tests/run.sh -k ci_shadow`
+- [x] T013 [O] Prove scope, identity, metadata, workflow trust and unchanged full-CI boundaries — files: `tests/test_ci_shadow.py` — verify: `bash tests/run.sh -k 'ci_shadow or ci_pilot or full_ci_coverage_parity or tests_workflow or ci_shards'`
+- [x] T014 [S] Record observational-only authority and later qualification boundaries — files: `.github/ci/shadow-classifier.md`, `.github/ci/task-set-delivery.md`, `features/009-manual-two-pr-queue/openspec/shadow-classifier.md` — verify: `bash tests/run.sh -k ci_shadow`
+
+Source task completion does not imply hosted positive-scope observation, candidate
+acceptance, review, merge, assembly delivery or CI-efficiency activation.
