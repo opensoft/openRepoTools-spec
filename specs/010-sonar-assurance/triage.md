@@ -127,3 +127,19 @@ checks plus the existing installer-pin contract passed (3 cases).
 All six false-positive dispositions were applied in Sonar with per-issue
 source-flow comments and the immutable triage record link. The six confirmed
 findings remain open until their source-owner repairs are consumed and analyzed.
+
+## Source-owner landing and consumer selection
+
+The provider repair merged normally in PR 1330 at
+4bf963f0ca416b142652bb608cafe5c76d893faa, with full Linux/Windows/package/Sonar
+checks passing. The consumer repair merged normally in PR 51 at
+b227d53c42449eeafbd4a57979cfbd541f74fbd5 after every ordinary/reusable full-CI
+check passed on c72c619510d88ae8eb6dcb0e220ce3c299708819. Its provider gitlink
+and contract select that merged provider commit with the digest recomputed by
+the provider's own helper. The expanded source-flow tests passed 414 cases and
+the current YAML oracle set passed 625 with zero skips.
+
+These source repairs are not an invented Sonar closure: the root project's six
+confirmed findings still require readback after the assembled main analysis.
+The existing issue identities, original source commits and earlier evidence
+remain intact. No real finding has been marked false-positive or accepted.

@@ -8,10 +8,10 @@
 - [x] T003 [O] Implement complete analysis inventory and fail-closed configuration verification — files: `.github/ci/sonar_assurance.py`, `tests/test_sonar_assurance.py` — verify: `tests/run.sh -k sonar_assurance`
 - [x] T004 [O] Implement provenance-checked Python/shell coverage collection and conversion — files: `.github/ci/sonar_coverage.py`, `.github/ci/sonar_coverage/`, `tests/test_sonar_coverage.py` — verify: `tests/run.sh -k sonar_coverage`
 - [x] T005 [O] Repair substantiated findings without reducing any existing CI jobs, tests or package checks — files: `.github/workflows/tests.yml`, `.github/ci/full-ci-baseline.json`, `tests/` — verify: `tests/run.sh -k 'full_ci or workflow or sonar'`
-- [ ] T006 [O] Publish reviewed code and any needed upstream fixes; reconcile exact dispositions and coverage evidence — files: `specs/010-sonar-assurance/triage.md`, `specs/010-sonar-assurance/evidence.md` — verify: `git diff --check`
+- [x] T006 [O] Publish reviewed code and any needed upstream fixes; reconcile exact dispositions and coverage evidence — files: `specs/010-sonar-assurance/triage.md`, `specs/010-sonar-assurance/evidence.md` — verify: `git diff --check`
 
 ## Set S03 — Assembly acceptance (root PR after S01/S02)
-- [ ] T007 [O] Add the complete composed analysis workflow/configuration and bump published leg pins with the standard tooling — files: `.github/workflows/composed.yml`, `code`, `spec`, `contracts/code-pin.yaml`, `contracts/spec-pin.yaml` — verify: `make validate`
+- [x] T007 [O] Add the complete composed analysis workflow/configuration and bump published leg pins with the standard tooling — files: `.github/workflows/composed.yml`, `code`, `spec`, `contracts/code-pin.yaml`, `contracts/spec-pin.yaml` — verify: `make validate`
 - [x] T008 [O] Switch Sonar analysis wiring and baseline only after the replacement is reviewable; read back unchanged gate thresholds — files: `specs/010-sonar-assurance/evidence.md` — verify: `python3 code/.github/ci/sonar_assurance.py verify-analysis`
 - [ ] T009 [O] Complete full CI, measured coverage, exact-head/main gate verification, preservation and normal project landing — files: `specs/010-sonar-assurance/evidence.md`, `specs/010-sonar-assurance/tasks.md` — verify: `make validate`
 

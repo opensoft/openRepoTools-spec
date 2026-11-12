@@ -139,3 +139,45 @@ union rather than summed or invented credit. All 45 focused checks pass under
 the actual Python 3.15 runtime. A parsed workflow comparison confirmed that both
 complete suite steps, all preparation steps and event scope were retained,
 and the required aggregator explicitly requires all three successful results.
+
+## Landed source and final consumer qualification
+
+Provider PR 1330 merged normally as
+4bf963f0ca416b142652bb608cafe5c76d893faa after full Linux (22,431 passed,
+409 conditional skips), Windows (343 passed, 821 conditional skips), package
+and Sonar checks passed at b4f4b5f4ca37ad5f547d0c3eb188808f8fef9ed6.
+No administrator bypass was used. The separate 414 source-flow and 625 YAML
+oracle checks also passed; the latter had zero skips.
+
+Consumer PR 51 merged normally as b227d53c42449eeafbd4a57979cfbd541f74fbd5
+after every reported hosted check passed on
+c72c619510d88ae8eb6dcb0e220ce3c299708819, including ordinary tests
+(run 43311455184), reusable full-CI qualification (run 43311455341), package,
+guard, parity, shadow and Sonar checks. The merged tree matches that tested head.
+The provider pin and gitlink moved together to the merged main commit; its
+own tree_digest recomputed
+7bd4a3a37066f8884dbe657b8ca71f2ec83e560f4624d6248df92ecc3a1f5673.
+The final consumer additionally passed 493 local pin, collector, park/resume
+and status checks with zero skips on Python 3.15.2.
+
+The final consumer Sonar analysis explicitly names c72c619510d88ae8eb6dcb0e220ce3c299708819,
+reports zero unresolved findings, and passes its PR gate. This is not the root
+project's full main gate/coverage receipt. That final assembled acceptance is
+still required by root PR 361 and its push-to-main workflow.
+
+Codex review was explicitly requested after meaningful updates and readiness.
+The service reported exhausted review quota rather than completing an actual
+review; no quota response is treated as approval. Sourcery likewise reported an
+exhausted review budget. Current review-thread readbacks contained no unresolved
+correctness/security findings; normal repository checks and merge rules remained
+in force.
+
+The final consumer's complete ordinary collection accounted for all 4,911
+items exactly once: 4,742 passed, 169 skipped, zero failures/errors. Its
+no-submodule control likewise accounted for all 4,911 items (3,434 passed,
+1,477 expected skips). The built-wheel package suite passed all 285 tests
+without skips. A comparison of the final ordinary JUnit skip messages against
+the previous green head confirmed the same nine explained reasons for every
+one of the 169 skips, with no newly introduced missing-context/dependency skip.
+Root make validate and actionlint also passed with the merged consumer and
+its actual nested provider checkout at 4bf963f0ca416b142652bb608cafe5c76d893faa.
