@@ -102,3 +102,18 @@ through tests/run.sh as UID1000 in an offline disposable 2CPU/2GiB bench image.
 Workflow actionlint, strict OpenSpec and whitespace checks passed. Hosted full
 CI/reuse qualification, exact-head review and any merge remain separate pending
 gates; no live observation or one-heavy-run acceptance is claimed.
+
+## Disabled CI-efficiency cutover preparation — 2026-11-12
+
+CI-CUTOVER-09 is one coupled CI-only code PR with a paired governance PR under
+issue26 and `prepare-claude-current-ci-cutover`. Prepare/open only. Paths are
+code-relative except this reconciliation. Preserve Sonar PR51's baseline work.
+
+- [x] T022 [O] Implement strict disabled activation, effective app-bound protection and trusted scoped source/full routing — files: `.github/ci/delivery-policy.json`, `.github/ci/delivery_route.py` — verify: `bash tests/run.sh -k ci_cutover`
+- [x] T023 [O] Bind immutable admission/qualified artifacts, authentic candidate runs and historical ordered landing proofs — files: `.github/ci/delivery_verify.py`, `.github/ci/delivery_evidence.py` — verify: `bash tests/run.sh -k 'ci_cutover or ci_delivery'`
+- [x] T024 [O] Wire exact full-job guards, final delivery verification, held manual queue and top-level heavy check without enabling omissions — files: `.github/workflows/tests.yml`, `.github/workflows/task-set-candidate*.yml`, `.mergify.yml` — verify: `bash tests/run.sh -k 'ci_cutover or ci_candidate_shadow or full_ci_coverage_parity or tests_workflow or ci_pilot_queue'`
+- [x] T025 [O] Prove complete coverage projection and refusal behavior with real Git/mocked read APIs/artifact bytes and actual shell gates — files: `tests/test_ci_cutover.py`, existing CI contract tests — verify: `bash tests/run.sh -k 'ci_cutover or ci_candidate_shadow or ci_delivery or ci_shadow or ci_pilot or full_ci_coverage_parity or tests_workflow or ci_shards'`
+- [ ] T026 [S] Document future migration, changed source floor, operator-only queue semantics, rollback and separate acceptance gates; open code/spec PRs and request exact-head reviews — files: `.github/ci/task-set-delivery.md`, `.github/ci/delivery-cutover.md`, `features/009-manual-two-pr-queue/openspec/ci-cutover.md`, this feature and OpenSpec change — verify: workflow lint, strict OpenSpec, whitespace and published PR readback
+
+The flag stays false. No settings write, direct fast-source merge, live queue,
+canary, bypass, app/paid access, release/tag, assembly pin or lane change follows.

@@ -156,3 +156,48 @@ image through tests/run.sh; lint workflows and strictly validate OpenSpec.
 Open code/spec PRs and request exact-head Codex review. Source/full hosted CI,
 merge permission, live qualification, check migration and eventual coherent
 assembly adoption remain separate gates; this stage saves no heavy runs yet.
+
+## Disabled CI-efficiency cutover — 2026-11-12
+
+Authority: prepare/open only. Full proposal:
+`openspec/changes/prepare-claude-current-ci-cutover/`; sole tasks T022–T026.
+Baseline code59c26e8/spec8813fa9; code PR51 separately owns Sonar collectors and
+its wheel-only baseline amendment. Preserve that work and require fresh integrated
+qualification before a later source merge. Do not regenerate its baseline here.
+
+Implement strict default-off policy, app-bound effective-protection verification,
+trusted source/candidate/landing routing, immutable artifacts and an independently
+held manual queue. Keep ordinary full CI in force. The original thirteen jobs
+remain hashed after only exact needs/if projection; freeze the added controls.
+Reusable callers grant only the same four read permissions and force full based
+on authenticated caller identity. No selector or write/status grant is exposed.
+
+Research and decisions: `cutover-research.md`; record boundaries:
+`cutover-data-model.md`; preparation/operator checks: `cutover-quickstart.md`.
+Use real temporary Git, mocked read APIs/artifact bytes and actual shell guards.
+Run the complete focused CI regression set offline as UID1000 in a disposable
+existing bench image with 2CPU/2GiB, plus workflow lint, strict OpenSpec and
+whitespace checks. Hosted ordinary/reuse CI and exact-head review stay distinct.
+
+Open code/spec PRs and request @codex review. Do not merge, enable, apply settings,
+enqueue, run a live canary, touch app/paid access/releases/tags, bump assembly pins
+or refresh lanes. Document the future changed source floor: the delivery gate is
+honest fast verification, and the named manual queue holds heavy. Direct fast
+source merging is prohibited by operator instructions, not magically prevented
+by the changed GitHub floor. Any machine-enforced queue-only control needs
+separate approval. No archive/full-rollout completion claim on preparation.
+
+Local preparation evidence: initial router test run failed with fourteen missing
+module errors before implementation. Final focused source/CI regressions passed
+741 cases, zero skips (4,289 unrelated cases deselected), as UID1000/offline in
+the disposable 2CPU/2GiB existing bench image through tests/run.sh. This includes
+real Git source/candidate/landing prefix fixtures, mocked read APIs/ZIP bytes,
+actual shell gates and coverage/control mutation tests. Actionlint, strict
+OpenSpec and whitespace checks passed. The baseline JSON, shard planner/weights,
+canonical test runner and release workflow remain unchanged. Shared py-bench and
+cloud-bench assembly readbacks remain4b3c3f3. No live canary/efficiency acceptance,
+hosted exact-head qualification or merge is implied by these local results.
+
+Prepared code commit9771e61bcd92509990f030c22c7c26121cd07e4c is published in
+[code PR52](https://github.com/opensoft/openRepoTools-code/pull/52). It remains
+unmerged and disabled; latest-head hosted qualification/review are separate.
