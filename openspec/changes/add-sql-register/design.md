@@ -5111,7 +5111,7 @@ It is a child process, not the frame's subshell (`design.md:568`, `:1705`), beca
 | Site | Caller | What changes at the site |
 |---|---|---|
 | `:6161` | `write_event`, for `log` `:16465`, `claim` `:16649`/`:16651` (CLAIM-LOST `:16676`/`:16679`/`:16682`), `release` `:16742`, `request-handoff` `:17203`/`:17232` | None. The tail at `:6162–6180` runs once, after COMMIT. |
-| `:12155` | `migrate_state_cells` | None at the site. Under the flag, the times the verb composes are whole seconds, a minute-only time getting `:00` (D13; the `log_lines` CHECK); files mode is byte-identical. |
+| `:12155` | `migrate_state_cells` | None at the site. Under the flag, the times the verb composes are whole seconds, a minute-only time getting `:00` (D13; the `log_lines` CHECK on primary's `utc`); files mode is byte-identical. |
 | `:12941` | `retire_rows` | None; the follow loop (`:12947–12952`) runs after COMMIT |
 | `:13151` | `archive_rows` | None |
 | `:15233` | `set-row-state` | None; a no-op stamp (`REPLACE_LINE_NOOP`, `:15223`) stages nothing, so no commit call |
