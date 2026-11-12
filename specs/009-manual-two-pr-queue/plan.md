@@ -137,3 +137,22 @@ Repair local evidence: code a644168af6c39dda17016aaaf8fda40244419833,
 py-bench image. Actionlint and committed-range whitespace checks passed. The
 source test fixtures now have 66 delivery vectors; no existing workflow or gate
 was changed. Hosted CI and latest-head local review are still distinct gates.
+
+## Non-gating candidate caller proposal — 2026-11-12
+
+Authority: prepare/open only, retaining full CI and no live canary or merge.
+Baselines: code aa93f99fd965269f07254e16cb8960642394dd53 and spec
+bc24929427a1551a3ed17f625fefb0234aa56ac5. Reuse our clean isolated paired
+worktrees on new branches; keep the shared assembly at 4b3c3f3 and do not select
+a new active plan or touch lanes 1–5. Extend the existing capability/amendment
+and sole task list; no new acceptance or review authority is introduced.
+
+Implement only a queue-push shadow caller with a trusted-main positive probe
+and the unchanged reusable candidate entry. Keep full CI and Mergify control
+files byte-identical. Test the probe shell, graph, permissions, missing/failed
+and unknown fallbacks, plus existing proof/parity/shard/queue regressions. Run
+unprivileged offline QA in an isolated 2CPU/2GiB instance of the existing bench
+image through tests/run.sh; lint workflows and strictly validate OpenSpec.
+Open code/spec PRs and request exact-head Codex review. Source/full hosted CI,
+merge permission, live qualification, check migration and eventual coherent
+assembly adoption remain separate gates; this stage saves no heavy runs yet.
