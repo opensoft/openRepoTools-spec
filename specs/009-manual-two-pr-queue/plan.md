@@ -116,3 +116,24 @@ whitespace checks passed. Original full/reuse/shadow/pilot/release workflows,
 coverage baseline and Mergify configuration are unchanged. Hosted full CI/reuse
 qualification, exact-head Codex, normal source merges and coherent assembly
 adoption remain separate gates; this record is not live canary acceptance.
+
+## Local review repair — 2026-11-12
+
+The user selected local skill review instead of waiting for connector quota.
+Nine roles plus master reproduced four failing rejection cases at code29685ef:
+dependent heads, alternate-base fast receipt, new run attempt and new thread.
+Reopen T015/T017 and retain the same source/spec PR pair. Reject overlapping
+non-main commit histories with Git merge-base; require a unique current run/PR
+association plus complete typed base-change events, all strictly earlier than
+immutable run.created_at. This avoids trusting mutable run.pull_requests snapshots
+as historical execution context. Repeat fast/check/run/review/thread evidence
+and compare stable snapshots before final qualification. Add all red reproducers
+and positive fresh-after-retarget coverage to the offline suite. Preserve every
+existing workflow, queue, required check, lane, app and release boundary.
+
+Repair local evidence: code a644168af6c39dda17016aaaf8fda40244419833,
+561 committed focused tests and the four originally red review reproducers passed
+(565 total/no skips) through tests/run.sh in an offline disposable 2CPU/2GiB
+py-bench image. Actionlint and committed-range whitespace checks passed. The
+source test fixtures now have 66 delivery vectors; no existing workflow or gate
+was changed. Hosted CI and latest-head local review are still distinct gates.

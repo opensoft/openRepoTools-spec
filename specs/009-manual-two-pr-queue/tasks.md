@@ -73,3 +73,11 @@ Implementation paths below are code-relative.
 
 Local completion is source preparation, not hosted review/full-CI qualification,
 candidate acceptance, assembly adoption or queue/ruleset activation.
+
+Reopened T015/T017 after local nine-role review reproduced dependent ancestry,
+alternate-base fast evidence and mutable fast/review evidence drift. Repair and
+regression qualification stay in this same bounded task set and PR pair.
+
+Repair locally qualified at a644168: 561 committed focused regression cases plus
+four review reproductions passed (565 total, no skips), with workflow lint.
+Current-head hosted CI and local re-review remain separate landing gates.

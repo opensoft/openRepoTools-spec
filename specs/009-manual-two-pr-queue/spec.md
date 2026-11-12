@@ -92,3 +92,12 @@ access, paid upgrade, release/tag or installed-session change is authorized.
   and queues remain unchanged. No live canary/queue, ruleset/app/release change,
   source success-status writer, dependent-stack/wider-scope activation or lane
   modification follows from this additive preparation.
+
+FR-019 clarification after local review: establish member independence from
+Git history, not absence of dependency text. Bind a fast run to its unique source
+PR and current main base with complete base-change history: its immutable creation
+time must be strictly after every retarget event. Current run PR associations alone
+are mutable and insufficient. Reopening after a retarget may produce fresh fast
+evidence; rerunning a historical run does not change its original creation time.
+Recheck successful fast run/job/check, base history, Codex and threads at the final
+source consistency boundary and refuse evidence drift, not just head/ref drift.

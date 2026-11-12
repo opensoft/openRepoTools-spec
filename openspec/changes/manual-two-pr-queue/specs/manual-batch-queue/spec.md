@@ -147,3 +147,9 @@ SHALL be introduced by this preparation.
 #### Scenario: Preparation is merged but no activation is approved
 - **WHEN** these source files land without a separately approved queue/ruleset change
 - **THEN** ordinary full CI remains required and no live batch or canary starts
+
+#### Scenario: Hidden dependency or evidence changed while verification runs
+- **WHEN** source heads share non-main history, a fast run predates a base retarget,
+  run/base-history reads are incomplete, or fast/review/thread evidence changes
+- **THEN** qualification refuses without trusting missing dependency text or a
+  mutable current run-to-PR association as historical execution proof

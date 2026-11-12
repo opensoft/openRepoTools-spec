@@ -154,3 +154,12 @@ aggregate requires verifier and the complete call to succeed, then repeats the
 trusted live verifier so source/ref/main changes during integration cannot qualify;
 failure, cancellation or skip cannot qualify. No existing queue/ruleset consumes the new check. Offline
 fault-injection/Git fixtures qualify preparation; no live candidate is created.
+
+Local-review repair keeps this scope: independent heads have no shared commits
+beyond current main, established from Git rather than optional dependency text.
+Fast evidence has one current source PR/main association and a complete bounded
+base-ref-change history. Immutable run creation must be strictly later than every
+retarget event; current associations alone are mutable and cannot prove the past
+base. A fresh reopened run may qualify after retargeting; a rerun retains its old
+creation identity. Read and compare mutable successful fast/check/run, base-history,
+Codex and thread evidence at the final source boundary. Any drift fails closed.
