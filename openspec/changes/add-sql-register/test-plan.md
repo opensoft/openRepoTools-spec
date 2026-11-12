@@ -688,6 +688,10 @@ rename.
     so that its last structured row breaks a CHECK, as §1.3 proposes. For
     each multi-file write, the line edits and the earlier rows of the entry
     have changed inside the transaction when the CHECK fails with 23514.
+    First, as its control, the same write runs with no arm, on an estate
+    and a database of its own, and must exit 0: a write that fails on
+    primary by itself would pass this case with its own 23514, so the case
+    fails at the control instead, and says so.
 - **Oracle.**
   - **The exit and stderr.** The writer exits 69. Stderr names the store,
     without credentials, and the error (P213–214). A read verb prints nothing
