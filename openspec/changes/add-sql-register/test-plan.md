@@ -1518,6 +1518,13 @@ rename.
   - `test_the_first_write_after_cutover_is_the_cutovers_seq_plus_1_with_lag_0`;
   - `test_the_cutover_aborts_when_main_moved_under_lanes`;
   - `test_a_handoff_commit_on_the_tip_does_not_abort_the_cutover`;
+  - `test_a_first_cutover_over_a_hold_with_no_readable_time_is_refused_2_and_sets_nothing`
+    (new since v3f, T211n): over the fixture's `HOLD` with no readable time,
+    left open, the first-form cutover exits 2 before its step 1, lists the
+    take with "time unreadable", and sets nothing (`contracts/exit-codes.md`'s
+    `cutover` 2; lane 3, #165 6813195977). Every other cutover case on the
+    fixture register first has the take's holder, the operator lane, write
+    its `HOLD RELEASED`, as act 4's holders do (§2.2);
   - `test_main_slots_pairing_equals_files_mode_rule_6_on_imported_history`:
     on the imported fixture register, whose `HOLD`, `LANDING` and `LANDED`
     lines name one repository under two spellings and close takes out of
@@ -5563,8 +5570,8 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     completes: `record_marker` sets it `present`, and seq 1 stays.
   - Unconfirmed: `cutover` exits 3 and changes nothing more; the switch
     stays `primary` with the marker `adding`, and every write fails with
-    LR002. Its rerun reads origin back first, and completes or aborts as the
-    two cases above. The same for the rollback's removal push: `rollback`
+    LR002. Its rerun reads origin back first: a marker found there completes
+    the cutover, as in "Pushed, reported failed"; a marker proven absent has the rerun push again, as a rerun that finds its own entry goes on to the cutover's step 2, and step 2's own ends follow, its abort among them (`operations.md` §2.2, act 4's step 7; lane 3, #165 6770600106, T116's point 1). The same for the rollback's removal push: `rollback`
     exits 3, the marker stays `removing`, and its rerun reads origin back,
     then records the marker `absent` or pushes the removal again (§2.3,
     step 4). A files-mode write that lands on origin after the 3, once the
