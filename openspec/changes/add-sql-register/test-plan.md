@@ -6286,12 +6286,17 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     meets the ordinary table;
   - **(d) Another session wanting the same lane, in files mode.** Two
     sessions answer `2` for one lane on the files-mode fixture, the bare
-    origin (case 8 is the primary half). The bind that reaches `lane-start`'s
-    re-read of `binding` at `:2614` second is refused there, the other record
-    ends `bound`, and there is one `RESUMED` line and one stamp for the lane.
-    Lane 4's table names the re-read but gives no exit code for it, so the
-    test asserts a refusal and the absence of a second line and records the
-    code it sees.
+    origin (case 8 is the primary half). Two binds that both read the lane
+    free both land, as files mode does: each reads `binding` once, and the
+    two, answered back to back, read it before either writes. `lane-start`
+    reads `binding` again only after a handoff wait or a Claude resolution
+    (`:2611` at `2a057a6d`, set at `:2509–2510` and `:2606`), and neither
+    runs in the bind: with `LANE_START_HANDOFF_ANSWER` unset, a binding
+    elsewhere is a refusal, not a wait, and the resolution never runs under
+    `--no-launch` (`:689`). So the race is one read wide, and the lane's
+    reservation is #84's (`:2582–2588`). Both records end `bound`, and the
+    lane's log holds two `RESUMED` lines, one for each bind; the test
+    asserts both and records each record's code and notes.
 - **The record's code,** under lane 4's corrected table (comment
   6709560550). The child runs the real `lane-start --no-launch --bind`
   through AT-11's stamp shim, for a resume and for a new lane that the offer
@@ -6372,7 +6377,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - `test_a_binding_from_another_host_or_container_is_not_judged_by_its_pid_until_the_deadline_plus_60_s[host|container]`;
   - `test_an_unreadable_bind_record_is_dropped_with_exit_2`;
   - `test_two_sessions_binding_one_lane_one_start_record_commits`;
-  - `test_two_sessions_binding_one_lane_in_files_mode_the_second_is_refused_at_the_reread`;
+  - `test_two_sessions_binding_one_lane_in_files_mode_both_binds_land`;
   - `test_the_bind_is_one_register_write_and_refuses_a_changed_row`;
   - `test_a_bind_in_doubt_looks_its_write_up_before_a_rerun[found|absent]`;
   - `test_the_bind_child_records_bind_failed_with_the_code_and_binds_nothing[<kind>-<code>]`,
