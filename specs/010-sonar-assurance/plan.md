@@ -6,6 +6,8 @@ Implement governance from ../../openspec/changes/repair-sonar-assurance/. The ro
 
 Inventory tracked files at exact Git commits. Classify executable shebangs and language suffixes, with explicit tests and exclusions that never hide product/upstream source. Generate deterministic scanner properties and a coverage/source receipt. Run full composed tests in isolated CI processes, reusing the existing shard collection verifier where parallelism is needed. Python subprocess and shell tracing collectors produce actual coverage. Normalize temporary copies only against committed-byte hashes and validate line bounds.
 
+The composed-tests job retains all existing composed tests and adds the provider complete suite. It uploads measured reports and the source-copy probe under an immutable artifact ID. The sonar job checks out the same github.sha, downloads that ID, rechecks the full commit/source inventory and coverage structure, then regenerates machine-local report paths. The existing required exact-pins context requires both jobs to succeed. A failed scanner retry never selects a branch-latest, different-commit or partial-test artifact.
+
 Publish complete coverage and scan artifacts; fail on incomplete collection, tests, report provenance or NONE/ERROR. Use the existing Sonar token and exact SonarSource scanner revision. The main migration preserves Sonar way and selects the earliest retained analysis, with before/after settings receipts.
 
 Review each original security flow before deciding its disposition. Pipeline-only wheel hardening preserves the full CI job graph, event set, package checks and parity contract. Any upstream change lands in openRepoShape before a normal consumer pin advance.
