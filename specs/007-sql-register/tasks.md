@@ -26,7 +26,7 @@ them (#165 6751920725).
 | --- | --- | --- | --- |
 | L1 | lane 1's block v4.11, T101 to T123, keyed to Y; it keeps v4.2's line numbers | `625a0b84…` | #165 6754645319 |
 | L5 | lane 5's block v5, T501 to T513, keyed to W `bb08d080` (its `W:` lines stand, as below), with its §3.6 review's section D (keyed to Y) (`e26a91e6…`) and lane 5's #165 6739068493 applied, then lane 5's fold-ready edits (#165 6742056462, edit 22 as #165 6742096448 corrects it); `v5:<n>` is the same block (v5 = L5) | `5d427c42…` | lane 5's review, #165 6738431117 |
-| L2 | lane 2's block F13d, T200 to T279, 769 lines, keyed to Y, with its NOTES §13's Table 1 and Table 2 placements (`NOTES-T2xx.md`, `ee41728c…`) and T204's `test-map.tsv` (`69144ea8…`, 581 rows); its folder checks against `SHA256SUMS-F13d` (`cc2a5d53…`), on F13c's (`dc686ccd…`); with lane 3's round B15 rulings and, since round B16, TX13's edits, it is 772 lines here, and the map, `870050a6…` with 582 rows at B16 and B17, is `78aa1e1e…` with 584 since the follow-up spec PR's rows for T211n's and T273d's names | `d918e777…` | #165 6783432592, 6797819623; TX13, #165 6812272109 |
+| L2 | lane 2's block F13d, T200 to T279, 769 lines, keyed to Y, with its NOTES §13's Table 1 and Table 2 placements (`NOTES-T2xx.md`, `ee41728c…`) and T204's `test-map.tsv` (`69144ea8…`, 581 rows); its folder checks against `SHA256SUMS-F13d` (`cc2a5d53…`), on F13c's (`dc686ccd…`); with lane 3's round B15 rulings and, since round B16, TX13's edits, it is 772 lines here, and the map, `870050a6…` with 582 rows at B16 and B17, is `78af1b1d…` with 584 since the follow-up spec PR's rows for T211n's and T273d's names | `d918e777…` | #165 6783432592, 6797819623; TX13, #165 6812272109 |
 | L4 | lane 4's block, revision w11, T401 to T434, keyed to Y, with its group B plan (`801274de…`) and its changes since `b95a1ff9` (`ad9a3857…`) | `a7c58603…` | #165 6742584818; its independent check, RV11, says READY |
 | SK | lane 3's task skeleton, keyed to W, re-keyed here | `43b01027…` | — |
 | M | lane 3's rulings memo, R01 to R61 | `b2184b1a…` | #165 6726556972 |
@@ -1752,7 +1752,7 @@ round B15, 2026-11-11, at F13d, by the 30 edits of `edits-F13c.json` (#165
 6783432592) and then the 16 of `edits-F13d.json` (#165 6797819623), with
 lane 3's rulings on the lines above: its batches 11 and 12, its batches c and e, its
 L2-6 to L2-8, and lane 2's #165 6808069863; round B16, 2026-11-12, by TX13's 9 edits, #165 6812272109, which make it 772 lines here). T204's `test-map.tsv` is F13d's
-`test-map-T2xx.tsv` with TX13-7 and TX13-P6 (`870050a6…`, 582 rows, at B16 and B17), and since the follow-up spec PR with the rows for T211n's and T273d's names (`78aa1e1e…`, 584 rows), at `specs/007-sql-register/test-map.tsv`.
+`test-map-T2xx.tsv` with TX13-7 and TX13-P6 (`870050a6…`, 582 rows, at B16 and B17), and since the follow-up spec PR with the rows for T211n's and T273d's names (`78af1b1d…`, 584 rows), at `specs/007-sql-register/test-map.tsv`.
 Its NOTES §13 places it: Table 1
 gives each slot item's tasks, below, and Table 2 each lane 2 marker's, which
 the tasks above now name as "lane 2's T2xx: <the marker's words>". Lane 2's
