@@ -37,3 +37,7 @@ grew from. The commands, their tests and their CI are in
 `openspec validate <change> --strict` runs from this leg's root.
 
 Licence: Apache-2.0. See [LICENSE](LICENSE).
+
+## Sonar assurance repair
+
+[Proposal](openspec/changes/repair-sonar-assurance/proposal.md), [design](openspec/changes/repair-sonar-assurance/design.md), [requirements](openspec/changes/repair-sonar-assurance/specs/sonar-assurance/spec.md), and [feature 010](specs/010-sonar-assurance/spec.md) govern the complete analysis/coverage repair. See the [plan](specs/010-sonar-assurance/plan.md) and [single task checklist](specs/010-sonar-assurance/tasks.md).
