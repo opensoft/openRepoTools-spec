@@ -6475,8 +6475,8 @@ exactly (Q21(b), D23), which nobody has checked yet and on which his Q21(b)
 answer rests; for the deploy key's push (the phase plan's row 2, under
 Q21(b)), whether every environment has git 2.32 or later, which
 `GIT_CONFIG_GLOBAL` needs, and whether `ready` can prove the key's write
-right (`git push --dry-run` over SSH); whether Eagle and Raven install by pipx
-or `./setup.sh` (Q24). Whether v1.2.0 carries #165 alone is answered: it carries
+right (`git push --dry-run` over SSH). Whether Eagle and Raven install by pipx
+or `./setup.sh` (Q24) is answered: `./setup.sh`, option b of lane 3's question, which Brett chose with "1a 2b", typed in lane 3's session at about 04:00Z on 2026-11-12 (lane 3, #165 6814260122). Whether v1.2.0 carries #165 alone is answered: it carries
 #165 and T017's five fixes, on Brett's split of the release (#165 6721648587 and
 6721870837).
 

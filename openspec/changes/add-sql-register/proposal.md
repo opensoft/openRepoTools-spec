@@ -2019,7 +2019,7 @@ org's GitHub plan supports such a ruleset, which nobody has checked yet.
     fixes, #290, #291, #295, #301 and #302, and the other issues milestoned
     v1.2.0 move to v1.2.1: "set 1.2.0 for 165 alone, 1.2.1 for the rest", then
     "let T017 ride in 1.2.0, retitle #343" (#165 6721648587 and 6721870837).
-    Whether Eagle and Raven use pipx or `./setup.sh` stays open.
+    Whether Eagle and Raven use pipx or `./setup.sh` is answered: `./setup.sh`, option b of lane 3's question, which Brett chose with "1a 2b", typed in lane 3's session at about 04:00Z on 2026-11-12 (lane 3, #165 6814260122).
 25. **The landing's mechanics (R3c's questions 1, 2 and 9; for Brett).**
     - (a) The merge method per leg: (i) a merge commit on both legs, as spec #1,
       #3 and #4 and code #1 were merged; (ii) a squash with an explicit body;
