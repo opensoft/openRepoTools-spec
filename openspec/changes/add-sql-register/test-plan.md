@@ -6906,7 +6906,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     - with its parent killed while it waits, the child writes `seam.out`
       as `none`, writes one line to fd 4, "attempt `<k>` of write `<id>`
       stopped waiting at the seam (`<why>`); nothing after the seam ran",
-      and exits 75 without its tail: the fake `gh` is not called;
+      and exits 75 without its tail: the fake `gh` makes no comment call;
     - with its parent stopped by `SIGSTOP`, the same at the cap;
     - `seam.out` is written once, with noclobber: `tail` before the child
       acts on `committed`, `none` before it acts on `abandon`.
