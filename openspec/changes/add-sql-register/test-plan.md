@@ -2202,7 +2202,7 @@ rename.
     - the two reads that name the lane, `window-lane` and `swapped`, are the
       ones `lane-handoff` and the handoff skill run with
       `LANES_READ_MIRROR=1` (`code/lane-handoff:1655`, `:1666`;
-      `code/skills/handoff/SKILL.md:210`, `:218`, which are `:211` and `:219` at line R merge20 `4353eb08`), and with it they answer
+      `code/skills/handoff/SKILL.md:210`, `:218`), and with it they answer
       from the mirror. The same two reads without the variable exit 69 with
       nothing on stdout, and the variable changes no other arm: `who` and
       `canon-lane` with it set still exit 69 (the phase plan's "The readers'

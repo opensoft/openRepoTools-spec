@@ -114,7 +114,7 @@ place, so every line of `operations.md`, `clarifications.md` and
   at the client's check; and RD14d's two (#165 6814602159;
   `RD14d-TEXTS-lane2-for-followups-6e534355.md`, `75dc2c80…`) at :5568,
   AT-F2's rerun after a files-mode write, and :5578, AT-F2's Tests. So
-  `test-plan.md` is `f0b734c3…`, 9,170 lines (`fbb9b46e…` before lane 3's draft at TP:2205, which moves no line), and its lines sit below B17's
+  `test-plan.md` is `fbb9b46e…`, 9,170 lines, and its lines sit below B17's
   numbers: from B17's :2849, two below; from B17's :5569, five below; from
   B17's :5579, seven below; from B17's :6417, eight below. And, in place, in
   the follow-up: design:2771–2772 (Y:2724–2725), T5's line, folded at a space,
@@ -128,12 +128,12 @@ place, so every line of `operations.md`, `clarifications.md` and
   configuration leaves `render_key=` out (lane 3's review of T327, MUST-2);
   ops:247 and :252, act 4's steps 1 and 3, where `cutover`'s open-`HOLD`
   check is for only a run that will make step 1, and a `HOLD` with no
-  readable time counts (lane 3, #165 6813195977); ops:275, where a cutover's
+  readable time counts (lane 3, #165 6813195977); and ops:275, where a cutover's
   rerun after a 3 that proves the marker absent pushes again, and step 2's
   own ends follow (lane 3, #165 6770600106, T116's point 1; T327's review,
-  NIT-1; the follow-up's check, S1); and TP:2205 (Y's :2201), the handoff
-  skill's two naming reads at line R merge20 beside 2a057a6d's (lane 3's
-  draft for lane 2; lane 2, #165 6814402899).
+  NIT-1; the follow-up's check, S1). TP:2205 (Y's :2201) stays as B17 has
+  it: lane 2 withdrew the merge20 point behind lane 3's draft there (lane
+  2, #165 6826474591, CF15-1).
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
