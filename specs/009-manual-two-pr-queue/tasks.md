@@ -133,7 +133,17 @@ acceptance of the defective enabled path.
 - [x] T027 [O] Acquire the validated synthetic PR merge object independently in both trusted controls, without checkout/ref/credential mutation — files: `.github/ci/delivery_route.py`, `.github/ci/delivery_evidence.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k ci_cutover_repair`
 - [x] T028 [O] Include classic branch protection in activation verification, retaining full on malformed/incomplete/raced evidence with existing read access — files: `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k 'ci_cutover or ci_delivery'`
 - [x] T029 [O] Wait only for authenticated pending fast/admission evidence; return definitive full-only cases immediately and preserve strict admission — files: `.github/ci/delivery_verify.py`, `.github/ci/delivery_evidence.py`, `.github/ci/delivery_route.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k 'ci_cutover or ci_delivery'`
-- [ ] T030 [S] Update matching contracts/runbook, repeat complete focused and hosted ordinary/reuse validation and latest-head local panel, publish fixes in existing PR52/33 without merging — files: this feature, OpenSpec change, `.github/ci/delivery-cutover.md`, PR receipts — verify: focused CI regressions, strict OpenSpec, actionlint, whitespace, exact-head CI/review and OPEN readbacks
+- [x] T030 [S] Update matching contracts/runbook, repeat complete focused and hosted ordinary/reuse validation and latest-head local panel, publish fixes in existing PR52/33 without merging — files: this feature, OpenSpec change, `.github/ci/delivery-cutover.md`, PR receipts — verify: focused CI regressions, strict OpenSpec, actionlint, whitespace, exact-head CI/review and OPEN readbacks
+
+Repair acceptance at code2c6eed1: 791 focused passed/no skips; fresh ordinary
+run43309287917 passed all15 jobs and reusable43309287854 passed all17 jobs.
+Both normal variants: 5,080 items reported once,4,911 passed/169 skipped.
+Both deliberate no-submodule variants: 5,080 once,3,562 passed/1,518 skipped.
+All43 new repair cases passed in every variant; no old case removed or skip
+identity changed from qualified d4b3ae1. The local master, nine standard expert
+roles and CI specialist found no remaining actionable issue. GitHub connector
+review requests remained quota-blocked, not approved. PR52/33 remain open and
+disabled; this completes the approved repair, not merge or live acceptance.
 
 No archive, activation/canary/settings/app/release/tag, assembly pin, installed
 tool or running-lane changes are authorized by these repairs.

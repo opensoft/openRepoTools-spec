@@ -8,6 +8,11 @@ canonical SHA256 proof digest. Outputs contain fixed vocabulary and validated
 hex only. Selected omission is independently reverified by the final delivery
 gate; drift fails, never manufactures an old full result.
 
+Internal pending signal: authenticated unfinished evidence may return full plus
+retryable:true to the routing loop only. The loop strips retryable from published
+JSON/Actions outputs. Pending is never a proof, omission grant or successful
+candidate receipt; only the router opts into pending recognition.
+
 Receipt: schema_version1, phase(admission|qualified), fixed repository+numeric ID,
 run ID, attempt1, exact queue branch and proof. Proof records verified/full-required
 booleans, base/candidate/tree SHA and one/two unique members(number/head/prefix/tree/

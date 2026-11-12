@@ -243,3 +243,25 @@ Repair-focused validation:791 passed/no skips through tests/run.sh as UID1000
 in the offline disposable2CPU/2GiB image, including43 new repair cases. Workflow
 actionlint passed. Hosted ordinary/reusable qualification and latest-head local
 panel remain separate pending gates; both PRs must stay open.
+
+Completed repair qualification at code2c6eed1458ee022b5544ff84d74e9ceb94af441e:
+ordinary43309287917 passed15/15 jobs, reusable43309287854 passed17/17, first
+attempts. Each full variant collected/reported5,080 items once. Normal results
+are4,911 passed/169 skipped; deliberate no-submodule results3,562 passed/1,518
+skipped. Compared with qualified d4b3ae1, all43 additions are repair regressions,
+all pass in every variant, no original case was removed and no skip identity
+changed. SonarCloud, Mergify configuration, fast CI and coverage parity passed.
+
+Actual checkout5f94ea86cc7626e9c7c855033b326025cef0c3ad has parents59c26e8 /
+2c6eed1 and exactly source treee7b80bda5922e709daeab8c9ac2cdac491399ecb.
+Reuse references tests.yml at that immutable merge SHA. A fresh disposable Git
+checkout also anonymously fetched the absent merge object using production
+flags without changing HEAD/refs or creating FETCH_HEAD; not a live canary.
+
+Local master plus nine standard expert roles and CI/GitHubActions/Mergify
+specialist re-reviewed the repaired implementation and matching contracts with
+no remaining actionable finding. The GitHub connector requests still returned
+quota failure; no official bot approval or future admission receipt is claimed.
+Both PRs remain OPEN, policyfalse and oldfour full requirements unchanged.
+Shared py-bench/cloud-bench assembly still4b3c3f3. No merge/activation/canary,
+settings/app/bypass/paid/release/tag/pin/active-plan or lane changes occurred.
