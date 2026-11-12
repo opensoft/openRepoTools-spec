@@ -4189,18 +4189,32 @@ and `ready`'s checks 11 and 12.
   writes, through the real `lanes-index`; `record_marker` as each read-back
   would call it; then a rollback's first transaction (Q4(b)(iii)),
   `commit_write` with a `rollback` entry, as REGISTER-WRITER. A second
-  database for the abort, and a third for the after-loss form.
+  database for the abort, and a third for the after-loss form. The
+  cutover's own cases run `lanes-index cutover`'s whole row, T116's
+  transaction and T327's push, against a scratch schema, from the operator
+  lane's own checkout: `LANES_REPO` names a clone whose origin is a local
+  bare repository, and `LANES_WORKSPACE_ROOT` a `W` of its own. Origin's
+  `main` is a real commit C, which the import names, and origin's
+  `pre-receive` hook refuses a push where a case asks (lane 3's ruling
+  (c), comment 6828023371).
 - **Oracle.**
   - After the bootstrap: `mode = 'files'`, the marker `absent`,
     `set_seq = -1`, and the head -1.
-  - After the import (seq 0) and the cutover: the head is 1,
-    `set_seq = 1`, `mode = 'primary'`, the marker `adding` at
-    `marker_seq = 1`, and `journal.operator` is true for seq 1 only. A write
-    then fails with LR002, so 69. After `record_marker` at seq 1, the marker
-    reads `present`, `marker_commit` holds the confirmed commit, and a write
-    commits.
-  - After `import --after-loss` at `m` and `cutover --after-loss`:
-    `set_seq = m+1`, and the generation differs from the bootstrap's.
+  - After the import (seq 0) and the cutover's entry, `commit_write` with a
+    `cutover` entry: the head is 1, `set_seq = 1`, `mode = 'primary'`, the
+    marker `adding` at `marker_seq = 1`, and `journal.operator` is true for
+    seq 1 only. A write then fails with LR002, so 69. After `record_marker`
+    at seq 1, the marker reads `present`, `marker_commit` holds the
+    confirmed commit, and a write commits.
+  - After the import at C (seq 0) and `lanes-index cutover --import <C>`,
+    whose 0 is T327's whole row: the head is 1, `set_seq = 1`,
+    `mode = 'primary'`, the marker `present` at `marker_seq = 1`,
+    `marker_commit` origin's new tip, its one push, a child of C carrying
+    `Register-Seq: 1`, and `journal.operator` is true for seq 1 only.
+  - After an after-loss import at `m`, its entry naming C, and
+    `lanes-index cutover --import <C> --after-loss`, whose 0 is T327's
+    whole row: `set_seq = m+1`, the marker `present` at `m+1`, and the
+    generation differs from the bootstrap's.
   - After the rollback's first transaction, read in one snapshot:
     `mode = 'files'`, the marker `removing`, the head `k+1`,
     `set_seq = k+1`, and the entry at `k+1` is the operator entry that
@@ -4211,19 +4225,27 @@ and `ready`'s checks 11 and 12.
     the head to 0 and the switch to `files` with the marker `absent`, and
     `set_seq` to 0, the abort's base. With the marker `present`, it fails
     with LR002 and changes nothing.
-  - **The re-import form's abort** (the third database): `switch_to_files`
-    at `m+1` sets `files` with the marker `absent`, `set_seq` `m` and
-    `lanes/STORE` gone, and leaves the `database_label` and `generation`
-    its cutover set, as lane 3 ruled lane 1's point 2 (comment
-    6710770304). So a commit call carrying another generation, as a
-    pending record made against the lost database would, still fails with
-    LR007.
+  - **The re-import form's abort** (the third database), through the
+    cutover's own step 3: origin refuses the marker's push, the read-back
+    proves it absent, and `cutover` exits 2 with its `ABORTED` line. While
+    the push is held, the switch reads `primary` with the marker `adding`,
+    `set_seq` `m+1` and a generation other than the lost database's. After
+    it, `switch_to_files` at `m+1` has set `files` with the marker
+    `absent`, `set_seq` `m` and `lanes/STORE` gone, and left the
+    `database_label` and `generation` its cutover set, as lane 3 ruled lane
+    1's point 2 (comment 6710770304); origin's `main` is still C. So a
+    commit call carrying another generation, as a pending record made
+    against the lost database would, still fails with LR007.
   - **The restore form** (a fourth database, restored at `b` as AT-D22
-    makes it): after its cutover, `restore_prior` holds the switch row and
-    `lanes/STORE`'s `files` row and lines as they were; `record_marker`
-    clears it. Its abort puts them back with their old `line_id`s, the
-    switch row whole, and `set_seq` the value before the cutover (AT-D22's
-    dump). As the admin under `SET ROLE lanes_register_owner`, setting
+    makes it), each cutover its whole row: `cutover --after-loss`'s 0
+    leaves `primary` with the marker `present`, `set_seq` `b+1` and its
+    label, and its own `record_marker` has cleared `restore_prior`. A
+    second restore form, whose marker's push origin refuses, aborts at its
+    step 3, exit 2, and its `switch_to_files` puts back what
+    `restore_prior` held: `lanes/STORE`'s `files` row and lines with their
+    old `line_id`s, the switch row whole, and `set_seq` the value before
+    the cutover (AT-D22's dump); origin's `main` stays where that cutover
+    found it. As the admin under `SET ROLE lanes_register_owner`, setting
     `restore_prior` while the marker is not `adding` fails with 23514
     (`register_switch_check4`).
   - **An operator entry with a row outside `lanes/STORE`**, as lane 3 ruled
