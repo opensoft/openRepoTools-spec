@@ -73,6 +73,8 @@ Keep open admission strict; do not fabricate push flags or relax it for closed
 PRs. Trusted candidate admission and post-integration qualification write small
 versioned JSON records into the runner's temporary directory and upload them
 under exact attempt-suffixed names using the existing pinned artifact action.
+The CLI takes no destination path. Only exclusive proof.json creation inside
+canonical Actions runner.temp is allowed, with no overwrite or symlink following.
 No source status writer or write-scoped GitHub token is introduced. Records
 contain validated identities/digests and intent flags, never arbitrary PR bodies,
 review text or credentials.

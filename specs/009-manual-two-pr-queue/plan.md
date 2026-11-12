@@ -201,3 +201,13 @@ hosted exact-head qualification or merge is implied by these local results.
 Prepared code commit9771e61bcd92509990f030c22c7c26121cd07e4c is published in
 [code PR52](https://github.com/opensoft/openRepoTools-code/pull/52). It remains
 unmerged and disabled; latest-head hosted qualification/review are separate.
+
+Sonar found an arbitrary CLI-selected proof destination in the initial published
+head. Follow-up coded4b3ae1591201775109c195f6b2f75bce70ef92c removes that
+argument entirely: exclusive proof.json creation in canonical runner.temp only,
+rejecting preexisting files/symlinks, relative/missing/redirected directories and
+oversized records. Seven added regressions bring focused QA to748 passed/no skips.
+Reported duplicated constants/assertions were repaired too. Lint and whitespace
+passed; hosted security reanalysis and full/reuse CI are not yet claimed green.
+Both GitHub Codex requests returned quota failure, not approval; no paid credits,
+review waiver, security issue dismissal or merge is inferred.
