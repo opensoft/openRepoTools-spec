@@ -153,3 +153,29 @@ SHALL be introduced by this preparation.
   run/base-history reads are incomplete, or fast/review/thread evidence changes
 - **THEN** qualification refuses without trusting missing dependency text or a
   mutable current run-to-PR association as historical execution proof
+
+### Requirement: Candidate-shadow caller preserves full CI and grants no admission
+The next config-only proposal SHALL prepare a non-gating push caller on Mergify
+candidate branches. A trusted-main probe SHALL permit the existing reusable
+candidate entry only after its unchanged full proof passes. Missing policy,
+uncertain/mixed scope, unsupported events or any probe failure SHALL NOT permit
+that additional entry. Existing full PR/candidate CI, queues and release
+workflows SHALL remain unchanged, and no consumer SHALL treat the observation
+as admission, an exemption or a completed heavy receipt.
+
+#### Scenario: A scoped candidate passes the complete read-only probe
+- **WHEN** main-owned policy proves the current exact candidate and reviewed
+  independent members with the existing claude-current constraints
+- **THEN** the additive reusable entry may independently verify, run every full
+  job and recheck evidence; ordinary full CI still remains required
+
+#### Scenario: A candidate is mixed, stale, unreviewed or uncertain
+- **WHEN** trusted policy is absent, verification refuses/crashes, reads fail or
+  the probe fails, skips, times out or is cancelled
+- **THEN** no additional qualification is scheduled and the unchanged ordinary
+  full-CI path supplies acceptance; no success alias or bypass is written
+
+#### Scenario: Configuration is prepared but live work is not authorized
+- **WHEN** these proposal/config PRs are opened
+- **THEN** no merge, queue command, live canary, required-check/ruleset/app change,
+  release act, assembly pin update or running-lane mutation is performed

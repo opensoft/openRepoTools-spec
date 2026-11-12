@@ -101,3 +101,19 @@ are mutable and insufficient. Reopening after a retarget may produce fresh fast
 evidence; rerunning a historical run does not change its original creation time.
 Recheck successful fast run/job/check, base history, Codex and threads at the final
 source consistency boundary and refuse evidence drift, not just head/ref drift.
+
+## Candidate-shadow caller preparation — 2026-11-12
+
+- FR-022: add only a non-gating push caller filtered to Mergify queue branches.
+  Probe with read-only metadata access and main-owned policy; missing policy or
+  any refusal/unknown/error schedules no additional qualification. No dispatch,
+  inherited secret, source-payload shell interpolation or write grant is allowed.
+- FR-023: only explicit probe success may call the existing reusable entry,
+  which independently proves the candidate and runs/rechecks all full jobs.
+  The fixed two-file, one/two-independent-member constraints stay unchanged.
+  Scheduling output is not admission, review evidence or a completed heavy run.
+- FR-024: preserve current full PR/candidate CI, its inventory, queues, required
+  checks, releases and active lanes byte-for-byte where applicable. Open code/spec
+  PRs only; no merge, live canary, queue command, ruleset/app change, bypass,
+  release/tag or assembly/runtime adoption. A positive future observation adds
+  full integration, not CI savings. A later cutover requires separate approval.

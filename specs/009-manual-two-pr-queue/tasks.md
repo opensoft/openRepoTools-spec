@@ -81,3 +81,24 @@ regression qualification stay in this same bounded task set and PR pair.
 Repair locally qualified at a644168: 561 committed focused regression cases plus
 four review reproductions passed (565 total, no skips), with workflow lint.
 Current-head hosted CI and local re-review remain separate landing gates.
+
+## Candidate-shadow caller preparation — 2026-11-12
+
+One code PR owns CANDIDATE-SHADOW-08 (T019–T021), with a paired spec proposal
+under issue #26. Scope is prepare/open only. No merge or live canary is approved.
+All paths below are code-relative; this is the only executable checklist.
+
+- [x] T019 [O] Prepare non-gating queue-push scheduling with trusted-main probe and the unchanged complete candidate entry — files: `.github/workflows/task-set-candidate-shadow.yml` — verify: `bash tests/run.sh -k ci_candidate_shadow`
+- [x] T020 [O] Prove caller trust, literal outputs, graph and full fallback without reducing any existing coverage — files: `tests/test_ci_candidate_shadow.py` — verify: `bash tests/run.sh -k 'ci_candidate_shadow or ci_delivery or ci_shadow or ci_pilot or full_ci_coverage_parity or tests_workflow or ci_shards'`
+- [x] T021 [S] Record non-gating observation and explicit cutover/authority boundaries — files: `.github/ci/delivery-preparation.md`, `.github/ci/task-set-delivery.md`, `features/009-manual-two-pr-queue/openspec/candidate-shadow-caller.md` — verify: `bash tests/run.sh -k ci_candidate_shadow`
+
+Publication and exact-head hosted checks/review are evidence, not merge authority
+or proof of live batching/efficiency. No new source green aliases, settings,
+queues, releases, pins or installed sessions belong to this task set.
+
+Local evidence: 577 focused regressions passed with zero skips, including 16
+new caller vectors; initial red run could not load the absent caller. Tests ran
+through tests/run.sh as UID1000 in an offline disposable 2CPU/2GiB bench image.
+Workflow actionlint, strict OpenSpec and whitespace checks passed. Hosted full
+CI/reuse qualification, exact-head review and any merge remain separate pending
+gates; no live observation or one-heavy-run acceptance is claimed.
