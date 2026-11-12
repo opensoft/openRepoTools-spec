@@ -6914,8 +6914,9 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - A writer refused at its commit (D18, D19) prints its buffered output,
     then the refusal, and no success text.
   - The fake `tmux` is called once per committed `request-handoff`, after
-    its COMMIT, and never for a refused one; the fake `gh` once per
-    committed `claim`.
+    its COMMIT, and never for a refused one; the fake `gh` comments
+    (`issue comment` or `pr comment`) once per committed `claim`; Rule 1's
+    reads, made before the seam (Y:5043), are not counted.
   - The arm that reaches the seam twice exits 2 naming the first seq, and
     the journal holds that one entry.
   - **The child at the seam** (lane 4's section, "How an attempt runs the
