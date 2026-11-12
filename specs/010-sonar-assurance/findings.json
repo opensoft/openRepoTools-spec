@@ -1,0 +1,171 @@
+{
+  "analysis": "35359032-968b-4948-912b-9db4d55591e7",
+  "revision": "4b3c3f30b08d39469a185cbb74afdace9579a857",
+  "findings": [
+    {
+      "key": "AaHNkAKzuDHHi52pWjoI",
+      "rule": "pythonsecurity:S8705",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/scripts/shape_materialize.py",
+      "line": 1204,
+      "message": "Command Argument Injection via faulty LLM-supplied CLI arguments in shape_materialize.run()",
+      "disposition": "false-positive",
+      "owner": "opensoft/openRepoShape",
+      "reason": "A branch value reaches fixed git/gh argv, not a shell command. main calls checked_branch before any apply path; the branch alphabet and git check-ref-format --branch reject option/ref syntax. Push uses -- plus refs/heads/<branch>:refs/heads/<branch>. run checks the executable allowlist. No HTTP handler or privilege boundary exists on this CLI flow.",
+      "source_commit": "50178305e4229275d18e71c2152403b4e9d3004e",
+      "regression_sources": [
+        "tests/test_update_shape_landing.py",
+        "tests/test_push_branch_refspec.py"
+      ],
+      "status": "source flow reviewed; service update pending"
+    },
+    {
+      "key": "AaHNkAShuDHHi52pWjoK",
+      "rule": "pythonsecurity:S8705",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+      "line": 4951,
+      "message": "Command Argument Injection via faulty LLM-supplied CLI arguments",
+      "disposition": "false-positive",
+      "owner": "opensoft/openRepoShape",
+      "reason": "The flagged landing_failed sink constructs a NEXT string for display. shlex.join quotes every argument; the push uses -- and a fully qualified refspec; create is the fixed gh pr create argv. This line does not execute the printed string. Its branch has already passed checked_branch.",
+      "source_commit": "50178305e4229275d18e71c2152403b4e9d3004e",
+      "regression_sources": [
+        "tests/test_update_shape_landing.py",
+        "tests/test_next_refspec_branch_length.py"
+      ],
+      "status": "source flow reviewed; service update pending"
+    },
+    {
+      "key": "AaHNkAShuDHHi52pWjoJ",
+      "rule": "pythonsecurity:S8705",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+      "line": 5609,
+      "message": "Command Argument Injection via faulty LLM-supplied CLI arguments",
+      "disposition": "false-positive",
+      "owner": "opensoft/openRepoShape",
+      "reason": "The flagged next_line sink constructs a printed manual recovery command. Both the root path and argv are quoted with shlex.join; branch refspecs are fully qualified. No shell evaluates this output. The caller validates the branch before entering this function.",
+      "source_commit": "50178305e4229275d18e71c2152403b4e9d3004e",
+      "regression_sources": [
+        "tests/test_next_refspec_branch_length.py",
+        "tests/test_push_branch_refspec.py"
+      ],
+      "status": "source flow reviewed; service update pending"
+    },
+    {
+      "key": "AaHHsu91IZXyb5gijwTS",
+      "rule": "pythonsecurity:S2083",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/scripts/shape_materialize.py",
+      "line": 883,
+      "message": "Path Traversal via file content in shape_materialize._append_eol_block()",
+      "disposition": "false-positive",
+      "owner": "opensoft/openRepoShape",
+      "reason": "The alleged file-content path traversal has no file-content-derived destination: _append_eol_block uses target / ATTRIBUTES, where ATTRIBUTES is the fixed .gitattributes name. It writes only on the exact attributes collision and refuses disk symlinks, non-files and index-mode symlinks, including core.symlinks=false checkouts. Existing content is payload for with_eol_block, not a destination path.",
+      "source_commit": "50178305e4229275d18e71c2152403b4e9d3004e",
+      "regression_sources": [
+        "tests/test_adopt_attributes_eol_block.py"
+      ],
+      "status": "source flow reviewed; service update pending"
+    },
+    {
+      "key": "AaGD6tPOxLux756IlU7J",
+      "rule": "githubactions:S8541",
+      "component": "opensoft_openRepoTools:.github/workflows/composed.yml",
+      "line": 102,
+      "message": "Omitting \"--only-binary :all:\" can lead to the execution of setup scripts. Make sure it is safe here.",
+      "disposition": "confirmed-fix",
+      "owner": "opensoft/openRepoTools",
+      "repair": "https://github.com/opensoft/openRepoTools/pull/361",
+      "reason": "Require wheels for pytest and coverage tooling in the composed job.",
+      "status": "prepared; pending merged analysis"
+    },
+    {
+      "key": "AaHAbodRidUOawbE2mJx",
+      "rule": "pythonsecurity:S8707",
+      "component": "opensoft_openRepoTools:scripts/repo_shape.py",
+      "line": 1151,
+      "message": "Path Traversal via faulty LLM-supplied CLI arguments in repo_shape.load_yaml()",
+      "disposition": "false-positive",
+      "owner": "opensoft/openRepoShape",
+      "reason": "load_yaml is an intentionally caller-selected local YAML reader. The traced CLI callers read --project, a fixed project.yaml below the selected repository root, or the selected local policy. Their explicit purpose is to validate an operator-selected filesystem tree. No network request, lower-privilege principal, confined-directory promise or privileged service is involved; an operator selecting a local input file is not a traversal across an authority boundary.",
+      "source_commit": "50178305e4229275d18e71c2152403b4e9d3004e",
+      "regression_sources": [
+        "tests/test_repo_shape.py"
+      ],
+      "status": "source flow reviewed; service update pending"
+    },
+    {
+      "key": "AaFMxuNRjy8gvDmEH5jA",
+      "rule": "text:S8565",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/pyproject.toml",
+      "line": null,
+      "message": "Dependency versions are not predictable if the lock file (uv.lock, poetry.lock, pdm.lock, pylock.toml or a fully pinned requirements.txt) is missing.",
+      "disposition": "confirmed-fix",
+      "owner": "opensoft/openRepoShape",
+      "repair": "https://github.com/opensoft/openRepoShape/pull/1330",
+      "reason": "Add recognized, fully pinned and hashed requirements.txt for git-filter-repo 2.47.0; its wheel has no Requires-Dist dependencies. Retain the separate full build hash lock.",
+      "status": "prepared; pending merged analysis"
+    },
+    {
+      "key": "AaFMxvaxjy8gvDmEH5kE",
+      "rule": "pythonsecurity:S8705",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/src/openreposhape/cli.py",
+      "line": 164,
+      "message": "Command Argument Injection via faulty LLM-supplied standard input in cli.run_child()",
+      "disposition": "false-positive",
+      "owner": "opensoft/openRepoShape",
+      "reason": "The org text entered on the terminal becomes the value after the fixed --org flag. run_child receives sys.executable followed by a known standard-owned Python script, using list argv and shell=False. The tools intentionally forward their documented options to that script, whose parser/validators own those values; stdin cannot select a program or add a shell fragment. This is a local CLI launcher, not an HTTP handler.",
+      "source_commit": "50178305e4229275d18e71c2152403b4e9d3004e",
+      "regression_sources": [
+        "tests/test_openreposhape_package.py"
+      ],
+      "status": "source flow reviewed; service update pending"
+    },
+    {
+      "key": "AaDPP3_OrPHmB1oAsIwL",
+      "rule": "githubactions:S8541",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/.github/workflows/tests.yml",
+      "line": 95,
+      "message": "Omitting \"--only-binary :all:\" can lead to the execution of setup scripts. Make sure it is safe here.",
+      "disposition": "confirmed-fix",
+      "owner": "opensoft/openRepoShape",
+      "repair": "https://github.com/opensoft/openRepoShape/pull/1330",
+      "reason": "Require wheels in the source-owned test workflow.",
+      "status": "prepared; pending merged analysis"
+    },
+    {
+      "key": "AaDPP3_OrPHmB1oAsIwM",
+      "rule": "githubactions:S8541",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/.github/workflows/tests.yml",
+      "line": 105,
+      "message": "Omitting \"--only-binary :all:\" can lead to the execution of setup scripts. Make sure it is safe here.",
+      "disposition": "confirmed-fix",
+      "owner": "opensoft/openRepoShape",
+      "repair": "https://github.com/opensoft/openRepoShape/pull/1330",
+      "reason": "Install the same runtime dependency from its hashed wheels-only requirements file.",
+      "status": "prepared; pending merged analysis"
+    },
+    {
+      "key": "AaDPP35qrPHmB1oAsIwI",
+      "rule": "githubactions:S8541",
+      "component": "opensoft_openRepoTools:code/.github/workflows/tests.yml",
+      "line": 173,
+      "message": "Omitting \"--only-binary :all:\" can lead to the execution of setup scripts. Make sure it is safe here.",
+      "disposition": "confirmed-fix",
+      "owner": "opensoft/openRepoTools-code",
+      "repair": "https://github.com/opensoft/openRepoTools-code/pull/51",
+      "reason": "Require wheels; preserve the complete parsed CI job contract.",
+      "status": "prepared; pending merged analysis"
+    },
+    {
+      "key": "AaDPP35qrPHmB1oAsIwJ",
+      "rule": "githubactions:S8541",
+      "component": "opensoft_openRepoTools:code/.github/workflows/tests.yml",
+      "line": 267,
+      "message": "Omitting \"--only-binary :all:\" can lead to the execution of setup scripts. Make sure it is safe here.",
+      "disposition": "confirmed-fix",
+      "owner": "opensoft/openRepoTools-code",
+      "repair": "https://github.com/opensoft/openRepoTools-code/pull/51",
+      "reason": "Require wheels; preserve the complete parsed CI job contract.",
+      "status": "prepared; pending merged analysis"
+    }
+  ]
+}
