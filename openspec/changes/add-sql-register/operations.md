@@ -226,7 +226,7 @@ Brett's ruling (#165 6723925474): the register's database is "CNPG in the instal
 7. **Stranded records and `W`.**
    - **Command:** each lane publishes or archives its own stranded records (Q4(c) (i), `proposal.md:1320-1324`), and Brett repairs `W` once (`r3b/REPORT.md:319-322`).
    - **Check:** each lane posts that it is done.
-8. **The rehearsal and the drill.** The operator lane acts, against a scratch schema, from a scratch clone whose origin is a local bare copy of the workspace repository, so nothing reaches `opensoft/brett-wip`.
+8. **The rehearsal and the drill.** The operator lane acts, against a scratch schema, from a scratch clone whose origin is a local bare copy of the workspace repository, so nothing reaches `opensoft/brett-wip`. Its scratch configuration leaves `render_key=` out, since T320 refuses a local origin with it (`contracts/render-commit.md`:136).
    - **Command:** `lanes-index import --at <C> --dry-run` (`r3b/REPORT.md:235`). Then test 13's sequence (`proposal.md:910-912`), with ADV-C10's outage added (`clarifications.md:207-208`): a cutover, writes, an outage of the scratch database with its refusals, a rollback, and a files-mode write.
    - **Check:** each step's oracle as test 13 states it, and the import's three-part proof (act 4's step 6) on the real register.
    - **Way back:** drop the scratch schema and the scratch clone.
