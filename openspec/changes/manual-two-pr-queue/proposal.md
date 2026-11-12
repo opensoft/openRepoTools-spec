@@ -76,3 +76,20 @@ checks and queues stay unchanged. Initial candidate scope remains the fixed
 claude-current/test pair and at most two independent main-based members.
 Activation, dependent-stack/wider scopes and required-check migration need their
 own qualified change and explicit authority; no current queue consumes this work.
+
+## Candidate-shadow caller proposal — 2026-11-12
+
+Brett approved preparing and opening the next narrow config-only PR after the
+reviewed preparation and checkout refresh. Add a non-gating queue-push caller
+for the existing claude-current candidate verifier. A trusted-main probe may
+invoke the prepared reusable full entry only after its existing complete proof
+passes. An absent policy, mixed/uncertain scope or any refusal retains full CI.
+
+Keep tests.yml, its full-job inventory, all existing Mergify queues/requirements,
+shadow classification and release workflows unchanged. This is additive
+qualification, not an efficiency cutover: a positive candidate will deliberately
+run additional full integration after a separately approved merge. Opening this
+PR authorizes neither merging it nor creating/queueing a live canary. No source
+status writer, required-check migration, app access, ruleset change/bypass,
+release act, assembly pin update or lane/session mutation belongs to this slice.
+Feature 009 remains the sole task owner, reconciled under spec issue #26.

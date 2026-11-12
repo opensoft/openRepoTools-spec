@@ -163,3 +163,39 @@ retarget event; current associations alone are mutable and cannot prove the past
 base. A fresh reopened run may qualify after retargeting; a rerun retains its old
 creation identity. Read and compare mutable successful fast/check/run, base-history,
 Codex and thread evidence at the final source boundary. Any drift fails closed.
+
+## Non-gating candidate caller — 2026-11-12
+
+Add task-set-candidate-shadow.yml, a push-only caller filtered to
+mergify/merge-queue/* branches. It has no dispatch, source-PR event, inherited
+secrets or write permission. Its probe checks out main with complete history and
+no persisted credentials, then executes only main-owned delivery_verify.py in
+candidate mode. Missing policy or a nonzero exit writes only qualify=false and
+a fixed full-fallback summary. A successful probe writes qualify=true; no event,
+branch, PR body or verifier stdout is interpolated into shell commands/outputs.
+
+Only that exact true output permits the same-commit local reusable candidate
+entry. Its existing independent verification and final live recheck remain
+mandatory around the SAME complete tests.yml call. The probe's boolean is only
+scheduling for this additive observation, never CI exemption, review evidence,
+admission or a heavy receipt. Unexpected failures/timeouts also cannot schedule
+qualification. The existing helper's bounded two-independent-member regular-file
+scope, main/ref/ancestry, exact-head fast and clean official Codex checks remain.
+
+All existing queues keep their full source/candidate gates; tests.yml and the
+coverage inventory stay byte-for-byte unchanged. Scope outside the fixed pair,
+dependent stacks and ambiguous/stale evidence retain full fallback. Mixed
+control changes cannot earn trusted qualification. The caller itself is not a
+trusted receipt for a future consumer merely because it ran on a queue branch.
+No current queue/ruleset consumes its results. A positive observation adds a
+full run, intentionally duplicating existing candidate CI during qualification;
+do not report one-heavy-run efficiency at this stage.
+
+Offline tests execute the actual probe shell with a fake read-only verifier for
+success, refusal, crash and absent-policy cases; assert the caller/permissions/
+needs graph and unchanged baseline; retain the existing real-Git proof fault
+vectors. This PR creates no live candidate. After separately authorized merge,
+qualification still requires an approved scoped canary and exact source/fast/
+review/candidate/run/landed-tree receipts. Only then propose source admission and
+required-check migration for explicit approval; never replace current checks
+with aliases or fabricate a connector review to clear a blocker.
