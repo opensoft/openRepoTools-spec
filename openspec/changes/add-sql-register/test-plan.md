@@ -4211,9 +4211,9 @@ and `ready`'s checks 11 and 12.
   - After the import (seq 0) and the cutover's entry, `commit_write` with a
     `cutover` entry: the head is 1, `set_seq = 1`, `mode = 'primary'`, the
     marker `adding` at `marker_seq = 1`, and `journal.operator` is true for
-    seq 1 only. A write then fails with LR002, so 69. After `record_marker`
-    at seq 1, the marker reads `present`, `marker_commit` holds the
-    confirmed commit, and a write commits.
+    seq 1 only. A write then exits 69 on the switch its snapshot reads, or
+    on LR002. After `record_marker` at seq 1, the marker reads `present`,
+    `marker_commit` holds the confirmed commit, and a write commits.
   - After the import at C (seq 0) and `lanes-index cutover --import <C>`,
     whose 0 is T327's whole row: the head is 1, `set_seq = 1`,
     `mode = 'primary'`, the marker `present` at `marker_seq = 1`,
@@ -5599,17 +5599,17 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - Pushed, reported failed: the read-back finds the marker, so the cutover
     completes: `record_marker` sets it `present`, and seq 1 stays.
   - Unconfirmed: `cutover` exits 3 and changes nothing more; the switch
-    stays `primary` with the marker `adding`, and every write fails with
-    LR002. Its rerun reads origin back first: a marker found there completes
-    the cutover, as in "Pushed, reported failed"; a marker proven absent has
-    the rerun push again, as a rerun that finds its own entry goes on to the
-    cutover's step 2, and step 2's own ends follow, its abort among them
-    (`operations.md` §2.2, act 4's step 7; lane 3, #165 6770600106, T116's
-    point 1). The same for the rollback's removal push: `rollback`
-    exits 3, the marker stays `removing`, and its rerun reads origin back,
-    then records the marker `absent` or pushes the removal again (§2.3,
-    step 4). A files-mode write that lands on origin after the 3, once the
-    removal is there (§2.3, step 3), changes neither: the rerun finds its
+    stays `primary` with the marker `adding`, and every write exits 69 on
+    the switch its snapshot reads, or on LR002. Its rerun reads origin back
+    first: a marker found there completes the cutover, as in "Pushed, reported
+    failed"; a marker proven absent has the rerun push again, as a rerun that
+    finds its own entry goes on to the cutover's step 2, and step 2's own ends
+    follow, its abort among them (`operations.md` §2.2, act 4's step 7; lane
+    3, #165 6770600106, T116's point 1). The same for the rollback's removal
+    push: `rollback` exits 3, the marker stays `removing`, and its rerun reads
+    origin back, then records the marker `absent` or pushes the removal again
+    (§2.3, step 4). A files-mode write that lands on origin after the 3, once
+    the removal is there (§2.3, step 3), changes neither: the rerun finds its
     removal, pushes nothing, ends 0 with the marker `absent`, and records
     no divergence (lane 3, #165 6814260122, T326's review MUST-1).
   - Held across git: with the push held on the wrapper's FIFO for 6 s, past
