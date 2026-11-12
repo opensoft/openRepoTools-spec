@@ -157,8 +157,23 @@ these two source PRs only. It does not authorize activation, canary, settings,
 release/tag, assembly pins, checkout refresh or changes to lanes 1–5.
 
 - [x] T031 [O] Reconcile code PR52 with current main while preserving landed Sonar collectors, reviewed baseline and dependency pin — files: code `.github/workflows/tests.yml`, `tests/test_tests_workflow.py`, related CI contract tests if required; spec `specs/009-manual-two-pr-queue/`, `openspec/changes/prepare-claude-current-ci-cutover/` — verify: `bash tests/run.sh -k 'ci_cutover or ci_candidate_shadow or ci_delivery or ci_shadow or ci_pilot or full_ci_coverage_parity or tests_workflow or ci_shards or sonar'`
-- [ ] T032 [O] Qualify the exact reconciled head with focused tests, lint, strict governance, full hosted ordinary/reusable CI and local expert review; prepare guarded normal source landings — files: PR52/33 and qualification records — verify: exact-head CI/review and pre-merge identity/policy guards with policy disabled and lane mounts unchanged
+- [x] T032 [O] Qualify the exact reconciled head with focused tests, lint, strict governance, full hosted ordinary/reusable CI and local expert review; prepare guarded normal source landings — files: `specs/009-manual-two-pr-queue/tasks.md`, `specs/009-manual-two-pr-queue/plan.md` in the spec leg, PR52/33 qualification records — verify: `gh pr checks 52 --repo opensoft/openRepoTools-code --required`
 
 Actual normal merges and landed-tree verification are separate external acts
 recorded on PR52/33. T032 completion means qualification and guarded landing
 preparation, not a claim that either PR has already merged.
+
+Current-main qualification at code `94d4659`: ordinary `43321898110` passed all
+15 jobs; reusable `43321898191` passed all 17, both first attempts. All four JUnit
+variants reported 5,125 unique cases, with no removed original cases or changed
+skip identities. Normal: 4,956 passed/169 existing skips. Deliberate no-submodule:
+3,607 passed/1,518 existing skips. All 43 repair cases and the 45 inherited Sonar
+additions passed in every variant. Focused QA: 836 passed/no skips. Actionlint,
+strict OpenSpec, SonarCloud, Mergify configuration and local expert review passed.
+
+Code PR52 was normally squash-merged as
+`5173ad25910ca4d7acfd6052090246ccc084f1a1`, parent `b227d53`, at
+2026-11-12T23:21:37Z. Its tree `0ef9640b600b1ffacc542ed40ab79db14e2bca21`
+exactly matches qualified head `94d4659` and actual tested merge `684c21f`.
+The final spec landing and its tree readback are recorded on PR33. No bypass,
+settings, activation/canary, releases, assembly pins or lane changes follow.

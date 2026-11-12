@@ -17,3 +17,8 @@ rerun exact-head CI/local review, then normally merge PR52/33 if green. The sole
 executable checklist continues at T031–T032. Preparation-only text above records
 the original approval, not a prohibition on this later approved source landing.
 Activation/canary/settings/release, assembly adoption and lanes remain excluded.
+
+Code PR52 subsequently qualified at `94d4659` and normally landed as
+`5173ad25910ca4d7acfd6052090246ccc084f1a1` with identical tested/landed trees.
+T031–T032 record completed source reconciliation/qualification. Actual final
+spec landing is a PR33 receipt; no archive or operational activation is inferred.

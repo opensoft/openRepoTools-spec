@@ -297,3 +297,37 @@ additional implementation edits were needed. Focused CI/Sonar QA passed836
 tests/no skips (4,289 deselected) through tests/run.sh as UID1000 in offline
 disposable2CPU/2GiB QA at the new dependency pin4bf963f. Actionlint and whitespace
 passed. Fresh hosted ordinary/reuse CI and local review remain pending.
+
+### Completed qualification and code source landing
+
+Exact reconciled code `94d4659897f8dad8ff86a4ab7a58497dc6e173f5` passed fresh
+ordinary full run `43321898110` (15/15 jobs) and reusable qualification
+`43321898191` (17/17), first attempts. All four downloaded JUnit variants contain
+5,125 unique case identities. Normal: 4,956 passed/169 existing skips; deliberate
+no-submodule: 3,607 passed/1,518 existing skips. Relative to qualified repair head
+`2c6eed1`, all 45 additions are inherited Sonar tests, no original cases were
+removed and no skip identity changed. All 43 repair regressions pass everywhere.
+
+Actual package checkout `684c21fd39ffff29f9951efa3e2b11843dff927b` has parents
+`b227d53`/`94d4659` and exactly source tree
+`0ef9640b600b1ffacc542ed40ab79db14e2bca21`. Reuse references that exact
+`tests.yml` revision. Later regenerated PR merge `68baece` has the same parents
+and tree, but was not substituted for the actually tested revision.
+
+The local master, nine standard specialist roles and CI specialist re-reviewed
+the integrated code/spec pair with no actionable findings. Focused QA, actionlint,
+strict OpenSpec, SonarCloud, Mergify configuration and coverage parity passed.
+GitHub connector requests remained separate from the authorized local review;
+no future managed-admission trust or review waiver was introduced.
+
+After fresh required checks, source/base/tree, disabled policy and review-thread
+guards, code PR52 was normally squash-merged without bypass at
+2026-11-12T23:21:37Z as `5173ad25910ca4d7acfd6052090246ccc084f1a1`, parent
+`b227d53c42449eeafbd4a57979cfbd541f74fbd5`. GitHub readback confirmed the
+landed tree exactly equals the qualified source/test tree above. Spec PR33's
+final checked source landing and tree readback are recorded on that PR.
+
+Source acceptance is not post-merge-main CI completion, activation, live savings,
+composed/assembly adoption or installed-session acceptance. Keep the policy false,
+all four legacy full requirements, existing shared mounts, lanes 1–5 and releases
+unchanged. Do not archive or advance assembly pins in this source-landing act.
