@@ -59,3 +59,25 @@ reconciliation under issue #26. All implementation paths below are code-relative
 
 Source task completion does not imply hosted positive-scope observation, candidate
 acceptance, review, merge, assembly delivery or CI-efficiency activation.
+
+## Additive fast/candidate preparation — 2026-11-11
+
+DELIVERY-PROOF-07 is one coupled code PR plus a paired spec reconciliation under
+issue #26. No activation task is approved by completing this preparation set.
+Implementation paths below are code-relative.
+
+- [x] T015 [O] Add exact-source fast validation and immutable read-only candidate/member/review proof — files: `.github/ci/delivery_verify.py` — verify: `bash tests/run.sh -k ci_delivery`
+- [x] T016 [O] Define additive fast and workflow_call-only full candidate qualification without queue wiring — files: `.github/workflows/task-set-fast.yml`, `.github/workflows/task-set-candidate.yml` — verify: `bash tests/run.sh -k ci_delivery`
+- [x] T017 [O] Prove failure, stale/forged evidence and full-coverage workflow boundaries — files: `tests/test_ci_delivery.py` — verify: `bash tests/run.sh -k 'ci_delivery or ci_shadow or ci_pilot or full_ci_coverage_parity or tests_workflow or ci_shards'`
+- [x] T018 [S] Document prepared-only semantics and the explicit activation authority boundary — files: `.github/ci/delivery-preparation.md`, `.github/ci/task-set-delivery.md`, `features/009-manual-two-pr-queue/openspec/delivery-proof.md` — verify: `bash tests/run.sh -k ci_delivery`
+
+Local completion is source preparation, not hosted review/full-CI qualification,
+candidate acceptance, assembly adoption or queue/ruleset activation.
+
+Reopened T015/T017 after local nine-role review reproduced dependent ancestry,
+alternate-base fast evidence and mutable fast/review evidence drift. Repair and
+regression qualification stay in this same bounded task set and PR pair.
+
+Repair locally qualified at a644168: 561 committed focused regression cases plus
+four review reproductions passed (565 total, no skips), with workflow lint.
+Current-head hosted CI and local re-review remain separate landing gates.

@@ -75,3 +75,29 @@ access, paid upgrade, release/tag or installed-session change is authorized.
   all existing full/reusable/verify/release workflows, job baseline and queues.
   Open source/spec PRs only; no merge, canary, ruleset/app change, assembly pins,
   installed tooling or lane/session mutation.
+
+## Full-rollout goal: fast/candidate preparation — 2026-11-11
+
+- FR-018: add exact-checkout fast source feedback and the scoped component/guard/
+  hygiene/policy tests, without replacing required full CI or authorizing admission.
+- FR-019: prepare a parameterless workflow_call-only candidate verifier, no queue/
+  dispatch trigger. Verify genuine Mergify context, live main/ref, one or two unique
+  ordered independent main-based PRs, scoped modified regular content, exact fast
+  Actions workflow, fresh clean Codex and resolved threads. Missing/ambiguous or
+  stale evidence fails; all reads are bounded and metadata permissions read-only.
+- FR-020: after verification reuse the same complete thirteen-job tests.yml on the
+  exact candidate and require both verifier and full call success in its aggregate.
+  No workflow/policy/control changes can be present in a qualifying scoped candidate.
+- FR-021: existing full/reusable/verify/release/shadow workflows, coverage baseline
+  and queues remain unchanged. No live canary/queue, ruleset/app/release change,
+  source success-status writer, dependent-stack/wider-scope activation or lane
+  modification follows from this additive preparation.
+
+FR-019 clarification after local review: establish member independence from
+Git history, not absence of dependency text. Bind a fast run to its unique source
+PR and current main base with complete base-change history: its immutable creation
+time must be strictly after every retarget event. Current run PR associations alone
+are mutable and insufficient. Reopening after a retarget may produce fresh fast
+evidence; rerunning a historical run does not change its original creation time.
+Recheck successful fast run/job/check, base history, Codex and threads at the final
+source consistency boundary and refuse evidence drift, not just head/ref drift.
