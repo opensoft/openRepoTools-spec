@@ -671,9 +671,10 @@ fixture: tests 7, 8 and 13, P8, D22, and AT-F18.
    - check 11: a URL without `sslmode=verify-full` and the root file of the
      issuer, or with `sslrootcert=system`, or a chain that
      does not verify against that root (ops:454; Y:2324);
-   - check 13: an endpoint whose address count differs from
-     `register_addresses=`, which the install's one A record makes 1
-     (ops:456; ops:151).
+   - check 13: an endpoint whose address count is above
+     `register_addresses=`, which the install's one A record makes 1; a
+     count at or below it passes and prints both (ops:456; ops:151;
+     lane 3, #165 6812031872).
 6. **Given** a dump of both schemas restored into a new database, **When**
    `bootstrap --roles-only` has run before the restore, **Then** PUBLIC holds
    no CONNECT on it, the writer and reader groups and the indexer's login

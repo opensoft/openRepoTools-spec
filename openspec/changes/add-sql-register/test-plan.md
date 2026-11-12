@@ -2626,8 +2626,8 @@ rename.
       set in `[no-fetch-set]` (D12), and the fork is made though
       `LANES_INDEX=off` is set in `[index-off-set]`, since `lane-worktrees`
       sets that variable on every call and it must never skip the fork;
-    - its stdin is closed, and so are its descriptors 3 to 9, as
-      `index_nudge`'s fork closes them;
+    - its stdin is closed or on `/dev/null`, its descriptors 3 to 9 are
+      closed, as `index_nudge`'s fork closes them;
     - the writer exits with the verb's own code while the wrapper holds the
       `render` call on a FIFO, so no fork waits, and the flipped copy's
       answer to it, "git half not installed", is never read.
@@ -2992,7 +2992,9 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   - A workstation configured `mode=primary`.
   - A fake `psql` exiting 2, or the stoppable cluster, stopped.
   - The hook's JSON input. For the skip, a stdin that blocks if it is read.
-  - No `tmux` window and no session record, so there is no lane session.
+  - The guard's refusal has a `tmux` window and a session record: without
+    them the guard refuses with 2 before any read (lane 3's T507 ruling (1)).
+    The skip, `status` and `rollback` have neither: there is no lane session.
 - **Oracle.**
   - The guard exits 2. Stderr names the database, without credentials, and
     the cause, and carries both commands and `CLAUDE_NO_LANE=1`.
