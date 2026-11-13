@@ -145,3 +145,23 @@ shape constraints only for the following new, disabled implementation:
   operator policy. No merge, live canary, settings/bypass, app/paid access, release/
   tag, assembly/runtime adoption or lane mutation. Local review of preparation is
   not a forged managed receipt for later candidate members.
+
+## Accepted local-review contract — 2026-11-12
+
+The owner explicitly authorized `accept-exact-head-local-reviews` as the narrow
+successor to the managed-only interpretation in FR-019/FR-031 and the earlier
+cutover proposal. Preserve their approval history; a local review is never
+relabeled as a hosted-bot review.
+
+- FR-032: the prepared candidate verifier accepts either the existing genuine
+  hosted review path or a new exact-head/base local Codex review receipt
+  authenticated to a current repository writer through GitHub comment identity
+  and live permission reads. Local acceptance records the review skill, findings,
+  resolution, validation and zero unresolved findings.
+- FR-033: local receipts are bounded, strict-schema, unedited top-level comments.
+  The newest authorized local record controls acceptance; revocation, unsupported
+  or stale evidence cannot fall back to old approvals. Complete resolved threads
+  and final source/receipt/permission rereads remain mandatory.
+- FR-034: local-review publication is operator attestation, not proof of local
+  model execution, independent human approval or merge authority. Keep activation
+  false, existing full CI/coverage and all live lanes/settings/releases unchanged.
