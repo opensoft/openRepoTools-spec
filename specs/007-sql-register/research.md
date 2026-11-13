@@ -1224,15 +1224,15 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **The decision:** each writer process asks the mode once, before slice
   1a's routing. On primary it skips `lane_checkout_enter`, takes `<c>` from
   `lane_checkout_path` with no S3 work, and refuses with 2, naming
-  `lanes-edit.sh lane-checkout <lane> --create`, which makes it, as
-  `lane-start` does at a launch, where that checkout does not exist. In
+  `lanes-edit.sh lane-checkout <lane> --create`, which makes it,
+  where that checkout does not exist, an explicit `LANES_REPO` included. In
   files and `index` mode it routes as today, and carries the answer across
   1a's `exec` as `LANES__MODE`, with the `LANES__PID` check. `reg_open`
   takes the same answer. Lane 4's T409 adds the carry, so slice 1a does not
   change.
 - **Whose:** lane 3's ruling R17 (#165 6726556972), on lane 4's Q-L3-2; the
   carry's place, lane 3's #165 6726831985; the command the refusal names,
-  lane 3's #165 6769061039, T415's question 2.
+  lane 3's #165 6769061039, T415's question 2; `LANES_REPO`, lane 3's #165 6841265575.
 - **Source:** Y:4983; Y:5452; Y:4858; D12 (Y:522).
 
 ### DEC-11. `rename-lane`'s handoff half runs in the parent (R18)

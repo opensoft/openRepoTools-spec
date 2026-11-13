@@ -1129,9 +1129,9 @@ are lane 3's rulings memo's).
   Each writer process MUST ask the mode once, before slice 1a's routing. On
   primary it MUST NOT enter the lane checkout by 1a's routing: it takes `<c>`
   from `lane_checkout_path`, with no S3 work, and refuses with 2, naming
-  `lanes-edit.sh lane-checkout <lane> --create`, which makes it, as
-  `lane-start` does at a launch, where that checkout does not exist (R17;
-  lane 3, #165 6769061039). Sources: "How an attempt runs the verb"
+  `lanes-edit.sh lane-checkout <lane> --create`, which makes it,
+  where that checkout does not exist, an explicit `LANES_REPO` included (R17;
+  lane 3, #165 6769061039 and 6841265575). Sources: "How an attempt runs the verb"
   (Y:4981); the primary branch (Y:4983); D7 (Y:455); D12 (Y:522).
 - **FR-019**: The commit seam's primary branch MUST keep every content check,
   and MUST refuse with 2 any staged path outside the write's pathspecs or
