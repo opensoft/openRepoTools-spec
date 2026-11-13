@@ -437,3 +437,45 @@ hint diagnostic negative to use a foreign non-null SHA, retaining its privacy
 assertions. This is local qualification only. Exact-head expert review,
 ordinary/reusable hosted full CI, checked landings and actual-main validation
 remain required before fresh source events. No new canary acceptance is claimed.
+
+### Generated-hint repair: checked source landings; actual main pending
+
+Code PR66 qualified exact head `3036650c508ae9dc4c2fdd9a65c649e2fe60148a`
+on base `bb253610a46d8f06d60b0b1c371102606cf70bdb`. Ordinary full run
+`43499591436` passed 15/15; reusable run `43499591727` passed 17/17; fast
+`43499591582` passed 1/1. Every job succeeded on its first attempt. All four
+complete ordinary/reusable normal/no-submodule JUnit inventories contain 5,342
+unique cases, preserving the 5,261-case actual-main baseline and adding exactly
+81 passing regressions. Zero removals, duplicates, failures or skip-identity
+changes. Normal: 5,169 passed/173 existing skips; no-submodule: 3,820 passed/
+1,522 existing skips. The tested merge `6955b6ed56a33f23c85d23a1936eafc1aee295f5`
+has the ordered reviewed base/head parents and tree
+`1163f0dc20a12a6bd7180b834ba20394924a94c2`, equal to the reviewed code tree.
+
+Exact-head local master, nine standard experts and CI specialist reviews found
+no actionable issues. Hosted Codex was explicitly requested on both PRs and
+reported quota failure, not review approval. Strict OpenSpec passed; complete
+current thread reads found zero unresolved findings. Landing readers found no
+open code/spec LANDING; current remote warning audit found no project reference
+in the 15 unrelated historical warnings. No register log was rewritten.
+
+Code PR66 merged normally at `660459fa662f6760476cb5ff5143afba6ede8a01`, sole
+parent `bb25361`, tree `1163f0d` exactly as reviewed/tested. Spec PR44 merged
+normally at `375666d79ca348dd85b24cd11fa15d24f870940d`, sole parent `7816ac5`,
+tree `e06eb38ed9b65e0e600b4849d5d0abd8dc95cda0`, equal to reviewed spec head
+`8ab644d`. Neither merge used a bypass or deleted a branch. Source qualification
+is complete (T054). Actual code-main full run `43506231972` is still pending;
+T055 is not complete and no actual-main or fresh-canary success is claimed.
+
+Local R4 A `6e1f3229ebcfc89572e562da549afeeca8fcd8e3` and B
+`62330f34d3b51b88a6a9f6b077f241dac818e7de` independently preserve the separate
+T042/T043 outcomes, each with `660459f` as sole parent. Canonical local QA passed
+A19/B27, zero skips, each with 5,323 deselected; all eight new B cases also
+passed without the submodule, zero skips, 5,342 deselected. A narrower B
+help/malformed selection independently passed 13 with 5,337 deselected. These
+were non-root offline disposable bench-image runs with private HOME and exact
+shape `4bf963f`; Bash parsing also passed. Exact-head review is the next gate,
+in parallel with actual-main validation. Neither is published or
+queued; source events must wait for actual-main qualification. All prior failed
+attempts remain failed evidence. No assembly, lane/session, installed-tool,
+ruleset/app/paid access or release change, and no archive/adoption is authorized.
