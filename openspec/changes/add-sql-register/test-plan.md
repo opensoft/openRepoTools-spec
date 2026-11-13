@@ -543,7 +543,7 @@ rename.
   P501–506). With it, the test checks four more things:
   - every row the write touched reads back `primary` as the mode that wrote it
     last (P183–188);
-  - the journal entry carries the write's commit message exactly as today
+  - the journal entry carries the write's commit message exactly as today, `rename-lane`'s on primary excepted (Y:3451)
     (P299–303);
   - the line's UTC is the database's, in whole seconds (P665–674);
   - the renderer touches nothing outside its four paths (P307–309).

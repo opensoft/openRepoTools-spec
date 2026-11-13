@@ -37,7 +37,7 @@
 
 ### The message
 
-- The message is "the journal entry's message byte for byte" (Y:555), and the entry's message is "today's commit message exactly" (Y:2796), in the forms `LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …` (Y:2796–2797).
+- The message is "the journal entry's message byte for byte" (Y:555), and the entry's message is "today's commit message exactly" (Y:2796), in the forms `LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …` (Y:2796–2797), `rename-lane`'s on primary excepted (Y:3451).
 - `Register-Seq: <n>` goes "in its final trailer block, its last paragraph" (Y:556).
 - Where the last paragraph is already a trailer block, the trailer is "appended as that paragraph's last line" (Y:556–557); F29 names such a block as "every line `Token: value` with a token of letters, digits and `-`" (Y:5964).
 - Otherwise it goes "after one blank line as a new last paragraph" (Y:558), "rather than starting a second block" (Y:558–559); F29's cases are "a subject alone, or a body ending in prose" (Y:5965).

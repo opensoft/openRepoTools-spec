@@ -2841,7 +2841,7 @@ Each committed write is one journal entry, the interface between S1 and S2:
 seq, `write_id`, the database UTC of its commit, verb, lane, workstation, the
 author identity (D15), the digest of the verb's arguments (`args_sha256`,
 F10), today's commit message exactly (`LANES(<lane>@<ws>): …` or
-`LOG(<lane>@<ws>): …`), the line edits across files with creates, renames and
+`LOG(<lane>@<ws>): …`; `rename-lane`'s on primary excepted (design:3498)), the line edits across files with creates, renames and
 removals, and the per-file digests after it. The mode is not on the entry:
 each line it writes records the mode in `doc_lines.written_mode`, and each
 structured row in its own `mode` (§1.2; lane 3's ruling, #165 6578020193).
@@ -5141,7 +5141,7 @@ Two lines that read HEAD's sha after the write print `register seq <n>` instead 
 
 **Which verbs reach the seam twice in one run today:** `claim` through CLAIM-LOST (`:16676–16682`) after its hook returns 7 or 9; `add-row`'s compensating commit (`:3908–3912`); the captures (`:2713–2714`, `:2396`). None can fire on primary: their triggers are the rebase hooks and dirty checkouts, the loser writes nothing (Q12(a), D18), and `commit` is refused.
 
-**The rule: one run, one journal entry.** A second reach in one run exits 2: "a second register write in one run; the first committed at seq `<s>`; nothing more was sent." No verb is split and the design names no merged message, because D5 and S2 give one entry and one mirror commit per write with its own message "exactly as today", a merged message would invent text, a split would create a partial state between two entries, and `rename-lane`'s second act is a git commit, not an entry.
+**The rule: one run, one journal entry.** A second reach in one run exits 2: "a second register write in one run; the first committed at seq `<s>`; nothing more was sent." No verb is split and the design names no merged message, because D5 and S2 give one entry and one mirror commit per write with its own message "exactly as today" (`rename-lane`'s on primary is the one Q13(a) names, design:3498, since its handoff is not in the entry), a merged message would invent text, a split would create a partial state between two entries, and `rename-lane`'s second act is a git commit, not an entry.
 
 #### `LANDING EXPIRED`'s verb: `append-line --landing-expired` (F13)
 
