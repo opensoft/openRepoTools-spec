@@ -386,3 +386,54 @@ existing-behavior regressions for T043. Both have `bb25361` as their sole parent
 and common merge base. Neither includes the other's change; both remain safe
 alone. Local QA and exact-head review are the next gates. No R3 PR, source
 acceptance receipt, queue request or live success is claimed by local commits.
+
+## R3 diagnostic source: generated merge-hint comparison refuses
+
+Fresh source A was published as PR65 at head `99b2cee`, with unique supported
+opt-ins, no dependency, open/non-draft state and qualified base `bb25361`.
+Local QA passed A19/B27 and all eight new B cases without the submodule, zero
+skips. The master, nine standard experts and CI specialist reviewed exact code
+A/B and spec `59b3831` without actionable findings. B remained unpublished.
+
+Actual route job `132126080233`, run `43495118330`, logged at
+`2026-11-13T19:45:16.585Z`: snapshot-mismatch, fields `[merge_commit_sha]`,
+stage source; then source-metadata refusal and full mode. This proves the
+rejecting comparison, not the original raw hint's value. The original payload
+is not recoverable from the sparse public event feed. Do not claim a proven
+null value or infer success from the following compatibility repair.
+
+Fast run `43495118253` passed 455 cases with 18 existing skips and independently
+reported tested merge `b83a805094d72252ed3c1a29295e94dcfd0a40f0`. Commit API
+readback confirms ordered parents `bb25361`/`99b2cee` and tree
+`01ea9d883a7699c23bc2b6042e1f14484f71a2a0`, exactly the reviewed source tree.
+Current REST's hint equals that tested SHA. The ordinary full fallback was
+cancelled only after exact run/head identity checks; it is terminal cancelled,
+not qualification. No receipt, queue, heavy or merge occurred. PR60 was closed
+with a replacement link while preserving its branch/history; PR61 remains open
+until an actual B replacement exists.
+
+The existing approval bundle covers the directly related bounded hint repair
+and checked source/main qualification under T052–T055. All provenance, coverage,
+review/admission trust and excluded-resource boundaries remain intact. T051 and
+T048 remain pending fresh source/candidate/heavy/landing acceptance.
+
+### Bounded hint repair: local red/green qualification
+
+The approved contract now permits only absent/null or trusted tested-SHA hints
+at the initial source/candidate comparison. Unknown hints refuse even when
+both snapshots agree. Later live rereads, candidate bodies, tested parents,
+effective protection, fast provenance and genuine admission remain strict.
+
+Red-first canonical QA on qualified base `bb25361` plus only the regression
+patch selected 83 cases: 42 failed and 41 passed, with 5,259 deselected. The
+same repair and regression selection without the submodule then passed all
+83, with zero skips and 5,259 deselected. The wider canonical CI-contract
+selection with the exact pinned standard passed 996, zero skips, 4,346
+deselected. These runs used non-root, offline disposable py-bench image
+containers with private HOME; no running bench or installed host tool changed.
+
+The patch adds 81 test cases to the 5,261-case base and updates the existing
+hint diagnostic negative to use a foreign non-null SHA, retaining its privacy
+assertions. This is local qualification only. Exact-head expert review,
+ordinary/reusable hosted full CI, checked landings and actual-main validation
+remain required before fresh source events. No new canary acceptance is claimed.

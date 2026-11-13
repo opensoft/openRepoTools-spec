@@ -19,6 +19,10 @@ code/spec merges and fresh canaries on 2026-11-13; assembly pins stay excluded.
 - After fresh PR60/61 also refused before queueing, add fixed-vocabulary stage
   diagnostics and mismatch field names only. Do not log bodies, exception text
   or API payloads, or relax gates on an unproven explanation.
+- Fresh PR65 then proved that the initial snapshot differs on merge_commit_sha.
+  Permit only missing/null or the trusted GITHUB_SHA as generated hints at the
+  initial source/candidate event comparison. All actual Git/provenance proofs
+  remain mandatory; other non-null hints retain full. Candidate bodies stay exact.
 - Review and qualify the code/spec PRs with full ordinary/reuse CI, verify the
   actual main result, then run a fresh independent two-member canary. Preserve
   the failed initial attempt as failed evidence; never rerun it into acceptance.
