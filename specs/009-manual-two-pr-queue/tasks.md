@@ -281,3 +281,13 @@ independent PRs retry the same separate T042/T043 outcomes after qualified main.
 - [x] T046 [O] Complete exact-head local expert review and full source/reuse qualification; open paired code/spec PRs — files: code/spec PR records and `activation-evidence.md` — verify: exact head/base checks, complete ordinary/reuse JUnit inventories and strict OpenSpec
 - [x] T047 [O] Normally merge checked code/spec heads, compare actual landed trees and qualify actual code main before fresh canary — files: `activation-evidence.md`, PR receipts — verify: actual main full CI and test-inventory parity
 - [ ] T048 [O] Publish fresh independent T042/T043 PRs and accepted exact-head reviews; verify fast-only source/candidate CI, one heavy run, matching prefixes/final tree and no duplicate full main run; reconcile evidence — files: source PRs, `activation-evidence.md`, this checklist — verify: immutable run/artifact/member/tree readbacks and strict OpenSpec; no archive or assembly adoption
+
+### R2 refusal observability follow-up
+
+PR60/61 are a second failed source-efficiency attempt, not queue acceptance.
+The pre-approved directly related repair bundle covers this diagnostic-only
+task set CI-METADATA-12-D. Do not relax provenance based on an unproven cause.
+
+- [ ] T049 [O] Add secret-safe fixed-vocabulary stage/refusal diagnostics and snapshot mismatch field names, retaining exact route results and all gates — files: code `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `.github/ci/delivery-cutover.md` — verify: red-first diagnostic tests and full existing routing/review contracts
+- [ ] T050 [O] Review exact code/spec refs, strictly validate, open paired PRs and fully qualify checked normal landings plus actual main — files: paired PRs, OpenSpec artifacts and `activation-evidence.md` — verify: full ordinary/reuse job and test inventory parity, reviewed/landed trees, actual-main results
+- [ ] T051 [O] Capture a genuinely new source event with diagnostic evidence; implement only a proven necessary repair under the same checked gates, then complete fresh T048 acceptance — files: source PRs, narrow directly related repair if needed and evidence — verify: fixed stage/reason plus actual fast-only/heavy/member/tree evidence; never reinterpret failed runs

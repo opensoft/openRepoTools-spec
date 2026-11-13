@@ -16,6 +16,9 @@ code/spec merges and fresh canaries on 2026-11-13; assembly pins stay excluded.
   effective protection, final strict live reread and conservative full fallback.
 - Add red-first positive description-edit and negative decision/identity/race
   regressions. Do not trust an editing actor or change any workflow permissions.
+- After fresh PR60/61 also refused before queueing, add fixed-vocabulary stage
+  diagnostics and mismatch field names only. Do not log bodies, exception text
+  or API payloads, or relax gates on an unproven explanation.
 - Review and qualify the code/spec PRs with full ordinary/reuse CI, verify the
   actual main result, then run a fresh independent two-member canary. Preserve
   the failed initial attempt as failed evidence; never rerun it into acceptance.

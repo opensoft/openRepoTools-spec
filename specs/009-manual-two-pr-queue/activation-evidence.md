@@ -237,3 +237,28 @@ T047 is complete. New independent A/B branches may now retry T042/T043 from
 that qualified main with new exact heads, reviews, receipts and PRs. T048 and
 all live efficiency/heavy/landing acceptance remain pending. No fresh-source
 success is inferred from configuration or main qualification.
+
+## Fresh R2 attempt: source fallback before queue admission
+
+Fresh independent PR60 / head df0871be2a873158ae2c55863097283cd05fd982 and
+PR61 / head 5ada6dfbe5bfdfd11cc7f4a3e0381781521a4837 were opened from the
+qualified 000743a3 base. Local QA passed A19, B27 and all eight new B cases in
+deliberate no-submodule mode, zero skips. The full local expert panel reviewed
+these exact refs without actionable findings. The new source patches are
+byte-identical to the useful original failed-attempt patches, not old heads.
+
+Actual first-attempt ordinary route logs selected full at 16:49:45.835Z for
+A run 43466603976 and 16:49:52.134Z for B run 43466623324 on 2026-11-13.
+Full jobs started, so source-efficiency acceptance failed. Only those two
+coordinator-owned fallback runs were cancelled after exact identity checks;
+both are terminal cancelled. No local acceptance receipt, queue request,
+heavy caller or source merge was made. PR57/58 were closed with replacement
+links while preserving branches/history. R2 remains failed evidence.
+
+Read-only live diagnosis later confirmed effective protection/current-run
+identity and authenticated pending fast evidence using reconstructed current
+PR metadata. That is not the original triggering payload or API-read sequence.
+The public event feed is sparse, and existing route logs reveal no refusal
+stage. Nullable event metadata, incomplete early fast evidence and read-to-read
+transitions remain hypotheses, not a proven cause. T049-T051 add diagnostic-only
+observability before a genuinely new attempt, without changing eligibility.

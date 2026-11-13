@@ -43,3 +43,18 @@ failed evidence, not be rerun or relabeled as clean efficiency acceptance.
 - **WHEN** exact reviewed members complete fast-only source/candidate CI and one
   complete heavy run with matching landed trees and no duplicate full main run
 - **THEN** only that supported scope SHALL receive live efficiency acceptance
+
+### Requirement: Refusal diagnostics preserve privacy and decisions
+The router SHALL report verification-stage and fixed-vocabulary refusal codes
+to stderr. Snapshot mismatch diagnostics SHALL contain field names only, never
+values, bodies, tokens, arbitrary exception text or raw API payloads. Diagnostic
+emission SHALL NOT alter routing, waiting, proof schema or merge authority.
+
+#### Scenario: Source snapshot or fast evidence refuses
+- **WHEN** current strict snapshot or fast provenance checks refuse
+- **THEN** full fallback SHALL remain unchanged and diagnostics SHALL identify
+  only the fixed refusal category and any mismatched snapshot field names
+
+#### Scenario: An exception contains private text
+- **WHEN** an unrecognized exception reaches the conservative fallback
+- **THEN** only a generic code and fixed verification stage SHALL be logged
