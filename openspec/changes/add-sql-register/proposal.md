@@ -310,7 +310,7 @@ answer to Q14 (#165 6710653292). Each item names the test that checks it; the ag
 
 - **The journal.** Each transaction appends a sequence number (commit order),
   the write's commit message exactly as today (`LANES(<lane>@<ws>): …`,
-  `LOG(<lane>@<ws>): …`), and the line edits its mirror commit makes. Rule 9(d)'s
+  `LOG(<lane>@<ws>): …`; `rename-lane`'s on primary excepted, design:3498), and the line edits its mirror commit makes. Rule 9(d)'s
   discipline, under which every write's file change is a known, finite set of
   line edits, is what makes it replayable.
 - **The renderer.** After the transaction commits, the writer forks it. It
