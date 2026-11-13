@@ -312,5 +312,20 @@ coincide. Reproduce the concrete within-read pending-completion race, preserve
 completed-proof strictness and all existing exclusion boundaries.
 
 - [x] T056 [O] Record observed R4 failure and pending-observation contract without duplicating tasks — files: fix-source-delivery-metadata OpenSpec artifacts, feature009 spec/tasks/evidence — verify: strict OpenSpec, exact run/job/timing readbacks and failed-attempt preservation
-- [ ] T057 [O] Reproduce within-read completion red-first, repair only pending wait ordering and preserve completed/admission refusals — files: code delivery_verify.py, delivery_evidence.py, focused repair regressions, cutover runbook and dated activation-record pointer — verify: canonical CI contracts, no-submodule new cases, exact-head local review and full ordinary/reuse inventories
+- [x] T057 [O] Reproduce within-read completion red-first, repair only pending wait ordering and preserve completed/admission refusals — files: code delivery_verify.py, delivery_evidence.py, focused repair regressions, cutover runbook and dated activation-record pointer — verify: canonical CI contracts, no-submodule new cases, exact-head local review and full ordinary/reuse inventories
 - [ ] T058 [O] Open and normally merge fully checked code/spec repair PRs, verify landed trees/actual main, then resume genuinely fresh source events and complete T051/T048 — files: paired PRs and evidence — verify: full source/main parity and actual member/heavy/tree/no-duplicate proof; no archive or assembly adoption
+
+T057 qualification is complete at code `c97a6e8` / spec `16d7ecf`: latest-head
+ordinary `43521046751` passed 15/15 jobs, reusable `43521046869` 17/17 and fast
+`43521046787` 1/1, all first attempts. All four complete inventories contain
+5,365 unique cases and pass all 23 new regressions without removed cases,
+duplicates, failures or skip-identity drift. Normal variants pass 5,192 with
+173 existing skips; deliberate no-submodule variants pass 3,843 with 1,522.
+Exact-head local expert review is clean; hosted requests received quota replies,
+not completed reviews. Strict OpenSpec and the recorded local red/green QA pass.
+
+The checked code/spec merges landed as `908d815` / `d266136`, with exact reviewed
+trees and sole expected parents. Actual-main run `43526748400` is still pending.
+Consequently T058 and every fresh live-acceptance task remain open. No fresh R5
+commit, PR, acceptance receipt, queue request or live qualification is recorded
+by this update. Full dated source/landing facts are in activation-evidence.md.

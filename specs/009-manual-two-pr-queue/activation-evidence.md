@@ -559,3 +559,71 @@ The combined updated tree passed 23 focused no-submodule cases, zero skips/
 the candidate red reproducer remains two failures before its repair. Current
 collection is expected to be 5,365, including 23 additions to qualified main.
 Neither local success nor superseded-head CI qualifies the updated PR head.
+
+### Pending-observation repair: exact-head source qualification and landings
+
+The final integrated code head was
+`c97a6e8b5aeb9e55dc98d2826954c8939f5ad8a7`, based on qualified `660459f`; paired
+spec head was `16d7ecf8605583877b0c10a409309647f06e3291`, based on `375666d`.
+The master, nine standard expert roles and CI specialist reviewed these exact
+integrated refs without actionable findings. Expert inspection was static;
+coordinator-executed QA is separate evidence. Strict OpenSpec passed on the
+exact spec head. Explicit hosted requests received quota-limit responses, not
+completed Codex reviews; the owner-approved local expert review applies.
+
+Latest-head hosted results, all first attempts:
+
+| Run | Role | Successful jobs |
+| --- | --- | ---: |
+| [43521046751](https://github.com/opensoft/openRepoTools-code/actions/runs/43521046751) | Ordinary complete CI | 15/15 |
+| [43521046869](https://github.com/opensoft/openRepoTools-code/actions/runs/43521046869) | Reusable complete CI | 17/17 |
+| [43521046787](https://github.com/opensoft/openRepoTools-code/actions/runs/43521046787) | Fast preparation | 1/1 |
+
+The run/head/event/attempt and every job's unique identity, run association,
+head and first-attempt successful conclusion were checked independently.
+Five normal and four deliberate no-submodule shard artifacts from each full
+run supplied four complete JUnit inventories. Each has 5,365 unique cases:
+normal 5,192 passed/173 existing skips; no-submodule 3,843 passed/1,522 existing
+skips. Compared to actual qualified `660459f` main, every variant has exactly
+the 23 expected new passing regressions, zero removed or duplicate cases,
+failures/errors or changed skip identities. No new regression was skipped.
+Superseded `28eda11` runs and partial downloads were excluded from this proof.
+
+Fast job/check `132215084827` independently logged tested merge
+`41a4ac11c50537240ae71b461601aa637358e123`, with ordered `660459f` / `c97a6e8`
+parents. Its tree `15996d375d01312b2affdc6622e4c2c73f032d27` equals the reviewed
+source tree. Its own test result was 455 passed/18 existing skips/4,892
+deselected; this is fast tested-object evidence, not full or live acceptance.
+
+Checked normal squash landings, without bypass or branch deletion:
+
+- [Code PR68](https://github.com/opensoft/openRepoTools-code/pull/68) landed
+  `908d815db2b2789b44828248a83bc8991ad71454` at 2026-11-13T23:23:22Z, sole
+  parent `660459f`, tree `15996d375d01312b2affdc6622e4c2c73f032d27`.
+- [Spec PR45](https://github.com/opensoft/openRepoTools-spec/pull/45) landed
+  `d266136dfd0e27ca258a55131898b221f7807c61` at 2026-11-13T23:24:11Z, sole
+  parent `375666d`, tree `4efc06a3a33767e4a4d1103a01a25fdb3e7fb2a7`.
+
+Both actual main refs, parents and trees were read back and match the reviewed
+heads. Primary Rule 6 checks reported no open landing hold immediately before
+each merge. The 15 secondary historical parser warnings were checked against
+current remote registry content; none mentions this project. Append-only
+records were preserved. Qualification and landing evidence is also retained in
+[issue 26](https://github.com/opensoft/openRepoTools-spec/issues/26#issuecomment-6867496775).
+
+Actual code-main run
+[43526748400](https://github.com/opensoft/openRepoTools-code/actions/runs/43526748400)
+is still pending on `908d815`, first attempt. Successful route job
+`132234277874` logged full mode with `omit_full:false`; this normal squash
+repair must not inherit a historical batch omission. Its eventual complete
+15-job result and both full inventories remain required before fresh source
+events. This completes T057, not T058 or live T040/T042/T043/T048/T051.
+
+Only local patch preflight for future R5 has run against the equivalent reviewed
+tree: A19/B27 passed, and all eight new B cases passed without the submodule,
+zero skips. No R5 source commit/PR, acceptance receipt, queue request, heavy
+candidate or live result exists yet. Keep PR67 and PR61 as failed evidence until
+their respective actual replacements exist; do not reuse their events.
+Both shared bench views remain at assembly `4b3c3f3`. No assembly pins, tools,
+settings, app/paid access, releases, active plan, lanes or sessions changed.
+No archive or broader adoption is authorized by this source qualification.
