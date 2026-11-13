@@ -72,7 +72,8 @@ observation expires or edit a live queue branch to force success.
 
 ## Migration Plan
 
-The sole executable checklist is feature 009 T036-T041. Record actual settings,
+The sole executable checklist is feature 009 T036-T041, with independent canary
+implementation sets T042 and T043 coordinated by T040. Record actual settings,
 heads, CI URLs and tested/landed trees as evidence, not executable instructions.
 On uncertainty, stop and retain evidence. A reviewed policy-false PR resumes
 full work under the honest delivery gate; restoring legacy required contexts
