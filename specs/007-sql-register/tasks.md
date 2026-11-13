@@ -2614,7 +2614,7 @@ summarises them by phase and by lane.
   configuration while Q6(c)'s refusal stands, and no service PR lands before
   the spec PR. T512 waits on lane 1's T102 (met through T507), T103 to
   T106, T111, T113, T115 and T117; T112 where AT-10's fresh write uses it;
-  T107 to T110 through lane 2's template; lane 2's T229, whose counting cluster `test_each_service_request_is_one_query` runs on, and whose silent-after-startup relay, T229c, one `test_a_database_that_does_not_answer_is_2_inside_4_5_s` id needs (lane 5, #165 6840801742); lane 3's T302; and lane 5's T504,
+  T107 to T110 through lane 2's template; lane 3's T302; and lane 5's T504,
   T505 and T507. It does not wait on T328 or on group B (L1:449).
 - **The release:** T342 can start at any time, and T346 at once, before
   T119's check 1, which depends on it; T340 and T341 wait until each
