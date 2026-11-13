@@ -384,3 +384,14 @@ Sonar reports missing blame for nested submodule files despite full Git history.
 documents submodules as a cause. Do not reset the period, exclude the nested
 files or disable SCM to make the gate pass. The native shell parser limitations
 and intentional UTF-8 negative-test warnings documented above remain disclosed.
+
+
+### Additional triage qualification
+
+Feature 010's [additional regression proof](main-findings-proof.json) records
+365 passing provider cases, 6 explained filesystem-only skips, 10 passing code
+preservation/export cases, direct runtime exception/normalizer/sandbox checks,
+and native transport red/green (8 failures before repair, 8 passes afterward).
+Dependency-related local skips were rerun in an isolated prepared environment
+with the exact same full provider tree; they are not counted as acceptance.
+Full source and fresh composed/current-main CI remain required for T009/T012.

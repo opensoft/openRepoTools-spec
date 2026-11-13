@@ -172,3 +172,45 @@ The eight real curl call sites each reproduced the downgrade with native curl
 against ephemeral loopback HTTPS/HTTP servers before the repair (8 failed
 security assertions). The stubs captured actual expanded function arguments;
 no GitHub request or downloaded payload was executed.
+
+
+### Verified additional false-positive evidence
+
+[Machine-readable runtime and regression proof](main-findings-proof.json)
+confirms the twelve proposed false positives before any service transition:
+
+- All four `_Unasked` handlers bind the actual class whose MRO is
+  `_Unasked -> repo_shape.Refusal -> Exception -> BaseException`. The
+  context manager preserves a thrown instance, and the submodule/throwaway
+  handlers convert it to the expected finding. Existing entry-finding
+  regressions exercise the remaining path.
+- Both HTTP normalizers returned `example/repo` for HTTP/HTTPS input with
+  `subprocess.run` forbidden; they perform no connection.
+- The default sandbox roots enumerate existing `/tmp` with
+  `open`, `os.open` and `os.mkdir` forbidden. They create no file.
+- Ten existing code regressions passed, zero skipped: live writers, arbitrary
+  marked/unmarked `tmp.*` directories, bare repositories/notes, symlink removal
+  preservation, and the fixed-basename export/read contract.
+- The four provider regression modules cover throwaway refusals and branch/
+  manual-command quoting. Across 371 distinct selected cases: 365 passed,
+  6 require a case-insensitive filesystem unavailable on these hosts. The
+  first local run also skipped 15 for missing git-filter-repo; all 15 were
+  rechecked in the prepared environment with git-filter-repo 2.47.0:
+  11 passed and 4 remained filesystem-only skips. The whole provider source
+  tree matches the pinned merged revision, tree
+  `e4605a5c4f30426a79e8009febc398e5bb20d2ee`.
+
+The four modules are
+`test_adopt_check_throwaway_repos.py`,
+`test_update_shape_branch_any_directory.py`,
+`test_update_shape_paste_lines.py` and
+`test_update_shape_next_quoting.py` at provider
+`4bf963f0ca416b142652bb608cafe5c76d893faa`.
+The ten code cases are in `test_lane_worktrees.py` and
+`test_lanes_index.py`; their production sources match code
+`22aac02ba5cfcb2777e4bf05a574e26c555bd38b` unchanged.
+
+Apply only these twelve false-positive dispositions, with per-issue source-flow
+comments and this published evidence. Keep all eight real download issues open
+until automatic closure in a fresh main scan. No accept/wontfix transition,
+threshold change or exclusion is authorized by this triage.
