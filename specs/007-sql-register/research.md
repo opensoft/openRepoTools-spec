@@ -1422,7 +1422,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Why:** the fix belongs with the change that needs it, and keeps that pull
   request green on its own. It follows Q-L2-3 (a), where lane 4's T417 adds
   its `_EXIT_3_CAUSES` entries and lane 2 reviews the hunk.
-- **Source:** T404; T401; T417.
+- **Source:** T404; T401; T417; T403's `failedit` re-point, which meets it (lane 3, #165 6851059362).
 
 ### DEC-25. A claim whose owner cannot be tested here counts as live for the seam's cap, then dead (T412's G10)
 
