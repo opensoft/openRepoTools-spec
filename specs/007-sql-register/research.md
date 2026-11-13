@@ -575,12 +575,12 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   `set-lane-state`, `handoff-path` and `write-handoff`, and the skill's own
   calls of these verbs (after slice 3, `handoff-path --create` and
   `write-handoff --prepend`), and, at the ownership seam, `managed-projection`
-  (DEC-27). Only `who` and `lane-last` still exit 69 under it. No register
+  (DEC-27). So do `lane-handoff`'s two reads that gate the handoff file, each with the variable on its own call: `lane-last` at the closed-lane fence, which opensoft/openRepoTools#118 moved from the late path into every other mode (code `ba2e6b9`; `lane-handoff:2153–2155` at `8a5edd97`), and which still refuses 2 where the mirror's last lane-kind line is `ENDED` or `RETIRED` and 1 where the mirror read fails too (Amendment 7(d)); and `restart-intent` at the preservation check (`:2164`), which Y:5646 calls host-local and T504's table reads as a deciding read. Only `who` still ignores the variable; `--late`'s own `lane-last` read and `lane-start`'s (spec:664) carry none and still exit 69. No register
   write rests on those answers: `PAUSED`, the `LANES.md` line and the row
   still exit 69 with their notes, and the lane stays `SWAPPING`. spec:692
   already requires it.
 - **Whose:** lane 3's ruling on lane 4's item 1, #165 6746035594, with its list by
-  verb (#165 6747422030). The
+  verb (#165 6747422030); widened to those two reads by lane 3's ruling on round 6h's #56 (#165 6859801732). The
   ownership seam in an outage (spec:648–649 against `lane-handoff:1728–1741`
   at code `ddc972d`) was his spec-PR list item 9, and is answered: DEC-27.
 - **Source:** Y:4895; Y:4928; `test-plan.md:2198–2204`; spec:692;
