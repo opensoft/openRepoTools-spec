@@ -24,7 +24,17 @@ including merge identity, stay exact. Later PR/API rereads remain byte-strict.
 This avoids brittle tuple-index slicing and a new general normalization API.
 Reject the alternatives of removing all metadata checks, trusting Sourcery,
 disabling summaries, expanding permissions or altering triggers. No new output
-schema or potentially sensitive payload logging is needed for this bounded fix.
+proof schema or potentially sensitive payload logging is needed for this bounded fix.
+
+The fresh R2 source PRs 60/61 still selected full before queue admission. Their
+logs do not identify the failed predicate, so do not infer that nullable event
+metadata or a fast-check startup race caused this attempt. Add stderr-only,
+fixed-vocabulary verification-stage/refusal codes and source-snapshot mismatch
+field names, never values. Map only known literal refusals to codes; other
+exceptions receive one generic code without their text. Keep the exact routing
+result, strict snapshot/live checks, pending policy and proof schema unchanged.
+Qualify this diagnostic-only configuration normally before obtaining a new
+live event; historical failures are not rerun into clean acceptance.
 
 Positive regressions reproduce appended/replaced/removed unrelated prose and
 both supported source bodies. Negative cross-products cover invalid event/live

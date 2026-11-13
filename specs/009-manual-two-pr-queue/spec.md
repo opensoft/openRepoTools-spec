@@ -206,3 +206,7 @@ canaries without per-PR approval stops. Earlier failed evidence stays failed.
   landings and actual main qualification before a fresh two-member canary. Do
   not reinterpret the failed initial attempt as acceptance. All prior coverage,
   queue/review trust and explicit excluded-resource boundaries remain unchanged.
+- FR-042: log fixed-vocabulary verification-stage/refusal codes and snapshot
+  mismatch field names only, never their values, bodies, tokens, exception text
+  or raw API responses. Preserve every fallback/waiting/proof/authority decision;
+  investigate the fresh R2 failure before speculatively relaxing any check.

@@ -218,3 +218,73 @@ T046 is complete. Spec landing and actual new-main full qualification remain
 T047 gates; fresh canary, receipt, heavy and landing acceptance remain pending.
 The first-attempt failure record above stays failed, and no new queue command
 or source fast-only acceptance is claimed by this configuration landing.
+
+## Metadata repair: actual main qualified for the fresh canary
+
+Spec PR40 normally landed reviewed head 954fe3a as
+28b5cf3d687a2a9f8680c59f260c5f3b701a3bfc, sole parent c6c668e, tree
+a00e26de3f6b408398041be99e5072d017820068 exactly reviewed. The final publication
+delta was acknowledged without actionable findings by the full local panel.
+
+Actual code-main run 43458131280 passed all 15 expected jobs on
+000743a3a3bb9eca92960d0c8fad1bf2075dc2e8, first attempt, no skipped full jobs.
+Its complete normal/no-submodule JUnit inventories each contain 5,245 cases and
+exactly match the qualified source variants, including skip identities. Normal
+5,076 passed/169 existing skips; no-submodule 3,727 passed/1,518 existing skips.
+Current code main remained at that exact qualified commit before fresh branches.
+
+T047 is complete. New independent A/B branches may now retry T042/T043 from
+that qualified main with new exact heads, reviews, receipts and PRs. T048 and
+all live efficiency/heavy/landing acceptance remain pending. No fresh-source
+success is inferred from configuration or main qualification.
+
+## Fresh R2 attempt: source fallback before queue admission
+
+Fresh independent PR60 / head df0871be2a873158ae2c55863097283cd05fd982 and
+PR61 / head 5ada6dfbe5bfdfd11cc7f4a3e0381781521a4837 were opened from the
+qualified 000743a3 base. Local QA passed A19, B27 and all eight new B cases in
+deliberate no-submodule mode, zero skips. The full local expert panel reviewed
+these exact refs without actionable findings. The new source patches are
+byte-identical to the useful original failed-attempt patches, not old heads.
+
+Actual first-attempt ordinary route logs selected full at 16:49:45.835Z for
+A run 43466603976 and 16:49:52.134Z for B run 43466623324 on 2026-11-13.
+Full jobs started, so source-efficiency acceptance failed. Only those two
+coordinator-owned fallback runs were cancelled after exact identity checks;
+both are terminal cancelled. No local acceptance receipt, queue request,
+heavy caller or source merge was made. PR57/58 were closed with replacement
+links while preserving branches/history. R2 remains failed evidence.
+
+Read-only live diagnosis later confirmed effective protection/current-run
+identity and authenticated pending fast evidence using reconstructed current
+PR metadata. That is not the original triggering payload or API-read sequence.
+The public event feed is sparse, and existing route logs reveal no refusal
+stage. Nullable event metadata, incomplete early fast evidence and read-to-read
+transitions remain hypotheses, not a proven cause. T049-T051 add diagnostic-only
+observability before a genuinely new attempt, without changing eligibility.
+
+## Diagnostic-only follow-up: local qualification
+
+Code 07336fddb80dcd9f86221ff788fffcd0fe04c07d adds only fixed stderr stage/reason
+codes and snapshot mismatch field names. Unknown exception text is never
+emitted. Exact routing outputs, snapshots, retries, proof schema and every
+gate remain unchanged. Against old main, six diagnostic tests failed and the
+quiet-success case passed; these are logging regressions, not eligibility fixes.
+
+With the change, 915 broad CI contracts passed, zero skips (4,337 deselected).
+The focused routing/review subset passed 375, zero skips; all seven additions
+also passed in deliberate no-submodule mode, zero skips (5,245 deselected).
+Canonical tests/run.sh ran in disposable existing bench-image containers as
+nonroot with no network, 2CPU/2GiB, private HOME and exact pinned shape bundle.
+Early disposable QA setup attempts failed before test execution because of
+incorrect fixture mounts; corrected runs above initialized the exact 4bf963f0
+pin or deliberately omitted it. No live bench was restarted or rebound.
+
+The exported tested patch exactly matches the committed code diff, SHA256
+013B1544D108AAA6C6F89F3ACD6CE0D26CCB28610A381B34C9847D24C93A366C.
+Master plus nine standard experts and CI specialist reviewed exact code 07336fd
+and spec 04fc566 without actionable findings. This final QA/task-only update is
+coordinator-reviewed. Both OpenSpec changes validate strictly. Shared py-bench
+and cloud-bench assembly HEADs remain 4b3c3f30b08d39469a185cbb74afdace9579a857.
+T049 is complete; T050 hosted qualification/landings and T051 actual new-event
+diagnosis plus all live efficiency acceptance remain pending.
