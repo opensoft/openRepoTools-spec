@@ -165,3 +165,28 @@ relabeled as a hosted-bot review.
 - FR-034: local-review publication is operator attestation, not proof of local
   model execution, independent human approval or merge authority. Keep activation
   false, existing full CI/coverage and all live lanes/settings/releases unchanged.
+
+## Owner-approved activation phase — 2026-11-13
+
+`activate-claude-current-ci-cutover` supersedes only the preparation-phase
+false/no-settings/no-canary boundary in FR-031/FR-034 for this explicit approval.
+It does not rewrite those historical decisions or expand routing/review trust.
+
+- FR-035: migrate only repository ruleset 25966308's four legacy required
+  contexts to delivery bound to GitHub Actions integration 15368, while the live
+  flag stays false. Preserve and read back every unrelated protection.
+- FR-036: enable only through an exact-head reviewed, full/reuse-qualified PR;
+  retain explicit disabled/no-network, unknown-proof and full-fallback coverage.
+  Qualify actual main CI before queue use. No original full job or baseline edit.
+- FR-037: both Claude and Codex use the named manual held-heavy queue for an
+  opted-in fast source, never direct merge. The owner accepts operator-policy
+  queue-only usage; no GitHub-enforced exclusivity is claimed.
+- FR-038: accept the two-member canary only on exact member/order/head/base,
+  fast-only source/candidate PR runs, one complete heavy call, no duplicate full
+  main run and matching tested/landed prefix/final trees. Distinguish local
+  refusal/recovery fixtures from live queue evidence. Stop on excluded authority.
+
+Bypass, app/paid access, releases/tags, assembly pins, installed tools, active-plan
+selection and running-lane changes remain excluded. Current scope is unchanged:
+one or two independent main-based PRs modifying only unchanged-mode regular
+claude-current/test files with both explicit opt-ins. Other work retains full CI.

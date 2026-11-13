@@ -216,3 +216,21 @@ not yet claimed passed. The flag remains false; source merges are not approved.
 Both shared py-bench and cloud-bench assembly checkouts remain `4b3c3f3`; no
 lane/session/tool/pin change, settings or queue write, canary or release act was
 performed. This completes T033–T035 as source preparation/publication only.
+
+## CI-ACTIVATION-11 — owner-approved scoped activation (2026-11-13)
+
+Governing change: `activate-claude-current-ci-cutover`. Brett explicitly approved
+the required-check migration, reviewed enablement PR and two-PR test, preserving
+lanes 1-5 and excluding bypass, app/paid access, releases and assembly pins.
+Earlier preparation-only and local-review records above remain historical.
+Code-relative paths below name implementation; OpenSpec/Speckit paths are
+spec-relative. This is the sole executable checklist, not proof of completion.
+Commands below are individual gates; actual remote/tree comparisons and live
+acceptance evidence are additionally required before marking their task done.
+
+- [x] T036 [O] Record the approved activation phase and current source baseline — files: `openspec/changes/activate-claude-current-ci-cutover/`, `specs/009-manual-two-pr-queue/`, code `features/009-manual-two-pr-queue/openspec/activation.md` — verify: `openspec validate activate-claude-current-ci-cutover --strict`
+- [x] T037 [O] Migrate only ruleset 25966308's required contexts with live flag false, preserving all other fields and recording target/effective readbacks — files: `features/009-manual-two-pr-queue/openspec/activation.md` — verify: `gh api repos/opensoft/openRepoTools-code/rules/branches/main | python3 -c 'import json,sys; checks=[c for r in json.load(sys.stdin) if r["type"]=="required_status_checks" for c in r["parameters"]["required_status_checks"]]; assert {"context":"openrepotools-delivery","integration_id":15368} in checks; assert not ({"guard-launch-mode","tests","tests-no-submodule","package"} & {c["context"] for c in checks})'`
+- [ ] T038 [O] Enable only the prepared flag, preserve explicit disabled/fallback tests, update shared instructions and open locally reviewed paired PRs — files: `.github/ci/delivery-policy.json`, `.github/ci/delivery-cutover.md`, `.github/ci/task-set-delivery.md`, `tests/test_ci_cutover.py`, `features/009-manual-two-pr-queue/openspec/activation.md` — verify: `bash tests/run.sh -k 'ci_local_review or ci_delivery or ci_cutover or ci_candidate_shadow or full_ci_coverage_parity or tests_workflow or ci_shards'`
+- [ ] T039 [O] Qualify exact-head ordinary/reuse CI and review, normally merge the enablement/governance PRs and verify landed trees plus actual main CI before queue use — files: `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${ENABLEMENT_MAIN_RUN_ID:-}" && gh run watch "$ENABLEMENT_MAIN_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
+- [ ] T040 [O] Run refusal/recovery fixtures, then the authorized two-member independent-main canary with explicit local-review acceptance; verify actual fast-only source/candidate runs, one complete heavy call and matching prefix/final trees — files: `claude-current`, `tests/test_claude_current.py`, `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${CANARY_HEAVY_RUN_ID:-}" && gh run watch "$CANARY_HEAVY_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
+- [ ] T041 [O] Reconcile actual settings/run/artifact/tree evidence and remaining adoption boundaries without advancing assembly pins or archiving — files: `features/009-manual-two-pr-queue/openspec/activation.md`, `specs/009-manual-two-pr-queue/activation-evidence.md`, `specs/009-manual-two-pr-queue/tasks.md` — verify: `openspec validate activate-claude-current-ci-cutover --strict`
