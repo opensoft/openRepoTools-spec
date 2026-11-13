@@ -143,3 +143,32 @@ These source repairs are not an invented Sonar closure: the root project's six
 confirmed findings still require readback after the assembled main analysis.
 The existing issue identities, original source commits and earlier evidence
 remain intact. No real finding has been marked false-positive or accepted.
+
+
+## Additional findings from complete main analysis (2026-11-13)
+
+Main `dab458e2f774637cccea490bfc6bdb1a5dafe212`, analysis
+`d61100b9-ea1e-4b47-9400-d0d68868e601`, evaluated all six unchanged
+conditions. Coverage 86.0%, duplication 2.6%, maintainability A and hotspot
+review 100% passed. Reliability E (4 bugs) and security D (16 vulnerabilities)
+correctly failed the required gate. [The exact 20 issue records](main-findings.json)
+retain the original keys, paths, rules and proposed dispositions.
+
+| Group | Count | Source review and proposed action |
+| --- | ---: | --- |
+| shell:S6506, root/implementation launchers | 8 | Real HTTPS-to-HTTP redirect exposure. Fix the existing three root and five code curl invocations with `--proto '=https' --proto-redir '=https' --tlsv1.2`; retain normal TLS verification and gh-first fallback order. |
+| python:S5708, provider adopt-project.py | 4 | `_Unasked` is a class deriving from imported `repo_shape.Refusal(Exception)`; all four handlers refer to that class. Verify runtime class identity and exercise refusal handling before false-positive disposition. |
+| python:S5332, lane-worktrees/lanes-index | 2 | HTTP strings are accepted input spellings in repository-slug normalization, then removed. Neither function connects to that URL. Verify pure normalization and no transport call. |
+| python:S5443, lane-worktrees | 2 | `sandbox_roots` enumerates existing candidate roots; it creates no temporary file or predictable filename. Candidate cleanup separately checks ownership/liveness/age and keeps arbitrary `tmp.*` directories. Verify the function and preservation regressions. |
+| pythonsecurity:S8707, lanes-index | 2 | `--out` is the local operator's explicit export destination, not data beneath a promised confinement root. The written basenames are fixed `worktrees` and `meta`. Verify the export contract and reader regressions. |
+| pythonsecurity:S8705, provider update-shape.py | 2 | One call passes a fixed git argv and a full `refs/heads/<branch>` value; the other uses `shlex.join` to print a manual recovery command. Verify branch/quoting regressions and source flows. |
+
+No new issue is accepted or waived. Apply false-positive dispositions only
+after the recorded source and regression proof; leave the eight real findings
+open until a fresh main scan closes them automatically. Preserve the original
+twelve records and server history, including cases the new analyzer closed.
+
+The eight real curl call sites each reproduced the downgrade with native curl
+against ephemeral loopback HTTPS/HTTP servers before the repair (8 failed
+security assertions). The stubs captured actual expanded function arguments;
+no GitHub request or downloaded payload was executed.

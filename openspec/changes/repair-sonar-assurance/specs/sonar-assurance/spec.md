@@ -38,7 +38,7 @@ The assigned Sonar way conditions and thresholds SHALL remain unchanged. Main SH
 - **THEN** the workflow SHALL report failure and retain the failed analysis evidence
 
 ### Requirement: Auditable security triage
-Each of the twelve recorded findings SHALL have a source-owner, evidence-backed disposition. Substantiated issues MUST be fixed in the owning source and consumed through ordinary pins. False positives MUST include source-flow and regression evidence; acceptance or scope exclusion MUST NOT hide a real finding.
+Each of the twelve recorded findings and any additional reliability/security finding exposed by the complete main analysis SHALL have a source-owner, evidence-backed disposition. Substantiated issues MUST be fixed in the owning source and consumed through ordinary pins. False positives MUST include source-flow and regression evidence; acceptance or scope exclusion MUST NOT hide a real finding.
 
 #### Scenario: Pinned upstream finding
 - **WHEN** a finding belongs to the pinned upstream standard
@@ -50,3 +50,12 @@ The repair SHALL preserve active checkout content, sessions, lane bindings, inst
 #### Scenario: Verification workspace
 - **WHEN** tests or scanners execute
 - **THEN** they SHALL use isolated workspaces without replacing a shared running checkout or restarting an active session
+
+
+#### Scenario: HTTPS download redirect
+- **WHEN** an installer or assembly launcher downloads code or pin metadata through curl
+- **THEN** it SHALL restrict both initial and redirected protocols to HTTPS, retain certificate validation and reject an HTTPS-to-HTTP redirect before sending an HTTP request
+
+#### Scenario: Newly exposed finding
+- **WHEN** complete indexing exposes an additional issue that makes the retained quality gate fail
+- **THEN** source-flow review and regression evidence SHALL determine a source-owner repair or substantiated false-positive disposition; the period, rule profile and scope SHALL not be changed to obtain a green result
