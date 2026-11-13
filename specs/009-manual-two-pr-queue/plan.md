@@ -391,3 +391,20 @@ direct fast-source merge; queue-only usage remains owner-accepted operator polic
 
 Assembly adoption, PR361's composed Sonar work, installed sessions and wider
 scopes remain separate. No app/paid access, release/tag, active-plan or lane act.
+
+## Approved source metadata repair — 2026-11-13
+
+Use fix-source-delivery-metadata, FR-039–FR-041 and sole tasks T044-T048.
+The owner pre-approved directly related repairs, local expert review, full
+validation, normal checked code/spec merges, fresh canaries and evidence updates.
+Assembly pins, tools, sessions, settings/app/paid access and releases stay out.
+
+Preserve source main 30abf79 and its successful actual-main qualification. Add
+red-first tests for pre-routing prose edits, invalid event/live delivery intents,
+other metadata changes and strict final live reads. Normalize only the body in
+the first source event/live comparison after independently validating both
+decisions. Do not alter global snapshots, full CI, workflow triggers, review or
+artifact trust. Qualify exact reviewed heads with ordinary/reusable full CI,
+verify actual landed trees and main, then retry T042/T043 in fresh independent
+PRs. Preserve failed PR57/58 evidence; retire only superseded coordinator-owned
+PRs without deleting their branches. Existing live acceptance gates are unchanged.

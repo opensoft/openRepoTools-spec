@@ -156,6 +156,15 @@ acceptance gates remain pending.
 
 ## Remaining boundary
 
+Owner follow-up approval on 2026-11-13 now authorizes the narrow repair above,
+regression tests, reviewed/validated code/spec PRs and a fresh canary. The owner
+also pre-approved directly related scoped fixes, checked normal source merges,
+fresh canaries and final evidence updates without per-PR approval stops. This
+supersedes the earlier pending-approval status, not the failed attempt. Use the
+new fix-source-delivery-metadata change and sole tasks T044-T048. Assembly pins
+and every other excluded resource remain excluded. No new live success is
+claimed by that approval; append actual qualification as it completes.
+
 Assembly adoption, exact-pin/composed acceptance and fresh-session rollout are
 separate work and are not authorized by this source activation/canary approval.
 No assembly or active lane checkout is refreshed here. Do not archive this

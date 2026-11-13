@@ -262,3 +262,22 @@ will be recorded in activation-evidence.md after publication and qualification.
 
 - [ ] T042 [O] Implement CI-ACTIVATION-11-A in one source PR; retain executable mode, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `claude-current` — verify: set A commands above plus actual hosted fast/delivery checks
 - [ ] T043 [O] Implement CI-ACTIVATION-11-B in a separate source PR; use the existing hermetic Sandbox without depending on A, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `tests/test_claude_current.py` — verify: set B command above plus actual hosted fast/delivery checks
+
+## CI-METADATA-12 — approved source-description repair (2026-11-13)
+
+The owner approved the narrow metadata fix, regression tests, checked code/spec
+merges and a fresh two-PR canary. The follow-up approval bundle covers directly
+related fixes, reviews, full validation, checked normal merges and fresh canaries
+without per-PR approval stops. Bypass, app/paid access, releases, tools, assembly
+pins and running-lane changes remain excluded. Governing change:
+fix-source-delivery-metadata. The initial attempt remains failed evidence.
+
+One configuration task set CI-METADATA-12 contains T044-T046; T047/T048 are
+external integration/acceptance gates, not duplicate implementation PRs. Fresh
+independent PRs retry the same separate T042/T043 outcomes after qualified main.
+
+- [ ] T044 [O] Record approved metadata decision contract and handoff without a duplicate checklist — files: `openspec/changes/fix-source-delivery-metadata/`, this task file, feature009 `spec.md` — verify: `openspec validate fix-source-delivery-metadata --strict`
+- [ ] T045 [O] Add red-first prose-edit, intent/dependency/identity and strict-live-race regressions; normalize only the first source-event body comparison — files: code `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `.github/ci/delivery-cutover.md` — verify: `bash tests/run.sh -k 'ci_cutover or ci_local_review or ci_delivery'`
+- [ ] T046 [O] Complete exact-head local expert review and full source/reuse qualification; open paired code/spec PRs — files: code/spec PR records and `activation-evidence.md` — verify: exact head/base checks, complete ordinary/reuse JUnit inventories and strict OpenSpec
+- [ ] T047 [O] Normally merge checked code/spec heads, compare actual landed trees and qualify actual code main before fresh canary — files: `activation-evidence.md`, PR receipts — verify: actual main full CI and test-inventory parity
+- [ ] T048 [O] Publish fresh independent T042/T043 PRs and accepted exact-head reviews; verify fast-only source/candidate CI, one heavy run, matching prefixes/final tree and no duplicate full main run; reconcile evidence — files: source PRs, `activation-evidence.md`, this checklist — verify: immutable run/artifact/member/tree readbacks and strict OpenSpec; no archive or assembly adoption
