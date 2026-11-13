@@ -5925,7 +5925,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - The act exits with the code lane 4's arms give: `start-record`'s 2 makes
     `lane-start` die 2 (a second binding); W7's refusal stops the launch;
     the guard's child, refused 2 on its `set-row-state` of the lane left,
-    records a note in the bind's record; never 0.
+    records a note in the bind's record. That write's own code is never 0; the guard's body still exits 0, and the record ends `bound`, `rc=0` (Y:5486, Y:5552).
   - Without the rival, or with a rival that touches no listed scope, or with
     an earlier write of the same act (the same `act_id`), the write commits.
   - A `HANDOFF-REQUESTED` line is not a lane-kind line, so a requester's
@@ -6149,14 +6149,14 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
      the bound, the record still ends `rc=124`: the bound covers that call
      too;
   8. two sessions answer `2` for one lane on the primary fixture: one
-     `start-record` commits, and the other is refused 2 by `bind:<L>`;
+     `start-record` commits, and the other is refused 2 by `bind:<L>`, which the writer's `expectation:` line names in lower case (Y:5584, Y:5589) in that attempt's `out` file; its record's `why` is `lane-start`'s last refusal line (Y:5487);
   9. the bind is one register commit plus one handoff commit in files mode,
      and one journal entry on primary; a row change injected after
      `act-begin` refuses it with 2 and writes nothing. With the
      `set-row-state` on the lane left, answer 2 journals two entries;
   10. an injected `psql` exit 2 gives `rc=3` with the id: [absent], exit 2
       on every call of the bind's write from its commit call on, its
-      deadline's lookup included; [found], the shim's `after` mode on that
+      deadline's lookup included, so it ends 3 (Y:5245), not the 75 of a lookup that answers absent (Y:5244); [found], the shim's `after` mode on that
       commit call, which commits, then exit 2 on every later call. At the
       next `2` the child's `find_write` lookup runs first. Its tries, here
       and in cases 18 to 20, follow AT-F3's rule, and are asserted as
