@@ -342,3 +342,22 @@ exactly from main, and repeat strict validation/local review on the union.
 Code source/landed trees and all exact-head CI qualification remain unchanged;
 no new implementation or policy adjustment is introduced by this docs-only merge.
 Final normal spec landing still requires fresh head/base/check/thread/tree guards.
+
+## Exact-head local review receipts — 2026-11-12
+
+Use the new full OpenSpec proposal `accept-exact-head-local-reviews`, feature
+requirements FR-032–FR-034 and sole tasks T033–T035. Extend the existing review
+reader only; retain immutable candidate artifact schemas, trusted-main routing,
+complete full CI jobs, disabled flag and historical landing checks unchanged.
+Publish a writer-authenticated strict comment rather than a label or spoofed
+hosted summary. Check exact PR/head/base, unedited server identity, supported
+skill, findings/resolution/validation and zero unresolved findings. Prefer the
+newest authorized local decision, including revocation, and recheck access and
+receipt digest with complete threads on the existing final verification pass.
+
+Exercise offline candidate fixtures with local-only, mixed and hosted evidence,
+all refusal classes, permission loss and receipt races. Run focused tests through
+the canonical wrapper as non-root in an offline disposable bounded bench image.
+Validate OpenSpec and locally review the exact patch before opening paired PRs.
+Full hosted CI follows publication; both PRs remain open. No settings migration,
+activation, canary, lane change, assembly pin or release work is authorized.

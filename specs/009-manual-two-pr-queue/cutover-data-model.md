@@ -30,3 +30,13 @@ heavy live recheck -> actual ordered merges -> separate historical prefix proof.
 Every unknown/stale/missing edge retains full or fails already-selected omission.
 Full source eligibility and complete candidate/release/assembly acceptance remain
 different facts. No automatic queue or state-setting API exists in the controller.
+
+Local review record (accepted successor, 2026-11-12): the strict versioned
+top-level comment binds repository, PR, head/base, Codex-local reviewer, supported
+skill, accepted/revoked status, unresolved-findings integer, findings, resolution
+and validation reports. Live writer identity/permission and complete GraphQL
+edit metadata authenticate it. Internal snapshots retain only numeric author and
+comment IDs, login, server creation time, permission and body SHA256 plus resolved
+threads. This is operator attestation, not hosted-bot or independent approval.
+The newest authorized local record controls; malformed, edited, stale or revoked
+evidence refuses. Candidate artifact and historical landing schemas stay intact.
