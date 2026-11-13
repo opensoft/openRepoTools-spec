@@ -302,4 +302,15 @@ nullable/current compatibility rule, not arbitrary stale hints or weaker proof.
 - [x] T052 [O] Record the observed R3 refusal and bounded source/candidate hint contract, preserving the sole task store and exclusions — files: OpenSpec fix-source-delivery-metadata artifacts, feature009 spec/tasks/evidence — verify: strict OpenSpec and exact live log/commit readbacks
 - [x] T053 [O] Add red-first nullable/current and invalid-hint tests, repair only initial event comparisons, and retain tested-parent, strict-live/body and admission refusals — files: code `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `.github/ci/delivery-cutover.md` — verify: canonical CI contracts and deliberate no-submodule regressions
 - [x] T054 [O] Review exact heads, open paired PRs and qualify complete ordinary/reusable full CI with exact test identities and skip accounting — files: code/spec PRs and evidence — verify: exact-head local panel, full job/report inventories and strict OpenSpec
-- [ ] T055 [O] Normally merge checked heads, verify landed trees and actual main, then resume fresh T051/T048 sources without reusing failed attempts — files: PR/actual-main/evidence records — verify: normal merge readbacks, actual-main full CI and complete inventory parity; no archive or assembly adoption
+- [x] T055 [O] Normally merge checked heads, verify landed trees and actual main, then resume fresh T051/T048 sources without reusing failed attempts — files: PR/actual-main/evidence records — verify: normal merge readbacks, actual-main full CI and complete inventory parity; no archive or assembly adoption
+
+### R4 pending-fast completion race — CI-METADATA-14
+
+Fresh PR67 reached fast-reread after initial metadata/Git validation. Its exact
+before/after fields were not logged; fast completion and refusal timestamps
+coincide. Reproduce the concrete within-read pending-completion race, preserve
+completed-proof strictness and all existing exclusion boundaries.
+
+- [x] T056 [O] Record observed R4 failure and pending-observation contract without duplicating tasks — files: fix-source-delivery-metadata OpenSpec artifacts, feature009 spec/tasks/evidence — verify: strict OpenSpec, exact run/job/timing readbacks and failed-attempt preservation
+- [ ] T057 [O] Reproduce within-read completion red-first, repair only pending wait ordering and preserve completed/admission refusals — files: code delivery_verify.py, focused repair regressions, cutover runbook and dated activation-record pointer — verify: canonical CI contracts, no-submodule new cases, exact-head local review and full ordinary/reuse inventories
+- [ ] T058 [O] Open and normally merge fully checked code/spec repair PRs, verify landed trees/actual main, then resume genuinely fresh source events and complete T051/T048 — files: paired PRs and evidence — verify: full source/main parity and actual member/heavy/tree/no-duplicate proof; no archive or assembly adoption

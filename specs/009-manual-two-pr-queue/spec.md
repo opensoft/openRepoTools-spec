@@ -216,3 +216,9 @@ canaries without per-PR approval stops. Earlier failed evidence stays failed.
   genuine candidate-admission proofs remain mandatory; candidate bodies and
   later live rereads stay strict. Unknown non-null hints retain full even when
   both snapshots agree. No new retry, schema, permission or hint-fetching path.
+- FR-044: after all initial fast identity, source/base-history, job and state
+  checks pass, a source's authenticated pending observation returns only the
+  existing bounded wait before completed-proof rereads. It grants no proof or
+  omission. A fresh all-success observation must pass the same exact rereads;
+  admission stays success-only, initial failed/unknown evidence retains full,
+  and no retry budget, schema, permission or queue authority changes.

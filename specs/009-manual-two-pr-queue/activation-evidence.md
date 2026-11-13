@@ -479,3 +479,59 @@ in parallel with actual-main validation. Neither is published or
 queued; source events must wait for actual-main qualification. All prior failed
 attempts remain failed evidence. No assembly, lane/session, installed-tool,
 ruleset/app/paid access or release change, and no archive/adoption is authorized.
+
+### R4 actual-main qualification and fast-reread refusal
+
+Actual code-main run `43506231972` passed all 15 jobs on `660459f`, first attempt.
+Complete main normal/no-submodule inventories each contain 5,342 unique cases
+and exactly match the qualified ordinary source inventories: normal 5,169 passed/
+173 existing skips; no-submodule 3,820 passed/1,522 existing skips. Zero new,
+removed or duplicate cases, failures or skip-identity drift. Code/spec main refs
+remained `660459f`/`375666d`. This completes the hint-repair main qualification.
+
+Fresh A was then published as PR67 at `6e1f322`, base `660459f`, with unique
+opt-ins, no dependency and an explicit Codex request. PR65 was closed only after
+replacement publication; its branch/history remain. Master, nine standard expert
+roles and CI specialist reviewed R4 A/B and spec `3dfd092` without actionable
+findings. Their static review is distinct from coordinator QA. B stayed local.
+
+Actual route job `132185260580`, ordinary run `43512281528`, logged fast-reread
+at `2026-11-13T21:39:54.806Z`, stage source, then full mode. Thus this attempt
+passed initial metadata, scope, ref and tested-parent checks but failed fast
+evidence's final raw run/check reread. Only this owned fallback was cancelled
+after identity checks; terminal cancelled is confirmed. No receipt, queue or
+heavy run occurred, and cancelled work is not qualification.
+
+Independent fast run `43512281201` succeeded: 455 passed/18 existing skips/
+4,869 deselected. Job/check `132185259609` completed at 21:39:53Z; the run's
+updated_at is 21:39:54Z, in the refusal's finalization window. Exact before/after
+fields were not logged, so these timings do not prove which field changed.
+Fast verified tested merge `6da2aa96679f393c03cca8f1658738c1b52528d9`; commit
+readback confirms ordered `660459f`/`6e1f322` parents and reviewed A tree
+`8c4f82dafa629c1b69392c21c11c8cdc94eb28cd`.
+
+Code inspection identifies a concrete pending-completion race to reproduce:
+authenticated pending observations undergo completed-proof raw stability checks
+before PendingEvidence is raised. T056–T058 govern that bounded follow-up, not
+a relaxation of all-success proof, admission, identity or queue checks. T055's
+checked landings/main qualification/fresh-event resumption is complete; live
+T040/T042/T043/T048/T051 acceptance remains pending. No excluded resources changed.
+
+### Pending-observation follow-up: local red/green results
+
+The first ten-case reproducer run on unchanged `660459f` failed all three
+within-read completion cases with fast-reread and passed the seven completed/
+admission refusal cases. The final suite adds six fresh-poll identity-drift
+variants: pending completion is never proof, and the next observation rejects
+wrong job heads or mismatched run attempts. The code moves only authenticated
+pending handling before completed-proof rereads; no accepting proof, identity
+check, success-only admission path or retry limit is weakened.
+
+Canonical offline non-root disposable bench QA passed all 16 new cases without
+the submodule, zero skips/5,342 deselected. The wider pinned-standard CI-contract
+selection passed 1,012, zero skips/4,346 deselected. The code-local activation
+record now preserves the known qualification/failure facts and points to this
+canonical spec ledger for later acceptance, rather than duplicating live status.
+Strict OpenSpec passes. Exact-head review and full hosted source/reuse/main
+qualification remain pending, followed by genuinely fresh source events; these
+local results do not reclassify PR67 or any earlier attempt as successful.
