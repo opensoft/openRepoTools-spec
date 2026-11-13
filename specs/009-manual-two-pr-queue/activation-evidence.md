@@ -169,3 +169,24 @@ Assembly adoption, exact-pin/composed acceptance and fresh-session rollout are
 separate work and are not authorized by this source activation/canary approval.
 No assembly or active lane checkout is refreshed here. Do not archive this
 change or claim that all repositories/workflows are fully deployed.
+
+## Metadata repair: source preparation and local qualification
+
+Code head 887cd0dddf7bd5439570ba105f0689113b99dfd0 is based on qualified main
+30abf79. Only the initial event/live source comparison, its runbook and routing
+regressions change; no workflow, queue, baseline, review/artifact schema,
+dependency, settings or excluded resource changes. Both event/live intents
+qualify independently, and every other snapshot field plus strict subsequent
+complete live reads remain enforced.
+
+Red-first tests against the old router produced six expected positive-case
+failures and 35 passing refusals/races. With the repair, canonical offline
+nonroot bench QA passed 908 CI contracts with no skips, plus all 41 new cases
+in a deliberate no-submodule checkout with no skips. The exact exported tested
+patch matches the reviewed committed patch, SHA256
+3518DC6042EE39F004847893664DF155F705C8E6FC13B373070CE232E924E6A2.
+
+Master plus nine standard experts and a CI specialist reviewed code 887cd0d
+and spec 41ab19e without actionable findings. This factual publication update
+is coordinator-reviewed. T044/T045 are complete; hosted source/reuse CI,
+checked landings, actual main and fresh-canary acceptance remain pending.
