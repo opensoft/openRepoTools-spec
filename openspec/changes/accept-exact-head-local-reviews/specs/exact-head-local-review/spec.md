@@ -59,7 +59,8 @@ body size and supported schema/skill. Truncated, saturated, malformed or failed
 API reads SHALL refuse. Local identity, report digest, writer permissions and
 threads MUST be revalidated with the source at the existing final live checks.
 Complete REST and GraphQL comment-ID sets MUST agree; equal counts alone SHALL
-NOT establish a consistent history.
+NOT establish a consistent history. Every comment body MUST agree across those
+reads before either local selection or hosted fallback.
 Untrusted report text SHALL NOT be executed or fetched.
 
 #### Scenario: Receipt or permission changes during verification
@@ -74,6 +75,13 @@ Untrusted report text SHALL NOT be executed or fetched.
   acceptance ID, but a different comment was replaced between the reads
 - **THEN** the inconsistent history SHALL refuse rather than hide a potentially
   newer local revocation
+
+#### Scenario: New local decision during hosted fallback or same-ID edit
+
+- **WHEN** a local decision appears between the REST and GraphQL reads, including
+  an ordinary comment edited into a receipt without changing its ID
+- **THEN** inconsistent identities or bodies SHALL refuse even when the first
+  read had no local marker and a hosted summary would otherwise qualify
 
 ### Requirement: Preparation is not activation
 

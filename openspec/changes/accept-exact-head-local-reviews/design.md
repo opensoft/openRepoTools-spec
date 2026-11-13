@@ -29,7 +29,9 @@ required checks, activate routing, enqueue anything or refresh a lane checkout.
    unedited server timestamps (`created_at == updated_at`) plus complete GraphQL
    comment metadata with `lastEditedAt: null`; timestamps alone miss same-second
    edits. Require complete REST/GraphQL comment-ID sets to agree, not just their
-   counts, so a same-count replacement cannot hide a newer decision. Replacements and
+   counts, and compare every comment body before either local selection or hosted
+   fallback. This detects a newer decision added, replaced or edited into an
+   existing ordinary comment between reads. Replacements and
    revocations are new comments, not edits. At most ten local-marker comments
    and fewer than 100 total comments are considered; saturation refuses.
 4. Ignore bot/non-writer local lookalikes. Order authorized local comments by
