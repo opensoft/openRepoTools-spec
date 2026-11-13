@@ -1,0 +1,916 @@
+{
+  "analysis": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+  "rootRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+  "issues": [
+    {
+      "key": "AaHV0W13UfOgUsHz1t3b",
+      "rule": "python:S5332",
+      "severity": "MINOR",
+      "component": "opensoft_openRepoTools:code/lane-worktrees",
+      "project": "opensoft_openRepoTools",
+      "line": 970,
+      "hash": "6e5adea9879ca38eac7518698309d4ef",
+      "textRange": {
+        "startLine": 970,
+        "endLine": 970,
+        "startOffset": 42,
+        "endOffset": 62
+      },
+      "status": "OPEN",
+      "message": "Using HTTP protocol is insecure. Use HTTPS instead.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0W13UfOgUsHz1t4U",
+      "rule": "python:S5443",
+      "severity": "CRITICAL",
+      "component": "opensoft_openRepoTools:code/lane-worktrees",
+      "project": "opensoft_openRepoTools",
+      "line": 4839,
+      "hash": "b9794235d1ee8a84b9a5ae5398460943",
+      "textRange": {
+        "startLine": 4839,
+        "endLine": 4839,
+        "startOffset": 17,
+        "endOffset": 23
+      },
+      "status": "OPEN",
+      "message": "Make sure publicly writable directories are used safely here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0W13UfOgUsHz1t4V",
+      "rule": "python:S5443",
+      "severity": "CRITICAL",
+      "component": "opensoft_openRepoTools:code/lane-worktrees",
+      "project": "opensoft_openRepoTools",
+      "line": 4839,
+      "hash": "b9794235d1ee8a84b9a5ae5398460943",
+      "textRange": {
+        "startLine": 4839,
+        "endLine": 4839,
+        "startOffset": 25,
+        "endOffset": 53
+      },
+      "status": "OPEN",
+      "message": "Make sure publicly writable directories are used safely here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0W2kUfOgUsHz1t7j",
+      "rule": "python:S5332",
+      "severity": "MINOR",
+      "component": "opensoft_openRepoTools:code/lanes-index",
+      "project": "opensoft_openRepoTools",
+      "line": 372,
+      "hash": "115dfd35d98c17e076e8bb0b81a6daca",
+      "textRange": {
+        "startLine": 372,
+        "endLine": 372,
+        "startOffset": 19,
+        "endOffset": 39
+      },
+      "status": "OPEN",
+      "message": "Using HTTP protocol is insecure. Use HTTPS instead.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0W2kUfOgUsHz1t7-",
+      "rule": "pythonsecurity:S8707",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:code/lanes-index",
+      "project": "opensoft_openRepoTools",
+      "line": 2564,
+      "hash": "a186579b3e82dec71af7554550e3c819",
+      "textRange": {
+        "startLine": 2564,
+        "endLine": 2564,
+        "startOffset": 9,
+        "endOffset": 84
+      },
+      "status": "OPEN",
+      "message": "Path Traversal via command-line argument",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cwe"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [
+        "taint"
+      ],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0W2kUfOgUsHz1t7_",
+      "rule": "pythonsecurity:S8707",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:code/lanes-index",
+      "project": "opensoft_openRepoTools",
+      "line": 2576,
+      "hash": "a3eb7aa04c7cbc50f8f79cf30984c917",
+      "textRange": {
+        "startLine": 2576,
+        "endLine": 2576,
+        "startOffset": 9,
+        "endOffset": 79
+      },
+      "status": "OPEN",
+      "message": "Path Traversal via command-line argument",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cwe"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [
+        "taint"
+      ],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0W5-UfOgUsHz1ueK",
+      "rule": "shell:S6506",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:code/openRepoTools",
+      "project": "opensoft_openRepoTools",
+      "line": 284,
+      "hash": "35252158235d3a3c7ab1ecfd1e6e5a2e",
+      "textRange": {
+        "startLine": 284,
+        "endLine": 284,
+        "startOffset": 2,
+        "endOffset": 98
+      },
+      "status": "OPEN",
+      "message": "Not enforcing HTTPS here might allow for redirections to insecure websites. Make sure it is safe here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "TRUSTWORTHY",
+      "cleanCodeAttributeCategory": "RESPONSIBLE",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FIX_IN_OWNER",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+    },
+    {
+      "key": "AaHV0W5-UfOgUsHz1ufW",
+      "rule": "shell:S6506",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:code/openRepoTools",
+      "project": "opensoft_openRepoTools",
+      "line": 797,
+      "hash": "ad081394d0520c7e9eaa6ce4314c9deb",
+      "textRange": {
+        "startLine": 797,
+        "endLine": 798,
+        "startOffset": 5,
+        "endOffset": 67
+      },
+      "status": "OPEN",
+      "message": "Not enforcing HTTPS here might allow for redirections to insecure websites. Make sure it is safe here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "TRUSTWORTHY",
+      "cleanCodeAttributeCategory": "RESPONSIBLE",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FIX_IN_OWNER",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+    },
+    {
+      "key": "AaHV0W5-UfOgUsHz1ufc",
+      "rule": "shell:S6506",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:code/openRepoTools",
+      "project": "opensoft_openRepoTools",
+      "line": 839,
+      "hash": "a0b716a36f9d9e5461c873afe6f903d5",
+      "textRange": {
+        "startLine": 839,
+        "endLine": 839,
+        "startOffset": 8,
+        "endOffset": 85
+      },
+      "status": "OPEN",
+      "message": "Not enforcing HTTPS here might allow for redirections to insecure websites. Make sure it is safe here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "TRUSTWORTHY",
+      "cleanCodeAttributeCategory": "RESPONSIBLE",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FIX_IN_OWNER",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+    },
+    {
+      "key": "AaHV0W5-UfOgUsHz1ufi",
+      "rule": "shell:S6506",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:code/openRepoTools",
+      "project": "opensoft_openRepoTools",
+      "line": 892,
+      "hash": "fe672f6759d5bfd19e81514bd2d5c136",
+      "textRange": {
+        "startLine": 892,
+        "endLine": 892,
+        "startOffset": 15,
+        "endOffset": 139
+      },
+      "status": "OPEN",
+      "message": "Not enforcing HTTPS here might allow for redirections to insecure websites. Make sure it is safe here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "TRUSTWORTHY",
+      "cleanCodeAttributeCategory": "RESPONSIBLE",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FIX_IN_OWNER",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+    },
+    {
+      "key": "AaHV0W5_UfOgUsHz1ujV",
+      "rule": "shell:S6506",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:code/openRepoTools",
+      "project": "opensoft_openRepoTools",
+      "line": 4077,
+      "hash": "49bee2a5af137d3dab5fb4c0e3054431",
+      "textRange": {
+        "startLine": 4077,
+        "endLine": 4077,
+        "startOffset": 2,
+        "endOffset": 77
+      },
+      "status": "OPEN",
+      "message": "Not enforcing HTTPS here might allow for redirections to insecure websites. Make sure it is safe here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "TRUSTWORTHY",
+      "cleanCodeAttributeCategory": "RESPONSIBLE",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FIX_IN_OWNER",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+    },
+    {
+      "key": "AaHV0WtWUfOgUsHz1t2e",
+      "rule": "python:S5708",
+      "severity": "BLOCKER",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+      "project": "opensoft_openRepoTools",
+      "line": 9191,
+      "hash": "77996fd94fd069ea91e78943a3692dda",
+      "textRange": {
+        "startLine": 9191,
+        "endLine": 9191,
+        "startOffset": 15,
+        "endOffset": 23
+      },
+      "status": "OPEN",
+      "message": "Change this expression to be a class deriving from BaseException or a tuple of such classes.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "",
+      "tags": [
+        "design",
+        "error-handling",
+        "pep"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "BUG",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "LOGICAL",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "BLOCKER"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0WtWUfOgUsHz1t2f",
+      "rule": "python:S5708",
+      "severity": "BLOCKER",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+      "project": "opensoft_openRepoTools",
+      "line": 10763,
+      "hash": "77996fd94fd069ea91e78943a3692dda",
+      "textRange": {
+        "startLine": 10763,
+        "endLine": 10763,
+        "startOffset": 11,
+        "endOffset": 19
+      },
+      "status": "OPEN",
+      "message": "Change this expression to be a class deriving from BaseException or a tuple of such classes.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "",
+      "tags": [
+        "design",
+        "error-handling",
+        "pep"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "BUG",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "LOGICAL",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "BLOCKER"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0WtWUfOgUsHz1t2h",
+      "rule": "python:S5708",
+      "severity": "BLOCKER",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+      "project": "opensoft_openRepoTools",
+      "line": 12860,
+      "hash": "3c5b11f3424b412a07aa494d909e0b54",
+      "textRange": {
+        "startLine": 12860,
+        "endLine": 12860,
+        "startOffset": 11,
+        "endOffset": 19
+      },
+      "status": "OPEN",
+      "message": "Change this expression to be a class deriving from BaseException or a tuple of such classes.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "",
+      "tags": [
+        "design",
+        "error-handling",
+        "pep"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "BUG",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "LOGICAL",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "BLOCKER"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0WtWUfOgUsHz1t2i",
+      "rule": "python:S5708",
+      "severity": "BLOCKER",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+      "project": "opensoft_openRepoTools",
+      "line": 13199,
+      "hash": "77996fd94fd069ea91e78943a3692dda",
+      "textRange": {
+        "startLine": 13199,
+        "endLine": 13199,
+        "startOffset": 15,
+        "endOffset": 23
+      },
+      "status": "OPEN",
+      "message": "Change this expression to be a class deriving from BaseException or a tuple of such classes.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "",
+      "tags": [
+        "design",
+        "error-handling",
+        "pep"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "BUG",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "LOGICAL",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "BLOCKER"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0WuUUfOgUsHz1t2n",
+      "rule": "pythonsecurity:S8705",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+      "project": "opensoft_openRepoTools",
+      "line": 2929,
+      "hash": "52286a7bdec636968964b5743a752a14",
+      "textRange": {
+        "startLine": 2929,
+        "endLine": 2931,
+        "startOffset": 11,
+        "endOffset": 35
+      },
+      "status": "OPEN",
+      "message": "Command Argument Injection via faulty LLM-supplied CLI arguments",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cwe"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [
+        "taint"
+      ],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0WuUUfOgUsHz1t2o",
+      "rule": "pythonsecurity:S8705",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+      "project": "opensoft_openRepoTools",
+      "line": 3900,
+      "hash": "0719afcbed2663f844f4096078edb4ec",
+      "textRange": {
+        "startLine": 3900,
+        "endLine": 3900,
+        "startOffset": 11,
+        "endOffset": 54
+      },
+      "status": "OPEN",
+      "message": "Command Argument Injection via faulty LLM-supplied CLI arguments",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "",
+      "tags": [
+        "cwe"
+      ],
+      "creationDate": "2026-11-13T16:48:25+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [
+        "taint"
+      ],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
+    },
+    {
+      "key": "AaHV0W-QUfOgUsHz1uvp",
+      "rule": "shell:S6506",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:openRepoTools",
+      "project": "opensoft_openRepoTools",
+      "line": 279,
+      "hash": "d2002e3eca1db9dbfebbd4eefe8e7530",
+      "textRange": {
+        "startLine": 279,
+        "endLine": 279,
+        "startOffset": 5,
+        "endOffset": 60
+      },
+      "status": "OPEN",
+      "message": "Not enforcing HTTPS here might allow for redirections to insecure websites. Make sure it is safe here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "1513478+brettheap@users.noreply.github.com",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-10-28T19:07:41+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "TRUSTWORTHY",
+      "cleanCodeAttributeCategory": "RESPONSIBLE",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FIX_IN_OWNER",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+    },
+    {
+      "key": "AaHV0W-QUfOgUsHz1uvx",
+      "rule": "shell:S6506",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:openRepoTools",
+      "project": "opensoft_openRepoTools",
+      "line": 311,
+      "hash": "be85cff88e443dd9950385601ee8dc68",
+      "textRange": {
+        "startLine": 311,
+        "endLine": 311,
+        "startOffset": 8,
+        "endOffset": 68
+      },
+      "status": "OPEN",
+      "message": "Not enforcing HTTPS here might allow for redirections to insecure websites. Make sure it is safe here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "1513478+brettheap@users.noreply.github.com",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-10-28T19:07:41+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "TRUSTWORTHY",
+      "cleanCodeAttributeCategory": "RESPONSIBLE",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FIX_IN_OWNER",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+    },
+    {
+      "key": "AaHV0W-QUfOgUsHz1uv0",
+      "rule": "shell:S6506",
+      "severity": "MAJOR",
+      "component": "opensoft_openRepoTools:openRepoTools",
+      "project": "opensoft_openRepoTools",
+      "line": 344,
+      "hash": "aa86e18884e538c87fe3b74264507391",
+      "textRange": {
+        "startLine": 344,
+        "endLine": 345,
+        "startOffset": 3,
+        "endOffset": 53
+      },
+      "status": "OPEN",
+      "message": "Not enforcing HTTPS here might allow for redirections to insecure websites. Make sure it is safe here.",
+      "effort": "30min",
+      "debt": "30min",
+      "author": "1513478+brettheap@users.noreply.github.com",
+      "tags": [
+        "cryptography",
+        "cwe",
+        "former-hotspot"
+      ],
+      "creationDate": "2026-10-28T19:07:41+0000",
+      "updateDate": "2026-11-13T16:48:25+0000",
+      "type": "VULNERABILITY",
+      "organization": "opensoft",
+      "cleanCodeAttribute": "TRUSTWORTHY",
+      "cleanCodeAttributeCategory": "RESPONSIBLE",
+      "impacts": [
+        {
+          "softwareQuality": "SECURITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "openRepoTools",
+      "internalTags": [],
+      "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
+      "lastChangeSource": "ANALYSIS",
+      "proposedDisposition": "FIX_IN_OWNER",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+    }
+  ]
+}

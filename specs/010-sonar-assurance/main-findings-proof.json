@@ -1,0 +1,61 @@
+{
+  "root_revision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+  "provider_revision": "4bf963f0ca416b142652bb608cafe5c76d893faa",
+  "exception_mro": [
+    "sonar_refusal_proof._Unasked",
+    "repo_shape.Refusal",
+    "builtins.Exception",
+    "builtins.BaseException",
+    "builtins.object"
+  ],
+  "four_handler_lines": [
+    9191,
+    10763,
+    12860,
+    13199
+  ],
+  "actual_handlers_exercised": [
+    "_asked_there",
+    "_asked_in_throwaways",
+    "_submodule_findings"
+  ],
+  "normalizers": {
+    "code/lane-worktrees": "pure input normalization; no transport invoked",
+    "code/lanes-index": "pure input normalization; no transport invoked"
+  },
+  "sandbox_default_root": "existing /tmp enumerated with open/os.open/mkdir forbidden; no creation",
+  "provider_full_tree": "e4605a5c4f30426a79e8009febc398e5bb20d2ee",
+  "provider_regressions": {
+    "unique_cases": 371,
+    "passed": 365,
+    "skipped": 6,
+    "skip_reason": "case-insensitive filesystem required; case-preserving host cannot provide it",
+    "initial_environment": {
+      "passed": 354,
+      "skipped": 17
+    },
+    "qualified_dependency_recheck": {
+      "selected_initial_skips": 15,
+      "passed": 11,
+      "skipped_for_filesystem": 4,
+      "python": "3.12",
+      "git_filter_repo": "2.47.0",
+      "source_tree_identical": true
+    }
+  },
+  "code_preservation_export_regressions": {
+    "passed": 10,
+    "skipped": 0
+  },
+  "transport_regressions": {
+    "before": {
+      "failed_on_insecure_redirect": 8
+    },
+    "after": {
+      "passed": 8,
+      "skipped": 0
+    },
+    "runtime": "native curl; trusted loopback TLS and HTTP fixture",
+    "code_repair_head": "350f65a2007b26923d15423317edafc2a3a4c0a1"
+  }
+}

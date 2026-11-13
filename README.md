@@ -43,3 +43,7 @@ Licence: Apache-2.0. See [LICENSE](LICENSE).
 [Proposal](openspec/changes/repair-sonar-assurance/proposal.md), [design](openspec/changes/repair-sonar-assurance/design.md), [requirements](openspec/changes/repair-sonar-assurance/specs/sonar-assurance/spec.md), and [feature 010](specs/010-sonar-assurance/spec.md) govern the complete analysis/coverage repair. See the [plan](specs/010-sonar-assurance/plan.md) and [single task checklist](specs/010-sonar-assurance/tasks.md).
 
 The [original twelve finding dispositions](specs/010-sonar-assurance/triage.md), [finding identities](specs/010-sonar-assurance/findings.json), and [acceptance evidence](specs/010-sonar-assurance/evidence.md) retain the repair receipts.
+
+The feature 010 complete-main [additional finding inventory](specs/010-sonar-assurance/main-findings.json) is explained in its [triage record](specs/010-sonar-assurance/triage.md).
+
+Feature 010 also retains [runtime and regression proof for the complete-main findings](specs/010-sonar-assurance/main-findings-proof.json).
