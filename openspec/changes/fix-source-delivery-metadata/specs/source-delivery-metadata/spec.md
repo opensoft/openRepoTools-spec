@@ -20,18 +20,44 @@ SHALL NOT confer trust or change eligibility.
 - **THEN** routing SHALL retain full CI even if the other description qualifies
 
 ### Requirement: Identity and live consistency remain strict
-All other event/live source snapshot fields SHALL match exactly. Existing Git
+All other event/live source snapshot fields SHALL match exactly, except the
+bounded generated-hint handling below. Existing Git
 scope, test-merge parents, branch history, effective protection and authentic
 fast evidence SHALL still qualify. Subsequent live rereads SHALL remain strict,
 including the full description, and uncertainty SHALL retain full CI.
 
 #### Scenario: Head, base, draft state or other identity differs
-- **WHEN** any non-prose snapshot field or existing provenance check fails
+- **WHEN** any other identity or existing provenance check fails
 - **THEN** routing SHALL retain full CI
 
 #### Scenario: Description changes during live verification
 - **WHEN** the live description changes between verification reads
 - **THEN** routing SHALL retain full CI rather than ignoring that race
+
+### Requirement: Generated merge hints are nullable metadata, not tested identity
+At the initial source and candidate event/live comparison, each generated
+merge_commit_sha hint SHALL be missing/null or equal the trusted GITHUB_SHA.
+Only when both qualify may the comparison copy align that field. Unknown or
+malformed non-null hints SHALL retain full, even if both snapshots agree.
+The tested commit and ordered main/head parents SHALL still be independently
+verified. All later live rereads SHALL remain strict. Candidate bodies SHALL
+remain exact and genuine admission/source proofs SHALL remain mandatory.
+
+#### Scenario: A current hint materializes after a source or candidate event
+- **WHEN** one hint is missing/null and the other is the trusted tested SHA
+- **THEN** that difference alone SHALL NOT refuse otherwise fully verified work
+
+#### Scenario: A hint is unknown or the actual tested merge is wrong
+- **WHEN** a non-null hint differs from the trusted SHA or ordered parents fail
+- **THEN** full CI SHALL remain required rather than trusting either hint
+
+#### Scenario: Candidate admission is absent or its body changes
+- **WHEN** a valid nullable-hint transition lacks admission or has differing bodies
+- **THEN** it SHALL NOT grant omission; existing bounded pending rules remain unchanged
+
+#### Scenario: A hint changes between live verification reads
+- **WHEN** the live hint changes after the first current API read
+- **THEN** strict rereads SHALL refuse omission rather than normalize that race
 
 ### Requirement: Acceptance remains evidence based and scoped
 The repair SHALL preserve all full coverage, workflow definitions, queue and

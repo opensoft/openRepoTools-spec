@@ -288,3 +288,152 @@ coordinator-reviewed. Both OpenSpec changes validate strictly. Shared py-bench
 and cloud-bench assembly HEADs remain 4b3c3f30b08d39469a185cbb74afdace9579a857.
 T049 is complete; T050 hosted qualification/landings and T051 actual new-event
 diagnosis plus all live efficiency acceptance remain pending.
+
+## Diagnostic-only follow-up: checked landings and actual-main qualification
+
+The first diagnostic head `07336fd` passed ordinary run `43469533638` (15/15
+jobs), reusable run `43469533858` (17/17) and fast run `43469533656`, all on
+their first attempts. Four complete normal/no-submodule inventories each
+contained 5,252 unique cases, exactly the seven diagnostic additions: normal
+5,083 passed/169 existing skips; no-submodule 3,734 passed/1,518 existing skips.
+No removals, duplicates, failures or skip drift.
+
+Before landing, independent HTTPS security PR63 advanced code main to `338eb42`.
+Its two files were disjoint from our three-file diagnostic patch. A normal,
+conflict-free merge preserved it; the diagnostic patch remained byte-identical,
+SHA256 `013B1544D108AAA6C6F89F3ACD6CE0D26CCB28610A381B34C9847D24C93A366C`.
+Independent Sonar spec PR41/43 work was also preserved by a normal conflict-free
+merge. Our seven-file spec patch remained byte-identical. All nine standard
+experts and the CI specialist refreshed exact-head reviews without findings on
+code `8155e4f`/base `338eb42` and spec `60c5f22`/base `dedef834`. Fresh local
+canonical QA passed 920 cases with three expected upstream assembly-context skips;
+all seven
+diagnostic cases passed without the submodule, zero skips. No earlier-head CI
+was reused as current-head proof.
+
+Qualified base `338eb42`'s actual-main run `43476514960` passed 15/15 jobs.
+Complete inventories have 5,253 distinct cases, exactly five passing code
+transport cases and three named assembly-context skips added to the prior 5,245
+baseline. No
+removed/duplicate/failing cases or unexpected skip changes.
+
+Refreshed source `8155e4fd8e4c5f8c35bd6e4c7d5bb47dd0ddde41` passed ordinary
+run `43477753837` (15/15), reusable run `43477754547` (17/17) and fast run
+`43477753696`, all on their first attempts. All expanded jobs succeeded with no
+skipped full jobs. Its four complete inventories each have 5,260 unique cases:
+normal 5,088 passed/172 existing skips; no-submodule 3,739 passed/1,521 existing
+skips. Exactly seven added diagnostic
+cases pass; no removals, duplicates, failures or skip-identity drift from the
+qualified current base. SonarCloud also reported success. Hosted Codex remained
+quota-blocked; the approved exact-head local panel is the actual review evidence.
+Complete final thread reads found no unresolved threads; canonical landing
+readers found no open hold. Historical malformed warning rows were reverified
+against current remote as unrelated; no registry or log was rewritten.
+
+Both completed package logs identify tested merge
+`ccfe054689b6192436d26983ec528f6a99169cce`, ordered parents `338eb42`/`8155e4f`,
+tree `82a711d832856c1d7be30f7c00220c4fe8760676`. Normal protected squash landings:
+
+- Code PR62 at `2026-11-13T18:36:57Z` → `6c4d8c3c6abde241c9324c80a3c4948a11b18f78`,
+  sole parent `338eb42`, tree `82a711d832856c1d7be30f7c00220c4fe8760676` exactly
+  reviewed and tested.
+- Spec PR42 at `2026-11-13T18:37:06Z` → `7816ac5caf0ba64a3c4ed9fb9f4b9c45e8a11801`,
+  sole parent `dedef834`, tree `d3ae7a034bc6cc0e928327da0f7ec2b87a919fe5` exactly
+  reviewed. No bypass or branch deletion.
+
+Actual landed code-main `6c4d8c3` passed run `43484357408`: all 15 jobs successful
+on the first attempt. Complete normal/no-submodule inventories each have 5,260 cases
+and exactly match the qualified source variants, including all skip identities.
+Normal 5,088 passed/172 existing skips; no-submodule 3,739 passed/1,521 existing skips.
+Its route log confirms fixed-vocabulary landing diagnostics and honest full
+fallback for this ordinary one-parent squash; this is observability acceptance,
+not source-efficiency or live-canary acceptance. T050 is complete.
+
+## Newer upstream base: separately pending qualification
+
+Independent test-only PR64 advanced main at `2026-11-13T18:58:56Z` to
+`bb253610a46d8f06d60b0b1c371102606cf70bdb`. It adds one assembly-context coverage
+case in `tests/test_download_transport.py`. Delivery runtime, verifier/evidence,
+workflow, policy flag, queue and both canary-file blobs are unchanged from `6c4d8c3`.
+Preserve it; do not create a stale-base source or redo our already merged source
+qualification. Latest-main run `43487813248` is live, not yet qualified here. Its
+expected extra standalone skip must be the exact new assembly-context test, with
+all previous identities/results preserved. A fresh source event must use the
+latest qualified live main after this separate check. T051/T048 and every live
+efficiency/heavy/landing acceptance gate remain pending; the cause is unproven.
+
+No source acceptance receipts or queue/heavy/source merges occurred for failed
+PR60/61. Failed attempts remain failed. No assembly pins, installed tools,
+sessions/lanes, rulesets/bypasses, apps/paid access, releases or archive changed.
+
+## Latest upstream base qualified for the fresh diagnostic source
+
+Current-main run `43487813248` passed all 15 jobs on
+`bb253610a46d8f06d60b0b1c371102606cf70bdb`, first attempt, with no skipped
+full jobs. Its complete normal/no-submodule inventories each contain 5,261
+distinct cases: normal 5,088 passed/173 skips; no-submodule 3,739 passed/1,522
+skips. Comparison with the qualified diagnostic main's 5,260-case inventories
+proves exactly one added context skip,
+`tests.test_download_transport::test_standalone_assembly_launcher_refuses_failed_payload_fetch`.
+No removals, duplicates, failures or other skip-identity changes. Both remote
+main refs were rechecked before creating fresh source heads; code remained at
+`bb25361` and spec at `7816ac5`.
+
+Fresh local R3 source A is `99b2cee5974cd69b4b43cd87008aa6236b09209c`, containing
+only the three help-prose lines for T042. Fresh local source B is
+`024bf1ab9d7a402d1b322909940d0b93f3bd0185`, containing only the eight
+existing-behavior regressions for T043. Both have `bb25361` as their sole parent
+and common merge base. Neither includes the other's change; both remain safe
+alone. Local QA and exact-head review are the next gates. No R3 PR, source
+acceptance receipt, queue request or live success is claimed by local commits.
+
+## R3 diagnostic source: generated merge-hint comparison refuses
+
+Fresh source A was published as PR65 at head `99b2cee`, with unique supported
+opt-ins, no dependency, open/non-draft state and qualified base `bb25361`.
+Local QA passed A19/B27 and all eight new B cases without the submodule, zero
+skips. The master, nine standard experts and CI specialist reviewed exact code
+A/B and spec `59b3831` without actionable findings. B remained unpublished.
+
+Actual route job `132126080233`, run `43495118330`, logged at
+`2026-11-13T19:45:16.585Z`: snapshot-mismatch, fields `[merge_commit_sha]`,
+stage source; then source-metadata refusal and full mode. This proves the
+rejecting comparison, not the original raw hint's value. The original payload
+is not recoverable from the sparse public event feed. Do not claim a proven
+null value or infer success from the following compatibility repair.
+
+Fast run `43495118253` passed 455 cases with 18 existing skips and independently
+reported tested merge `b83a805094d72252ed3c1a29295e94dcfd0a40f0`. Commit API
+readback confirms ordered parents `bb25361`/`99b2cee` and tree
+`01ea9d883a7699c23bc2b6042e1f14484f71a2a0`, exactly the reviewed source tree.
+Current REST's hint equals that tested SHA. The ordinary full fallback was
+cancelled only after exact run/head identity checks; it is terminal cancelled,
+not qualification. No receipt, queue, heavy or merge occurred. PR60 was closed
+with a replacement link while preserving its branch/history; PR61 remains open
+until an actual B replacement exists.
+
+The existing approval bundle covers the directly related bounded hint repair
+and checked source/main qualification under T052–T055. All provenance, coverage,
+review/admission trust and excluded-resource boundaries remain intact. T051 and
+T048 remain pending fresh source/candidate/heavy/landing acceptance.
+
+### Bounded hint repair: local red/green qualification
+
+The approved contract now permits only absent/null or trusted tested-SHA hints
+at the initial source/candidate comparison. Unknown hints refuse even when
+both snapshots agree. Later live rereads, candidate bodies, tested parents,
+effective protection, fast provenance and genuine admission remain strict.
+
+Red-first canonical QA on qualified base `bb25361` plus only the regression
+patch selected 83 cases: 42 failed and 41 passed, with 5,259 deselected. The
+same repair and regression selection without the submodule then passed all
+83, with zero skips and 5,259 deselected. The wider canonical CI-contract
+selection with the exact pinned standard passed 996, zero skips, 4,346
+deselected. These runs used non-root, offline disposable py-bench image
+containers with private HOME; no running bench or installed host tool changed.
+
+The patch adds 81 test cases to the 5,261-case base and updates the existing
+hint diagnostic negative to use a foreign non-null SHA, retaining its privacy
+assertions. This is local qualification only. Exact-head expert review,
+ordinary/reusable hosted full CI, checked landings and actual-main validation
+remain required before fresh source events. No new canary acceptance is claimed.

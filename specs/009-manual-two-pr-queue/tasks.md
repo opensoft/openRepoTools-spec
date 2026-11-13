@@ -289,5 +289,17 @@ The pre-approved directly related repair bundle covers this diagnostic-only
 task set CI-METADATA-12-D. Do not relax provenance based on an unproven cause.
 
 - [x] T049 [O] Add secret-safe fixed-vocabulary stage/refusal diagnostics and snapshot mismatch field names, retaining exact route results and all gates — files: code `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `.github/ci/delivery-cutover.md` — verify: red-first diagnostic tests and full existing routing/review contracts
-- [ ] T050 [O] Review exact code/spec refs, strictly validate, open paired PRs and fully qualify checked normal landings plus actual main — files: paired PRs, OpenSpec artifacts and `activation-evidence.md` — verify: full ordinary/reuse job and test inventory parity, reviewed/landed trees, actual-main results
+- [x] T050 [O] Review exact code/spec refs, strictly validate, open paired PRs and fully qualify checked normal landings plus actual main — files: paired PRs, OpenSpec artifacts and `activation-evidence.md` — verify: full ordinary/reuse job and test inventory parity, reviewed/landed trees, actual-main results
 - [ ] T051 [O] Capture a genuinely new source event with diagnostic evidence; implement only a proven necessary repair under the same checked gates, then complete fresh T048 acceptance — files: source PRs, narrow directly related repair if needed and evidence — verify: fixed stage/reason plus actual fast-only/heavy/member/tree evidence; never reinterpret failed runs
+
+### R3 generated-merge-hint repair — CI-METADATA-13
+
+PR65 supplied the new diagnostic evidence: initial event/live merge_commit_sha
+differs while fast CI proves the actual tested merge. The raw original hint
+value was not logged. Preserve this failed attempt and qualify only the bounded
+nullable/current compatibility rule, not arbitrary stale hints or weaker proof.
+
+- [x] T052 [O] Record the observed R3 refusal and bounded source/candidate hint contract, preserving the sole task store and exclusions — files: OpenSpec fix-source-delivery-metadata artifacts, feature009 spec/tasks/evidence — verify: strict OpenSpec and exact live log/commit readbacks
+- [x] T053 [O] Add red-first nullable/current and invalid-hint tests, repair only initial event comparisons, and retain tested-parent, strict-live/body and admission refusals — files: code `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `.github/ci/delivery-cutover.md` — verify: canonical CI contracts and deliberate no-submodule regressions
+- [ ] T054 [O] Review exact heads, open paired PRs and qualify complete ordinary/reusable full CI with exact test identities and skip accounting — files: code/spec PRs and evidence — verify: exact-head local panel, full job/report inventories and strict OpenSpec
+- [ ] T055 [O] Normally merge checked heads, verify landed trees and actual main, then resume fresh T051/T048 sources without reusing failed attempts — files: PR/actual-main/evidence records — verify: normal merge readbacks, actual-main full CI and complete inventory parity; no archive or assembly adoption

@@ -210,3 +210,9 @@ canaries without per-PR approval stops. Earlier failed evidence stays failed.
   mismatch field names only, never their values, bodies, tokens, exception text
   or raw API responses. Preserve every fallback/waiting/proof/authority decision;
   investigate the fresh R2 failure before speculatively relaxing any check.
+- FR-043: the R3 generated-hint repair permits only missing/null or trusted
+  GITHUB_SHA hints at initial source/candidate event comparisons. All other
+  identities, actual tested-merge parent checks, source intent, fast/review and
+  genuine candidate-admission proofs remain mandatory; candidate bodies and
+  later live rereads stay strict. Unknown non-null hints retain full even when
+  both snapshots agree. No new retry, schema, permission or hint-fetching path.

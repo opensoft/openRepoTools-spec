@@ -18,8 +18,9 @@ At the source event-versus-live comparison only, substitute the event body into
 a shallow copy of the current PR before comparing existing snapshots. Validate
 the event's unique supported intents and dependency absence independently; keep
 the existing live intent/dependency checks. The temporary copy is never passed
-as live evidence, a receipt or queue authority. All non-body snapshot fields,
-including merge identity, stay exact. Later PR/API rereads remain byte-strict.
+as live evidence, a receipt or queue authority. All other snapshot identities
+stay exact except the bounded generated-hint handling below. Later PR/API
+rereads remain byte-strict, including the hint and full body.
 
 This avoids brittle tuple-index slicing and a new general normalization API.
 Reject the alternatives of removing all metadata checks, trusting Sourcery,
@@ -36,6 +37,27 @@ result, strict snapshot/live checks, pending policy and proof schema unchanged.
 Qualify this diagnostic-only configuration normally before obtaining a new
 live event; historical failures are not rerun into clean acceptance.
 
+R3 diagnostic source PR65 subsequently selected full with an explicit
+snapshot-mismatch on merge_commit_sha, followed by source-metadata refusal.
+This proves the rejecting field, not the original raw hint's value. Fast CI
+independently verified the actual tested merge and its ordered base/head parents.
+Do not treat the generated REST/event hint as the tested-commit authority.
+
+For the initial event/live comparison only, both hints must be missing/null or
+equal the trusted workflow GITHUB_SHA. Only then may a shallow comparison copy
+align that field. Malformed or different non-null hints retain full, even when
+both API snapshots agree on them. The actual tested SHA must still be acquired
+and independently checked against ordered main/head parents. Every other
+identity, source intent, fast receipt and final strict reread remains mandatory.
+
+Apply this same bounded hint validation to source and genuine candidate-PR
+events, not globally to snapshot semantics. Candidate bodies remain exact, and
+candidate omission still requires authenticated real admission and independently
+revalidated sources. No new retry, hint fetching, artifact or permission path.
+Regressions cover supported actions, nullable/current combinations, unknown
+hints, bad tested commits, changed live hints, strict candidate bodies and
+missing/corrupt admission. Fresh live acceptance remains required.
+
 Positive regressions reproduce appended/replaced/removed unrelated prose and
 both supported source bodies. Negative cross-products cover invalid event/live
 intent, dependency declaration and every other snapshot field. A final-read
@@ -51,7 +73,7 @@ it is not a gate and is deliberately outside this narrow runtime repair.
 
 ## Migration Plan
 
-Feature 009 T044-T048 is the sole new execution sequence. Qualify exact reviewed
+Feature 009 T044-T055 is the sole execution sequence. Qualify exact reviewed
 code/spec heads and normal protected merges, verify actual main, then use fresh
 main-based sources and new review receipts. Preserve old attempt records and
 retire only superseded coordinator-owned PRs without deleting branches. Source
