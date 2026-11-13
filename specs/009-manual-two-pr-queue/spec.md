@@ -222,3 +222,6 @@ canaries without per-PR approval stops. Earlier failed evidence stays failed.
   omission. A fresh all-success observation must pass the same exact rereads;
   admission stays success-only, initial failed/unknown evidence retains full,
   and no retry budget, schema, permission or queue authority changes.
+  The genuine candidate duplicate's explicitly pending-enabled absent-admission
+  observation follows the same no-proof boundary; caller evolution requires a
+  fresh poll. Invalid/default readers refuse and artifact-present proofs remain strict.

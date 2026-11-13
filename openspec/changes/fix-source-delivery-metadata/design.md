@@ -83,6 +83,16 @@ identity checks, retry budget, artifact/review schemas or queue authority.
 Regressions must reproduce within-read completion, require a separate fresh
 successful poll, retain completed-proof drift refusals and success-only admission.
 
+The same wait-versus-proof boundary applies to a genuine candidate caller whose
+admission artifact is absent. A deterministic regression reproduces refusal
+when that authenticated queued caller starts or completes during the empty
+artifact-list read. In this absent-artifact, explicitly pending-enabled branch,
+return only the existing wait after caller authentication, not a stable receipt.
+A fresh poll must reacquire the caller and independently verify the actual
+artifact. Invalid callers and default readers never wait; artifact-present
+proofs retain every original digest, schema and strict row/run reread. No live
+candidate failure is claimed: this is a reproduced same-class boundary defect.
+
 ## Risks / Trade-offs
 
 Other runtime differences can still refuse: preserve and diagnose them rather

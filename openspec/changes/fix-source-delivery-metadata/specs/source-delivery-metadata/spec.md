@@ -79,6 +79,12 @@ observations SHALL retain exact run/check rereads. Admission SHALL remain
 success-only. Initial failures or uncertainty SHALL retain full; the existing
 retry budget SHALL NOT increase.
 
+The explicitly pending-enabled candidate duplicate reader SHALL likewise wait
+without proof when its authenticated live caller has no admission artifact.
+Caller evolution during that empty-list observation SHALL require a fresh poll,
+not confer receipt or omission. Invalid callers and default artifact readers
+SHALL refuse; artifact-present proofs SHALL retain every strict validation.
+
 #### Scenario: Fast work completes during the first observation
 - **WHEN** initially authenticated pending evidence completes between API reads
 - **THEN** source routing SHALL wait rather than accept it or treat that observation
@@ -87,6 +93,12 @@ retry budget SHALL NOT increase.
 #### Scenario: Completed proof changes or admission sees pending work
 - **WHEN** an all-success proof changes on reread or admission encounters pending work
 - **THEN** the existing refusal SHALL remain, without pending-proof acceptance
+
+#### Scenario: A queued candidate caller publishes admission during observation
+- **WHEN** the authenticated caller starts or completes during an initially empty
+  admission-artifact read and waiting is explicitly allowed
+- **THEN** return only the existing bounded wait and verify the actual artifact
+  afresh before any omission; default and unauthenticated readers SHALL NOT wait
 
 ### Requirement: Refusal diagnostics preserve privacy and decisions
 The router SHALL report verification-stage and fixed-vocabulary refusal codes

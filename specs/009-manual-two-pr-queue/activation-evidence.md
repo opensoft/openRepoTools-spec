@@ -535,3 +535,27 @@ canonical spec ledger for later acceptance, rather than duplicating live status.
 Strict OpenSpec passes. Exact-head review and full hosted source/reuse/main
 qualification remain pending, followed by genuinely fresh source events; these
 local results do not reclassify PR67 or any earlier attempt as successful.
+
+### Same-class candidate waiting regression
+
+During source CI, inspection found the same completed-stability check in the
+explicitly pending-enabled absent-admission branch. Two deterministic cases on
+unchanged `28eda11` reproduced full refusal when an authenticated queued caller
+started or completed during the empty artifact-list read. Both failed; 5,358
+other cases were deselected. This is a local contract defect, not an observed
+live candidate failure; no candidate or queue had been created.
+
+The update returns only the existing no-proof wait after caller authentication.
+A fresh poll must acquire and fully verify a real admission artifact. Four
+invalid actor/attempt cases and one default-reader refusal join the two lifecycle
+cases, bringing total new regressions to 23. Artifact-present digest/schema and
+raw artifact/run rereads remain unchanged. The earlier PR68 CI head `28eda11`
+cannot qualify this additional change; require a newly reviewed head and fresh
+full CI. No previous partial or read-only diagnostic is live acceptance.
+
+The combined updated tree passed 23 focused no-submodule cases, zero skips/
+5,342 deselected, and 1,019 pinned-standard CI-contract cases, zero skips/
+4,346 deselected. The source red reproducer remains three failures/seven passes;
+the candidate red reproducer remains two failures before its repair. Current
+collection is expected to be 5,365, including 23 additions to qualified main.
+Neither local success nor superseded-head CI qualifies the updated PR head.

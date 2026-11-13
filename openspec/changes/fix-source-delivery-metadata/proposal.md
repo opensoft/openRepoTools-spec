@@ -27,6 +27,9 @@ code/spec merges and fresh canaries on 2026-11-13; assembly pins stay excluded.
   finalization. Reproduce completion during authenticated pending reads and
   return only the existing bounded wait before completed-proof stability checks.
   Fresh successful stable evidence remains mandatory; admission stays success-only.
+- Apply the same no-proof waiting boundary to an authenticated candidate caller
+  with no admission artifact yet. Reproduce queued-caller evolution during the
+  empty-list read; preserve default-reader refusal and strict real-artifact proofs.
 - Review and qualify the code/spec PRs with full ordinary/reuse CI, verify the
   actual main result, then run a fresh independent two-member canary. Preserve
   the failed initial attempt as failed evidence; never rerun it into acceptance.
@@ -45,7 +48,7 @@ local-review and activation contracts remain governing context.
 
 ## Impact
 
-Code: delivery_route.py, delivery_verify.py, focused routing regressions and the
+Code: delivery_route.py, delivery_verify.py, delivery_evidence.py, focused routing regressions and the
 existing cutover runbook. Spec: this change and feature 009's sole executable task file under
 issue 26. No queue/workflow definition, policy flag, artifact/review schema,
 baseline, dependency, release, tool, assembly-pin or lane change. Scope remains
