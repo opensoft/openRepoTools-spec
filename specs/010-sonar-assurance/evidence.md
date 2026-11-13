@@ -324,3 +324,32 @@ complete assembled reports are still required. Historical 70bfd raw-event
 reports must never be rebound as acceptance for a changed source/commit.
 T009 remains open, including the real post-merge main gate, per-language/file
 coverage import and original finding readback.
+
+## Scanner warning audit: index/coverage is not complete native parsing
+
+The retained 70bfd scanner log attempted all 19 shell files. Its IaC Shell
+sensor emitted 13 native parse warnings at the following locations:
+code/park:1, code/status:1, code/resume:1, code/lanes-edit.sh:1,
+code/lane:1606, code/lane-end:3341, code/lane-handoff:136,
+code/lane-start:1115, code/claude-current:532, code/openRepoTools:411,
+openRepoTools:72, code/upstream/openRepoShape/openRepoShape:516, and
+code/upstream/openRepoShape/install.sh:420. Every warned file passes native
+bash -n against the exact pinned bytes. A separate audit retains paths,
+columns, SHA-256 values, source lines and syntax-check results.
+
+These warnings are a native analyzer parsing limitation, not evidence that
+the commands are absent from the configured source inventory or that tests
+were skipped. No command is excluded, no rule is suppressed, and measured
+coverage still includes every executable denominator. Complete language
+index/coverage receipts must not be described as proof that all native Shell
+rules parsed every construct. This remaining limitation must be disclosed
+with final acceptance rather than hidden by a green PR gate. SonarSource
+documents Bash/POSIX as the supported Shell flavors:
+https://docs.sonarsource.com/sonarqube-server/analyzing-source-code/languages/shell
+
+The UTF-8 warnings point to literal U+FFFD in intentional negative tests:
+test_doctor_gitmodules_not_utf8.py:170 and test_git_output_decoding.py:86,
+both below code/upstream/openRepoShape/tests/. Their exact committed bytes
+decode with strict UTF-8; the replacement characters are expected assertions
+about invalid Git output. Their source is not re-encoded or excluded to
+silence those diagnostics.
