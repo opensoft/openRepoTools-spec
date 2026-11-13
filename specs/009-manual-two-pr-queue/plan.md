@@ -361,3 +361,33 @@ the canonical wrapper as non-root in an offline disposable bounded bench image.
 Validate OpenSpec and locally review the exact patch before opening paired PRs.
 Full hosted CI follows publication; both PRs remain open. No settings migration,
 activation, canary, lane change, assembly pin or release work is authorized.
+
+## Owner-approved activation phase — 2026-11-13
+
+The preceding records retain their dated preparation/source-only authority.
+Brett now explicitly approves the required-check migration, reviewed enablement
+PR and two-PR test. Use `activate-claude-current-ci-cutover`, FR-035–FR-038 and
+sole checklist T036–T041; do not select a different active plan or update pins.
+
+Preserve current code 22aac02/spec 9311051 and all inherited Sonar repairs. Read,
+guard and retain ruleset 25966308, migrate only its required contexts while the
+live flag is false, and verify target/effective/classic readbacks. Keep every
+unrelated protection and GitHub Actions integration binding; no bypass.
+
+Enable through the narrow paired code/spec PRs after local skill review and full
+ordinary/reuse qualification. Update the committed-state test and independently
+exercise explicit false/no-network and uncertain/full fallback. Do not change
+workflow jobs, the full baseline, review/artifact schemas, dependencies or releases.
+Actual main CI must pass before queue use. Record local failure/recovery fixtures
+separately from live acceptance.
+
+The live canary uses two independently safe main-based changes, only to
+claude-current and its test file. Review and explicitly accept each exact head/base,
+verify fast/delivery success, then request the named manual queue on both. Prove
+two actual members, one complete heavy run, fast-only source/candidate PR work,
+no duplicate full main work and exact tested/landed prefix/final trees. Stop for
+uncertainty or excluded authority. A source delivery success never permits a
+direct fast-source merge; queue-only usage remains owner-accepted operator policy.
+
+Assembly adoption, PR361's composed Sonar work, installed sessions and wider
+scopes remain separate. No app/paid access, release/tag, active-plan or lane act.
