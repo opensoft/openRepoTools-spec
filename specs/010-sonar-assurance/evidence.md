@@ -224,3 +224,46 @@ when a test step fails. A partial diagnostic artifact is never acceptance:
 Sonar still requires both complete suite jobs to succeed and revalidates both
 full reports, and the required exact-pins context still requires all three
 successful results. No failed or skipped suite can provide passing evidence.
+
+## Complete measured rehearsal and deleted-directory correction
+
+Root run 43333300918 at branch head
+9e206aca07e9b18870e991f1f4af83194ceb7158 measured the PR merge revision
+2ae97b752c6e5570a8398e7e4c2014160584d758 with merged code b227d53,
+spec 1b1c93f and provider 4bf963f. The complete composed suite passed:
+4,905 passed, six explained skips, zero failures, in 9,360.96 seconds. Five
+skips are built-wheel cases independently exercised by the green 285-case,
+zero-skip package job; one is the filesystem byte-count branch. All 4,911
+composed cases are accounted for. Its report passed and was retained as
+immutable artifact 14005056790, including all 491 inventoried Python/shell
+files and all 18 extensionless commands. Production scope remains 62 files:
+43 Python and 19 shell. Measured composed hits were 8,438/36,540 Python
+lines and 17,697/21,889 shell lines. These are one suite's observations,
+not the combined provider coverage or a live Sonar acceptance claim.
+The exact-copy diagnostic credited 190 canonical lines and zero modified
+lines, separately from measured suite data.
+
+The provider's complete measured suite accounted for all 22,840 cases:
+22,477 passed, 360 conditional skips and three failures in 13,119.85 seconds.
+The only failures are the original invalid-branch tests deliberately starting
+from a removed working directory. Product refusals remain correct, but Coverage
+7.17.3 calls os.getcwd() while importing coverage.files; sitecustomize therefore
+adds FileNotFoundError before the expected output. The full failed log and a
+separate verbose local startup traceback are preserved. Sonar was correctly
+skipped and exact-pins correctly failed; this run is not acceptance.
+
+Code PR 54 checks precisely this instrumentation prerequisite before importing
+Coverage. A removed cwd remains removed and that execution is unobserved,
+without changing output or granting coverage credit; complete source
+denominators remain. Other import/configuration failures are not suppressed.
+A deterministic startup regression fails before the correction. Afterward,
+47 assurance/collector regressions pass, and all 28 existing provider
+branch/directory cases pass under Python 3.15.2/Coverage 7.17.3 with measurement.
+No original product assertion, command, timeout, threshold or test is removed.
+
+The follow-up is based on independently advanced current code main 6292cf5,
+preserving #52/#53's disabled delivery preparation, and current spec main
+fd70ac5, preserving #36's local-review governance. No delivery flag, queue,
+protection, lane, session or installed tool is changed. Full source CI,
+fresh exact-pin composed/provider reports, normal root landing and actual
+post-merge main Sonar acceptance remain required; T009 stays open.
