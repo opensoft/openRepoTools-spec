@@ -187,7 +187,7 @@ Code paths below are code-relative; governance paths are spec-relative.
 
 - [x] T033 [O] Accept authenticated bounded exact-head local-review comments with explicit replacement/revocation, preserving hosted review and live thread rechecks — files: `.github/ci/delivery_verify.py`, `tests/test_ci_local_review.py` — verify: `bash tests/run.sh -k ci_local_review`
 - [x] T034 [O] Prove local-only and mixed candidate admission, stale/forged/edited/malformed receipts, revoked/lost access and live evidence drift; adapt existing fixtures to complete comment metadata and isolate the wait-loop test clock while retaining disabled/full-CI coverage — files: `tests/test_ci_local_review.py`, `tests/test_ci_delivery.py`, `tests/test_ci_cutover.py`, `tests/test_ci_cutover_repair.py` — verify: `bash tests/run.sh -k 'ci_local_review or ci_delivery or ci_cutover or ci_candidate_shadow or full_ci_coverage_parity or tests_workflow or ci_shards'`
-- [ ] T035 [O] Reconcile the shared receipt procedure and governing feature contracts, validate and locally review the exact code/spec diff, then open paired PRs without merging — files: `.github/ci/delivery-cutover.md`, `.github/ci/task-set-delivery.md`, `features/009-manual-two-pr-queue/openspec/local-review-receipts.md`, spec `openspec/changes/accept-exact-head-local-reviews/`, `specs/009-manual-two-pr-queue/` — verify: focused tests, strict OpenSpec, whitespace and published OPEN/disabled readbacks
+- [x] T035 [O] Reconcile the shared receipt procedure and governing feature contracts, validate and locally review the exact code/spec diff, then open paired PRs without merging — files: `.github/ci/delivery-cutover.md`, `.github/ci/task-set-delivery.md`, `features/009-manual-two-pr-queue/openspec/local-review-receipts.md`, spec `openspec/changes/accept-exact-head-local-reviews/`, `specs/009-manual-two-pr-queue/` — verify: focused tests, strict OpenSpec, whitespace and published OPEN/disabled readbacks
 
 Verification at code `a9300367ba8202b17678b60648b701c8b52dfbb6`: canonical
 `tests/run.sh` passed 908 focused CI/Sonar contracts, no skips (4,289 deselected).
@@ -203,3 +203,16 @@ found no remaining actionable issues. Both OpenSpec changes validate strictly.
 No workflow definition, queue configuration, activation flag, full-coverage
 baseline, artifact schema, dependency pin or release file changed. Hosted full
 CI, source merges, live qualification and assembly adoption remain separate.
+
+Published preparation: code PR53 and spec PR36, both OPEN against main. Code
+head is `a9300367ba8202b17678b60648b701c8b52dfbb6`. The master plus nine standard
+expert roles and CI specialist completed local review; the security, reliability,
+QA, API, static, CI, architecture, persistence, performance and simplicity final
+passes acknowledged the repaired union without actionable findings. Subsequent
+spec-only task/count notes are coordinator-reviewed publication records, not a
+new contract. Ordinary full CI and reuse qualification are running on GitHub,
+not yet claimed passed. The flag remains false; source merges are not approved.
+
+Both shared py-bench and cloud-bench assembly checkouts remain `4b3c3f3`; no
+lane/session/tool/pin change, settings or queue write, canary or release act was
+performed. This completes T033–T035 as source preparation/publication only.
