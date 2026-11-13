@@ -231,7 +231,7 @@ acceptance evidence are additionally required before marking their task done.
 - [x] T036 [O] Record the approved activation phase and current source baseline — files: `openspec/changes/activate-claude-current-ci-cutover/`, `specs/009-manual-two-pr-queue/`, code `features/009-manual-two-pr-queue/openspec/activation.md` — verify: `openspec validate activate-claude-current-ci-cutover --strict`
 - [x] T037 [O] Migrate only ruleset 25966308's required contexts with live flag false, preserving all other fields and recording target/effective readbacks — files: `features/009-manual-two-pr-queue/openspec/activation.md` — verify: `gh api repos/opensoft/openRepoTools-code/rules/branches/main | python3 -c 'import json,sys; checks=[c for r in json.load(sys.stdin) if r["type"]=="required_status_checks" for c in r["parameters"]["required_status_checks"]]; assert {"context":"openrepotools-delivery","integration_id":15368} in checks; assert not ({"guard-launch-mode","tests","tests-no-submodule","package"} & {c["context"] for c in checks})'`
 - [x] T038 [O] Enable only the prepared flag, preserve explicit disabled/fallback tests, update shared instructions and open locally reviewed paired PRs — files: `.github/ci/delivery-policy.json`, `.github/ci/delivery-cutover.md`, `.github/ci/task-set-delivery.md`, `tests/test_ci_cutover.py`, `tests/test_ci_local_review.py`, `tests/test_ci_pilot_queue.py`, `features/009-manual-two-pr-queue/openspec/activation.md` — verify: `bash tests/run.sh -k 'ci_ or full_ci_coverage_parity or tests_workflow or ci_shards'`
-- [ ] T039 [O] Qualify exact-head ordinary/reuse CI and review, normally merge the enablement/governance PRs and verify landed trees plus actual main CI before queue use — files: `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${ENABLEMENT_MAIN_RUN_ID:-}" && gh run watch "$ENABLEMENT_MAIN_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
+- [x] T039 [O] Qualify exact-head ordinary/reuse CI and review, normally merge the enablement/governance PRs and verify landed trees plus actual main CI before queue use — files: `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${ENABLEMENT_MAIN_RUN_ID:-}" && gh run watch "$ENABLEMENT_MAIN_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
 - [ ] T040 [O] Run refusal/recovery fixtures, then the authorized two-member independent-main canary with explicit local-review acceptance; verify actual fast-only source/candidate runs, one complete heavy call and matching prefix/final trees — files: `claude-current`, `tests/test_claude_current.py`, `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${CANARY_HEAVY_RUN_ID:-}" && gh run watch "$CANARY_HEAVY_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
 - [ ] T041 [O] Reconcile actual settings/run/artifact/tree evidence and remaining adoption boundaries without advancing assembly pins or archiving — files: `features/009-manual-two-pr-queue/openspec/activation.md`, `specs/009-manual-two-pr-queue/activation-evidence.md`, `specs/009-manual-two-pr-queue/tasks.md` — verify: `openspec validate activate-claude-current-ci-cutover --strict`
 
@@ -246,3 +246,38 @@ three related OpenSpec changes validate strictly. Hosted full/reuse CI and
 review requests are live, not yet claimed passed. Live main policy remains false.
 T039–T041 still require actual source/main and live-canary evidence; no queue,
 assembly, release, app/paid access, bypass or running-lane action occurred.
+
+### Independent canary task sets
+
+T040 is the orchestration/acceptance gate, not an implementation task assigned
+to both source PRs. These two implementation tasks each belong to exactly one
+independent main-based PR. Neither depends on the other; no Depends-On line or
+invented stacked dependency is appropriate. PR identities and actual results
+will be recorded in activation-evidence.md after publication and qualification.
+
+| Set | Task | Outcome and safe intermediate state | Immediate predecessor | Fast verification |
+| --- | --- | --- | --- | --- |
+| CI-ACTIVATION-11-A | T042 | Clarify resolver stdout/stderr in help; no execution/install change, safe alone | None; qualified enablement main | bash -n claude-current; bash tests/run.sh -k 'claude_current and (help or malformed or repositorys_bash_rules)' |
+| CI-ACTIVATION-11-B | T043 | Cover both help aliases before malformed timeout validation, with zero fake npm/node/Claude calls; tests pass without A | None; same qualified enablement main | bash tests/run.sh -k 'claude_current and (help or malformed)' |
+
+- [ ] T042 [O] Implement CI-ACTIVATION-11-A in one source PR; retain executable mode, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `claude-current` — verify: set A commands above plus actual hosted fast/delivery checks
+- [ ] T043 [O] Implement CI-ACTIVATION-11-B in a separate source PR; use the existing hermetic Sandbox without depending on A, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `tests/test_claude_current.py` — verify: set B command above plus actual hosted fast/delivery checks
+
+## CI-METADATA-12 — approved source-description repair (2026-11-13)
+
+The owner approved the narrow metadata fix, regression tests, checked code/spec
+merges and a fresh two-PR canary. The follow-up approval bundle covers directly
+related fixes, reviews, full validation, checked normal merges and fresh canaries
+without per-PR approval stops. Bypass, app/paid access, releases, tools, assembly
+pins and running-lane changes remain excluded. Governing change:
+fix-source-delivery-metadata. The initial attempt remains failed evidence.
+
+One configuration task set CI-METADATA-12 contains T044-T046; T047/T048 are
+external integration/acceptance gates, not duplicate implementation PRs. Fresh
+independent PRs retry the same separate T042/T043 outcomes after qualified main.
+
+- [x] T044 [O] Record approved metadata decision contract and handoff without a duplicate checklist — files: `openspec/changes/fix-source-delivery-metadata/`, this task file, feature009 `spec.md` — verify: `openspec validate fix-source-delivery-metadata --strict`
+- [x] T045 [O] Add red-first prose-edit, intent/dependency/identity and strict-live-race regressions; normalize only the first source-event body comparison — files: code `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `.github/ci/delivery-cutover.md` — verify: `bash tests/run.sh -k 'ci_cutover or ci_local_review or ci_delivery'`
+- [x] T046 [O] Complete exact-head local expert review and full source/reuse qualification; open paired code/spec PRs — files: code/spec PR records and `activation-evidence.md` — verify: exact head/base checks, complete ordinary/reuse JUnit inventories and strict OpenSpec
+- [ ] T047 [O] Normally merge checked code/spec heads, compare actual landed trees and qualify actual code main before fresh canary — files: `activation-evidence.md`, PR receipts — verify: actual main full CI and test-inventory parity
+- [ ] T048 [O] Publish fresh independent T042/T043 PRs and accepted exact-head reviews; verify fast-only source/candidate CI, one heavy run, matching prefixes/final tree and no duplicate full main run; reconcile evidence — files: source PRs, `activation-evidence.md`, this checklist — verify: immutable run/artifact/member/tree readbacks and strict OpenSpec; no archive or assembly adoption

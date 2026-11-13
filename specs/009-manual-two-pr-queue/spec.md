@@ -190,3 +190,19 @@ Bypass, app/paid access, releases/tags, assembly pins, installed tools, active-p
 selection and running-lane changes remain excluded. Current scope is unchanged:
 one or two independent main-based PRs modifying only unchanged-mode regular
 claude-current/test files with both explicit opt-ins. Other work retains full CI.
+
+## Approved source-description repair — 2026-11-13
+
+The owner approved fix-source-delivery-metadata after the documented initial
+source-routing refusal, including scoped fixes, checked source merges and fresh
+canaries without per-PR approval stops. Earlier failed evidence stays failed.
+
+- FR-039: pre-routing explanatory prose may differ only when event and live
+  descriptions independently contain both unique supported opt-ins and neither
+  declares a dependency. Actor identity grants no exemption or authority.
+- FR-040: every other event/live snapshot field, existing provenance requirement
+  and subsequent strict full-body live reread stays enforced; uncertainty is full.
+- FR-041: require red-first regressions, reviewed/full-qualified checked source
+  landings and actual main qualification before a fresh two-member canary. Do
+  not reinterpret the failed initial attempt as acceptance. All prior coverage,
+  queue/review trust and explicit excluded-resource boundaries remain unchanged.
