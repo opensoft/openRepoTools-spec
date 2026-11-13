@@ -70,6 +70,36 @@ failed evidence, not be rerun or relabeled as clean efficiency acceptance.
   complete heavy run with matching landed trees and no duplicate full main run
 - **THEN** only that supported scope SHALL receive live efficiency acceptance
 
+### Requirement: Authenticated pending observations wait without accepting proof
+Source routing SHALL handle an authenticated pending check/run/job observation
+before completed-proof raw rereads. Every initial identity, source association,
+base-history, job and state check SHALL still pass. Waiting SHALL produce no
+proof or omission; a fresh poll SHALL revalidate the complete evidence. All-success
+observations SHALL retain exact run/check rereads. Admission SHALL remain
+success-only. Initial failures or uncertainty SHALL retain full; the existing
+retry budget SHALL NOT increase.
+
+The explicitly pending-enabled candidate duplicate reader SHALL likewise wait
+without proof when its authenticated live caller has no admission artifact.
+Caller evolution during that empty-list observation SHALL require a fresh poll,
+not confer receipt or omission. Invalid callers and default artifact readers
+SHALL refuse; artifact-present proofs SHALL retain every strict validation.
+
+#### Scenario: Fast work completes during the first observation
+- **WHEN** initially authenticated pending evidence completes between API reads
+- **THEN** source routing SHALL wait rather than accept it or treat that observation
+  as a completed stable proof, and SHALL qualify only on a fresh successful poll
+
+#### Scenario: Completed proof changes or admission sees pending work
+- **WHEN** an all-success proof changes on reread or admission encounters pending work
+- **THEN** the existing refusal SHALL remain, without pending-proof acceptance
+
+#### Scenario: A queued candidate caller publishes admission during observation
+- **WHEN** the authenticated caller starts or completes during an initially empty
+  admission-artifact read and waiting is explicitly allowed
+- **THEN** return only the existing bounded wait and verify the actual artifact
+  afresh before any omission; default and unauthenticated readers SHALL NOT wait
+
 ### Requirement: Refusal diagnostics preserve privacy and decisions
 The router SHALL report verification-stage and fixed-vocabulary refusal codes
 to stderr. Snapshot mismatch diagnostics SHALL contain field names only, never

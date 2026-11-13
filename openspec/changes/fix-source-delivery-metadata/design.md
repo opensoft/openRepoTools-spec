@@ -63,6 +63,36 @@ both supported source bodies. Negative cross-products cover invalid event/live
 intent, dependency declaration and every other snapshot field. A final-read
 prose race must still retain full. Exact existing full and receipt tests remain.
 
+R4 source PR67 passed the initial metadata/Git checks, then logged fast-reread
+at 21:39:54.806Z. Its fast check/job completed at 21:39:53Z and run updated at
+21:39:54Z. These timings correlate with finalization; the exact differing API
+fields were not captured. Preserve that distinction and the failed attempt.
+
+The verifier currently demands raw run/check equality before handling an
+authenticated pending observation. Reproduce completion during those reads.
+After every initial identity, source association, base-history, job and state
+check passes, any pending component may return only PendingEvidence before the
+completed-proof rereads. This produces no proof or omission, and a fresh router
+poll must independently revalidate everything. All-success observations still
+require the same exact raw rereads. Admission's default allow_pending=false
+path remains success-only. Failed, unknown or unauthenticated initial evidence
+still refuses immediately; the existing thirty ten-second waits are unchanged.
+
+This changes pending observation ordering, not completed-proof normalization,
+identity checks, retry budget, artifact/review schemas or queue authority.
+Regressions must reproduce within-read completion, require a separate fresh
+successful poll, retain completed-proof drift refusals and success-only admission.
+
+The same wait-versus-proof boundary applies to a genuine candidate caller whose
+admission artifact is absent. A deterministic regression reproduces refusal
+when that authenticated queued caller starts or completes during the empty
+artifact-list read. In this absent-artifact, explicitly pending-enabled branch,
+return only the existing wait after caller authentication, not a stable receipt.
+A fresh poll must reacquire the caller and independently verify the actual
+artifact. Invalid callers and default readers never wait; artifact-present
+proofs retain every original digest, schema and strict row/run reread. No live
+candidate failure is claimed: this is a reproduced same-class boundary defect.
+
 ## Risks / Trade-offs
 
 Other runtime differences can still refuse: preserve and diagnose them rather
@@ -73,7 +103,7 @@ it is not a gate and is deliberately outside this narrow runtime repair.
 
 ## Migration Plan
 
-Feature 009 T044-T055 is the sole execution sequence. Qualify exact reviewed
+Feature 009 T044-T058 is the sole execution sequence. Qualify exact reviewed
 code/spec heads and normal protected merges, verify actual main, then use fresh
 main-based sources and new review receipts. Preserve old attempt records and
 retire only superseded coordinator-owned PRs without deleting branches. Source

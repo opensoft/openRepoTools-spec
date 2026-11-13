@@ -437,3 +437,125 @@ hint diagnostic negative to use a foreign non-null SHA, retaining its privacy
 assertions. This is local qualification only. Exact-head expert review,
 ordinary/reusable hosted full CI, checked landings and actual-main validation
 remain required before fresh source events. No new canary acceptance is claimed.
+
+### Generated-hint repair: checked source landings; actual main pending
+
+Code PR66 qualified exact head `3036650c508ae9dc4c2fdd9a65c649e2fe60148a`
+on base `bb253610a46d8f06d60b0b1c371102606cf70bdb`. Ordinary full run
+`43499591436` passed 15/15; reusable run `43499591727` passed 17/17; fast
+`43499591582` passed 1/1. Every job succeeded on its first attempt. All four
+complete ordinary/reusable normal/no-submodule JUnit inventories contain 5,342
+unique cases, preserving the 5,261-case actual-main baseline and adding exactly
+81 passing regressions. Zero removals, duplicates, failures or skip-identity
+changes. Normal: 5,169 passed/173 existing skips; no-submodule: 3,820 passed/
+1,522 existing skips. The tested merge `6955b6ed56a33f23c85d23a1936eafc1aee295f5`
+has the ordered reviewed base/head parents and tree
+`1163f0dc20a12a6bd7180b834ba20394924a94c2`, equal to the reviewed code tree.
+
+Exact-head local master, nine standard experts and CI specialist reviews found
+no actionable issues. Hosted Codex was explicitly requested on both PRs and
+reported quota failure, not review approval. Strict OpenSpec passed; complete
+current thread reads found zero unresolved findings. Landing readers found no
+open code/spec LANDING; current remote warning audit found no project reference
+in the 15 unrelated historical warnings. No register log was rewritten.
+
+Code PR66 merged normally at `660459fa662f6760476cb5ff5143afba6ede8a01`, sole
+parent `bb25361`, tree `1163f0d` exactly as reviewed/tested. Spec PR44 merged
+normally at `375666d79ca348dd85b24cd11fa15d24f870940d`, sole parent `7816ac5`,
+tree `e06eb38ed9b65e0e600b4849d5d0abd8dc95cda0`, equal to reviewed spec head
+`8ab644d`. Neither merge used a bypass or deleted a branch. Source qualification
+is complete (T054). Actual code-main full run `43506231972` is still pending;
+T055 is not complete and no actual-main or fresh-canary success is claimed.
+
+Local R4 A `6e1f3229ebcfc89572e562da549afeeca8fcd8e3` and B
+`62330f34d3b51b88a6a9f6b077f241dac818e7de` independently preserve the separate
+T042/T043 outcomes, each with `660459f` as sole parent. Canonical local QA passed
+A19/B27, zero skips, each with 5,323 deselected; all eight new B cases also
+passed without the submodule, zero skips, 5,342 deselected. A narrower B
+help/malformed selection independently passed 13 with 5,337 deselected. These
+were non-root offline disposable bench-image runs with private HOME and exact
+shape `4bf963f`; Bash parsing also passed. Exact-head review is the next gate,
+in parallel with actual-main validation. Neither is published or
+queued; source events must wait for actual-main qualification. All prior failed
+attempts remain failed evidence. No assembly, lane/session, installed-tool,
+ruleset/app/paid access or release change, and no archive/adoption is authorized.
+
+### R4 actual-main qualification and fast-reread refusal
+
+Actual code-main run `43506231972` passed all 15 jobs on `660459f`, first attempt.
+Complete main normal/no-submodule inventories each contain 5,342 unique cases
+and exactly match the qualified ordinary source inventories: normal 5,169 passed/
+173 existing skips; no-submodule 3,820 passed/1,522 existing skips. Zero new,
+removed or duplicate cases, failures or skip-identity drift. Code/spec main refs
+remained `660459f`/`375666d`. This completes the hint-repair main qualification.
+
+Fresh A was then published as PR67 at `6e1f322`, base `660459f`, with unique
+opt-ins, no dependency and an explicit Codex request. PR65 was closed only after
+replacement publication; its branch/history remain. Master, nine standard expert
+roles and CI specialist reviewed R4 A/B and spec `3dfd092` without actionable
+findings. Their static review is distinct from coordinator QA. B stayed local.
+
+Actual route job `132185260580`, ordinary run `43512281528`, logged fast-reread
+at `2026-11-13T21:39:54.806Z`, stage source, then full mode. Thus this attempt
+passed initial metadata, scope, ref and tested-parent checks but failed fast
+evidence's final raw run/check reread. Only this owned fallback was cancelled
+after identity checks; terminal cancelled is confirmed. No receipt, queue or
+heavy run occurred, and cancelled work is not qualification.
+
+Independent fast run `43512281201` succeeded: 455 passed/18 existing skips/
+4,869 deselected. Job/check `132185259609` completed at 21:39:53Z; the run's
+updated_at is 21:39:54Z, in the refusal's finalization window. Exact before/after
+fields were not logged, so these timings do not prove which field changed.
+Fast verified tested merge `6da2aa96679f393c03cca8f1658738c1b52528d9`; commit
+readback confirms ordered `660459f`/`6e1f322` parents and reviewed A tree
+`8c4f82dafa629c1b69392c21c11c8cdc94eb28cd`.
+
+Code inspection identifies a concrete pending-completion race to reproduce:
+authenticated pending observations undergo completed-proof raw stability checks
+before PendingEvidence is raised. T056–T058 govern that bounded follow-up, not
+a relaxation of all-success proof, admission, identity or queue checks. T055's
+checked landings/main qualification/fresh-event resumption is complete; live
+T040/T042/T043/T048/T051 acceptance remains pending. No excluded resources changed.
+
+### Pending-observation follow-up: local red/green results
+
+The first ten-case reproducer run on unchanged `660459f` failed all three
+within-read completion cases with fast-reread and passed the seven completed/
+admission refusal cases. The final suite adds six fresh-poll identity-drift
+variants: pending completion is never proof, and the next observation rejects
+wrong job heads or mismatched run attempts. The code moves only authenticated
+pending handling before completed-proof rereads; no accepting proof, identity
+check, success-only admission path or retry limit is weakened.
+
+Canonical offline non-root disposable bench QA passed all 16 new cases without
+the submodule, zero skips/5,342 deselected. The wider pinned-standard CI-contract
+selection passed 1,012, zero skips/4,346 deselected. The code-local activation
+record now preserves the known qualification/failure facts and points to this
+canonical spec ledger for later acceptance, rather than duplicating live status.
+Strict OpenSpec passes. Exact-head review and full hosted source/reuse/main
+qualification remain pending, followed by genuinely fresh source events; these
+local results do not reclassify PR67 or any earlier attempt as successful.
+
+### Same-class candidate waiting regression
+
+During source CI, inspection found the same completed-stability check in the
+explicitly pending-enabled absent-admission branch. Two deterministic cases on
+unchanged `28eda11` reproduced full refusal when an authenticated queued caller
+started or completed during the empty artifact-list read. Both failed; 5,358
+other cases were deselected. This is a local contract defect, not an observed
+live candidate failure; no candidate or queue had been created.
+
+The update returns only the existing no-proof wait after caller authentication.
+A fresh poll must acquire and fully verify a real admission artifact. Four
+invalid actor/attempt cases and one default-reader refusal join the two lifecycle
+cases, bringing total new regressions to 23. Artifact-present digest/schema and
+raw artifact/run rereads remain unchanged. The earlier PR68 CI head `28eda11`
+cannot qualify this additional change; require a newly reviewed head and fresh
+full CI. No previous partial or read-only diagnostic is live acceptance.
+
+The combined updated tree passed 23 focused no-submodule cases, zero skips/
+5,342 deselected, and 1,019 pinned-standard CI-contract cases, zero skips/
+4,346 deselected. The source red reproducer remains three failures/seven passes;
+the candidate red reproducer remains two failures before its repair. Current
+collection is expected to be 5,365, including 23 additions to qualified main.
+Neither local success nor superseded-head CI qualifies the updated PR head.
