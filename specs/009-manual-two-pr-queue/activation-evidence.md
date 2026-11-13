@@ -619,6 +619,8 @@ repair must not inherit a historical batch omission. Its eventual complete
 15-job result and both full inventories remain required before fresh source
 events. This completes T057, not T058 or live T040/T042/T043/T048/T051.
 
+#### Post-landing snapshot before local R5 commits (23:25Z)
+
 Only local patch preflight for future R5 has run against the equivalent reviewed
 tree: A19/B27 passed, and all eight new B cases passed without the submodule,
 zero skips. No R5 source commit/PR, acceptance receipt, queue request, heavy
@@ -627,3 +629,35 @@ their respective actual replacements exist; do not reuse their events.
 Both shared bench views remain at assembly `4b3c3f3`. No assembly pins, tools,
 settings, app/paid access, releases, active plan, lanes or sessions changed.
 No archive or broader adoption is authorized by this source qualification.
+
+### R5 local-only preparation while actual-main validation runs
+
+Local preparation was subsequently parallelized with the still-running main
+qualification, without relaxing the live source-event gate. The earlier
+pre-commit snapshot above remains historical, not the current inventory of
+local commits. Both commits have `908d815` as their sole parent:
+
+- A `c5d0a4ee33110f2ed2089889ba420d34aa8084bb`, tree
+  `42acf4a982861166fa71fa0b7282a62836589ca6`: three literal help lines only,
+  `claude-current` mode `100755`; its test blob equals main.
+- B `41e3f3adeffc29a4fddb5aedf029aeff603e7808`, tree
+  `35c9ee37f3d938781fe8ce00dbf0ff89d0e11c31`: eight parameterized cases in
+  twelve test lines only, mode `100644`; its resolver blob equals main.
+
+These are independent T042/T043 outcomes, not an artificial dependency stack.
+Committed patch bytes exactly equal the tested preflight patches: A SHA256
+`8199D0AA0DD12A12BA8AD0CF08D1E782ABFED9BA3B5D7DB3E754FB9D316016B8`, B
+`3BAE906ADE8051D51003DFB8CAFF51362BDAC7F08DA317E63482F9F619568C26`.
+
+Fresh bundles of these exact commits passed canonical offline non-root
+bench-image QA with private HOME and a 2CPU/2GiB cap. A passed 19 with 5,346
+deselected; B passed 27 with 5,346 deselected; all eight new B cases passed in a
+deliberate no-submodule checkout with 5,365 deselected. Every selection had zero
+skips. Normal runs initialized exact shape `4bf963f`; Bash parsing passed too.
+These are local exact-head results, not hosted source or live acceptance.
+
+Actual-main `43526748400` is still pending. Neither local branch has been
+pushed, no new PR/source event or acceptance receipt exists, and no queue or
+heavy candidate was requested. Publication remains gated on complete successful
+actual-main qualification and exact-head local review. Source/queue events,
+settings and active bench state are unchanged by this preparation.

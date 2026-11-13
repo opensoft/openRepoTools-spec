@@ -327,5 +327,7 @@ not completed reviews. Strict OpenSpec and the recorded local red/green QA pass.
 The checked code/spec merges landed as `908d815` / `d266136`, with exact reviewed
 trees and sole expected parents. Actual-main run `43526748400` is still pending.
 Consequently T058 and every fresh live-acceptance task remain open. No fresh R5
-commit, PR, acceptance receipt, queue request or live qualification is recorded
-by this update. Full dated source/landing facts are in activation-evidence.md.
+source event, PR, acceptance receipt, queue request or live qualification is
+recorded by this update. Subsequent local-only R5 commits and their exact-bundle
+QA are distinguished from publication in activation-evidence.md, alongside the
+full dated source/landing facts.
