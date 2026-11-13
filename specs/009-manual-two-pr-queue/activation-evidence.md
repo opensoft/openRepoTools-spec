@@ -365,3 +365,24 @@ efficiency/heavy/landing acceptance gate remain pending; the cause is unproven.
 No source acceptance receipts or queue/heavy/source merges occurred for failed
 PR60/61. Failed attempts remain failed. No assembly pins, installed tools,
 sessions/lanes, rulesets/bypasses, apps/paid access, releases or archive changed.
+
+## Latest upstream base qualified for the fresh diagnostic source
+
+Current-main run `43487813248` passed all 15 jobs on
+`bb253610a46d8f06d60b0b1c371102606cf70bdb`, first attempt, with no skipped
+full jobs. Its complete normal/no-submodule inventories each contain 5,261
+distinct cases: normal 5,088 passed/173 skips; no-submodule 3,739 passed/1,522
+skips. Comparison with the qualified diagnostic main's 5,260-case inventories
+proves exactly one added context skip,
+`tests.test_download_transport::test_standalone_assembly_launcher_refuses_failed_payload_fetch`.
+No removals, duplicates, failures or other skip-identity changes. Both remote
+main refs were rechecked before creating fresh source heads; code remained at
+`bb25361` and spec at `7816ac5`.
+
+Fresh local R3 source A is `99b2cee5974cd69b4b43cd87008aa6236b09209c`, containing
+only the three help-prose lines for T042. Fresh local source B is
+`024bf1ab9d7a402d1b322909940d0b93f3bd0185`, containing only the eight
+existing-behavior regressions for T043. Both have `bb25361` as their sole parent
+and common merge base. Neither includes the other's change; both remain safe
+alone. Local QA and exact-head review are the next gates. No R3 PR, source
+acceptance receipt, queue request or live success is claimed by local commits.
