@@ -2840,7 +2840,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
       that re-reads from the mirror and prints the `read: mirror` line;
       `lane-rename:241` has new text for 3, 75 and 69; the restart skill's
       `lread` (`code/skills/restart/SKILL.md:48`, run with
-      `LANES_NO_FETCH=1`) refuses on 69, 75 and 3 through its `*)` arm
+      `LANES_NO_FETCH=1`) refuses on 69 through the `69)` arm T407 adds (lane 2, #165 6851002528; lane 3, #165 6851059362), and on 75 and 3 through its `*)` arm
       (`:70`), so the skill binds no window, writes no stamp and prints no
       resume command (`design.md` S3's table of readers; the delta's
       "Callers' own reads of the register go through verbs");
@@ -6165,12 +6165,12 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       `T_L`, 9 s at `c` = 2,
       is made again, and LR011 and LR007 are not; where no try takes the
       lock, the record ends `bind-failed`, `rc=3`, again, with the copies
-      kept. Absent binds anew under a new id. Found is the bind's "found"
+      kept. Absent binds anew under a new id, the test having disarmed its arm before the next `2`, so that the lookup answers absent (Y:5244). Found is the bind's "found"
       row, and writes no second `RESUMED`: the child runs `start-record`'s
       pending record's `cmdline` under its `write_id`, generation, lane and
       session, which finds the entry and replays (lane 4's section,
       "The tail, once").
-      The shim's log shows `register snapshot --tree <dir> --at <s−1>`;
+      The shim's log shows `register snapshot --tree <dir> --checkout <c> --at <s−1>`;
       the replay reads the `call` line's directory, `snapshot`, `files`
       and `preimages`; its child's `seam.out` says `tail`;
       `lane_state_follow` moves the lane's `lane-state.yaml` `generation`
@@ -7065,7 +7065,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - **The kept child gone** (the second): the same three, with the cap
     ending the kept child first, its line on fd 4 naming the attempt. The
     run replays: the shim's log shows one
-    `register snapshot --tree <dir> --at <s−1>` and no commit call after
+    `register snapshot --tree <dir> --checkout <c> --at <s−1>` and no commit call after
     it; the replay's change set has the sha256 of the entry's
     `journal_files`; the fake `gh` is called once; and the sidecar's
     pre-image is the one the committing call recorded. For
