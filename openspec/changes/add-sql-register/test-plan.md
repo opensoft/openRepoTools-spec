@@ -3439,15 +3439,15 @@ lane 3's ruling 6 (#165 comment 6578020193).
     either way. The rerun removes the record after writing the done mark
     with `owed <utc>`, prints one WARNING, and exits 0, with no tail run.
     For `rename-lane`:
-    - `[rename-lane-stops]`, the handoff file is committed empty in the lane's
-      checkout, so the checks before the stamp pass it, and the replay's stamp proof (Y:5092) refuses it with 5 before the seam
+    - `[rename-lane-stops]`, the handoff file is committed empty on the lanes
+      origin, so the rerun's lane checkout holds it, the checks before the stamp pass it, and the replay's stamp proof (Y:5092) refuses it with 5 before the seam
       (`code/lanes-edit.sh:16190–16195`): the text says that, replayed at
       seq `<s−1>`, the write now stops before its write, with its exit and
       last line, and names the steps that did NOT run;
-    - `[rename-lane-differs]`, the handoff file is moved to the new path by
-      hand, so the row's handoff cell no longer changes (`:16227–16229`) and
-      the replay's change set differs from the entry's: the text names the
-      first path whose digest differs.
+    - `[rename-lane-differs]`, the handoff file is removed by a commit on the
+      lanes origin, so the rerun's lane checkout lacks it, the replay notes it missing (`:16162–16163`), and the row's handoff cell no longer changes (`:16227–16229`):
+      the replay's change set differs from the entry's, and the text names the
+      first path whose digest differs, `lanes/LANES.md`. A handoff moved by hand to the new path stops instead: its replay meets `rename-lane`'s refusal of an occupied target, 2, before the seam (`:16032–16033`).
 
     `[request-handoff-differs]`: the fake `tmux` now reports the holder's
     window as gone, so the replay's request line differs. The run exits 2
