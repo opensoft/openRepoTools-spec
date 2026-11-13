@@ -43,8 +43,10 @@
       "internalTags": [],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0W13UfOgUsHz1t4U",
@@ -86,8 +88,10 @@
       "internalTags": [],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0W13UfOgUsHz1t4V",
@@ -129,8 +133,10 @@
       "internalTags": [],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0W2kUfOgUsHz1t7j",
@@ -173,8 +179,10 @@
       "internalTags": [],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0W2kUfOgUsHz1t7-",
@@ -217,8 +225,10 @@
       ],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0W2kUfOgUsHz1t7_",
@@ -261,8 +271,10 @@
       ],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0W5-UfOgUsHz1ueK",
@@ -306,7 +318,8 @@
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
     },
     {
       "key": "AaHV0W5-UfOgUsHz1ufW",
@@ -350,7 +363,8 @@
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
     },
     {
       "key": "AaHV0W5-UfOgUsHz1ufc",
@@ -394,7 +408,8 @@
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
     },
     {
       "key": "AaHV0W5-UfOgUsHz1ufi",
@@ -438,7 +453,8 @@
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
     },
     {
       "key": "AaHV0W5_UfOgUsHz1ujV",
@@ -482,7 +498,8 @@
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
     },
     {
       "key": "AaHV0WtWUfOgUsHz1t2e",
@@ -525,8 +542,10 @@
       "internalTags": [],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0WtWUfOgUsHz1t2f",
@@ -569,8 +588,10 @@
       "internalTags": [],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0WtWUfOgUsHz1t2h",
@@ -613,8 +634,10 @@
       "internalTags": [],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0WtWUfOgUsHz1t2i",
@@ -657,8 +680,10 @@
       "internalTags": [],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0WuUUfOgUsHz1t2n",
@@ -701,8 +726,10 @@
       ],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0WuUUfOgUsHz1t2o",
@@ -745,8 +772,10 @@
       ],
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
-      "proposedDisposition": "FALSE_POSITIVE_AFTER_REGRESSION_PROOF",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "proposedDisposition": "FALSE_POSITIVE",
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "regressionEvidence": "main-findings-proof.json",
+      "serviceTransition": "pending evidence publication"
     },
     {
       "key": "AaHV0W-QUfOgUsHz1uvp",
@@ -790,7 +819,8 @@
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
     },
     {
       "key": "AaHV0W-QUfOgUsHz1uvx",
@@ -834,7 +864,8 @@
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
     },
     {
       "key": "AaHV0W-QUfOgUsHz1uv0",
@@ -878,7 +909,8 @@
       "lastChangeAnalysisUuid": "d61100b9-ea1e-4b47-9400-d0d68868e601",
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
-      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212"
+      "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
+      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
     }
   ]
 }

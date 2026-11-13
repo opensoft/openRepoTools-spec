@@ -45,3 +45,5 @@ Licence: Apache-2.0. See [LICENSE](LICENSE).
 The [original twelve finding dispositions](specs/010-sonar-assurance/triage.md), [finding identities](specs/010-sonar-assurance/findings.json), and [acceptance evidence](specs/010-sonar-assurance/evidence.md) retain the repair receipts.
 
 The feature 010 complete-main [additional finding inventory](specs/010-sonar-assurance/main-findings.json) is explained in its [triage record](specs/010-sonar-assurance/triage.md).
+
+Feature 010 also retains [runtime and regression proof for the complete-main findings](specs/010-sonar-assurance/main-findings-proof.json).
