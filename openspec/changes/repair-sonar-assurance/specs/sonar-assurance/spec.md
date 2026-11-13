@@ -16,11 +16,19 @@ The analysis SHALL include every shipped command in its actual language, includi
 - **THEN** analysis SHALL fail rather than silently excluding that source
 
 ### Requirement: Measured coverage
-The analysis SHALL import coverage produced by executed tests. Coverage from temporary copies SHALL map only to byte-identical committed sources with validated line bounds. Failed test execution, missing reports and inconsistent provenance MUST fail verification.
+The analysis SHALL import coverage produced by executed tests. Coverage from temporary copies SHALL map only to byte-identical committed sources with validated line bounds. Failed test execution, missing reports and inconsistent provenance MUST fail verification. Each source's executable denominator SHALL be fixed independently of observed hits. Python observations SHALL use Coverage.py's canonical statement-line translation; shell observations SHALL not enlarge the static executable baseline.
 
 #### Scenario: Coverage artifact
 - **WHEN** analysis is submitted
 - **THEN** its coverage metrics SHALL derive from actual test reports associated with the exact source tree
+
+#### Scenario: Trace events outside executable statements
+- **WHEN** tracing records a Python docstring/multiline continuation or shell closing-construct event
+- **THEN** reporting SHALL map Python events to canonical statement lines and SHALL count only the fixed executable denominator, retaining all unexecuted statements and sources
+
+#### Scenario: Different suite denominators
+- **WHEN** independently produced suite reports have different per-file executable line sets for identical source inventories
+- **THEN** combination SHALL refuse the reports rather than union their denominator differences
 
 ### Requirement: Meaningful quality gate
 The assigned Sonar way conditions and thresholds SHALL remain unchanged. Main SHALL use the oldest retained main analysis as its initial baseline, and the submitted analysis SHALL finish with an evaluated quality-gate result rather than NONE.

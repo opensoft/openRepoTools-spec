@@ -24,7 +24,7 @@ Acceptance: before/after checkout and pane receipts; no active checkout reset, r
 
 FR-001: Inventory exact root, code/spec and nested provider commits and all shipped extensionless commands.
 FR-002: Enforce explicit language and test classification, including Python 3.9 compatibility.
-FR-003: Generate measured Python and shell coverage; map copies only by exact committed bytes and checked line bounds.
+FR-003: Generate measured Python and shell coverage; map copies only by exact committed bytes and checked line bounds. Keep executable denominators independent of hits, normalize Python multiline observations to canonical statements, retain every unexecuted statement/source, and refuse unequal per-file denominators for identical source inventories.
 FR-004: Keep every existing full test, package, required-check and Sonar way threshold unchanged or stronger.
 FR-005: Main uses the oldest retained analysis as baseline; fresh analysis must have evaluated conditions and non-NONE status.
 FR-006: Triage all twelve original keys with auditable evidence; preserve history.
