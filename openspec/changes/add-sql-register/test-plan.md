@@ -577,7 +577,7 @@ rename.
     - every path outside those four is unchanged.
   - **The journal.**
     - It gains exactly one entry, at the old head plus one.
-    - Its message equals the twin's commit message, byte for byte.
+    - Its message equals the twin's commit message, byte for byte, but `rename-lane`'s on primary, which is the message the design names under Q13(a) (Y:3451), since the handoff is not in its entry (lane 3, #165 6859179515).
     - It carries a `write_id`, unique in the journal.
   - **The rows.** Every row the entry touched reads `primary` as its last
     writer's mode.
@@ -6165,7 +6165,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       `T_L`, 9 s at `c` = 2,
       is made again, and LR011 and LR007 are not; where no try takes the
       lock, the record ends `bind-failed`, `rc=3`, again, with the copies
-      kept. Absent binds anew under a new id, the test having disarmed its arm before the next `2`, so that the lookup answers absent (Y:5244). Found is the bind's "found"
+      kept. Absent binds anew under a new id, the test having disarmed its arm before the next `2`, so that the lookup answers absent (Y:5244; the bind's row, Y:5516; lane 5, #165 6858973903). Found is the bind's "found"
       row, and writes no second `RESUMED`: the child runs `start-record`'s
       pending record's `cmdline` under its `write_id`, generation, lane and
       session, which finds the entry and replays (lane 4's section,

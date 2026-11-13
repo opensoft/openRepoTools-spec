@@ -3495,7 +3495,7 @@ and `aliases.tsv`, as one journal entry spanning files. Then the handoff file's
 move and Rule 3 stamp, as a git commit in the lane's checkout under Amendment
 23's S3–S4; the renderer never moves it. A failed move leaves the row's handoff
 cell naming the file not yet moved, and rerunning `lane-rename` finds the
-register already renamed and makes only the move and the stamp.
+register already renamed and makes only the move and the stamp. On primary the entry carries the message the design names for it under [L4-a], since the handoff is not in it: `LANES(<new>@<ws>): RENAMED lane <old> → <new> (Amendment 16) — the row, lanes/log/<new>.md and lanes/aliases.tsv in one register write; the handoff's move and stamp follow in the lane's checkout (Q13(a))`, where files mode's ends `the row, lanes/log/<new>.md, the handoff and lanes/aliases.tsv in one commit` (lane 3, #165 6859179515, on round 6h's twin id).
 
 ## Roles and credentials
 
