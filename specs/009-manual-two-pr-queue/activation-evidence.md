@@ -1,6 +1,8 @@
 # CI-ACTIVATION-11: scoped source activation and two-member canary
 
-Working evidence draft. Do not treat pending sections as live acceptance.
+Progress record: source activation is qualified. The first source-routing
+attempt failed efficiency acceptance before queue use. No heavy or landing
+acceptance is claimed; T040/T041 and the canary task sets remain incomplete.
 
 ## Authority and preserved boundaries
 
@@ -78,10 +80,79 @@ No running bench restart, real credential use or installed-tool update occurred.
 
 ## Live canary
 
-PENDING: two independent main-based source heads, exact-head/base local review
-receipts, actual source and candidate fast-only CI, two-member queue order,
-single first-attempt complete heavy caller, immutable qualified artifact,
-matching tested/landed prefix and final trees, and no duplicate full main run.
+### First source-routing attempt: failed, never queued
+
+Both independent source commits have the qualified enablement main 30abf79 as
+their sole parent and preserve the original file modes:
+
+- [Code PR 57](https://github.com/opensoft/openRepoTools-code/pull/57), set A:
+  e2f2f1907112b166113f9d81fe9e7fdc4351534d, help prose only, mode 100755.
+- [Code PR 58](https://github.com/opensoft/openRepoTools-code/pull/58), set B:
+  8d8b28bf6ed271d2f013d445d879e29252880ee3, eight independent tests, mode 100644.
+
+Local exact-bundle validation passed A's 19 focused cases, B's 27 focused
+cases, and all eight new B cases in a deliberate no-submodule checkout. No
+selected case skipped. Master, nine standard expert roles and a Bash/CI
+specialist completed static review of both exact heads/base and spec b29cb9e
+without actionable findings. Later factual evidence updates are coordinator
+readbacks, not expert claims of live acceptance. Hosted Codex was requested on
+both heads and returned quota failures; that is not hosted approval.
+
+Both first-attempt fast runs passed:
+
+- [A: 43423891441](https://github.com/opensoft/openRepoTools-code/actions/runs/43423891441):
+  455 passed, 18 existing skips, 4,731 deselected.
+- [B: 43423898443](https://github.com/opensoft/openRepoTools-code/actions/runs/43423898443):
+  463 passed, 18 existing skips, 4,731 deselected.
+
+However, both ordinary routing jobs selected mode=full, omit_full=false on
+trusted main 30abf79. Full jobs started, so fast-only source acceptance failed.
+Only these two newly created fallback runs were cancelled to avoid unnecessary
+runner time: A 43423891433 and B 43423898734. Their cancelled status is not
+full-CI success, and no rerun was used to conceal the failed initial attempt.
+
+GitHub's complete userContentEdits histories identify an actual pre-routing
+description race:
+
+| Source | Created by brettheap | Summary appended by sourcery-ai | Full route logged |
+| --- | --- | --- | --- |
+| PR 57 | 12:17:16Z | 12:17:27Z | 12:17:32.150Z |
+| PR 58 | 12:17:19Z | 12:17:30Z | 12:17:33.800Z |
+
+All timestamps are 2026-11-13 UTC. The summaries preserve both unique opt-in
+lines but change the description body from the opened event. The source router
+compares the complete event/live policy.snapshot tuple, including body. This
+confirmed difference fails that source predicate. The advisory observer also
+reported pr-not-qualified, while the head-owned file classifier saw the allowed
+claude-current scope. This is not evidence of missing model credentials or a
+need for expanded app permissions.
+
+An isolated offline fixture replay passed one diagnostic case: the valid source
+first selects scoped omission; appending only summary prose then selects full,
+with Git identities, rules, fast evidence and both opt-ins unchanged. This is a
+reproduction of the observed body-drift mechanism, not a captured Actions-token
+or complete webhook replay and not a production fix.
+
+No local acceptance receipts or Mergify queue commands were published. No queue
+candidate, heavy caller, qualified artifact, source merge or landing occurred.
+Both PRs stay open. The required delivery gate remains non-green for these
+cancelled source runs; they must not be direct-merged or counted as qualified.
+
+### Proposed next step, not implemented or authorized by this record
+
+Prepare a narrow code/spec fix that compares stable delivery decision metadata
+for event-versus-live description changes, while retaining exact Git identities,
+both unique opt-ins, dependency refusals, authentic fast evidence and strict
+live rechecks. Add red-first regressions for harmless appended prose and real
+intent/base/head/dependency changes, plus safe fixed-vocabulary diagnostics.
+Review and fully qualify that configuration change before a fresh two-PR
+canary. Do not trust the editing actor, disable Sourcery, widen app access,
+change rules, weaken fallback or rerun this attempt into an efficiency claim.
+
+The existing activation phase was limited to enabling prepared behavior. A
+runtime metadata-contract fix and fresh canary require a separately approved
+reviewed change. All successful heavy, prefix/final-tree and no-duplicate-main
+acceptance gates remain pending.
 
 ## Remaining boundary
 
