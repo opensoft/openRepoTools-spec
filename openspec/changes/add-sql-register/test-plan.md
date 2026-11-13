@@ -3440,7 +3440,7 @@ lane 3's ruling 6 (#165 comment 6578020193).
     with `owed <utc>`, prints one WARNING, and exits 0, with no tail run.
     For `rename-lane`:
     - `[rename-lane-stops]`, the handoff file is committed empty in the lane's
-      checkout, so the replay's stamp proof refuses it with 5 before the seam (Y:5092), though its stamp checks pass an emptied file
+      checkout, so the checks before the stamp pass it, and the replay's stamp proof (Y:5092) refuses it with 5 before the seam
       (`code/lanes-edit.sh:16190–16195`): the text says that, replayed at
       seq `<s−1>`, the write now stops before its write, with its exit and
       last line, and names the steps that did NOT run;
