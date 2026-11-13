@@ -3439,7 +3439,7 @@ lane 3's ruling 6 (#165 comment 6578020193).
     either way. The rerun removes the record after writing the done mark
     with `owed <utc>`, prints one WARNING, and exits 0, with no tail run.
     For `rename-lane`:
-    - `[rename-lane-stops]`, the handoff file is removed from the lane's
+    - `[rename-lane-stops]`, the handoff file is emptied in the lane's
       checkout, so the replay's stamp checks refuse before the seam
       (`code/lanes-edit.sh:16190–16195`): the text says that, replayed at
       seq `<s−1>`, the write now stops before its write, with its exit and
