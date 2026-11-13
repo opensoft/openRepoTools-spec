@@ -58,6 +58,8 @@ Local receipt JSON SHALL have exact keys and types, no duplicate keys, bounded
 body size and supported schema/skill. Truncated, saturated, malformed or failed
 API reads SHALL refuse. Local identity, report digest, writer permissions and
 threads MUST be revalidated with the source at the existing final live checks.
+Complete REST and GraphQL comment-ID sets MUST agree; equal counts alone SHALL
+NOT establish a consistent history.
 Untrusted report text SHALL NOT be executed or fetched.
 
 #### Scenario: Receipt or permission changes during verification
@@ -65,6 +67,13 @@ Untrusted report text SHALL NOT be executed or fetched.
 - **WHEN** the accepted receipt is edited, deleted, replaced, revoked, or its
   publishing user loses access during the live verification pass
 - **THEN** that verification SHALL refuse; no success alias or skip is granted
+
+#### Scenario: Same-count comment replacement
+
+- **WHEN** REST and GraphQL contain equal numbers of comments and the selected
+  acceptance ID, but a different comment was replaced between the reads
+- **THEN** the inconsistent history SHALL refuse rather than hide a potentially
+  newer local revocation
 
 ### Requirement: Preparation is not activation
 
