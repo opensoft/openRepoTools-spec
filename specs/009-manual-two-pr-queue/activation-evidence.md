@@ -218,3 +218,22 @@ T046 is complete. Spec landing and actual new-main full qualification remain
 T047 gates; fresh canary, receipt, heavy and landing acceptance remain pending.
 The first-attempt failure record above stays failed, and no new queue command
 or source fast-only acceptance is claimed by this configuration landing.
+
+## Metadata repair: actual main qualified for the fresh canary
+
+Spec PR40 normally landed reviewed head 954fe3a as
+28b5cf3d687a2a9f8680c59f260c5f3b701a3bfc, sole parent c6c668e, tree
+a00e26de3f6b408398041be99e5072d017820068 exactly reviewed. The final publication
+delta was acknowledged without actionable findings by the full local panel.
+
+Actual code-main run 43458131280 passed all 15 expected jobs on
+000743a3a3bb9eca92960d0c8fad1bf2075dc2e8, first attempt, no skipped full jobs.
+Its complete normal/no-submodule JUnit inventories each contain 5,245 cases and
+exactly match the qualified source variants, including skip identities. Normal
+5,076 passed/169 existing skips; no-submodule 3,727 passed/1,518 existing skips.
+Current code main remained at that exact qualified commit before fresh branches.
+
+T047 is complete. New independent A/B branches may now retry T042/T043 from
+that qualified main with new exact heads, reviews, receipts and PRs. T048 and
+all live efficiency/heavy/landing acceptance remain pending. No fresh-source
+success is inferred from configuration or main qualification.
