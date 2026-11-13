@@ -7821,10 +7821,10 @@ test that asserts a time says which of the three it is.
     section 5.6), and a lost SYN adds 1 s. SVC-8 says how the shares hold
     it ("Over a remote database"): the direct read takes `c`, and its
     timer, not the connect bound, keeps the hook's budget; a whole-file
-    fetch meets the start line past about 165 ms of RTT, and case 6's
+    fetch meets the start line past about 165 ms of RTT, a figure its own `lanes-index` start and second connect bring lower, since the fetch is a call of its own (SVC-8; lane 1's R07, #165 6809169664; lane 3, #165 6809568632), and case 6's
     detached fetch keeps it for the next prompt. Under section 5.6's option
     A or B, the same cases also run on a healthy delayed link, so that no
-    share expires on a link that answers.
+    share expires on a link that answers, once the image cache is filled, as a joined workstation's is: a direct read is then about eight round trips, inside the start line to about 375 ms of RTT, or 310 ms where a configured service is silent (SVC-8, "A whole file is never lost to the line"). A prompt that must fetch a whole file may still answer 2 there, "too late to verify", and the next prompt reads the file its fetch left in the cache, as case 6 shows (lane 5, #165 6852197902; lane 3, #165 6858923154).
 - **Tests.** `test_a_database_that_does_not_answer_is_2_inside_4_5_s[<case>-<service>]`
   for cases 1 to 4, and AT-10's
   `test_a_connect_timeout_above_the_direct_reads_share_is_cut_at_the_parse_start_line[service-up|service-down]`
@@ -8383,10 +8383,10 @@ reworded, and add M1 in the design's form.
   which open point 11 could not.
 - **B, a delaying relay in the suite.** A standard-library relay on
   127.0.0.1, as AT-D9's F2 relay is, holds each chunk RTT/2 in each
-  direction and delays its upstream connect by one RTT. It needs no root
+  direction. As T229 built it (`code/tests/pgcluster.py`'s `DelayedLoopback`), it connects upstream at once and delays no connect, so TCP's handshake crosses it with no RTT, and a connect through it is n_c less that one round trip: 6 under the default key shares, 5 with P-256 offered first (lane 5, #165 6852197902; lane 3, #165 6858923154). It needs no root
   and runs in pytest on any host, as
   `test_each_shape_on_a_delayed_relay_is_recorded[<shape>-<rtt>]` (AT-9).
-  It models no slow start, loss or kernel timer, so it checks n for small
+  It models no slow start, loss, kernel timer or TCP handshake, so it checks n, less one round trip a connect, for small
   messages, not C.
 - **C, neither.** M13's counts, lane 5's run and act 3's rows carry the
   model.
