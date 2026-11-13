@@ -6252,7 +6252,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       `guard-bind` records `bound_s=530`, the bind ends `bound`, which its
       `timeout` allows only inside it, with its `ended_utc` less
       `started_utc` recorded beside the 530 s, and the shim's log shows no
-      step at its timer. The guard's register read is the hook's last
+      step at its timer. The guard's register read is the `2`'s own prefetch, `register read --for guard` in form 2 (the register-read contract's section 3.6), a call through the relay at `c` = 3 under the guard's 1500 ms statement bound, and the hook's last
       database call in the shim's log, so answer 2 adds none, and the
       exit's lag after the read is asserted and recorded as case 1's is;
   22. `bound_s` as `guard-bind` computes it from the configuration, with a
