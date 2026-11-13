@@ -6248,7 +6248,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   21. on the primary fixture behind the delayed loopback lane 3 picks for
       lane 2's question 3 (#165 6722518182; section 7's point 23), with
       75 ms added each way and TLS on (AT-D9c (d)'s link), and
-      `connect_timeout=3` with one address in the configuration:
+      `connect_timeout=3` with one address in the configuration, with the image cache filled (the offer made over the cluster's own port, whose whole-file fetch fills it) and no service (a state home whose socket path is over 103 bytes, so the client reads directly and starts none):
       `guard-bind` records `bound_s=530`, the bind ends `bound`, which its
       `timeout` allows only inside it, with its `ended_utc` less
       `started_utc` recorded beside the 530 s, and the shim's log shows no
@@ -7093,17 +7093,17 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       ws1, it says the steps may already have run here, and names them;
     - [other-host]: with the write made from ws2, it names ws2 and the
       steps, and says to rerun there if that run ended 3.
-  - Lane 4's third test, a rerun after a 3 that replays, is AT-D8's, and
-    its seventh, the bind's found row, is AT-F6's.
+  - **Two matching call lines** (NIT-4 (b); lane 3, #165 6851422597): a killed `claim`'s record holds its one `call=` line and no `tail`. The test adds a second line with the same `<base> <clock> <not_after> <files>`, naming its own attempt directory, `<run>/2`, which holds a copy of the first's `snapshot`, `files` and `preimages`, as a resend of one change set in the same database second would. A plain rerun finds its id at the snapshot, with no kept child, and does not replay (Y:5317; tasks:1236): it exits 0 with one WARNING saying that two call lines sent the entry's change set and that it cannot be replayed, and naming the steps that did not run. The fake `gh` gets no Rule 1 read and no comment after the kill, the done mark keeps `owed <utc>`, and the record is removed. A run whose own commit answered `committed` keeps that call's line (Y:5306); this case does not build it.
+  - Lane 4's third test, a rerun after a 3 that replays, is AT-D8's, and its seventh, the bind's found row, is AT-F6's.
 - **Tests.** In `code/tests/test_sql_register_in_doubt.py`:
   - `test_a_call_in_doubt_that_committed_runs_its_tail_once_from_the_kept_child[snapshot|lr006|lookup]`;
   - `test_with_the_kept_child_gone_a_replay_runs_the_tail_once[snapshot|lr006|lookup]`;
   - `test_a_replay_of_request_handoff_types_into_no_pane`;
   - `test_a_rerun_that_finds_tail_sent_runs_no_tail_and_writes_the_done_mark`;
   - `test_a_replay_that_stops_or_differs_runs_no_tail_and_warns[stops|differs]`;
-  - `test_a_run_with_no_record_runs_no_tail_and_names_it[done-mark|this-host|other-host]`.
-- **Run time.** About 1–1.5 min: the [lookup] cases wait about 10 s each for
-  `<n>`, and the others take 2–5 s each.
+  - `test_a_run_with_no_record_runs_no_tail_and_names_it[done-mark|this-host|other-host]`;
+  - `test_two_matching_calls_of_one_change_set_leave_the_replays_tail_owed`.
+- **Run time.** About 1.5–2 min: the [lookup] cases wait about 10 s each for `<n>`, and the others take 2–5 s each.
 - **Flakiness.** Every order is a FIFO hold, or the cap's end, which the
   test waits for through `seam.out`; no sleep decides an order.
 
@@ -7823,8 +7823,8 @@ test that asserts a time says which of the three it is.
     timer, not the connect bound, keeps the hook's budget; a whole-file
     fetch meets the start line past about 165 ms of RTT, a figure its own `lanes-index` start and second connect bring lower, since the fetch is a call of its own (SVC-8; lane 1's R07, #165 6809169664; lane 3, #165 6809568632), and case 6's
     detached fetch keeps it for the next prompt. Under section 5.6's option
-    A or B, the same cases also run on a healthy delayed link, so that no
-    share expires on a link that answers, once the image cache is filled, as a joined workstation's is: a direct read is then about eight round trips, inside the start line to about 375 ms of RTT, or 310 ms where a configured service is silent (SVC-8, "A whole file is never lost to the line"). A prompt that must fetch a whole file may still answer 2 there, "too late to verify", and the next prompt reads the file its fetch left in the cache, as case 6 shows (lane 5, #165 6852197902; lane 3, #165 6858923154).
+    A or B, a healthy delayed link is crossed by AT-F6's case 21, whose warm direct read and whole bind meet their shares, and by AT-D9c (d), where no healthy call meets its timer; the fault cases stay on loopback, where each share's expiry is exact.
+    With the image cache filled, as a joined workstation's is, a direct read is about eight round trips, inside the start line to about 375 ms of RTT, or 310 ms where a configured service is silent (SVC-8, "A whole file is never lost to the line"). A prompt that must fetch a whole file may still answer 2 on a healthy delayed link, "too late to verify", and the next prompt reads the file its fetch left in the cache, as case 6 shows (lane 5, #165 6852197902; lane 3, #165 6858923154; lane 2, #165 6859896678).
 - **Tests.** `test_a_database_that_does_not_answer_is_2_inside_4_5_s[<case>-<service>]`
   for cases 1 to 4, and AT-10's
   `test_a_connect_timeout_above_the_direct_reads_share_is_cut_at_the_parse_start_line[service-up|service-down]`
