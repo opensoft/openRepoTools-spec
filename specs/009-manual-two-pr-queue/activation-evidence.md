@@ -262,3 +262,29 @@ The public event feed is sparse, and existing route logs reveal no refusal
 stage. Nullable event metadata, incomplete early fast evidence and read-to-read
 transitions remain hypotheses, not a proven cause. T049-T051 add diagnostic-only
 observability before a genuinely new attempt, without changing eligibility.
+
+## Diagnostic-only follow-up: local qualification
+
+Code 07336fddb80dcd9f86221ff788fffcd0fe04c07d adds only fixed stderr stage/reason
+codes and snapshot mismatch field names. Unknown exception text is never
+emitted. Exact routing outputs, snapshots, retries, proof schema and every
+gate remain unchanged. Against old main, six diagnostic tests failed and the
+quiet-success case passed; these are logging regressions, not eligibility fixes.
+
+With the change, 915 broad CI contracts passed, zero skips (4,337 deselected).
+The focused routing/review subset passed 375, zero skips; all seven additions
+also passed in deliberate no-submodule mode, zero skips (5,245 deselected).
+Canonical tests/run.sh ran in disposable existing bench-image containers as
+nonroot with no network, 2CPU/2GiB, private HOME and exact pinned shape bundle.
+Early disposable QA setup attempts failed before test execution because of
+incorrect fixture mounts; corrected runs above initialized the exact 4bf963f0
+pin or deliberately omitted it. No live bench was restarted or rebound.
+
+The exported tested patch exactly matches the committed code diff, SHA256
+013B1544D108AAA6C6F89F3ACD6CE0D26CCB28610A381B34C9847D24C93A366C.
+Master plus nine standard experts and CI specialist reviewed exact code 07336fd
+and spec 04fc566 without actionable findings. This final QA/task-only update is
+coordinator-reviewed. Both OpenSpec changes validate strictly. Shared py-bench
+and cloud-bench assembly HEADs remain 4b3c3f30b08d39469a185cbb74afdace9579a857.
+T049 is complete; T050 hosted qualification/landings and T051 actual new-event
+diagnosis plus all live efficiency acceptance remain pending.
