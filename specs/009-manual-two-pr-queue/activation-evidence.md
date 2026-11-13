@@ -190,3 +190,31 @@ Master plus nine standard experts and a CI specialist reviewed code 887cd0d
 and spec 41ab19e without actionable findings. This factual publication update
 is coordinator-reviewed. T044/T045 are complete; hosted source/reuse CI,
 checked landings, actual main and fresh-canary acceptance remain pending.
+
+## Metadata repair: hosted qualification and code landing
+
+At code head 887cd0dddf7bd5439570ba105f0689113b99dfd0, first-attempt ordinary
+run 43450668152 passed all 15 jobs, reusable run 43450668194 passed all 17,
+and fast run 43450667976 passed. Attempt-specific inventories contain the exact
+expected job names, all successful, with no skipped full jobs. Both PRs had
+complete review-thread reads with zero unresolved threads. Hosted Codex was
+quota-blocked; the approved local review path remains the actual review evidence.
+
+All four downloaded ordinary/reusable normal/no-submodule JUnit variants have
+5,245 distinct cases, exactly the reviewed 41 additions to the 5,204 baseline.
+Normal: 5,076 passed and 169 existing skips. No-submodule: 3,727 passed and 1,518
+existing skips. No removed/duplicate/failing cases or changed skip identities.
+
+Both completed package logs identify actual tested merge
+d8f874df431239c837e0692ae6dbc6a1e28f94f2, ordered parents 30abf79/887cd0d,
+tree 1dca115d61e4c46878830f32850c4224e0c473d7. Code PR59 was normally
+squash-merged as 000743a3a3bb9eca92960d0c8fad1bf2075dc2e8, sole parent 30abf79,
+with that exact tree. No bypass. Fresh canonical landing reads reported no open
+hold for either repo; the same 15 malformed historical warning lines were
+checked against the current registry remote and do not mention openRepoTools.
+No lane log or shared checkout was rewritten.
+
+T046 is complete. Spec landing and actual new-main full qualification remain
+T047 gates; fresh canary, receipt, heavy and landing acceptance remain pending.
+The first-attempt failure record above stays failed, and no new queue command
+or source fast-only acceptance is claimed by this configuration landing.
