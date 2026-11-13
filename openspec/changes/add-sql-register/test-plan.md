@@ -455,12 +455,12 @@ written out below. This plan always says which set it means.
     #291, #295, #301 and #302, and the other issues milestoned v1.2.0 move
     to v1.2.1 ("set 1.2.0 for 165 alone, 1.2.1 for the rest", then "let
     T017 ride in 1.2.0, retitle #343": comments 6721648587 and
-    6721870837). Whether Eagle and Raven install by pipx or by `./setup.sh`
-    stays open.
+    6721870837). Eagle and Raven install by `./setup.sh` (Brett's "1a 2b",
+    2026-11-12; lane 3, comment 6814260122), and check 1 there rests on the re-vendor's package (Brett's "Vendor release as package (Recommended)", 2026-11-13).
 - **Still open** (the design's "Open questions" at W):
   - The expiry of any outage Brett declares, which he names later. No test
     reads it: AT-D20 expires a declaration with a UTC already past.
-  - Whether Eagle and Raven install by pipx or by `./setup.sh` (Q24).
+  - Answered since, and kept here so that no line moves: Eagle and Raven install by `./setup.sh` (Q24; Brett's "1a 2b", 2026-11-12), and check 1 there rests on the re-vendor's package (Brett's "Vendor release as package (Recommended)", 2026-11-13).
   - Whether the organisation's GitHub plan supports the ruleset, and whether
     it can name the render set exactly (Q21(b), D23). Nobody has checked.
   - Whether every environment has git 2.32 or later, which the deploy key's
@@ -898,8 +898,8 @@ rename.
     ends in a `COMMIT` too.
   - **The deadline (A″).** D7 sets it at 30 s, and
     `LANES_REGISTER_DEADLINE_S` sets it for tests, in whole seconds
-    (`design.md` S1). The burst, case (c), runs with the variable unset, at
-    D7's default; the busy case (d) sets it to 1; and case (h) leaves it
+    (`design.md` S1). The burst, case (c), sets it to the runner's own D7, as
+    case (c) says; the busy case (d) sets it to 1; and case (h) leaves it
     unset, to assert the 30 s default once.
 - **Oracle.**
   - **(a) Two claimants, W = 200 ms.**
@@ -922,7 +922,7 @@ rename.
   - **(c) The burst.** Section 4.1's oracle, with the seqs counted from the
     cutover's entry: the ten writes take seqs 2 to 11, with no gap and no
     repeat (the delta's "A burst loses no writer"). It runs with
-    `LANES_REGISTER_DEADLINE_S` unset, at D7's 30 s default.
+    `LANES_REGISTER_DEADLINE_S` set to the runner's own D7, the per-workstation formula of the phase plan's "D7 stays 30 s", `max(30 s, 10 × the runner's attempt p95)`, in whole seconds rounded up (lane 3's reading, for lane 2 to confirm), which the test sets from its own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13). How those attempts reflect the burst's own load is lane 2's to propose. D7's default stays 30 s, and case (h) asserts it.
   - **(d) Busy.** Two writers on distinct objects, W = 2 s, deadline 1 s.
     - One exits 0. The other exits 75. The frame wins here: D7 names the
       code the proposal left to the design.
@@ -998,7 +998,7 @@ rename.
   - The barrier, not a sleep, makes the writers simultaneous.
   - The window, 200 ms or more, is far above scheduling jitter.
   - Every assertion is about counts, codes and order, except the two below.
-  - The burst runs at D7's 30 s default. Its outcome, every writer committed
+  - The burst runs at the runner's own D7, case (c)'s, never under D7's 30 s default. Its outcome, every writer committed
     and none exiting 75 (the delta's "A burst loses no writer"), depends on
     time through that deadline alone. The probes' 2.26 s drain was
     `psql` alone. A real attempt costs about 0.55–0.61 s (lane 4's section,
@@ -1008,12 +1008,12 @@ rename.
     The burst's 55 verb runs and 110 Python starts are about 28 CPU-seconds
     on the measuring host, so a runner with c cores needs at least 28/c s of
     wall time, and its margin is less. The burst's drain, from the release
-    to the last exit, is asserted under twice the deadline, 60 s (timing
-    rule 2), and recorded against the 30 s with its margin, beside each
+    to the last exit, is asserted under twice the deadline it ran under (timing
+    rule 2), 60 s at the default, and recorded against that deadline with its margin, beside each
     writer's attempts, counted as snapshot calls in the shim's log and not
     asserted. A runner that cannot drain the burst inside the deadline is a
     finding on D7's value, which the delta requires to exceed the largest
-    burst's drain, and not flake (open point 32).
+    burst's drain, and not flake (open point 32). Since case (c) sets its deadline from the runner's own attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13), a slower runner lengthens the deadline with its attempts.
   - Case (h) asserts the default by a lower bound, 29 s from the launch
     (timing rule 3), which load only lengthens, and by an upper bound at
     twice the design's (timing rule 2).
@@ -3778,7 +3778,7 @@ lane 3's ruling 6 (#165 comment 6578020193).
       time is recorded against its timer, `S` = `C` = 9 s, `T_L` = 10 s and
       a reader's 7 s, with its margin;
     - the burst, one request per call, under D7's 30 s, with
-      `LANES_REGISTER_DEADLINE_S` unset as in AT-4 (c): every writer commits
+      `LANES_REGISTER_DEADLINE_S` unset, as AT-4 (h) leaves it, not as AT-4 (c) now sets it: every writer commits
       once, or exits
       75 with nothing written, its write id absent from the journal, and no
       writer ends any other way. The new seqs have no gap and no repeat.
@@ -7576,8 +7576,8 @@ test that asserts a time says which of the three it is.
     the barrier.
   - A window of W = 200 ms, injected by the shim's `window` mode between each
     writer's snapshot and its COMMIT.
-  - A deadline of 30 s (Q7 (A″); D7), D7's default: the burst runs with
-    `LANES_REGISTER_DEADLINE_S` unset, as AT-4 (c) does. The companion
+  - A deadline of D7's 30 s default (Q7 (A″); D7), or the runner's own D7 where that is longer: the burst runs with
+    `LANES_REGISTER_DEADLINE_S` set as AT-4 (c) sets it, `max(30 s, 10 × the runner's attempt p95)`, from the test's own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13). The companion
     case below keeps its variable.
 - **Oracle.**
   - All ten exit 0, and none exits 75 or 69.
@@ -7595,8 +7595,8 @@ test that asserts a time says which of the three it is.
     from 40 ms up, which is why (A) fails this test (P1540–1547).
 
   The asserted bound is the deadline itself: no writer exits busy (the
-  delta's "A burst loses no writer"). The drain is asserted under 60 s,
-  twice D7's 30 s (section 4's rule 2), and recorded against the 30 s with
+  delta's "A burst loses no writer"). The drain is asserted under twice the deadline it ran under,
+  60 s at D7's 30 s (section 4's rule 2), and recorded against that deadline with
   its margin.
 - **Two companion cases.**
   - **The window is effective.** The same burst with a 1 s deadline: at least
@@ -7627,10 +7627,10 @@ test that asserts a time says which of the three it is.
     database"). D7 stays 30 s, and act 3's test 4 decides it; AT-D9c (d)
     runs this burst on a delayed link, where each writer commits once or
     exits 75 with nothing written.
-  - **The drain is recorded beside D7's 30 s, and asserted only under
-    twice it, 60 s (section 4's rule 2):** the time from the barrier's
+  - **The drain is recorded beside the deadline the burst ran under, D7's 30 s or the runner's own, and asserted only under
+    twice it, 60 s at the default (section 4's rule 2):** the time from the barrier's
     release to the last writer's exit, and each writer's attempts, counted
-    as snapshot calls in the shim's log, are printed beside the result.
+    as snapshot calls in the shim's log, are printed beside the result, with the measured attempt p95 and the deadline set from it.
 - **Tests.** AT-4 owns `test_ten_writers_released_together_all_commit_in_order`,
   whose oracle section 4.1 gives. Section 4.1 adds
   `test_the_burst_window_is_effective_a_short_deadline_sends_writers_busy`.
@@ -9056,7 +9056,7 @@ frame do not yet make it. None adds a requirement.
     that workstation's attempt p95)`, with `T_write` and `bound_s`
     recomputed (the phase plan's "Over a remote database"). The tests set
     D7 by `LANES_REGISTER_DEADLINE_S` for their short cases, run test 4's
-    burst with it unset, and assert the 30 s default once (AT-4 (h)). A
+    burst under the runner's own D7 by that formula, set from its own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13, which answers this point for AT-4 (c)), and assert the 30 s default once (AT-4 (h)). A
     per-workstation D7 would add a configured value for them to read.
 33. **`max_connections` against the connections the register opens.** The
     design says the server's `max_connections` must hold one service

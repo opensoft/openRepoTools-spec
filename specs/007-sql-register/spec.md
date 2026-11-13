@@ -1455,7 +1455,7 @@ are lane 3's rulings memo's).
   - each new name of "New and unproven".
 
   Each is written in the phase that builds what it checks, and lands with
-  that phase. Source: the test plan (Y:6084).
+  that phase, or before it under T280's landing gate, which skips it, naming its tasks, until they land; T281 removes the gate in the last set (Brett's "Temporary landing gate (Recommended)", 2026-11-13). Source: the test plan (Y:6084).
 - **FR-060**: `tests.yml` MUST set `OPENREPOTOOLS_REQUIRE_PG: '1'` where the
   binaries exist. It MUST keep the four required check names:
   `guard-launch-mode`, `tests`, `tests-no-submodule` and `package`. Source:

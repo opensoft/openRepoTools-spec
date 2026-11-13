@@ -301,7 +301,7 @@ he named on 2026-11-08 ("Values Brett named on 2026-11-08", in Open questions).
 17. **Q24, how #165 reaches the hosts: (a).** The workBenches re-vendor, v1.2.0
     with a TestPyPI rc1, the one-liner as a stopgap, and one image rebuild.
     Under (b) or (c), only the route changes; the readiness check's digests
-    follow whichever artifact is installed.
+    follow whichever artifact is installed. Under (a), the re-vendor vendors the release as a package, its `payload/` files plus the wheel's stamped `_release.py`, installed with `payload/openRepoTools --install`, so that on the `./setup.sh` hosts check 1's list is placed as from the package, and check 1 keeps its meaning (Brett's "Vendor release as package (Recommended)", 2026-11-13).
 18. **Q25(a), the merge method: (i), merge commits.** Under (ii) or (iii), the
     sha that lands differs from the rehearsed head, so the composed run is
     repeated.
@@ -6337,7 +6337,7 @@ The runbook is `operations.md`, summarised below. In order:
    measure the direct guard.
 5. **The release** (Q24(a)): v1.2.0 with an rc1, the workBenches re-vendor and
    one image rebuild carrying the configuration mount (Q23(a)) and PostgreSQL
-   16 (1A).
+   16 (1A). The re-vendor vendors the release as a package, as Q24 (a) above says (Brett's "Vendor release as package (Recommended)", 2026-11-13).
 6. **The readiness check** in every environment that writes the register
    (P19): on Eagle, the host shell and each bench container (py-bench,
    cloud-bench and any other bench image, each a separate environment because

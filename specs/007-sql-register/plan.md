@@ -306,7 +306,7 @@ lanes-index                     # CHANGED. The one client. Governed.
 │           T113 register read, its four forms; T114 journal; T115 import --at;
 │           T116 cutover's transaction; T117 status, reconcile's check, sync;
 │           T118 REGISTER_KIND_RE; T119 ready; T120 set-mode; T121 outage declare
-│           and clear (U4); T122 register classify (R04)
+│           and clear (U4); T122 register classify (R04); T124 the cached module, PC-2 (Brett's "(d) Both (a) and (c)", 11-13; for lane 1 to confirm)
 │   A [L3]  T301 render --images; T302 the image cache (U8); T304 rollback's
 │           transaction, on a scratch schema only
 │   A [L5]  T507 register read --for guard's client half, under lane 1's review (R07)
@@ -353,17 +353,17 @@ skills/handoff/SKILL.md         # A [L4] T406 step 1's reads (R25) | B [L4] T431
 skills/restart/SKILL.md         # A [L4] T407 lread's 69 arm under S3
 openRepoTools                   # A [L3] T303 wip_init's refusal under lanes/ (U9);
                                 #   GUARD_COMMAND, GUARD_TIMEOUT and the hook text unchanged
-                                # [L3] T346 --install places check 1's list beside lanes-index
+                                # [L3] T346 --install places check 1's list beside lanes-index; T347 ships the cached lanes-index module ("(d) Both (a) and (c)"); on ./setup.sh hosts both arrive by the package re-vendor ("Vendor release as package")
 .github/workflows/release.yml   # [L3] T346 publishes check 1's list as a release asset
 .github/workflows/tests.yml     # 0 [L2] OPENREPOTOOLS_REQUIRE_PG; the four check names kept
 tests/                          # [L2] pgcluster.py, conftest.py, test_sql_register_*.py,
                                 #   test_lanes_index.py (FAKE_PSQL from PG* variables),
                                 #   test_lane_helpers.sh, test_tests_workflow.py,
                                 #   test_wip_init_command.py,
-                                #   fixtures/ [PLAN CHOICE: test 6's v1.1.0 writer]
+                                #   fixtures/ [PLAN CHOICE: test 6's v1.1.0 writer]; sql_register_gate.py and sql_register_landed/, T280's landing gate until the last set, T281's ("Temporary landing gate")
 tests/test_repo_hygiene.py      # [L2]; T417 adds each _EXIT_3_CAUSES entry with its
                                 #   die … 3, and lane 2 reviews that hunk (R22; Q-L2-3 (a))
-pyproject.toml                  # UNCHANGED: no installable is added
+pyproject.toml                  # [L3] T347: force-include takes the cached lanes-index module ("(d) Both (a) and (c)")
 ```
 
 **In the spec leg** `[L3]`:
@@ -468,7 +468,7 @@ Group C, phase 3 ............................... [L3] [L2: tests G]
    v
 The tag, v1.3.0, on Brett's own word, after group C and the service ... [L3]:
    :       rc1 on TestPyPI, the tag, release/v1.3, PyPI, the notes, the workBenches
-   :       re-vendor, which also carries the launcher's window reads ("5A")
+   :       re-vendor, which also carries the launcher's window reads ("5A") and vendors the release as a package ("Vendor release as package")
    :
    :  outside 007: the install (a codexFactory lane) --> act 3 --> act 4,
    :  which also waits for slices 2a, 2b and 3 (Q28(i)), and for the service
@@ -659,7 +659,7 @@ own governed files.
 - `tests/fixtures/` — the digest-pinned v1.1.0 `lanes-edit.sh` (PC-12): an
   edit moves a recorded digest.
 
-Governed already, and unchanged by this feature, which adds no installable:
+Governed already; this feature adds one payload file, PC-2's cached `lanes-index` module, which the install ships (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13; T124, T347), and changes these only as that module's form needs:
 
 - `pyproject.toml`'s `force-include`;
 - the count lines in `tests.yml`, `release.yml` and
@@ -683,7 +683,7 @@ Governed already, and unchanged by this feature, which adds no installable:
 | DP-12 | Slices 2a, 2b and 3 | act 4 waits for them (Q28(i)) | 2a is code#18; ready by 2026-11-17 | act 4, not 007 |
 | DP-13 | The GitHub plan's facts: a push ruleset with a deploy-key bypass on the render set and `lanes/STORE`; git 2.32 or later everywhere; whether `ready` can prove the key's right | the push function's `render_key=` branch, and the ruleset | facts still to find; Q21(b)'s scope is on the spec PR's list | group C's push function, which works without `render_key=` |
 | DP-14 | The install itself, by a codexFactory lane Brett names | act 3, the restore drill, and Q29's figure on each workstation | lane 3's kickoff for opsXfactory-6 awaits Brett's word | acts 3 and 4, not 007 |
-| DP-15 | The v1.3.0 workBenches re-vendor | the launcher's bare window reads, spec:626 (R41) | lane 3 drafts it | the tag, not 007's code |
+| DP-15 | The v1.3.0 workBenches re-vendor | the launcher's bare window reads, spec:626 (R41); and the release vendored as a package, its `payload/` files plus the wheel's stamped `_release.py`, installed with `payload/openRepoTools --install`, so that check 1 keeps its meaning on `./setup.sh` hosts (Brett's "Vendor release as package (Recommended)", 2026-11-13) | lane 3 drafts it | the tag, not 007's code |
 
 ## Risks
 
@@ -760,7 +760,7 @@ could object in its block. research.md records each with its source at Y.
 | # | Choice | Where the design leaves it | Taken |
 | --- | --- | --- | --- |
 | PC-1 | The image cache's form | "Deferrable within the design"; the phase plan's Question 13 | Question 13's form: content-addressed objects under `register-images/objects/`, per-seq manifests, and a `head` that moves only forward, under a short `fcntl.flock`; collection of objects in no recent manifest and older than 10 minutes; readers copy into their own files. The service writes through |
-| PC-2 | The pipe pair: one `psql` kept for an attempt's two calls | lane 4's row 27; (A″) excludes a session held across the verb | not in phase 1. Decided at phase 2 from tests 9 and 4 (R24). A cached module or lazy imports come first |
+| PC-2 | The pipe pair: one `psql` kept for an attempt's two calls | lane 4's row 27; (A″) excludes a session held across the verb | not in phase 1. Decided at phase 2 from tests 9 and 4 (R24). A cached module or lazy imports come first: the cached module is taken in 007 (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13; T124, T347), and lazy imports stay with phase 2 |
 | PC-3 | The renderer's batch of 64 and cap of 16 passes, and whether to accept the gap after six lost races | lane 4's row 3, "lane 3: the two values" | take 64 and 16, record test 5's figures, and accept the stated gap, which `reconcile` closes |
 | PC-4 | Which way out the runbook prefers | lane 4's row 7: the import toggles a line's history, and the revert does not | ship both (the requirement needs a tool for each); the runbook prefers `render --revert` |
 | PC-5 | How a test builds test 14's two states | test plan, open point 3 | a copy of `lanes-index` with the constant rewritten, in the test's temporary directory. No environment override |
@@ -802,7 +802,7 @@ path. These stay open, each with its owner:
 - **Lane 3's, before the change is archived:** R61's wording task on the
   change's `design.md` (Y:4975's Q29 clause; T1 and T5's line lengths).
 - **A per-workstation D7:** after act 3's test 4, to 007's tasks or to
-  v1.2.1.
+  v1.2.1. For AT-4 (c) in CI it is answered: the test runs under the runner's own D7 by the design's formula, set from its own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13).
 
 ## The test layout
 
@@ -812,7 +812,7 @@ due 2026-11-09 18:00Z, fixes the names and the prefixes that each task's
 
 | Module | Phase | Holds |
 | --- | --- | --- |
-| `tests/pgcluster.py`, `tests/conftest.py` | 0 | the fixture and the switch |
+| `tests/pgcluster.py`, `tests/conftest.py` | 0 | the fixture and the switch; until the last set, T280's landing gate in `tests/conftest.py`, with `tests/sql_register_gate.py` and `tests/test_sql_register_gate.py`, which T281 removes (Brett's "Temporary landing gate (Recommended)", 2026-11-13) |
 | `test_sql_register_fixture.py` | 0 | the switch's four cases |
 | `test_sql_register_schema.py`, `_roles.py`, `_shape.py` | N | §1.2 to §1.5, the roles, and the SQL's shape (fake `psql`), with `tls_at_load` |
 | `test_sql_register_render.py` | N | the pure renderer, and test 1's phase-N part |
