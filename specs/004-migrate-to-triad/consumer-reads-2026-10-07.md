@@ -408,3 +408,13 @@ grep -n '\[ -d "\$worktree" \]' ~/.claude/skills/handoff/SKILL.md
 ls $ORT/.specify/extensions/git/
 grep -n 'worktree_root\|checkout_mode\|base_branch' $ORT/.specify/extensions/git/git-config.yml
 ```
+
+*Updated 2026-11-08, in the follow-up to lane 2's NIT 6 on opensoft/openRepoTools-spec#6: the
+line numbers of the October 4 mapping.* Lines 49, 226, 238, 257 and 372 of this record
+cite `adoption-plan.yaml:N`. Each number is a line of
+`openspec/changes/migrate-to-triad/adoption-plan.yaml` at `593250d` (375 lines, blob `f9d26fbe`,
+the same bytes as `ff6f6a7`'s, the commit this record says it read), and each holds there. The
+path holds a later plan now: at `9f8b21a`, run C's plan (445 lines, blob `8b360179`), where the
+same numbers name other lines. Read them with
+`git show 593250d:openspec/changes/migrate-to-triad/adoption-plan.yaml | cat -n`.
+No line above was changed.
