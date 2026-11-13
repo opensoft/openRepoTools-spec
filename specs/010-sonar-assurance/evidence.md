@@ -267,3 +267,60 @@ fd70ac5, preserving #36's local-review governance. No delivery flag, queue,
 protection, lane, session or installed tool is changed. Full source CI,
 fresh exact-pin composed/provider reports, normal root landing and actual
 post-merge main Sonar acceptance remain required; T009 stays open.
+
+## Full successful rehearsal and coverage denominator audit
+
+Source correction #54 merged normally as febf51673f1e501465bdd344c0cf159178c3b664.
+Its full ordinary CI accounted for 5,199 cases exactly once: 5,030 passed and
+169 skipped, with exactly the prior green skip reasons. The no-submodule
+negative control accounted for the same 5,199 cases (3,681 passed/1,518
+expected skips). Its unchanged package SIGTERM-cp case failed once; the exact
+built-wheel case then passed ten consecutive local runs and the retained
+same-head hosted retry passed all 285 cases without skips. Both subsequent
+published-main full workflows also passed, including their package jobs:
+43365237917 and 43365296407. No test, assertion, timeout or source gate was
+removed or relaxed.
+
+Root 70bfd106bcf90e6f1206dd8d3e0506d58ef71751 coherently consumes that code,
+spec 7e5a248 and provider 4bf963f. Full workflow 43365392750 passed both suites,
+report combination, scanner/readback and exact-pins. The complete composed
+suite passed 5,193 cases with the same six explained skips; provider passed
+22,480 cases with 360 conditional skips. Both exact-copy probes report
+190 canonical lines and zero modified lines. Inventory is 496 Python/shell
+files, including 64 production files (45 Python/19 shell) and all 18
+extensionless commands. PR merge revision is cad55da6adc1807ea7b2455e4748507df04721ca.
+Those successful test results and all reports are preserved.
+
+This rehearsal is nevertheless NOT accepted final coverage, and root #361
+remains unmerged. A report audit found differing denominators for identical
+source bytes: composed Python 37,161 lines versus provider 44,427, and shell
+21,889 versus 20,128. Python raw trace events include module docstrings and
+multiline continuations (for example adopt-project.py line 3 and continuation
+lines beside 463/464). The converter incorrectly unioned these observed-only
+lines into PythonParser.statements. Bash DEBUG closing-construct events could
+similarly enlarge kcov's baseline. This made the denominator depend on which
+suite ran and could inflate coverage.
+
+Code #55 corrects this using Coverage.py's documented translate_lines mapping
+and the complete fixed statement set, retains kcov's fixed executable baseline,
+and refuses any pair of reports whose per-file denominators differ. Bounds,
+source hashes, positive/modified copy checks, missing-source refusals and all
+unexecuted source/statement obligations remain. This strengthens measurement;
+it is not an exclusion, waived test or changed threshold. Reference:
+https://coverage.readthedocs.io/en/latest/api_plugin.html#coverage.FileReporter.translate_lines
+
+Three regressions fail on the previous converter; all 49 collector/assurance
+tests pass with the correction. Native Python 3.15.2/Coverage 7.17.3/kcov 43
+qualification independently verifies canonical multiline credit, exclusion of
+docstrings/closing events from coverable lines, retained untaken branches and
+an entirely unexecuted Python file, and identical shell denominator keys
+before/after execution. The fixture reports three covered of six Python
+statements and three covered of four shell statements, with missing lines
+explicitly retained. These are diagnostic fixture metrics, not assembled
+coverage or main acceptance.
+
+Fresh full source CI, ordinary source landing, coherent parent pins and fresh
+complete assembled reports are still required. Historical 70bfd raw-event
+reports must never be rebound as acceptance for a changed source/commit.
+T009 remains open, including the real post-merge main gate, per-language/file
+coverage import and original finding readback.
