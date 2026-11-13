@@ -353,3 +353,34 @@ both below code/upstream/openRepoShape/tests/. Their exact committed bytes
 decode with strict UTF-8; the replacement characters are expected assertions
 about invalid Git output. Their source is not re-encoded or excluded to
 silence those diagnostics.
+
+
+## Complete-main diagnostic after root #361 (2026-11-13)
+
+Root #361 merged normally as `dab458e2f774637cccea490bfc6bdb1a5dafe212`.
+Full [main run 43429604689](https://github.com/opensoft/openRepoTools/actions/runs/43429604689)
+completed: composed 5195 passed/6 explained skips; provider 22480 passed/360
+explained skips; both provenance reports and fixed-denominator combination
+passed. [Manual main validation 43429913267](https://github.com/opensoft/openRepoTools/actions/runs/43429913267)
+also passed. The real main Sonar analysis computed ERROR, correctly leaving the
+required exact-pins gate red. T009 is not complete.
+
+Independent API pagination confirmed every one of 496 expected Python/shell
+files with its expected language (513 indexed files including other languages).
+The 64-file coverage artifact retained both zero-statement package markers:
+Sonar omits numeric metrics for those two empty executable maps, while all
+62 files with statements matched imported `lines_to_cover` and
+`uncovered_lines` exactly. Overall 56114 executable lines, 7863 uncovered,
+86.0% coverage. The 18 extensionless commands are included.
+
+All six unchanged gate conditions evaluated with `ignoredConditions=false`
+and manual baseline date 2026-09-10T20:01:30+0000. Four passed; 4 bugs and 16
+vulnerabilities require S04. Original 12 service readback: 8 CLOSED/FIXED and
+4 RESOLVED/FALSE-POSITIVE (two previously documented false positives disappeared
+from this analysis and were automatically closed); no original issue remains open.
+
+Sonar reports missing blame for nested submodule files despite full Git history.
+[Its Cloud troubleshooting guide](https://docs.sonarsource.com/sonarqube-cloud/appendices/troubleshooting)
+documents submodules as a cause. Do not reset the period, exclude the nested
+files or disable SCM to make the gate pass. The native shell parser limitations
+and intentional UTF-8 negative-test warnings documented above remain disclosed.

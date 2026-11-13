@@ -16,3 +16,11 @@
 - [ ] T009 [O] Complete full CI, measured coverage, exact-head/main gate verification, preservation and normal project landing — files: `specs/010-sonar-assurance/evidence.md`, `specs/010-sonar-assurance/tasks.md` — verify: `make validate`
 
 Each set has one reviewer decision and retains current full-CI acceptance. No queue is invoked. S02 depends on S01's recorded authority; S03 consumes the independently published code/spec commits. The single executable checklist is this file.
+
+
+## Set S04 — Findings exposed by complete main analysis
+- [ ] T010 [O] Verify and record the 20 additional findings against main analysis d61100b9, preserving the original twelve dispositions — files: `specs/010-sonar-assurance/triage.md`, `specs/010-sonar-assurance/main-findings.json`, `specs/010-sonar-assurance/evidence.md` — verify: source-flow regression receipts and service readback
+- [ ] T011 [O] Enforce HTTPS on initial requests and redirects in the five implementation and three root-launcher curl calls, with real loopback transport regression tests — files: code `openRepoTools`, `tests/test_download_transport.py`; assembly `openRepoTools` — verify: `python3 -m pytest tests/test_download_transport.py -q`
+- [ ] T012 [O] Land the source-owner repair normally, consume its merged pin and run fresh exact-commit full composed/provider tests and actual main analysis — files: assembly `code`, `contracts/code-pin.yaml`, `openRepoTools`; this feature's evidence — verify: current-main full CI and six evaluated Sonar way conditions
+
+S04 depends on S03's main diagnostic result. It is one bounded transport repair plus evidence-backed triage, with code-owner and root-owner PRs. Intermediate state: the gate remains red while genuine HTTPS download defects are repaired; no period, source exclusion, rule or required check changes. T009 stays open through S04 and final preservation verification. The current code owner's unrelated delivery activation (#56/#59) is retained; this mixed transport/CI-test work retains full CI and does not enter a manual queue.
