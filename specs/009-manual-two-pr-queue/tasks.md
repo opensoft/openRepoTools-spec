@@ -381,3 +381,18 @@ accepted proof; source immediate refusals remain. Exact-head master, nine
 standard expert roles and CI review found no actionable findings. Both governing
 changes pass strict OpenSpec. These are local source checks, NOT full hosted,
 actual-main, fresh heavy/landing acceptance or assembly adoption.
+
+T064 source and actual-main gates are now complete: code78/spec51 normally
+landed as `f3adc6d` / `e72ca65` with exact reviewed trees, after ordinary15 /
+reusable17 and four complete5,449-case source inventories passed. Actual-main
+push43555851715 passed15/15 first attempt and both full inventories exactly
+match source, including skip identities. Fresh independent PR79/80 passed
+fast-only source CI and received new actual accepted local-review receipts.
+Production live preflight passed both; genuine draft81 admission proves both
+ordered members and the independently expected combined tree. Its actual route
+twice returned pending without proof for moving PR/caller views, then accepted
+a fresh stable complete decision; ordinary candidate CI passed with all full
+roles skipped. The one heavy caller43560096407 is still running at this
+checkpoint. T064 and every live acceptance task remain OPEN pending full heavy
+coverage, qualified artifact, actual prefix/final landing, no duplicate full
+main work and final reconciliation. R6 remains failed; it was not rerun.

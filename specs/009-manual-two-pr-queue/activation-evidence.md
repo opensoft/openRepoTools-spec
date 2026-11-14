@@ -1021,3 +1021,166 @@ unrelated feature010 assurance evidence unchanged. No assembly pin was adopted.
 T063 is complete locally; T064/full source/main qualification, genuinely fresh
 R7 source receipts, real member/heavy/tree/no-duplicate gates and final evidence
 remain open. R6 will not be requeued or rerun into clean acceptance.
+
+## CI-METADATA-16 checked landings and actual main — 2026-11-14
+
+[Code PR78](https://github.com/opensoft/openRepoTools-code/pull/78) qualified
+head `8de8e499b5f9a8d35ae46c885370f2d716f881fa` against `a15a6b5`.
+Ordinary run `43552555631` passed all 15 jobs; reusable `43552555793` passed
+all 17; fast `43552555748` passed its one job. All were first attempts.
+All four complete JUnit inventories contain 5,449 unique cases, retain every
+one of the 5,418 baseline IDs, and add the 31 reviewed passing regressions.
+There are no removed or duplicate cases, failures/errors or skip-identity drift.
+Both normal variants report 5,276 passes and 173 existing skips; both deliberate
+no-submodule variants report 3,927 passes and 1,522 existing skips.
+
+Both completed packaging jobs logged actual tested merge
+`cfe0419cba4c31b1bdf47e1ed8ff5063fb899fe4`, with ordered parents
+`a15a6b5` / `8de8e49`. Its tree `771e130e9ca417f8b1eaff21802fe78d885ee0d6`
+equals the reviewed code tree. No later regenerated PR merge was substituted.
+Exact-head local master, nine standard expert roles and CI review were clean;
+both governing OpenSpec changes passed strictly. Hosted Codex returned quota
+replies, not completed reviews. The source qualification is retained in
+[the code receipt](https://github.com/opensoft/openRepoTools-code/pull/78#issuecomment-6871549390)
+and [the spec receipt](https://github.com/opensoft/openRepoTools-spec/pull/51#issuecomment-6871549788).
+
+After fresh head/base/main, required-check, complete empty-thread and landing
+guards, both PRs merged normally, without bypass or branch deletion:
+
+- Code78 landed at 04:16:52Z as `f3adc6d5f50eaf1c951272da191a4f7ea0311e98`,
+  sole parent `a15a6b5`, with exactly the reviewed tree above.
+- [Spec51](https://github.com/opensoft/openRepoTools-spec/pull/51) landed at
+  04:17:07Z as `e72ca656dbfa721a27af099b95104cf8365ff7e3`, sole parent
+  `59183ec`, tree `4d73f600fb2ce13ffa5e5357815240450d139798`, exactly reviewed
+  head `f027007`'s tree. Unrelated feature010 work is preserved.
+
+Actual-main push run
+[43555851715](https://github.com/opensoft/openRepoTools-code/actions/runs/43555851715)
+passed 15/15 jobs on exact `f3adc6d`, first attempt, completing at 04:56:22Z.
+Its packaging log independently identifies checkout `f3adc6d` itself.
+Both complete 5,449-case inventories exactly match qualified source, including
+all skip identities, with zero added/removed/duplicate/failed cases. A scheduled
+run or workflow rerun was not substituted. See
+[the actual-main receipt](https://github.com/opensoft/openRepoTools-spec/issues/26#issuecomment-6872058192).
+
+## Fresh R7 source qualification and real receipts — 2026-11-14
+
+Only after actual-main qualification, independently safe sources were published
+and checked in parallel; neither was queued merely because it was eligible:
+
+- [A79](https://github.com/opensoft/openRepoTools-code/pull/79), head
+  `f3de6223ff75157fd8984ca0e081990f1536bf04`, sole parent `f3adc6d`, tree
+  `fc765b058639d32005856d88f99a2b550815b47a`: three literal help lines,
+  unchanged executable mode `100755`, no execution/install change.
+- [B80](https://github.com/opensoft/openRepoTools-code/pull/80), head
+  `87a38f0d15045c39db57cff0fab050eb0cabb1bc`, sole parent `f3adc6d`, tree
+  `7a5fe1da5ddeb8f1eda65b2f1b899de35b3e4b95`: eight hermetic cases in twelve
+  lines, unchanged mode `100644`, no dependency on A's prose.
+
+Fresh exact-head master, nine standard experts and CI review found no actionable
+findings. Reviews were static/read-only; coordinator QA is separate evidence.
+Canonical exact-bundle QA passed A19 and B13; broader B27 also passed, preserving
+repository bash-rule coverage. All eight new B cases passed without upstream.
+All had zero skips. Collection retains 5,449 baseline IDs and adds exactly eight
+for 5,457 unique cases, with no removed or duplicate cases.
+
+Actual source runs `43559200071` / `43559205175` each passed eight jobs: two
+successful controls and six skipped full roles. No full work started. Actual
+first-attempt fast runs `43559200108` / `43559205161` passed respectively
+455 / 463 cases, with 18 baseline fast-suite skips and 4,976 deselections each.
+Their completed logs identify actual tested merges:
+
+- A: `9fe15c3ddbaa9f61028697d4ffb48566f80628b7`, ordered parents
+  `f3adc6d` / `f3de622`, exactly reviewed tree `fc765b0`.
+- B: `6dbd9cf635489487c40cde996bbffe9721057963`, ordered parents
+  `f3adc6d` / `87a38f0`, exactly reviewed tree `7a5fe1d`.
+
+Actual route proofs, both `source` / `omit_full:true`:
+
+- A at 05:01:41.838Z:
+  `58905528c0d1bfbeb0f7dc38a8d5cca275255a3fd224fe3a636ec4553320ebc0`.
+- B at 05:01:23.187Z:
+  `0073c0a12480aa31dccc19666f30fc0cb1c329f4f059a5450cbb03c1149cb275`.
+
+Hosted requests again received quota replies, not reviews. Complete fresh review
+threads were empty. After current head/base/main, real checks and writer access
+verification, authenticated User `brettheap` / 1513478 with live admin permission
+explicitly accepted the actual local reports using new, unedited comments:
+[A receipt6872133963](https://github.com/opensoft/openRepoTools-code/pull/79#issuecomment-6872133963)
+at 05:04:50Z and
+[B receipt6872135222](https://github.com/opensoft/openRepoTools-code/pull/80#issuecomment-6872135222)
+at 05:04:57Z. These are operator attestations, not independent human or hosted
+approvals. No R6 receipt was reused or edited.
+
+The unchanged production `source_pr` validator, trusted at `f3adc6d` with real
+GitHub REST/GraphQL evidence and reviewed private Git objects, passed both
+actual sources, fast evidence, local receipts, comment metadata, permissions,
+ancestry and final live rereads. Component digests:
+
+- A: `6c0a06e2923a5f813e72aa1bdb43b8fa0e38685184222146456722d0a462151d`.
+- B: `c3d39364f493efc90da5a7d4c0ec8e78daf0b6c0cdaa333563aca03ffc1a655a`.
+
+Mergify's real structured check reported both ready/waiting for the named
+`openrepotools-claude-current` queue, each with 16 conditions and zero failures.
+Only after actual replacements existed, superseded R6 PR75/76 were guarded as
+operator-owned, unchanged, unmerged and explicitly dequeued with neutral checks,
+then closed. Their original remote branches remain intact at `624986b` /
+`4ec0fba`. R6 remains failed; no history, receipt, branch or run was rewritten.
+
+## R7 genuine admission and live race recovery — checkpoint, 2026-11-14
+
+Fresh project landing and current-remote historical-warning reads were clear;
+exact sources, base/main `f3adc6d` and absence of prior queue commands were
+rechecked immediately before the explicit writer requests:
+[A6872175958](https://github.com/opensoft/openRepoTools-code/pull/79#issuecomment-6872175958)
+at 05:08:28Z and
+[B6872176254](https://github.com/opensoft/openRepoTools-code/pull/80#issuecomment-6872176254)
+at 05:08:30Z, two seconds apart. Both bodies are exactly
+`@mergifyio queue openrepotools-claude-current`. No R7 requeue, cancellation or
+dequeue has occurred at this checkpoint.
+
+Actual Mergify draft [PR81](https://github.com/opensoft/openRepoTools-code/pull/81)
+was created at 05:08:55Z, branch `mergify/merge-queue/48adb3e70a`, base `f3adc6d`,
+head `f0bc5701b765a4260dd2bfe7150e93393e21b069`. Source checks reported the two
+PRs tested together; that prose was not used as proof.
+
+Independent production validation of the real admission archive and Git chain
+proves the actual order and prefixes:
+
+- Artifact14100157570, name
+  `candidate-admission-f0bc5701b765a4260dd2bfe7150e93393e21b069-a1`, 576 bytes,
+  archive SHA256 `f7818fa94d5a08c2ec27e417bc8f92d4f60e9074d65130828627ac2fc67b94e4`.
+- Canonical record digest
+  `315d456b09f6e9384b14fa975d62629a2e7c794cc77796b84f48568170b67535`.
+- First member79 / `f3de622`, prefix `64a0acc0e01c60053ed3959cfc77f7a5a9a3740d`,
+  tree `fc765b058639d32005856d88f99a2b550815b47a`.
+- Second member80 / `87a38f0`, final prefix `f0bc5701`, tree
+  `498cda538b6feefd312915bf36c2b9c4fa23b6a5`, exactly the independently
+  prepared Git union. Both actual delivery flags are true.
+
+The retained real proof JSON independently reproduces the live archive's
+canonical record digest. No event or receipt was manufactured.
+
+Candidate ordinary run `43560104195` passed 8/8 jobs, two controls successful
+and all six full roles skipped. Its actual route log exercised the repair:
+
+- 05:09:32.650Z: `candidate-reread-pending`, fields `pull_request`.
+- 05:09:56.558Z: `candidate-reread-pending`, fields `pull_request`, `caller`.
+- 05:10:21.118Z: stable `candidate` / `omit_full:true`, proof
+  `5eeedc14bb1eb356db0b369dff03d591e0befe62bb0bf936ead404bdf42cb615`.
+
+The canonical candidate-plus-actual-admission-record hash independently matches
+that route proof; the final omitted-work gate also passed. This is genuine
+pending-without-proof followed by a separately stable complete decision, not
+normalization or mixed-view acceptance. Candidate fast run `43560104254` passed
+its one job. No duplicate candidate full work started.
+
+At this checkpoint the one authentic first-attempt push caller
+[43560096407](https://github.com/opensoft/openRepoTools-code/actions/runs/43560096407)
+is still executing full heavy CI on exact `f0bc5701`. Admission is not completed
+heavy qualification. The 19-job successful result, real qualified artifact and
+digest, both complete 5,457-case inventories, actual landed prefix/final trees,
+and absence of duplicate full main/PR work remain unproved. The live acceptance
+tasks therefore remain open. Assembly/session adoption and archive remain
+excluded; all running benches, lanes, installed tools, pins, active plan,
+settings/app/paid access and releases are unchanged by this work.
