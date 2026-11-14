@@ -10,8 +10,10 @@ adoption, installed-session delivery or efficiency for every component.
 Final artifact reconciliation (06:48Z): code82 and spec52 have now landed with
 their exact reviewed trees; the final checked-landings section records the
 actual receipts and closes T041. All 64 feature009 source/reconciliation tasks
-are complete. New code-main qualification is still pending separately, and
-assembly/session adoption, wider efficiency and archive remain unfinished.
+are complete. Actual code-main full-test qualification subsequently completed
+at 07:31:58Z; the final main section records its independent inventories and the
+separate neutral Sonar check. Assembly/session adoption, assembled quality-gate
+acceptance, wider efficiency and archive remain unfinished.
 
 ## CI-METADATA-15 local repair qualification — 2026-11-14
 
@@ -1353,3 +1355,46 @@ without new authority. Current remote assembly `4377a70` contains newer
 HTTPS/Sonar work and must be preserved in any later approved adoption. No
 settings, app/paid access, release/tag, installed-tool or running-lane change
 follows from task closure or from publication of these receipts.
+
+## Actual code main full-test qualification — 2026-11-14
+
+The native push/main run
+[43568137721](https://github.com/opensoft/openRepoTools-code/actions/runs/43568137721)
+completed successfully at 07:31:58Z on exact
+`eff8459657e9a970d46a0cdef5cbd531cbe0e9cd`, first attempt. All 15 exact expected
+jobs succeeded, with no skipped job. Actor and triggering actor are `brettheap`.
+Complete all-state head history contains the three intended workflows and
+exactly one ordinary full caller. No rerun or scheduled/manual substitute was
+used. Actual code main still read back as `eff8459` after this audit.
+
+All five normal and four no-submodule JUnit artifacts were independently
+compared against both qualified R7 heavy and the reviewed PR82 source:
+
+| Actual-main variant | Unique cases | Passed | Existing skips | Identity/skip drift |
+| --- | ---: | ---: | ---: | --- |
+| Normal | 5,457 | 5,284 | 173 | None |
+| Deliberately without upstream | 5,457 | 3,935 | 1,522 | None |
+
+Both comparisons contain zero added, removed, duplicate or failed cases and
+zero changed skip identities. This is complete case-level source/main parity,
+not merely a successful aggregate. Actual packaging job `132366453530` logged
+checkout `eff8459` itself at 06:49:02.610Z and separately passed 285 cases.
+The actual commit retains the reviewed tree `ef2e250` and sole parent `11964a6`.
+See [the actual-main receipt](https://github.com/opensoft/openRepoTools-spec/issues/26#issuecomment-6873917701).
+
+Keep quality acceptance distinct: the exact-main check inventory contains
+19 successful checks and one **neutral** `SonarCloud Code Analysis` check,
+ID `132366894485`, titled **Quality Gate not computed** for project
+`opensoft_openRepoTools-code`. That is not a passing quality gate. The successful
+15-job test workflow does not substitute for an uncomputed Sonar assessment.
+The existing assembled assurance uses the separate `opensoft_openRepoTools`
+project and requires complete composed/provider measurement, a computed passing
+gate and coverage verification. That assembled exact-pin acceptance remains
+unfinished; no gate, setting or permission is changed or waived here.
+
+This later full run belongs to the out-of-scope evidence PR82, not a duplicate
+R7 canary landing run. The accepted canary and preserved failed attempts remain
+unchanged. Feature009 source/reconciliation tasks stay complete; full deployment
+does not. Assembly adoption, fresh SAFE-gated shared-checkout/session adoption,
+wider efficiency and archive remain separately unfinished. The assembly
+approval question is unanswered, so its prior exclusion remains in force.

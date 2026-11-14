@@ -427,3 +427,12 @@ qualification43568137721 remains a separate pending gate, not inferred from
 source success. Assembly pins, composed qualification, shared checkout/session
 adoption, wider efficiency and archive remain unfinished and separately
 excluded. No active plan, installed tool, release, permission or lane is changed.
+
+Subsequent actual-main qualification completed at07:31:58Z: push run43568137721
+passed all15jobs on exact `eff8459`, first attempt; both full5,457-case
+inventories exactly match the reviewed source and R7 heavy, including skip
+identities. The final actual-main section in activation-evidence.md records
+the proof and separately reports the standalone Sonar check as neutral / Quality
+Gate not computed, not a passing quality gate. No checkbox or deployment scope
+changes: all64source/reconciliation tasks remain complete, while assembled
+quality acceptance, pins/session adoption, wider efficiency and archive do not.
