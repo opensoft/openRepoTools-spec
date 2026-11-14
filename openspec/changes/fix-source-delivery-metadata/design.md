@@ -51,11 +51,11 @@ and independently checked against ordered main/head parents. Every other
 identity, source intent, fast receipt and final strict reread remains mandatory.
 
 Apply this same bounded hint validation to source and genuine candidate-PR
-events, not globally to snapshot semantics. Candidate bodies remain exact, and
+events, not globally to snapshot semantics. Later candidate bodies remain exact, and
 candidate omission still requires authenticated real admission and independently
 revalidated sources. No new retry, hint fetching, artifact or permission path.
 Regressions cover supported actions, nullable/current combinations, unknown
-hints, bad tested commits, changed live hints, strict candidate bodies and
+hints, bad tested commits, changed live hints, strict later candidate bodies and
 missing/corrupt admission. Fresh live acceptance remains required.
 
 Positive regressions reproduce appended/replaced/removed unrelated prose and
@@ -93,6 +93,38 @@ artifact. Invalid callers and default readers never wait; artifact-present
 proofs retain every original digest, schema and strict row/run reread. No live
 candidate failure is claimed: this is a reproduced same-class boundary defect.
 
+R5 subsequently proved both independent source PRs fast-only and real two-member
+admission, but draft PR73 selected full at 2026-11-14T00:27:07.974Z, stage
+candidate/incomplete-evidence. Full duplicate jobs started alongside the genuine
+heavy caller, so this is failed efficiency acceptance. Both specimen runs were
+cancelled and both sources explicitly dequeued before landing; main stayed908d815.
+
+GitHub's complete edit history confirms a nonempty Sourcery description edit at
+00:27:05Z, after creation at00:26:55Z and before fallback. The first precise
+rejecting predicate and original raw event body/hints were not logged. Do not
+claim this chronology proves the sole historical cause. It does expose a
+necessary incompatibility: the current initial candidate snapshot includes an
+exact body comparison even though the candidate description grants no authority.
+
+At only that initial candidate event/live comparison, require both descriptions
+to be strings or null and substitute the event description in the existing
+temporary comparison copy. Do not parse or trust member, review or admission
+claims in either description. All other snapshot fields, the bounded generated
+hint rule, genuine Mergify draft/ref/main/head identity, tested Git parents,
+regular modes/paths, authenticated real admission and independently verified
+live source intent/reviews remain mandatory. Missing or corrupt proof cannot
+be replaced by prose. Never mutate the original current PR; final raw PR,
+branch, caller and artifact rereads stay strict, including the full description.
+
+Add candidate snapshot field-name diagnostics and fixed refusal vocabulary so
+another failure can be investigated without guessing. Never emit body/hint
+values, arbitrary exception text or API payloads. No workflow, queue, flag,
+schema, wait budget, permission, app, installed-tool or release change follows.
+Regression coverage must include append/replace/remove/null prose transitions,
+invalid description types, unchanged non-description identities, missing/corrupt
+admission and body mutation during final rereads. Qualify the repair normally
+before genuinely fresh R6 sources; never rerun R5 into successful acceptance.
+
 ## Risks / Trade-offs
 
 Other runtime differences can still refuse: preserve and diagnose them rather
@@ -103,7 +135,7 @@ it is not a gate and is deliberately outside this narrow runtime repair.
 
 ## Migration Plan
 
-Feature 009 T044-T058 is the sole execution sequence. Qualify exact reviewed
+Feature 009 T044-T061 is the sole execution sequence. Qualify exact reviewed
 code/spec heads and normal protected merges, verify actual main, then use fresh
 main-based sources and new review receipts. Preserve old attempt records and
 retire only superseded coordinator-owned PRs without deleting branches. Source

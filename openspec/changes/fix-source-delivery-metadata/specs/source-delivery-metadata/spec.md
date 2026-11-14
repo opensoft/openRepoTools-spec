@@ -40,8 +40,9 @@ merge_commit_sha hint SHALL be missing/null or equal the trusted GITHUB_SHA.
 Only when both qualify may the comparison copy align that field. Unknown or
 malformed non-null hints SHALL retain full, even if both snapshots agree.
 The tested commit and ordered main/head parents SHALL still be independently
-verified. All later live rereads SHALL remain strict. Candidate bodies SHALL
-remain exact and genuine admission/source proofs SHALL remain mandatory.
+verified. All later live rereads SHALL remain strict, including candidate
+descriptions. The initial candidate-description comparison SHALL follow the
+bounded descriptive-prose rule below; genuine admission/source proofs stay mandatory.
 
 #### Scenario: A current hint materializes after a source or candidate event
 - **WHEN** one hint is missing/null and the other is the trusted tested SHA
@@ -51,8 +52,8 @@ remain exact and genuine admission/source proofs SHALL remain mandatory.
 - **WHEN** a non-null hint differs from the trusted SHA or ordered parents fail
 - **THEN** full CI SHALL remain required rather than trusting either hint
 
-#### Scenario: Candidate admission is absent or its body changes
-- **WHEN** a valid nullable-hint transition lacks admission or has differing bodies
+#### Scenario: Candidate admission is absent or its body changes during verification
+- **WHEN** a valid nullable-hint transition lacks admission or a later body reread differs
 - **THEN** it SHALL NOT grant omission; existing bounded pending rules remain unchanged
 
 #### Scenario: A hint changes between live verification reads
@@ -106,7 +107,7 @@ to stderr. Snapshot mismatch diagnostics SHALL contain field names only, never
 values, bodies, tokens, arbitrary exception text or raw API payloads. Diagnostic
 emission SHALL NOT alter routing, waiting, proof schema or merge authority.
 
-#### Scenario: Source snapshot or fast evidence refuses
+#### Scenario: Source or candidate snapshot or fast evidence refuses
 - **WHEN** current strict snapshot or fast provenance checks refuse
 - **THEN** full fallback SHALL remain unchanged and diagnostics SHALL identify
   only the fixed refusal category and any mismatched snapshot field names
@@ -114,3 +115,25 @@ emission SHALL NOT alter routing, waiting, proof schema or merge authority.
 #### Scenario: An exception contains private text
 - **WHEN** an unrecognized exception reaches the conservative fallback
 - **THEN** only a generic code and fixed verification stage SHALL be logged
+
+### Requirement: Initial candidate descriptions are descriptive, not authority
+Only at the first genuine candidate event/live snapshot comparison, string or
+null descriptions MAY differ. All other identities SHALL remain exact except
+the existing bounded generated-hint rule. Candidate descriptions SHALL NOT
+supply member, review, admission or merge authority. Genuine Mergify draft/ref/
+main/head identity, tested parents, fixed scope, actual authenticated admission
+and independently verified live sources/reviews SHALL still qualify. Original
+current PR data and all final raw rereads SHALL remain unchanged and strict,
+including descriptions. Invalid description types or uncertain proof retain full.
+
+#### Scenario: A summary is added before candidate routing
+- **WHEN** candidate prose changes before routing and all independent proof qualifies
+- **THEN** that prose difference alone SHALL NOT force duplicate full work
+
+#### Scenario: Prose claims approval but independent evidence is absent
+- **WHEN** a description claims members, review or admission without valid real proof
+- **THEN** it SHALL NOT grant omission or manufacture a receipt or queue authority
+
+#### Scenario: Another identity or a final description reread changes
+- **WHEN** an initial non-description identity fails or the current body changes later
+- **THEN** the existing full refusal SHALL remain without normalization of live proof

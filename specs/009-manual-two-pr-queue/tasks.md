@@ -328,8 +328,22 @@ The checked code/spec merges landed as `908d815` / `d266136`, with exact reviewe
 trees and sole expected parents. Actual-main run `43526748400` passed all 15 jobs
 on `908d815`, first attempt; both complete 5,365-case inventories exactly match
 qualified source, with no added/removed/duplicate/failed cases or skip drift.
-Fresh independent A is now PR71 at `c5d0a4e`; its real fast and source-routing
-runs are pending. B `41e3f3a` remains local. T058 and every fresh live-acceptance
-task remain open: no acceptance receipt, queue request or live qualification is
-recorded by this update. Dated publication, exact-bundle QA and qualification
-facts are distinguished in activation-evidence.md.
+Fresh independent PR71/72 subsequently qualified fast-only and received real
+accepted local reviews. Their actual two-member draft PR73 then selected full
+fallback and is failed efficiency evidence. Both sources were dequeued and the
+duplicate/heavy specimen runs cancelled before landing; main remains `908d815`.
+T058 and every fresh live-acceptance task stay open. Dated source, receipt,
+admission and stop evidence is distinguished in activation-evidence.md.
+
+### R5 candidate-description follow-up — CI-METADATA-15 (2026-11-14)
+
+Draft PR73 logged generic candidate/incomplete-evidence at00:27:07.974Z.
+GitHub's complete edit history shows a nonempty Sourcery description edit at
+00:27:05Z. This exposes the initial exact-body compatibility problem, not the
+precise first historical exception or a sole-cause claim. Keep failed R5 failed.
+The owner-preapproved directly related repair bundle covers this narrow metadata
+task set and its checked landings/fresh retry; no excluded authority follows.
+
+- [x] T059 [O] Record R5 source/admission success separately from candidate full-fallback failure and safe stop; define bounded initial candidate-description handling and privacy-safe diagnostics — files: fix-source-delivery-metadata OpenSpec artifacts, feature009 spec/tasks/evidence — verify: strict OpenSpec, exact run/edit/stop readbacks and no duplicate task list
+- [ ] T060 [O] Reproduce pre-routing candidate prose differences red-first, repair only the initial comparison and add field-name diagnostics; preserve invalid-type/identity/admission/final-reread refusals — files: code delivery_route.py, focused regression tests, cutover runbook and dated activation-record pointer — verify: canonical CI contracts, no-submodule added cases, exact-head local expert review
+- [ ] T061 [O] Open paired code/spec PRs, qualify full ordinary/reuse inventories, normally merge checked heads and verify landed trees/actual main; resume genuinely fresh R6 sources and complete T051/T048 — files: paired PRs and evidence — verify: full source/main identity/skip parity, fresh reviews/receipts, actual two-member/one-heavy/prefix/final/no-duplicate proof; no archive or assembly adoption

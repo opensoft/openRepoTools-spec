@@ -695,3 +695,65 @@ result remain failed R4 efficiency evidence. B remains local; failed B PR61 is
 not closed before its actual replacement exists. No fresh local acceptance
 receipt, queue command, heavy candidate or live acceptance has occurred. The
 next gate is real source-mode/fast-only success for A before publishing B.
+
+### R5 source qualification, real admission and failed candidate omission
+
+PR71/72 both independently qualified against908d815. A fast43532038721 passed
+455 cases/18 existing skips; source43532038713 completed both verification
+controls successfully and honestly skipped six full-work roles. Route132251860889
+logged source/omit_full:true at00:11:15.372Z. Its actual tested merge7b054e0
+has ordered908d815/c5d0a4e parents and reviewed tree42acf4a9. B was published
+only afterward as PR72 at41e3f3a; fast43532690156 passed463/18, and source
+43532690132 had the same two-success/six-skip shape. Route132254025235 logged
+source/omit_full:true at00:16:13.906Z. Tested532e69a has ordered908d815/41e3f3a
+parents and reviewed tree35c9ee37. No full-work job started in either source run.
+
+Fresh unedited writer-accepted receipts are PR71/comment6868374946 and
+PR72/comment6868376224. Authenticated author brettheap/1513478 had repository
+admin permission; both exact-head local panels and committed-bundle QA were
+clean. Hosted requests received quota responses. The trusted source-admission
+reader checked both real records read-only and accepted their components, not
+a fabricated event or candidate. This is distinct from batch qualification.
+
+Manual queue comments6868448679/6868449053 were created00:25:57Z/00:25:59Z, two
+seconds apart. Mergify confirmed rule openrepotools-claude-current and grouped
+71/72 in genuine draft PR73, head84af43a4f1aabb77d95d236b799ab2d96e19672e,
+branch mergify/merge-queue/246bbb3897. Caller43534248306 began00:26:55Z, first
+attempt. Probe132259255522 and Verify queue candidate132259413474 succeeded.
+
+Admission artifact14089046668 was downloaded and its raw ZIP digest verified:
+sha256:12e6eb1eb2ab545614b3f1602658fa227e16ab94c0ddf27b0534db347cb117a8.
+Its actual order is71/c5d0a4e, then72/41e3f3a, base908d815. First prefix
+15c0dfae72dd8e12d8708d37189fd1d718add2d6 has tree42acf4a9; final prefix84af43a4
+has tree1da5bbc3f804552e02a98a8dd1fc91cf6ff58ed3. This is historical admission
+only, not a qualified artifact or a completed heavy/landing result.
+
+Draft PR73 ordinary43534255339, route132259280594, logged candidate/
+incomplete-evidence at2026-11-14T00:27:07.9741289Z and full/omit_full:false.
+Duplicate full jobs actually started alongside the genuine heavy call. This
+fails clean efficiency acceptance regardless of later job results. No rerun or
+partial admission result can reclassify it as successful.
+
+GitHub's complete four-entry userContentEdits history records initial description
+00:26:55Z, nonempty Sourcery edit00:27:05Z, Mergify edit00:27:12Z and stop-status
+edit00:35:59Z. Only timings, editor identities and nonempty-diff facts were
+recorded, not body values. Public opened event20076057639 has minimal head/base
+metadata, not the full original description/hint. The generic refusal does not
+identify the exact first predicate; the pre-routing description change exposes
+a concrete necessary incompatibility to reproduce, not a sole-cause assertion.
+
+After exact head/path/event/attempt checks, both owned specimen runs43534255339
+and43534248306 were cancelled; terminal cancelled is confirmed. Resulting
+aggregate failures/skips were caused by cancellation, not demonstrated test
+assertion failures. Explicit dequeue comments6868588415/6868589140 were posted
+00:35:28Z/00:35:30Z. Mergify confirms PR71/72 manually dequeued, open/unmerged;
+draft73 is closed/unmerged. Main remains908d815. Branches, runs and historical
+admission evidence are preserved. Superseded failed67/61 were closed only after
+actual replacements71/72 existed, without deleting their branches.
+
+Evidence is also retained in
+[issue26](https://github.com/opensoft/openRepoTools-spec/issues/26#issuecomment-6868752674).
+T059-T061 govern the next narrow metadata repair and a genuinely fresh retry,
+never a requeue of this failed specimen after changing policy. No complete
+heavy, landing, one-heavy efficiency, broader adoption or release is accepted.
+All excluded settings/app/paid/tool/assembly/lane boundaries remain in force.
