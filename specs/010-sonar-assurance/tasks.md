@@ -26,3 +26,22 @@ Each set has one reviewer decision and retains current full-CI acceptance. No qu
 S04 depends on S03's main diagnostic result. It is one bounded transport repair plus evidence-backed triage, with code-owner and root-owner PRs. Intermediate state: the gate remains red while genuine HTTPS download defects are repaired; no period, source exclusion, rule or required check changes. T009 was completed after S04 and final main/API/preservation verification; see final-acceptance.json. The preceding red intermediate state is retained as history. The current code owner's unrelated delivery activation (#56/#59) is retained; this mixed transport/CI-test work retains full CI and does not enter a manual queue.
 
 Completion evidence: [accepted main receipt](final-acceptance.json) and the final-main section of [evidence](evidence.md). This post-acceptance Spec record does not advance the already verified assembly pins.
+
+## Set S05 — Pin-only PR coverage eligibility compatibility
+
+Brett approved this narrow follow-up on 2026-11-14 after assembly PR363's full
+consumer/provider suites passed but independent analysis verification failed.
+Sonar returned zero changed components and omitted new-code metrics, rather
+than reporting explicit zero eligible lines. No prior failed result is erased.
+
+- [x] T013 [O] Record the real absent-metric/empty-component response and define a positive exact-merge pin-only proof, retaining fail-closed real/uncertain source handling — files: this checklist, OpenSpec design and delta spec — verify: failed run43594656117 and PR363 API readbacks
+- [ ] T014 [O] Reproduce the compatibility failure, implement only the proven pin-only exception and add positive/negative regression tests — files: code `.github/ci/sonar_assurance.py`, `tests/test_sonar_assurance.py` — verify: canonical `tests/run.sh -k sonar` and exact-head local expert review
+- [ ] T015 [O] Normally land fully qualified source/governance PRs, update PR363 using official coherent pin tooling, require fresh composed/provider/Sonar qualification and actual-main verification, then obtain fresh exact-target SAFE from every affected lane owner before one guarded shared-checkout refresh — files: source PRs, assembly pins, this feature's evidence — verify: actual checks/trees, computed main gate, owner receipts and preservation readback
+
+S05 is one bounded verifier repair with its regressions and governance. It does
+not change thresholds, Sonar settings, workflow scope, app access, paid plans,
+releases/tags, installed tools or sessions. Existing running work, drafts and
+worktrees are preserved. A pin-only PR exception never establishes complete
+main coverage; main's complete-index, measured-coverage and exact-revision
+requirements remain mandatory. The refresh is newly and separately approved,
+only after all affected owners give fresh SAFE confirmation.
