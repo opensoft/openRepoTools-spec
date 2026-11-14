@@ -214,3 +214,23 @@ Apply only these twelve false-positive dispositions, with per-issue source-flow
 comments and this published evidence. Keep all eight real download issues open
 until automatic closure in a fresh main scan. No accept/wontfix transition,
 threshold change or exclusion is authorized by this triage.
+
+## Accepted main finding readback
+
+Main revision `4377a702913f3a096eae42131d131bdf4480b0e3`, analysis
+`52558a56-c6f2-432b-a179-102a63bd4a57`, computes a green gate with zero
+open bugs and vulnerabilities. [Final per-issue states](final-acceptance.json)
+and the appended readbacks in both inventories preserve every original key.
+
+The original twelve are eight CLOSED/FIXED and four RESOLVED/FALSE-POSITIVE.
+Six original findings had substantiated source repairs; two of the six
+originally documented false positives disappeared and closed automatically.
+Those two closures are not claimed as extra source fixes.
+
+The additional twenty are eight CLOSED/FIXED automatically after the five
+implementation and three root curl calls enforce HTTPS for requests and
+redirects, and twelve RESOLVED/FALSE-POSITIVE after published source-flow and
+runtime/regression proof. No accept/wontfix resolution, rule suppression,
+threshold change, new exclusion or baseline-to-today change was used.
+Maintainability remains A with 7,569 code smells (7,561 in the old new-code
+period); this bounded repair does not claim every maintainability issue fixed.

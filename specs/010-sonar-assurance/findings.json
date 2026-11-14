@@ -17,7 +17,19 @@
         "tests/test_push_branch_refspec.py"
       ],
       "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
-      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHNkAKzuDHHi52pWjoI",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/scripts/shape_materialize.py",
+        "line": 1384,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-12T18:08:21+0000"
+      }
     },
     {
       "key": "AaHNkAShuDHHi52pWjoK",
@@ -34,7 +46,19 @@
         "tests/test_next_refspec_branch_length.py"
       ],
       "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
-      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHNkAShuDHHi52pWjoK",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+        "line": 5681,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-12T18:08:23+0000"
+      }
     },
     {
       "key": "AaHNkAShuDHHi52pWjoJ",
@@ -51,7 +75,19 @@
         "tests/test_push_branch_refspec.py"
       ],
       "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
-      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHNkAShuDHHi52pWjoJ",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+        "line": 6339,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-12T18:08:24+0000"
+      }
     },
     {
       "key": "AaHHsu91IZXyb5gijwTS",
@@ -67,7 +103,19 @@
         "tests/test_adopt_attributes_eol_block.py"
       ],
       "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
-      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHHsu91IZXyb5gijwTS",
+        "rule": "pythonsecurity:S2083",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/scripts/shape_materialize.py",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      }
     },
     {
       "key": "AaGD6tPOxLux756IlU7J",
@@ -79,7 +127,19 @@
       "owner": "opensoft/openRepoTools",
       "repair": "https://github.com/opensoft/openRepoTools/pull/361",
       "reason": "Require wheels for pytest and coverage tooling in the composed job.",
-      "status": "prepared; pending merged analysis"
+      "status": "prepared; pending merged analysis",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaGD6tPOxLux756IlU7J",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:.github/workflows/composed.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      }
     },
     {
       "key": "AaHAbodRidUOawbE2mJx",
@@ -96,7 +156,19 @@
         "tests/test_yaml_reader_spaces.py"
       ],
       "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
-      "regression_result": "350 passed, zero skipped, original provider pin; PyYAML 6.0.2 installed to exercise optional comparison cases"
+      "regression_result": "350 passed, zero skipped, original provider pin; PyYAML 6.0.2 installed to exercise optional comparison cases",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHAbodRidUOawbE2mJx",
+        "rule": "pythonsecurity:S8707",
+        "component": "opensoft_openRepoTools:scripts/repo_shape.py",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      }
     },
     {
       "key": "AaFMxuNRjy8gvDmEH5jA",
@@ -109,7 +181,19 @@
       "repair": "https://github.com/opensoft/openRepoShape/pull/1330",
       "reason": "Add recognized, fully pinned and hashed requirements.txt for git-filter-repo 2.47.0; its wheel has no Requires-Dist dependencies. Retain the separate full build hash lock.",
       "status": "Source-owner repair merged; final consumer pins it; root analysis readback pending",
-      "repair_commit": "4bf963f0ca416b142652bb608cafe5c76d893faa"
+      "repair_commit": "4bf963f0ca416b142652bb608cafe5c76d893faa",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaFMxuNRjy8gvDmEH5jA",
+        "rule": "text:S8565",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/pyproject.toml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      }
     },
     {
       "key": "AaFMxvaxjy8gvDmEH5kE",
@@ -125,7 +209,19 @@
         "tests/test_openreposhape_package.py"
       ],
       "status": "FALSE-POSITIVE recorded in Sonar with source-flow comment",
-      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin"
+      "regression_result": "101 targeted branch/refspec/symlink/argv regressions passed at original provider pin",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaFMxvaxjy8gvDmEH5kE",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/src/openreposhape/cli.py",
+        "line": 165,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-12T18:08:27+0000"
+      }
     },
     {
       "key": "AaDPP3_OrPHmB1oAsIwL",
@@ -138,7 +234,19 @@
       "repair": "https://github.com/opensoft/openRepoShape/pull/1330",
       "reason": "Require wheels in the source-owned test workflow.",
       "status": "Source-owner repair merged; final consumer pins it; root analysis readback pending",
-      "repair_commit": "4bf963f0ca416b142652bb608cafe5c76d893faa"
+      "repair_commit": "4bf963f0ca416b142652bb608cafe5c76d893faa",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaDPP3_OrPHmB1oAsIwL",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/.github/workflows/tests.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      }
     },
     {
       "key": "AaDPP3_OrPHmB1oAsIwM",
@@ -151,7 +259,19 @@
       "repair": "https://github.com/opensoft/openRepoShape/pull/1330",
       "reason": "Install the same runtime dependency from its hashed wheels-only requirements file.",
       "status": "Source-owner repair merged; final consumer pins it; root analysis readback pending",
-      "repair_commit": "4bf963f0ca416b142652bb608cafe5c76d893faa"
+      "repair_commit": "4bf963f0ca416b142652bb608cafe5c76d893faa",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaDPP3_OrPHmB1oAsIwM",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/.github/workflows/tests.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      }
     },
     {
       "key": "AaDPP35qrPHmB1oAsIwI",
@@ -164,7 +284,19 @@
       "repair": "https://github.com/opensoft/openRepoTools-code/pull/51",
       "reason": "Require wheels; preserve the complete parsed CI job contract.",
       "status": "Source-owner repair merged with full CI; root analysis readback pending",
-      "repair_commit": "b227d53c42449eeafbd4a57979cfbd541f74fbd5"
+      "repair_commit": "b227d53c42449eeafbd4a57979cfbd541f74fbd5",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaDPP35qrPHmB1oAsIwI",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:code/.github/workflows/tests.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      }
     },
     {
       "key": "AaDPP35qrPHmB1oAsIwJ",
@@ -177,7 +309,20 @@
       "repair": "https://github.com/opensoft/openRepoTools-code/pull/51",
       "reason": "Require wheels; preserve the complete parsed CI job contract.",
       "status": "Source-owner repair merged with full CI; root analysis readback pending",
-      "repair_commit": "b227d53c42449eeafbd4a57979cfbd541f74fbd5"
+      "repair_commit": "b227d53c42449eeafbd4a57979cfbd541f74fbd5",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaDPP35qrPHmB1oAsIwJ",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:code/.github/workflows/tests.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      }
     }
-  ]
+  ],
+  "finalAcceptanceEvidence": "final-acceptance.json"
 }
