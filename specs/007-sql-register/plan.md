@@ -180,7 +180,7 @@ one-line install.
 - **The hook**: 5 s, with budget lines at `T0 + 3.75 s`, `4.25 s` and
   `4.4 s`.
 - **Answer 2**: exits within 0.1 s after the guard's read.
-- **The service**: under 50 ms for the guard's read, gated at the release by T343's warm p95 on quickstart's scratch database, on a workstation with PostgreSQL 16, failing at 50 ms or above; CI's figure, T237's on the fixture, the served median of the whole hook, is a warning only (SC-005).
+- **The service**: under 50 ms for the guard's read, gated at the release by T343's nearest-rank p95 of at least 20 warm requests on quickstart's scratch database, on a workstation with PostgreSQL 16, failing at 50 ms or above; CI's figure, T237's on the fixture, the served median of the whole hook, is a warning only, gates nothing, and is not SC-005's connect-to-last-byte p95 (SC-005).
 - **One attempt**: about 0.55 to 0.61 s locally (lane 4's [L4-c]). It is
   about 1.03 s at 20 ms of RTT, and about 3.11 s at 150 ms (arithmetic).
 - **Deadlines**:

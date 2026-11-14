@@ -455,7 +455,7 @@ written out below. This plan always says which set it means.
     #291, #295, #301 and #302, and moved the other issues milestoned v1.2.0
     to v1.2.1 ("set 1.2.0 for 165 alone, 1.2.1 for the rest", then "let
     T017 ride in 1.2.0, retitle #343": comments 6721648587 and
-    6721870837); his "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; comment 6768477034) then shipped v1.2.0 without #165, which v1.3.0 carries. Eagle and Raven install by `./setup.sh` (Brett's "1a 2b",
+    6721870837); his "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; comment 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`) then shipped v1.2.0 without #165, which v1.3.0 carries. Eagle and Raven install by `./setup.sh` (Brett's "1a 2b",
     2026-11-12; lane 3, comment 6814260122), and check 1 there rests on the re-vendor's package (Brett's "Vendor release as package (Recommended)", 2026-11-13). Every other host shell installs by pipx v1.3.0, with the root one-liner only as a stopgap (operations.md, act 3, step 5).
 - **Still open** (the design's "Open questions" at W):
   - The expiry of any outage Brett declares, which he names later. No test
@@ -1885,8 +1885,8 @@ rename.
   - a write by another process between two requests is in the next answer;
   - no environment a session inherits carries a database URL or password
     (Amendment 14(c));
-  - the service's answer time is recorded beside SVC-10's 50 ms on the
-    fixture register, with a warning past it and never a failure, since SC-005 gates the 50 ms at the release, in 007's T343 run on its scratch database (section 5.4), and with today's direct guard beside it (P5). Every
+  - T237's figure, the served median of the whole hook, which is not SC-005's connect-to-last-byte p95, is recorded beside SVC-10's 50 ms on the
+    fixture register, with a warning past it and never a failure, and gates nothing, since SC-005 gates the 50 ms at the release, in 007's T343 run on its scratch database (section 5.4), and with today's direct guard beside it (P5). Every
     answer crosses to the database (SVC-7), so act 3 records it against
     Brett's managed PostgreSQL with its RTT and Query count (section 5.6);
   - the `CLAUDE_NO_LANE=1` exception still exits 0 before any input
@@ -1946,11 +1946,11 @@ rename.
     declaration's floor.
   - **A fresh write.** Request, a write by another process, request: the
     second answer equals the direct read made after the write.
-  - **The environment.** No variable carries the register password, the
+  - **The environment.** In the environments a session inherits, no variable carries the register password, the
     password file's path, `register_url=`'s value or any `postgresql://`
-    string. That covers the hook's own environment, the service's children,
-    and the fake `claude`'s recorded environment. The fake `psql`'s log shows
-    `PGPASSWORD` never set.
+    string. That covers the hook's own environment, the session's, and the fake `claude`'s recorded environment, and not the `psql` children.
+    For the service's own `psql` child and each direct read's, `PGPASSFILE` is the configured 0600 passfile of the call's role (`reader_passfile=` for READER; `contracts/config.md`'s password-file row; contract §2.2), while the literal password, the connection URL and `PGPASSWORD` stay absent (design: "`PGPASSFILE` and `PGOPTIONS` are the service's own"). The fake `psql`'s log shows
+    `PGPASSWORD` never set, and each call's `PGPASSFILE` the role's file (spec#17's re-review r4, its second BLOCKING finding; lane 3's ruling, commit 20's post; for lane 2, T213's owner, to confirm; lane 5's T512 runs the test).
   - **The answer time.** It is recorded as section 5 sets out, never asserted.
     On CI's fixture it is the local share; act 3's row is the production
     figure.
@@ -2050,7 +2050,7 @@ rename.
     finds it running (lane 5's question 17, as lane 3 ruled);
   - `test_the_first_call_starts_the_service_with_no_supervisor` (SVC-4): with
     no service running, the client starts `lanes-index serve` detached, its
-    request is answered, and no supervisor process exists;
+    request is answered, by the direct read, since the guard never waits for a start (lane 3's erratum, on lane 5's SHOULD 3, row 1), and no supervisor process exists;
   - `test_a_service_that_cannot_start_falls_back_to_the_direct_read`: with
     `lanes-index serve` made to fail, the request is answered by the direct
     read, and no second start is tried within SVC-4's 60 s cooldown;
@@ -2563,7 +2563,7 @@ rename.
       "Readers under the refusal"; the phase plan's "D3's refusal").
   - **With the constant flipped,** the same write goes to SQL.
 
-  The readiness check's item fails the first state (P612–617, P626). And T124's cached module (PC-2; FR-064; the sql-register delta's "`lanes-index` starts from its cached module", added since W): a start runs the module's checked-hash cached bytecode, never bytecode whose source has changed, and the module's source where it has no bytecode, with every subcommand's output and exit as before; T347's install places the module and its bytecode beside `lanes-index`, and the release's digest list names the module and not its bytecode (lane 3, commit 18's post, on spec#17's re-review).
+  The readiness check's item fails the first state (P612–617, P626). And T124's cached module (PC-2; FR-064; the sql-register delta's "`lanes-index` starts from its cached module", added since W): a start runs the module's checked-hash cached bytecode, never bytecode whose source has changed, and the module's source where it has no bytecode, with every subcommand's output and exit as before; every subcommand answers alike, its argv handling, stdout, stderr and exit code, from the cached module and from its source (the review of commit 18's delta, its first BLOCKING finding); and `ready`'s check 1 compares the installed bytecode with a checked-hash compilation of the digest-checked module, so that the cache that runs is the release's at check time (the same review, its second BLOCKING finding; P8's `[cache-payload]`). T347's two cases, the fold writer's choice in commit 18, beyond lane 3's minimum (#165 6878873635): the install places the module and its bytecode beside `lanes-index`, after which check 1 passes, and the release's digest list names the module and not its bytecode (spec#17's re-review; lane 3's ruling, commit 20's post).
 - **Phase and kind.** N and W. It stays in the suite after G, which builds the
   refusing state from the flipped one. The refusing state is FP, so it always
   runs. The flipped state is RE: its write is a `register snapshot` reply
@@ -2571,7 +2571,7 @@ rename.
   `design.md` S1) and a commit, which a fake cannot fabricate faithfully.
 - **Fixture.**
   - Two test copies of `lanes-index` under the test's temporary directory:
-    one with the constant refusing, one with it flipped (open point 3). For T124's cases, the refusing copy, with `lanes_index_main.py` beside it as `flipped_copy` places it (T124), on the refusing state's configuration, and a checked-hash `.pyc` (PEP 552) that the test writes where T124's launcher reads the module's bytecode, built from a marker module that prints `cached-marker` and exits 0, and carrying the hash of the real module's bytes (`importlib.util.source_hash`); for T347's, an install by `openRepoTools --install` into a temporary directory, and the digest list `release.yml` builds.
+    one with the constant refusing, one with it flipped (open point 3). For T124's cases, the refusing copy, with `lanes_index_main.py` beside it as `flipped_copy` places it (T124), on the refusing state's configuration, and a checked-hash `.pyc` (PEP 552) that the test writes where T124's launcher reads the module's bytecode, built from a marker module that prints `cached-marker` and exits 0, and carrying the hash of the real module's bytes (`importlib.util.source_hash`); for the parity case, the same copy and module, with the module's own checked-hash bytecode written and then removed; for T347's (the fold writer's choice, beyond lane 3's minimum), an install by `openRepoTools --install` into a temporary directory, and the digest list `release.yml` builds.
   - The checkout's `lanes-edit.sh`, pointed at each copy by the means it
     already uses to find the `lanes-index` executable
     (`code/lanes-edit.sh:2554–2568`).
@@ -2657,7 +2657,7 @@ rename.
   - `test_a_primary_write_forks_render_checkout_on_the_lane_checkout_detached[plain|no-fetch-set|index-off-set]`
     (the phase-W stub test of the render fork's argv);
   - `test_readers_under_the_refusal_answer_the_78_as_a_failed_read[<read>|listing|session-start|guard|projection]`.
-  - The readiness item is in P8's test (below). **T124's cases** (lane 2's T282, in this module; FR-064), each starting the refusing copy's `lanes-index mode`, whose source exits 78 with the text above: `test_a_start_runs_the_cached_module_whose_checked_hash_matches_its_source`: with the marker `.pyc` in place, the start prints `cached-marker` and exits 0, which only the cached bytecode can do; `test_a_start_never_runs_cached_bytecode_whose_source_has_changed`: with the same `.pyc` and one byte then added to the module, the start never prints `cached-marker`, and exits 78 with the text, as the source does; `test_a_start_runs_the_module_source_where_it_has_no_bytecode`: with no bytecode where the launcher reads it, as after an install that could not write it, the start exits 78 with the text, its stdout, stderr and exit equal to those of a start with the module's own valid bytecode. **T347's cases,** in its own modules: `test_install_places_the_cached_module_and_its_checked_hash_bytecode_beside_the_launcher` (`tests/test_install_payload_source.py`): after the install, `lanes_index_main.py` is beside `lanes-index`, byte for byte the payload's, and its bytecode, where T124's launcher reads it, has a header that marks it checked-hash (flags 0b11) and carries `importlib.util.source_hash` of the module's bytes and the magic number of the interpreter `lanes-index` runs on; `test_the_release_digest_list_names_the_cached_module_and_not_its_bytecode` (`tests/test_release_workflow.py`): the digest list names `lanes_index_main.py` beside `lanes-index` and `lanes-edit.sh`, and names no `.pyc`.
+  - The readiness item is in P8's test (below). **T124's cases** (lane 2's T282, in this module; FR-064), each starting the refusing copy's `lanes-index mode`, whose source exits 78 with the text above: `test_a_start_runs_the_cached_module_whose_checked_hash_matches_its_source`: with the marker `.pyc` in place, the start prints `cached-marker` and exits 0, which only the cached bytecode can do; `test_a_start_never_runs_cached_bytecode_whose_source_has_changed`: with the same `.pyc` and one byte then added to the module that leaves the source's behaviour unchanged, such as a trailing newline (lane 2, #165 6879048130), the start never prints `cached-marker`, and exits 78 with the text, as the source does; `test_a_start_runs_the_module_source_where_it_has_no_bytecode`: with no bytecode where the launcher reads it, as after an install that could not write it, the start exits 78 with the text, its stdout, stderr and exit equal to those of a start with the module's own valid bytecode. `test_each_subcommand_answers_alike_from_the_cached_module_and_from_its_source` (the review of commit 18's delta, its first BLOCKING finding; confirmed by lane 2, #165 6879048130): for each subcommand in `lanes-index`'s usage list, run with `--help`, with an argument it refuses as usage, and in its plain form on the refusing state's configuration, once with the module's own checked-hash bytecode in place and once with none, so that the source runs, each pair's stdout, stderr and exit code are equal, byte for byte; the list is read from the usage, so a subcommand added later is covered. **T347's cases,** the fold writer's choice in commit 18, beyond lane 3's minimum (#165 6878873635), in its own modules: `test_install_places_the_cached_module_and_its_checked_hash_bytecode_beside_the_launcher` (`tests/test_install_payload_source.py`): after the install, `lanes_index_main.py` is beside `lanes-index`, byte for byte the payload's, and its bytecode, where T124's launcher reads it, has a header that marks it checked-hash (flags 0b11) and carries `importlib.util.source_hash` of the module's bytes and the magic number of the interpreter `lanes-index` runs on, and `ready`'s check 1 then passes, its checked-hash compilation of the installed module equal to the installed bytecode byte for byte (the positive case of the review of commit 18's delta, its second BLOCKING finding); `test_the_release_digest_list_names_the_cached_module_and_not_its_bytecode` (`tests/test_release_workflow.py`): the digest list names `lanes_index_main.py` beside `lanes-index` and `lanes-edit.sh`, and names no `.pyc`.
 - **Run time.** About 1–3 s for 14 verbs in the refusing state and one flipped
   write, about 1–2 s more for the readers' cases, and about 1 s for each
   of the render fork's three.
@@ -3053,7 +3053,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     the switch at `primary`, whatever `--expect` says, a `register_label=`
     that is not the switch's label (check 10, §2.4, folded at commit Q from
     V2's S-2 and lane 1's v2.8), and a host its URLs name that resolves to
-    more addresses than `register_addresses=` (check 13, §2.4), and, since T119's follow-up 2, a `git` older than 2.32, no `git` on `PATH`, or a `git --version` that names no version it can read (check 14, git 2.32 or later, which `ready` runs last; lane 1, #165 6877889644);
+    more addresses than `register_addresses=` (check 13, §2.4), and, since T119's follow-up 2, a `git` older than 2.32, no `git` on `PATH`, or a `git --version` that names no version it can read (check 14, git 2.32 or later, which `ready` runs last; lane 1, #165 6877889644), and, since T124, an installed cached module whose code payload differs from a checked-hash compilation of the digest-checked module, though its header keeps flags 0b11 and the module's source hash (check 1; lane 3's ruling, commit 20's post);
   - the flip writes only `mode=` and keeps the file's 0600, and setting
     `primary` refuses with 2 unless the switch is `primary`, the marker
     `present`, and the fetched `lanes/STORE` names this database.
@@ -3066,7 +3066,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   `lanes-index login add` only as a fixture.
 - **Phase and kind.** N. RE for the bootstrap, the ready environment, the
   GRANT check and check 10, which reads the switch, FP for the digest,
-  `psql`, refusing-build and git (check 14)
+  `psql`, cached-module (check 1), refusing-build and git (check 14)
   checks, and FM for the flip.
 - **Fixture.**
   - A `stoppable_cluster` of the test's own (section 3.1), since the
@@ -3089,7 +3089,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     is not a terminal.
   - An installed-tools directory with the release's digest list (its form is
     the design's).
-  - A `PATH` with `psql` and one without, and, for check 14's fault, a `git` shim first on the call's `PATH` that answers `--version` with `git version 2.31.1`.
+  - A `PATH` with `psql` and one without, and, for check 14's fault, a `git` shim first on the call's `PATH` that answers `--version` with `git version 2.31.1`; and, for check 1's `[cache-payload]`, a `lanes_index_main.py` beside the bench's `lanes-index` whose checked-hash `.pyc` carries another module's code under a header that keeps flags 0b11 and the real module's source hash.
   - Configurations at `mode=index` and `mode=primary`.
   - An extra GRANT the test adds.
   - Test 14's refusing copy of `lanes-index`.
@@ -3130,7 +3130,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   - **The readiness check.**
     - Each fault case is the ready environment with that one fault added. It
       exits 2 and names that fault on its own `FAIL` line, and in the RE
-      cases no other line is `FAIL`. `[old-git]`'s line is check 14's, naming the shim's git 2.31.1 as older than 2.32.
+      cases no other line is `FAIL`. `[old-git]`'s line is check 14's, naming the shim's git 2.31.1 as older than 2.32. `[cache-payload]`'s line is check 1's, naming the cached module as not matching the release's source.
     - The ready environment itself exits 0, with one `ok` line per check.
     - **Check 10,** whatever `--expect` says (§2.4, check 10; V2's S-2). The
       fixture's configuration holds a `register_label=` equal to the label the
@@ -3178,7 +3178,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   - `test_the_bootstrap_refuses_a_connection_string_argument_with_2`;
   - `test_the_bootstrap_passes_the_admin_service_only_as_pgservice` (FP);
   - `test_set_mode_primary_refuses_before_the_marker_is_present_or_names_another_database`;
-  - `test_the_readiness_check_fails_on_each_fault[<fault>]`, check 14's `[old-git]` among the faults since T218's follow-up;
+  - `test_the_readiness_check_fails_on_each_fault[<fault>]`, check 14's `[old-git]` and check 1's `[cache-payload]` among the faults since T218's follow-up;
   - `test_the_readiness_check_passes_a_ready_environment`;
   - `test_the_readiness_check_10_compares_register_label_with_the_switch_label[equal|label-only|url-only|files]`;
   - `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[equal|above|ip-literal]`;
@@ -4569,7 +4569,7 @@ and `ready`'s checks 11 and 12.
   `encode(sha256(render_file(path)), 'hex')` against the entry's digest. The
   operator flag's rules raise LR004 too: an operator entry that edits
   anything but `lanes/STORE`, or nothing, and any other entry that edits
-  `lanes/STORE` (F2, D24).
+  `lanes/STORE` (F2, D24). So does a `files` row whose path is outside the render set and `lanes/STORE`, and, for a `write`, an `import` or a `stray-import`, a `files` row for a path its edits never touch (spec#17's re-review r4, its third BLOCKING finding).
 - **Phase and kind.** W. RE, with the shim's `edit-entry` mode, which
   rewrites one field of the commit call's entry.
 - **Fixture.** AT-LR006's register, and `log NOTED` as the write. Per case,
@@ -4639,7 +4639,7 @@ and `ready`'s checks 11 and 12.
   - `test_an_import_carries_not_after_of_its_330_s_timer_plus_2_s`, on lane
     1's v2.6;
   - `test_the_operator_flag_rules_refuse_lr004[write-edits-store|operator-edits-other|operator-edits-nothing]`;
-  - `test_a_file_without_a_final_newline_renders_back_byte_identical`.
+  - `test_a_file_without_a_final_newline_renders_back_byte_identical`; and, since spec#17's re-review r4, T231f's `test_a_write_with_a_files_row_for_a_path_it_does_not_edit_is_refused_lr004_at_commit[outside-the-render-set|untouched-file]` (its third BLOCKING finding; lane 3's ruling, commit 20's post; lane 2, #165 6879455400): `lr4_body`'s write on this fixture, sent by a direct call to `commit_write`, as the operator entry's case is, with one more `files` row, `lanes/notes.md`, absent, outside the render set, or `lanes/aliases.tsv`, present with its own digest, a render-set file the write does not edit; each ends with LR004, the head unmoved and the tables the oracle names unchanged.
 - **Run time.** AT-VER and AT-LR4 take 10–20 s together.
 - **Flakiness.** None: each case is one write with a fixed rewrite, or a
   fixed client copy.
@@ -6034,7 +6034,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     verb `guard-bind` as a `setsid` child with the hook's descriptors 3 to 9
     closed, stdin on `/dev/null` and its output in a 0600 file per attempt,
     prints "BINDING" and exits 2;
-  - the offer file is the record, with the child's pid and start time
+  - the offer file is the record, with the child's pid, and its start time where it can be read
     (`pid_start_of`) as its liveness test, its host and container, the
     attempt (1 to 3), its start, its bound, `bound_s`, which `guard-bind`
     computes at the start from `c` and `N_a`: 500 s at `c` = 2 and 530 s at
@@ -8048,12 +8048,12 @@ follows.
     They are recorded where lane 3 places them, and Q29's decision cites
     them (section 5.6).
 - **The 50 ms.** SVC-10 states it against the scratch database of 007's T343, which gates it (below). On the suite's fixture register it
-  is CI's figure, T237's, the served median of the whole hook: recorded, with a warning when it exceeds 50 ms,
+  is CI's figure, T237's, the served median of the whole hook, which is not SC-005's connect-to-last-byte p95: recorded, with a warning when it exceeds 50 ms,
   without failing, a warning only and never a gate there, since the spec puts its gate on another
   register. Against the Azure server every answer is at least one round
   trip to the database (SVC-7), and lane 5's netem run puts it over 50 ms
   above an RTT of about 40 ms (#165 6722703424). Act 3 records it beside
-  Q29's figure, with its RTT and Query count. SC-005 gates it at the release, not in CI, whose runners vary too much for a 50 ms gate: 007's T343, on a workstation with PostgreSQL 16, records the warm p95 on quickstart's scratch database, from the client's connect to the last byte of a digest-checked answer, over its run's repetitions, rounded up to whole milliseconds, and fails at 50 ms or above (lane 3, commit 17's post).
+  Q29's figure, with its RTT and Query count. SC-005 gates it at the release, not in CI, whose runners vary too much for a 50 ms gate: 007's T343, on a workstation with PostgreSQL 16, records n, the samples and their median and p95 by nearest rank (section 5.3's statistics) over at least 20 warm requests on quickstart's scratch database, each from the client's connect to the last byte of a digest-checked answer, rounded up to whole milliseconds, and fails unless n is at least 20, the median and p95 are the samples' nearest-rank ones, and the p95 is under 50 ms (lane 3, commit 17's post; spec#17's re-review r4, its first BLOCKING finding; lane 3's ruling, commit 20's post).
 - **Q29's limit, 1 s** (lane 3, #165 6722025863). Whether act 4 waits for
   the service (Q29 (a), Brett's answer) is decided by reading the warm p95
   of act 3's whole guard through the direct read against it, with the cold
@@ -8504,7 +8504,7 @@ at commit I. Four marks say what changed:
 Each row's tests are written against the text at W. 79 of the 88 have tests;
 nine have none or only a partial one (below).
 
-`specs/sql-register/spec.md`, 69 requirements at W. A seventieth, "`lanes-index` starts from its cached module", added in the follow-up's commit 18, has no row of its own, so that no line moves: its tests are AT-14's T124 cases, `test_a_start_runs_the_cached_module_whose_checked_hash_matches_its_source`, `test_a_start_never_runs_cached_bytecode_whose_source_has_changed` and `test_a_start_runs_the_module_source_where_it_has_no_bytecode`, and T347's two, `test_install_places_the_cached_module_and_its_checked_hash_bytecode_beside_the_launcher` and `test_the_release_digest_list_names_the_cached_module_and_not_its_bytecode`, with T124's own verify for its unchanged subcommands:
+`specs/sql-register/spec.md`, 69 requirements at W. A seventieth, "`lanes-index` starts from its cached module", added in the follow-up's commit 18, has no row of its own, so that no line moves: its tests are AT-14's T124 cases, `test_a_start_runs_the_cached_module_whose_checked_hash_matches_its_source`, `test_a_start_never_runs_cached_bytecode_whose_source_has_changed` and `test_a_start_runs_the_module_source_where_it_has_no_bytecode`, and T347's two, `test_install_places_the_cached_module_and_its_checked_hash_bytecode_beside_the_launcher` and `test_the_release_digest_list_names_the_cached_module_and_not_its_bytecode`, and, since commit 20, T282's parity case, `test_each_subcommand_answers_alike_from_the_cached_module_and_from_its_source`, for every subcommand (the review of commit 18's delta), and P8's `[cache-payload]` for check 1's comparison of the cached module; with T124's own verify for its unchanged subcommands:
 
 | Requirement | Tests |
 |---|---|
@@ -8562,7 +8562,7 @@ nine have none or only a partial one (below).
 | A rollback needs the database | 8 (b); section 4.2; D22; AT-F18 (the disaster path); AT-LRMPG (the restore from the dump and from the provider's own copy: `test_a_restore_from_the_dump_equals_its_source_with_new_passwords`, `test_a_restore_from_the_providers_copy_keeps_the_roles_and_takes_new_passwords`) |
 | A writer the rollback missed cannot write | 8 (c); section 4.2; AT-SET (an older snapshot fails 40001, then 69) |
 | The operator's bootstrap is idempotent and holds no secret † ◊ | P8 (a connection string refused with 2; `PGSERVICE` only in the environment); AT-VER; AT-LRMPG (the bootstrap without a superuser: `test_bootstrap_without_a_superuser_runs_twice_with_one_catalog`, `test_bootstrap_refuses_a_database_its_admin_does_not_own`; each engineer's two logins and the dump job's, made, rotated and revoked by `lanes-index login`, each with its group's floors, and the delta's "An engineer's logins" scenario: `test_two_writer_logins_write_alike_and_the_log_names_each`, `test_a_revoked_login_is_refused_69_and_writes_nothing[<case>]`, `test_an_open_session_gets_42501_between_the_revokes_steps_then_57p01`, `test_a_write_cut_by_a_revoke_mid_commit_is_in_doubt_and_ends_3_with_nothing_written`, `test_login_add_makes_an_engineers_two_logins_with_their_floors_and_prints_their_lines_once`, `test_login_add_run_again_puts_back_a_lost_membership_and_changes_nothing_else`, `test_login_rotate_keeps_an_open_session_and_refuses_the_old_password`, `test_login_refuses_a_bad_name_a_connection_string_and_a_pipe[<case>]`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`) |
-| The readiness check proves an environment before the cutover † ◊ | P8 (every check, the schema's window among them; the endpoint's address count, check 13: `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[<case>]`; git 2.32 or later, check 14: `test_the_readiness_check_fails_on_each_fault[old-git]`); 14; AT-VER; AT-LRMPG (checks 11 to 12: `test_ready_check_11_needs_tls_and_the_primary[<case>]`, `test_ready_check_12_passes_the_logins_the_step_made`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`; the reader's `target_session_attrs`: `test_reader_url_takes_target_session_attrs_primary_not_read_write[<case>]`) |
+| The readiness check proves an environment before the cutover † ◊ | P8 (every check, the schema's window among them; the endpoint's address count, check 13: `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[<case>]`; git 2.32 or later, check 14: `test_the_readiness_check_fails_on_each_fault[old-git]`; the cached module, check 1: `test_the_readiness_check_fails_on_each_fault[cache-payload]`); 14; AT-VER; AT-LRMPG (checks 11 to 12: `test_ready_check_11_needs_tls_and_the_primary[<case>]`, `test_ready_check_12_passes_the_logins_the_step_made`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`; the reader's `target_session_attrs`: `test_reader_url_takes_target_session_attrs_primary_not_read_write[<case>]`) |
 | The `mode=primary` flip is a command run once per host † | P8 |
 | Claim order is commit order | 4; C10; D19; AT-SPL; AT-LR5; section 4.1 |
 | `HOLD` and `LANDING` are ordered by commit sequence † ¶ ◊ | 4 (b); 4 (f) (a taking line that names no repository: `test_a_hold_line_that_names_no_repository_is_refused_with_2`); a taking line with no readable UTC, refused with 2 on primary naming the rule, `take-no-utc` at the commit (U3), and loaded as it stands by an import: AT-F13 (`test_on_primary_a_take_with_no_readable_utc_is_refused_before_the_lock_and_written_off_primary[<case>]`), AT-LR5 (`test_on_primary_a_take_with_no_readable_utc_is_lr005_take_no_utc_and_writes_nothing[<case>]`, `test_a_refresh_or_a_line_of_no_kind_with_no_utc_commits_and_a_take_with_none_loads_at_files[<case>]`) and AT-7 (`test_import_loads_takes_with_no_readable_utc_and_a_holderless_landing_expired_as_they_stand[<case>]`); AT-LR5 (one repository under two spellings, `HOLD` or `LANDING`, either order; each rule's DETAIL token: `test_each_claim_and_main_rule_lr005_carries_its_detail_token[<case>]`) |

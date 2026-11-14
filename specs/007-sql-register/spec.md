@@ -721,7 +721,7 @@ still works without it.
 
 - byte-identical answers;
 - the fallback line;
-- the service's answer time against 50 ms on the fixture register, recorded with a warning; SC-005 gates it at the release, in T343's run on its scratch database.
+- on the fixture register, T237's figure against 50 ms, the served median of the whole hook, recorded with a warning only: it gates nothing and is not SC-005's connect-to-last-byte p95, which T343's run on its scratch database gates at the release.
 
 **Acceptance Scenarios**:
 
@@ -732,7 +732,7 @@ still works without it.
 3. **Given** the service down, or accepting and never answering, **When** a
    client calls, **Then** the client reads directly, and writes go on.
 4. **Given** a first call where the service can start, **When** it is made,
-   **Then** the service starts with no supervisor, and answers.
+   **Then** the service starts with no supervisor; that call reads directly, and the service answers from the next call (lane 3's erratum, on lane 5's SHOULD 3, row 1: design SVC-4's "The guard never waits for a start" and spec#46's contract; #165 6879679278 and 6879724890).
 5. **Given** the package metadata, **When** it is read, **Then** it lists no
    runtime dependency and no database driver.
 6. **Given** the `SessionStart` block, **When** it runs, **Then** it reads
@@ -1481,7 +1481,7 @@ are lane 3's rulings memo's).
   launcher MUST run the module's source. `openRepoTools --install` MUST place the
   module beside `lanes-index` and write its checked-hash bytecode for the
   interpreter `lanes-index` runs on, and the release's digest list MUST name the
-  module, which `ready`'s check 1 digests, and not its bytecode. Sources:
+  module, which `ready`'s check 1 digests, and not its bytecode; check 1 MUST also compile the digest-checked module with that interpreter in checked-hash mode and fail, naming the cached module as not matching the release's source, unless the result equals the installed bytecode byte for byte, so that the code the launcher runs, with no compile at a start, is the release's at check time, as every other installed file is. Sources:
   "`lanes-index` starts from its cached module" (the sql-register delta, since
   the follow-up's commit 18); PC-2; T124, T347.
 
@@ -1551,7 +1551,7 @@ are lane 3's rulings memo's).
   read returns, while a stub bind sleeps 15 s (AT-F6 (1); Y:5563).
 - **SC-005**: The service answers the guard's read in under 50 ms on the
   scratch database of T343's quickstart run, from the client's connect to the last byte of a
-  digest-checked answer (svc:278; SVC-10, Y:4387). It gates at the release, not in CI: T343's run, on a workstation with PostgreSQL 16, records the warm p95 of that time over its repetitions, rounded up to whole milliseconds, and fails at 50 ms or above. CI's figure, T237's on the test fixture's register, only warns (lane 3, commit 17's post).
+  digest-checked answer (svc:278; SVC-10, Y:4387). It gates at the release, not in CI: T343's run, on a workstation with PostgreSQL 16, records, over at least 20 warm requests, n, the samples and their median and p95 of that time by nearest rank, rounded up to whole milliseconds, and fails unless n is at least 20, the recorded median and p95 are the samples' nearest-rank ones, and the p95 is under 50 ms. On the test fixture's register, CI's T237 records the served median of the whole hook instead: it only warns, gates nothing, and is not this connect-to-last-byte p95 (lane 3, commit 17's post; spec#17's re-review r4; the review of commit 18's delta).
 - **SC-006**: No write is lost or doubled in the tests (spec:236).
   - Test 12: exactly one journal entry per `write_id`, and exit 0 after a
     clean retry.
@@ -1585,7 +1585,7 @@ are lane 3's rulings memo's).
   function by name.
 - **v1.2.0 carried T017's five fixes, W2 and code#15, but not #165,** which
   Brett's "v1.2.0 now, 007 later (Recommended)" moved to v1.3.0
-  (2026-11-10T13:22:23Z; #165 6768477034). The three landed on Brett's
+  (2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`). The three landed on Brett's
   "Land them now, in v1.2.0 (Recommended)", whose option read "v1.2.0 then
   carries #165, T017's five fixes and these" (lane 3's #165 6723967774):
   - W2 is lane 2's seven fixes, code#8 to code#14;

@@ -518,7 +518,7 @@ and in lane openRepoTools-1's:
   Central US at about 86 ms at best, 205 ms at the median and 456 ms at the p90,
   so the guard without the service takes about 1.2 to 2.1 s, which misses
   Brett's 1 s, and about 0.5 to 0.7 s through it (#165 6725361742). So Q29 (a)'s
-  condition is met: the cutover waits for the service, the release tag (v1.2.0's when Brett answered; v1.3.0's since his "v1.2.0 now, 007 later (Recommended)", 2026-11-10T13:22:23Z, #165 6768477034) waits for
+  condition is met: the cutover waits for the service, the release tag (v1.2.0's when Brett answered; v1.3.0's since his "v1.2.0 now, 007 later (Recommended)", 2026-11-10T13:22:23Z, #165 6768477034, `RULINGS-brett-20261110-standing-landing-word.md`) waits for
   it too, and it is built beside groups A and B, not last. Lane 3 ruled so (#165
   6724332510 and 6726078173), and Brett approved it on 2026-11-08, changing his
   Q29 (a) answer: "4A", for "Build it beside groups A and B, and the tag waits

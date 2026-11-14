@@ -42,7 +42,7 @@ The service SHALL start on demand ("socket activation or first call") and SHALL 
 
 #### Scenario: The first call starts the service
 - **WHEN** a client calls a service that is not running, where the service can start
-- **THEN** the service starts on that call and answers it, with no supervisor running
+- **THEN** the service starts on that call, with no supervisor running; that call reads directly, and the service answers from the next call (lane 3's erratum, on lane 5's SHOULD 3, row 1; Y:3921–3925)
 
 #### Scenario: A service that cannot start
 - **WHEN** a client calls a service that is not running and cannot be started
@@ -139,7 +139,7 @@ The client's wait for the service, the fallback's own reads and every database a
 
 #### Scenario: Answer 2 runs detached
 - **WHEN** a person answers `2` to an offer
-- **THEN** the hook exits 2 inside its 5 s with "BINDING", the offer file records the bind with the child's pid and start time, and the bind is not ended with the hook, whether the hook exits or is timed out
+- **THEN** the hook exits 2 inside its 5 s with "BINDING", the offer file records the bind with the child's pid, and its start time where it can be read (lane 3's ruling on lane 5's point 22, from spec#47's draft 11, `a2e0e3e6`; #165 6879739447 and 6879754335), and the bind is not ended with the hook, whether the hook exits or is timed out
 
 #### Scenario: A prompt while the bind runs
 - **WHEN** a prompt arrives from the same session while its bind is live
@@ -276,11 +276,11 @@ While `lanes-index outage declare`'s database probe reads the switch at `files` 
 - **THEN** it is refused with 2 and writes no declaration
 
 ### Requirement: The service answers the guard's read fast, and the cost is recorded
-The service SHALL answer the guard's read in under 50 ms, measured as Q10 settles, from the client's connect to the last byte of a digest-checked answer, as the warm p95 of a run's repetitions, rounded up to whole milliseconds, on a scratch database on a workstation with PostgreSQL 16 at the release gate (007's T343). CI records the figure on the suite's fixture register with a warning and never fails on it, since its runners vary too much for a 50 ms gate. The PR body SHALL record that figure with the whole guard's wall time, through the service and through the direct read, and today's direct guard recorded beside it; the whole guard's figure is Q29's. Before the client's form is settled, the design SHALL measure today's guard in four parts: reaching the guard arm, tmux, the scan of the session records, and the register read, and SHALL say which parts the service removes.
+The service SHALL answer the guard's read in under 50 ms, measured as Q10 settles, from the client's connect to the last byte of a digest-checked answer, as the nearest-rank p95 of at least 20 warm requests, rounded up to whole milliseconds, on a scratch database on a workstation with PostgreSQL 16 at the release gate (007's T343). On the suite's fixture register CI's T237 records the served median of the whole hook instead, which is not this connect-to-last-byte p95: it warns, never fails and gates nothing, since CI's runners vary too much for a 50 ms gate. The PR body SHALL record that median with the whole guard's wall time, through the service and through the direct read, and today's direct guard recorded beside it; the whole guard's figure is Q29's. Before the client's form is settled, the design SHALL measure today's guard in four parts: reaching the guard arm, tmux, the scan of the session records, and the register read, and SHALL say which parts the service removes.
 
 #### Scenario: The recorded guard time (agreement test 10)
 - **WHEN** the PR is opened
-- **THEN** its body records the service's answer time for the guard's read, with the whole guard's time through the service and through the direct read, and today's direct guard's time, beside it
+- **THEN** its body records T237's figure for the guard's read on the fixture register, the served median of the whole hook, which is not SC-005's connect-to-last-byte p95, with the whole guard's time through the service and through the direct read, and today's direct guard's time, beside it
 
 ### Requirement: The socket API is documented
 The socket API SHALL be documented in `docs/README-lanes.md`: the service answers the register's text at `n`, and the reader decides. The 001 feature's lanes service (T055) SHALL adopt it through `lanes-edit.sh`'s read verbs, which ask the service and run today's parser, so that Codex and the managed path read the same text from the same process and decide by the same parser.

@@ -1151,7 +1151,7 @@ CREATE TABLE journal_edits (                   -- Rule 9(d): a known, finite set
 
 CREATE TABLE journal_files (                   -- S2: each touched file's bytes after the write
   seq     bigint  NOT NULL REFERENCES journal (seq),
-  path    text    COLLATE "C" NOT NULL,
+  path    text    COLLATE "C" NOT NULL CHECK (path ~ '^lanes/(LANES\.md|STORE|aliases\.tsv|archive/[^/]+\.md|log/[^/]+\.md)$' AND path <> 'lanes/log/README.md'),  -- Q18 (A), as journal_edits.path: the render set and lanes/STORE (data-model.md:48–50; spec#17's re-review r4)
   present boolean NOT NULL,                    -- false: removed or renamed away
   sha256  text    CHECK (sha256 ~ '^[0-9a-f]{64}$'),
   final_newline boolean,                       -- files.final_newline after the write
@@ -2055,14 +2055,14 @@ SELECT v_seq, nullif(v_head, -1), p_write_id, e.*, p_entry -> 'act' ->> 'id'  --
     END LOOP;
   END IF;
 
-  -- 8. The proof: every touched path is in the entry's files, and renders to its digest.
+  -- 8. The proof: every files row names the render set or lanes/STORE (LR004 before journal_files' CHECK); every touched path is in the entry's files; for a write, an import or a stray import, every files row is a touched path, while a stray revert, edit-free, names untouched ones (spec#17's re-review r4); and each renders to its digest.
   IF EXISTS (SELECT 1 FROM journal_edits j, LATERAL (VALUES (j.path), (j.to_path)) t(p)
              WHERE j.seq = v_seq AND t.p IS NOT NULL
                AND NOT coalesce(p_entry -> 'files', '[]') @> jsonb_build_array(
                          jsonb_build_object('path', t.p))) THEN
     RAISE EXCEPTION 'an edited path has no files row in the entry' USING ERRCODE = 'LR004';
   END IF;
-  FOR r IN SELECT * FROM jsonb_to_recordset(coalesce(p_entry -> 'files', '[]'))
+  IF EXISTS (SELECT 1 FROM jsonb_to_recordset(coalesce(p_entry -> 'files', '[]')) AS x(path text) WHERE x.path IS NULL OR x.path !~ '^lanes/(LANES\.md|STORE|aliases\.tsv|archive/[^/]+\.md|log/[^/]+\.md)$' OR x.path = 'lanes/log/README.md') THEN RAISE EXCEPTION 'a files row names a path outside the render set and lanes/STORE' USING ERRCODE = 'LR004'; END IF; IF v_kind IN ('write', 'import', 'stray-import') AND EXISTS (SELECT 1 FROM jsonb_to_recordset(coalesce(p_entry -> 'files', '[]')) AS x(path text) WHERE NOT EXISTS (SELECT 1 FROM journal_edits j WHERE j.seq = v_seq AND x.path IN (j.path, j.to_path))) THEN RAISE EXCEPTION 'a files row names a path the entry does not edit' USING ERRCODE = 'LR004'; END IF; FOR r IN SELECT * FROM jsonb_to_recordset(coalesce(p_entry -> 'files', '[]'))
              AS x(path text, present boolean, sha256 text, final_newline boolean) LOOP
     INSERT INTO journal_files (seq, path, present, sha256, final_newline)
     VALUES (v_seq, r.path, r.present, r.sha256, r.final_newline);
@@ -4439,14 +4439,14 @@ the 50 ms is **the service's answer time**:
 
 - **What is timed:** inside the client, from the `connect()` call to the last
   byte of a digest-checked answer, for one `register read --for guard
-  --prefetch` of the three files, against a warm service on the scratch database of 007's T343 (quickstart's, on a workstation with PostgreSQL 16), and in CI on the suite's
-  fixture register.
+  --prefetch` of the three files, against a warm service on the scratch database of 007's T343 (quickstart's, on a workstation with PostgreSQL 16), in its release-gate run alone; in CI, on the suite's
+  fixture register, T237 records the served median of the whole hook instead, which is not SC-005's connect-to-last-byte p95 and gates nothing.
 - **Not included,** and recorded beside it: the client's process start, the
   hook's fixed parts, today's parses, and a cold start of the service, which
   the guard never waits for (SVC-4).
-- **The gate,** at the release (SC-005): T343, on that scratch database, records the median and the p95 over at least 20 warm
-  requests, as Q10 settles, the p95 rounded up to whole milliseconds, with the cold first request beside them (the QA seat), and fails at 50 ms or above.
-- **In CI, a warning only:** on the suite's fixture register, lane 2's T237 records its figure, the served median of the whole hook, beside the 50 ms in the PR body, with a warning past it, never asserted on shared runners, whose times vary too much for a 50 ms gate (#165's body: "recorded in the
+- **The gate,** at the release (SC-005): T343, on that scratch database, records n, the samples, and the median and the p95 by nearest rank over at least 20 warm
+  requests, as Q10 settles, each rounded up to whole milliseconds, with the cold first request beside them (the QA seat), and fails unless n is at least 20, the median and p95 are the samples' nearest-rank ones, and the p95 is under 50 ms (T343's verify).
+- **In CI, a warning only:** on the suite's fixture register, lane 2's T237 records the served median of the whole hook, which is not SC-005's connect-to-last-byte p95, beside the 50 ms in the PR body, with a warning past it; it gates nothing and is never asserted on shared runners, whose times vary too much for a 50 ms gate (#165's body: "recorded in the
   PR body").
 - **Beside it,** the whole hook's wall time through the service and through
   the direct read, and today's files-mode guard, each in the four parts above
@@ -6478,7 +6478,7 @@ Q21(b)), whether every environment has git 2.32 or later, which
 right (`git push --dry-run` over SSH). Whether Eagle and Raven install by pipx
 or `./setup.sh` (Q24) is answered: `./setup.sh`, option b of lane 3's question, which Brett chose with "1a 2b", typed in lane 3's session at about 04:00Z on 2026-11-12 (lane 3, #165 6814260122). Whether v1.2.0 carries #165 alone is answered: it carries
 #165 and T017's five fixes, on Brett's split of the release (#165 6721648587 and
-6721870837); Brett's "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; #165 6768477034) then shipped v1.2.0 without #165, which v1.3.0 carries.
+6721870837); Brett's "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`) then shipped v1.2.0 without #165, which v1.3.0 carries.
 
 **A dead holder's `HOLD` (U6):** no verb writes `HOLD EXPIRED` today, in files
 mode or in the register (lane 1, #165 6722618324). Releasing a dead holder's
