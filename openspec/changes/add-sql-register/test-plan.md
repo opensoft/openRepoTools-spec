@@ -3053,7 +3053,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     the switch at `primary`, whatever `--expect` says, a `register_label=`
     that is not the switch's label (check 10, §2.4, folded at commit Q from
     V2's S-2 and lane 1's v2.8), and a host its URLs name that resolves to
-    more addresses than `register_addresses=` (check 13, §2.4);
+    more addresses than `register_addresses=` (check 13, §2.4), and, since T119's follow-up 2, a `git` older than 2.32, no `git` on `PATH`, or a `git --version` that names no version it can read (check 14, git 2.32 or later, which `ready` runs last; lane 1, #165 6877889644);
   - the flip writes only `mode=` and keeps the file's 0600, and setting
     `primary` refuses with 2 unless the switch is `primary`, the marker
     `present`, and the fetched `lanes/STORE` names this database.
@@ -3066,7 +3066,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   `lanes-index login add` only as a fixture.
 - **Phase and kind.** N. RE for the bootstrap, the ready environment, the
   GRANT check and check 10, which reads the switch, FP for the digest,
-  `psql` and refusing-build
+  `psql`, refusing-build and git (check 14)
   checks, and FM for the flip.
 - **Fixture.**
   - A `stoppable_cluster` of the test's own (section 3.1), since the
@@ -3089,7 +3089,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     is not a terminal.
   - An installed-tools directory with the release's digest list (its form is
     the design's).
-  - A `PATH` with `psql` and one without.
+  - A `PATH` with `psql` and one without, and, for check 14's fault, a `git` shim first on the call's `PATH` that answers `--version` with `git version 2.31.1`.
   - Configurations at `mode=index` and `mode=primary`.
   - An extra GRANT the test adds.
   - Test 14's refusing copy of `lanes-index`.
@@ -3130,7 +3130,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   - **The readiness check.**
     - Each fault case is the ready environment with that one fault added. It
       exits 2 and names that fault on its own `FAIL` line, and in the RE
-      cases no other line is `FAIL`.
+      cases no other line is `FAIL`. `[old-git]`'s line is check 14's, naming the shim's git 2.31.1 as older than 2.32.
     - The ready environment itself exits 0, with one `ok` line per check.
     - **Check 10,** whatever `--expect` says (§2.4, check 10; V2's S-2). The
       fixture's configuration holds a `register_label=` equal to the label the
@@ -3178,7 +3178,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   - `test_the_bootstrap_refuses_a_connection_string_argument_with_2`;
   - `test_the_bootstrap_passes_the_admin_service_only_as_pgservice` (FP);
   - `test_set_mode_primary_refuses_before_the_marker_is_present_or_names_another_database`;
-  - `test_the_readiness_check_fails_on_each_fault[<fault>]`;
+  - `test_the_readiness_check_fails_on_each_fault[<fault>]`, check 14's `[old-git]` among the faults since T218's follow-up;
   - `test_the_readiness_check_passes_a_ready_environment`;
   - `test_the_readiness_check_10_compares_register_label_with_the_switch_label[equal|label-only|url-only|files]`;
   - `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[equal|above|ip-literal]`;
@@ -8562,7 +8562,7 @@ nine have none or only a partial one (below).
 | A rollback needs the database | 8 (b); section 4.2; D22; AT-F18 (the disaster path); AT-LRMPG (the restore from the dump and from the provider's own copy: `test_a_restore_from_the_dump_equals_its_source_with_new_passwords`, `test_a_restore_from_the_providers_copy_keeps_the_roles_and_takes_new_passwords`) |
 | A writer the rollback missed cannot write | 8 (c); section 4.2; AT-SET (an older snapshot fails 40001, then 69) |
 | The operator's bootstrap is idempotent and holds no secret † ◊ | P8 (a connection string refused with 2; `PGSERVICE` only in the environment); AT-VER; AT-LRMPG (the bootstrap without a superuser: `test_bootstrap_without_a_superuser_runs_twice_with_one_catalog`, `test_bootstrap_refuses_a_database_its_admin_does_not_own`; each engineer's two logins and the dump job's, made, rotated and revoked by `lanes-index login`, each with its group's floors, and the delta's "An engineer's logins" scenario: `test_two_writer_logins_write_alike_and_the_log_names_each`, `test_a_revoked_login_is_refused_69_and_writes_nothing[<case>]`, `test_an_open_session_gets_42501_between_the_revokes_steps_then_57p01`, `test_a_write_cut_by_a_revoke_mid_commit_is_in_doubt_and_ends_3_with_nothing_written`, `test_login_add_makes_an_engineers_two_logins_with_their_floors_and_prints_their_lines_once`, `test_login_add_run_again_puts_back_a_lost_membership_and_changes_nothing_else`, `test_login_rotate_keeps_an_open_session_and_refuses_the_old_password`, `test_login_refuses_a_bad_name_a_connection_string_and_a_pipe[<case>]`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`) |
-| The readiness check proves an environment before the cutover † ◊ | P8 (every check, the schema's window among them; the endpoint's address count, check 13: `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[<case>]`); 14; AT-VER; AT-LRMPG (checks 11 to 12: `test_ready_check_11_needs_tls_and_the_primary[<case>]`, `test_ready_check_12_passes_the_logins_the_step_made`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`; the reader's `target_session_attrs`: `test_reader_url_takes_target_session_attrs_primary_not_read_write[<case>]`) |
+| The readiness check proves an environment before the cutover † ◊ | P8 (every check, the schema's window among them; the endpoint's address count, check 13: `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[<case>]`; git 2.32 or later, check 14: `test_the_readiness_check_fails_on_each_fault[old-git]`); 14; AT-VER; AT-LRMPG (checks 11 to 12: `test_ready_check_11_needs_tls_and_the_primary[<case>]`, `test_ready_check_12_passes_the_logins_the_step_made`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`; the reader's `target_session_attrs`: `test_reader_url_takes_target_session_attrs_primary_not_read_write[<case>]`) |
 | The `mode=primary` flip is a command run once per host † | P8 |
 | Claim order is commit order | 4; C10; D19; AT-SPL; AT-LR5; section 4.1 |
 | `HOLD` and `LANDING` are ordered by commit sequence † ¶ ◊ | 4 (b); 4 (f) (a taking line that names no repository: `test_a_hold_line_that_names_no_repository_is_refused_with_2`); a taking line with no readable UTC, refused with 2 on primary naming the rule, `take-no-utc` at the commit (U3), and loaded as it stands by an import: AT-F13 (`test_on_primary_a_take_with_no_readable_utc_is_refused_before_the_lock_and_written_off_primary[<case>]`), AT-LR5 (`test_on_primary_a_take_with_no_readable_utc_is_lr005_take_no_utc_and_writes_nothing[<case>]`, `test_a_refresh_or_a_line_of_no_kind_with_no_utc_commits_and_a_take_with_none_loads_at_files[<case>]`) and AT-7 (`test_import_loads_takes_with_no_readable_utc_and_a_holderless_landing_expired_as_they_stand[<case>]`); AT-LR5 (one repository under two spellings, `HOLD` or `LANDING`, either order; each rule's DETAIL token: `test_each_claim_and_main_rule_lr005_carries_its_detail_token[<case>]`) |

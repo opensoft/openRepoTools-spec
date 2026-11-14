@@ -674,7 +674,7 @@ fixture: tests 7, 8 and 13, P8, D22, and AT-F18.
    - check 13: an endpoint whose address count is above
      `register_addresses=`, which the install's one A record makes 1; a
      count at or below it passes and prints both (ops:456; ops:151;
-     lane 3, #165 6812031872).
+     lane 3, #165 6812031872); and check 14, git 2.32 or later: a `git` older than 2.32, none on `PATH`, or one whose `--version` names no version `ready` can read (lane 1's T119 follow-up 2, #165 6877889644).
 6. **Given** a dump of both schemas restored into a new database, **When**
    `bootstrap --roles-only` has run before the restore, **Then** PUBLIC holds
    no CONNECT on it, the writer and reader groups and the indexer's login
@@ -1407,10 +1407,10 @@ are lane 3's rulings memo's).
   - A secret is printed only to a terminal.
   - Passwords are SCRAM verifiers computed on the client.
   - Sources: ops:398; ops:407; ops:437; ops:462; ops:477.
-- **FR-055**: `ready` MUST make §2.4's checks 1 to 13 (ops:444–456). Check 11
+- **FR-055**: `ready` MUST make §2.4's checks 1 to 13 (ops:444–456), and a fourteenth, git 2.32 or later, run last. Check 11
   reads `verify-full` and the issuer's root file, and fails on `system`
   (ops:454); check 13 expects the install's one address, `N_a` 1 (ops:456;
-  ops:151).
+  ops:151); check 14 runs `git --version` with `LC_ALL=C`, passes where its first line names git 2.32 or later, and fails, with exit 2 like every failed check, where `git` is older, is not on `PATH`, or names no version it can read, since git before 2.32 ignores `GIT_CONFIG_GLOBAL`, which isolates the renderer's push (lane 1's T119 follow-up 2, #165 6877889644; lane 3, #165 6877365776; the contract's §10).
 - **FR-056**: `outage declare` and `outage clear` MUST write and remove the
   declaration beside `lanes-index.conf` (D20). The `--rollback` form needs
   `--mirror-seq <k>`, and refuses where its probe cannot read the switch.
