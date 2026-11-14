@@ -615,7 +615,7 @@ rename.
     once, and a rerun adds no entry and makes the move; a handoff that
     cannot be stamped refuses before anything is sent. A rerun that finds
     its write id committed runs the tail (lane 4's row 24, as lane 3 ruled
-    it in comment 6710770304), which AT-D8 asserts;
+    it in comment 6710770304), which AT-D8 asserts; and, beside it, `test_rename_lane_commits_the_transaction_only_where_its_handoffs_path_has_no_cache_part_on_primary` (W), new in B15 (REV422c N1; lane 3's batch c, Q56, #165 6807881675): a row whose handoff is at a path with a `venv/` part, and one whose handoff is at a path with a `__pycache__/` part, each refuse 2 before the seam, with no commit call, no register line and no move;
   - `test_a_caller_composed_utc_and_log_paused_utc_stay_as_written` (W): a
     UTC the caller wrote into the line, and `log PAUSED`'s, is stored and
     rendered byte for byte, not replaced by the database's clock;
@@ -1890,7 +1890,7 @@ rename.
     answer crosses to the database (SVC-7), so act 3 records it against
     Brett's managed PostgreSQL with its RTT and Query count (section 5.6);
   - the `CLAUDE_NO_LANE=1` exception still exits 0 before any input
-    (P758–760).
+    (P758–760); and lane 5's T512 cases (A5, A7): `lanes-index status` prints the service's lines and its failure stamp (R44); the socket's directory is a 0700 directory of this uid and never a symlink, a client of another uid is closed by `SO_PEERCRED`, and an owner file from another pid namespace or boot is no service (SVC-2; ERR-27); `serve` refuses with 2 unless the mode answer is `primary` (SVC-5; R36); one instance holds `register.lock`, a second starter exits 0, and a stale socket is unlinked under the lock and rebound (SVC-4); and the service stops after its idle time and unlinks its socket (SVC-4; R37).
 - **Phase and kind.** N: the service and its read API. RE for the service
   against the cluster. FP for the credential and environment checks. A
   loopback listener for ADV-C4.
@@ -1904,7 +1904,7 @@ rename.
   - **Window and liveness facts:** a fake `tmux` on `PATH` answers `#W`. The
     live records sit under a temporary `$HOME`.
   - **The service** is started by the test on a socket in a short directory
-    (where the socket lives is Q2(c)'s).
+    (where the socket lives is Q2(c)'s). For T512's cases: the socket's directory, `${XDG_STATE_HOME:-~/.local/state}/openRepoTools/run/` (SVC-2); since CI has no second uid, `lanes-index` loaded in process with its peer-credential read replaced by one that answers another uid; a service killed and another started, for the stale socket; and `LANES_REGISTER_SERVE_IDLE_STOP_S` set, for the idle stop (R37).
   - **The stand-ins for a service that will not answer:**
     - "service down": no socket file, then a socket file with no listener;
     - "never answers": a Python stand-in that accepts and then blocks on a
@@ -2004,7 +2004,7 @@ rename.
     declaration the guard can read, the guard answers from the mirror with
     its `read: mirror` line. Without a declaration it answers 2. D20 puts
     the declaration in a file beside `lanes-index.conf`, and its cases are
-    AT-D20's.
+    AT-D20's. **T512's cases (A5, A7).** `lanes-index status` prints the service's lines and its failure stamp, as T512 writes them in `cmd_status` (R44); the socket's directory is a 0700 directory of this uid, never a symlink (SVC-2); a client of another uid is closed by `SO_PEERCRED`; an owner file from another pid namespace or boot is no service, and the client starts none (ERR-27); `serve` exits 2 in files mode, in `mode=index` and on the shipped build, whose constant still refuses `primary` (R36; A10); a second starter exits 0 while one instance holds `register.lock`; a dead service's stale socket is unlinked under the lock and the new service binds it; and with `LANES_REGISTER_SERVE_IDLE_STOP_S` set the service stops after it and unlinks its socket, while a value under the 1 s floor is ignored, so the service runs on with no failure stamp (R37).
 - **Options.**
   - **Under Q2(g),** the client is a block at the top of
     `lanes-edit.sh guard`, or a separate program with a new hook string. The
@@ -2064,7 +2064,7 @@ rename.
   - `test_the_guard_answer_time_is_recorded_beside_todays_direct_guard`;
   - `test_todays_direct_guard_is_timed_in_its_four_parts` (M5b);
   - `test_the_guards_register_parse_is_timed_on_a_real_sized_register_beside_todays_six_reads_through_git`
-    (M10's parse).
+    (M10's parse); and lane 5's eight, new since v3f (A5, A7; T512's verify): `test_status_prints_the_services_lines_and_its_failure_stamp`; `test_the_socket_directory_is_a_0700_directory_of_this_uid_and_never_a_symlink`; `test_a_client_of_another_uid_is_closed_by_so_peercred`; `test_an_owner_file_from_another_namespace_or_boot_is_no_service[namespace|boot]`; `test_serve_refuses_unless_the_mode_answer_is_primary[files|index|refusing-build]`; `test_one_instance_holds_register_lock_and_a_second_starter_exits_0`; `test_a_stale_socket_is_unlinked_under_the_lock_and_rebound`; and `test_the_service_stops_after_its_idle_time_and_unlinks_its_socket[stops|floor]`.
 - **Run time.**
   - The byte-identical and fallback cases take about 10–20 s. Today's guard
     took about 2 s wall in its register read on 2026-09-14 (C158–159); the
@@ -8049,11 +8049,11 @@ follows.
     them (section 5.6).
 - **The 50 ms.** SVC-10 states it on the suite's fixture register. There it
   is recorded, and the test prints a warning when the median exceeds it,
-  without failing, and it stands there, since the spec names that
+  without failing, and it gates nothing there, since the spec puts its gate on another
   register. Against the Azure server every answer is at least one round
   trip to the database (SVC-7), and lane 5's netem run puts it over 50 ms
   above an RTT of about 40 ms (#165 6722703424). Act 3 records it beside
-  Q29's figure, with its RTT and Query count.
+  Q29's figure, with its RTT and Query count. SC-005 gates it at the release, not in CI, whose runners vary too much for a 50 ms gate: 007's T343, on a workstation with PostgreSQL 16, records the warm p95 on quickstart's scratch database, from the client's connect to the last byte of a digest-checked answer, over its run's repetitions, rounded up to whole milliseconds, and fails at 50 ms or above (lane 3, commit 17's post).
 - **Q29's limit, 1 s** (lane 3, #165 6722025863). Whether act 4 waits for
   the service (Q29 (a), Brett's answer) is decided by reading the warm p95
   of act 3's whole guard through the direct read against it, with the cold
@@ -8354,7 +8354,7 @@ without it is over 1 s (lane 3, #165 6722025863), judged on its warm p95.
   Eagle and from Raven, with the RTT, the TLS version, M12 and n beside
   them. CI's figure is the gate's: the local share, and a floor.
 - **Test 10** asserts no time in CI. The 50 ms is recorded on the fixture
-  with a warning (section 5.4), and its fault cases assert the frame's
+  with a warning; it gates at the release instead, on the scratch database of 007's T343 (section 5.4), and its fault cases assert the frame's
   4.5 s on loopback (section 4.4). At act 3 it records the service's answer
   time, and the whole hook through the service and through the direct
   read, each with its RTT and n.
@@ -8363,8 +8363,8 @@ without it is over 1 s (lane 3, #165 6722025863), judged on its warm p95.
   connection, reading the head `n` and the digests at `n`, and the service
   sends the images it holds only where their digests match the database's
   at `n`. So each answer is at least one round trip; lane 5's B2 measured
-  1.0. The register-service spec's 50 ms names the suite's fixture
-  register, so it stands there. Against the Azure server the answer is
+  1.0. The register-service spec's 50 ms gates at the release, on the scratch database of 007's T343, and CI records it on the suite's fixture
+  register with a warning. Against the Azure server the answer is
   over 50 ms above an RTT of about 40 ms; act 3 records it beside Q29's
   figure, and SVC-9 says that test 10's figure on the fixture is a floor
   that decides nothing for Q29.
@@ -8527,7 +8527,7 @@ nine have none or only a partial one (below).
 | Handoffs stay git files written by the lane | 11; 2 (the queued handoff) |
 | `lane-start`'s bind is one write ‡ ¶ | AT-F6 (one register commit and push in files mode and one journal entry on primary; two sessions on one lane in both modes; a refused or in-doubt bind's `bind-failed` record; the bind child's lookup with the five copied values: `test_the_bind_childs_lookup_sends_the_five_copied_values[<case>]`); 11 (a resume's note, stamp and launch, and a new lane's death with the code, on `start-record`'s 75, 3 or 69); AT-F5 (`start-record`'s union expectation); a bind refused with another 2: `test_lane_start_dies_with_2_on_any_2_from_start_record_not_only_the_expectations[<case>]` (AT-11) |
 | Every database path is bounded | D9; section 4.4; 10; AT-F6 (answer 2, detached, inside the budget; the body past its bound: `test_a_bind_body_past_its_bound_ends_with_the_bounds_code_and_leaves_no_process[<case>]`); AT-F7 (the 3.65 s cap under a declaration); AT-F8 (the mode query's hang); AT-LR4 (an import's `not_after`: `test_an_import_carries_not_after_of_its_330_s_timer_plus_2_s`) |
-| `rename-lane` commits the transaction before moving the handoff | 1 (`test_rename_lane_commits_the_transaction_then_a_rerun_makes_only_the_move`, and the `rename-lane` case) |
+| `rename-lane` commits the transaction before moving the handoff | 1 (`test_rename_lane_commits_the_transaction_then_a_rerun_makes_only_the_move`, and the `rename-lane` case; `test_rename_lane_commits_the_transaction_only_where_its_handoffs_path_has_no_cache_part_on_primary`, a handoff path with a cache part) |
 | A claim's comment cites the register sequence | 4 (`test_claim_prints_its_register_seq`: the printed `register seq <n>` is the entry's seq, and the claim comment, through a fake `gh`, cites the same `<n>`); 1 (part G: the mirror commit on origin whose `Register-Seq:` trailer is the entry's seq, found by `git log`'s trailer format, which is the scenario "Finding the commit": `test_the_mirror_on_origin_equals_a_full_render_after_each_write[<verb>]`). The manual's text: **not covered** |
 | The journal records each write † ‡ | 1; 5; 12 (`lanes-index journal --write-id`); AT-F10 (`args_sha256`); AT-LR4 (the operator flag); AT-F1 (exactly two operator entries); AT-F2; AT-SET (no kind commits in a state its row refuses, and an operator entry writing outside `lanes/STORE` is refused with LR004); AT-F18; AT-LR009 (`test_act_id_is_the_acts_id_on_a_write_and_null_on_every_other_entry`, `test_the_act_id_checks_refuse_an_act_id_on_another_kind_and_a_malformed_one`, `test_each_entry_stores_the_keys_its_lines_derive[<kind>]`, `test_an_import_a_cutover_and_a_rollback_store_only_the_star_key`, `test_a_stray_import_stores_its_keys_and_a_stray_revert_none`, `test_an_aborted_cutover_and_a_reimport_leave_no_scopes_at_a_deleted_seq`) |
 | UTC comes from the database's clock in whole seconds | 1 (with `test_a_caller_composed_utc_and_log_paused_utc_stay_as_written`); 7 (the `WORD` lines whose UTC carries milliseconds, kept as they are: `test_word_lines_with_milliseconds_import_verbatim_and_flagged`) |
@@ -8582,10 +8582,10 @@ nine have none or only a partial one (below).
 
 | Requirement | Tests |
 |---|---|
-| The service serves the reads and the guard, and writes do not depend on it | 10; 2 (`test_a_write_goes_on_with_the_service_down`) |
+| The service serves the reads and the guard, and writes do not depend on it | 10; 2 (`test_a_write_goes_on_with_the_service_down`); 10's T512 cases for the socket and who may connect (SVC-2), `test_the_socket_directory_is_a_0700_directory_of_this_uid_and_never_a_symlink`, `test_a_client_of_another_uid_is_closed_by_so_peercred` and `test_an_owner_file_from_another_namespace_or_boot_is_no_service`, and for primary only (SVC-5), `test_serve_refuses_unless_the_mode_answer_is_primary` |
 | Every answer that decides state is read fresh | 10 (the fresh write; never a cached `ok`) |
 | The service reaches the database only through `psql` | 10 (`test_the_service_reaches_the_database_only_through_psql`, FP) |
-| The service starts on demand with no supervisor of its own | 10 (`test_the_first_call_starts_the_service_with_no_supervisor`, `test_a_service_that_cannot_start_falls_back_to_the_direct_read`) |
+| The service starts on demand with no supervisor of its own | 10 (`test_the_first_call_starts_the_service_with_no_supervisor`, `test_a_service_that_cannot_start_falls_back_to_the_direct_read`; T512's SVC-4 cases, `test_one_instance_holds_register_lock_and_a_second_starter_exits_0`, `test_a_stale_socket_is_unlinked_under_the_lock_and_rebound` and `test_the_service_stops_after_its_idle_time_and_unlinks_its_socket`, and its failure stamp, `test_status_prints_the_services_lines_and_its_failure_stamp`) |
 | New code keeps to the toolchain floor | the existing hygiene suite (bash 3.2's rules, Python 3.9 and the standard library); partial, since nothing runs on 3.9 but the `package` job |
 | The `UserPromptSubmit` guard is the service's client † ‡ | 10 (the request carries only file names); AT-F6 (answer 2, detached) |
 | The `CLAUDE_NO_LANE=1` exception is kept | 10; P3 |
@@ -8598,7 +8598,7 @@ nine have none or only a partial one (below).
 | The guard fails closed during a database outage | P3; 10 |
 | A declared outage lets the guard answer from the mirror † ¶ | D20 (with the rollback's start: `test_a_rollbacks_start_declares_the_outage[<mode>]`); 10; AT-F7; AT-F11 (no `Register-Seq` within the bound; a ref behind a rollback's head: `test_the_guard_refuses_a_ref_behind_a_rollbacks_head`); AT-D20 (a rollback's declaration counts only where the guard's own read finds the switch at `files`, so not once the switch is primary again, and not in a partition: `test_a_rollbacks_declaration_counts_only_where_the_guards_read_finds_the_switch_at_files[<case>]`; a rollback rerun's declaration: `test_a_rollback_rerun_declares_before_it_goes_on[<case>]`; the floor is AT-F7's) |
 | `outage declare` during a rollback records the rollback's head ¶ | D20 (`test_outage_declare_is_refused_where_the_probe_reads_primary[<form>]`; Brett's word during a rollback: `test_outage_declare_on_a_persons_word_during_a_rollback_is_refused_and_prints_the_rollback_form`; a wrong `<k>` and a switch it cannot read: `test_outage_declare_rollback_is_refused_for_a_wrong_k_a_missing_mirror_seq_or_a_switch_it_cannot_read[<case>]`); D9 (the probe's row: `test_the_outage_declare_probe_ends_inside_its_bound_and_the_declaration_follows_the_rule[<fault>-<form>]`) |
-| The service answers the guard's read fast, and the cost is recorded | 10 (M5 and M10's four parts: `test_the_guard_answer_time_is_recorded_beside_todays_direct_guard`; M5b: `test_todays_direct_guard_is_timed_in_its_four_parts`; M10's parse: `test_the_guards_register_parse_is_timed_on_a_real_sized_register_beside_todays_six_reads_through_git`); section 5 (M13); the 50 ms is the suite's fixture register's, and against the Azure server the service's answer is over 50 ms above an RTT of about 40 ms, which act 3 records beside Q29's figure (section 5.6; lane 5's netem run, comment 6722703424) |
+| The service answers the guard's read fast, and the cost is recorded | 10 (M5 and M10's four parts: `test_the_guard_answer_time_is_recorded_beside_todays_direct_guard`; M5b: `test_todays_direct_guard_is_timed_in_its_four_parts`; M10's parse: `test_the_guards_register_parse_is_timed_on_a_real_sized_register_beside_todays_six_reads_through_git`); section 5 (M13); CI records the 50 ms on the suite's fixture register with a warning, and against the Azure server the service's answer is over 50 ms above an RTT of about 40 ms, which act 3 records beside Q29's figure (section 5.6; lane 5's netem run, comment 6722703424); the 50 ms gates at the release, on the scratch database of 007's T343, never in CI (section 5.4) |
 | The socket API is documented | **not covered**: documentation |
 | The cutover waits for the service only if the guard needs it | **not covered** by a test: Brett decides, from act 3's figure, the warm p95 of the guard without the service, against the limit he named, 1 s (comment 6722025863; section 5.6, where lane 5's netem run, comment 6722703424, puts the direct guard over 1 s above an RTT of about 57 to 63 ms) |
 

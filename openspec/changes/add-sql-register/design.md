@@ -298,7 +298,7 @@ he named on 2026-11-08 ("Values Brett named on 2026-11-08", in Open questions).
     declaration sits beside it. Under (c), provisioned at launch: a container
     started before a flip or a declaration does not see it until it is
     relaunched.
-17. **Q24, how #165 reaches the hosts: (a).** The workBenches re-vendor, v1.2.0
+17. **Q24, how #165 reaches the hosts: (a).** The workBenches re-vendor, v1.3.0
     with a TestPyPI rc1, the one-liner as a stopgap, and one image rebuild.
     Under (b) or (c), only the route changes; the readiness check's digests
     follow whichever artifact is installed. Under (a), the re-vendor vendors the release as a package, its `payload/` files plus the wheel's stamped `_release.py`, installed with `payload/openRepoTools --install`, so that on the `./setup.sh` hosts check 1's list is placed as from the package, and check 1 keeps its meaning (Brett's "Vendor release as package (Recommended)", 2026-11-13).
@@ -334,7 +334,7 @@ he named on 2026-11-08 ("Values Brett named on 2026-11-08", in Open questions).
     and it is: lane 5 measured Eagle's round trip to Central US at about 86 ms
     at best, 205 ms at the median and 456 ms at the p90, so the guard without
     the service takes about 1.2 to 2.1 s, which misses Brett's 1 s, and about
-    0.5 to 0.7 s through it (#165 6725361742). So the cutover and the v1.2.0 tag
+    0.5 to 0.7 s through it (#165 6725361742). So the cutover and the v1.3.0 tag
     wait for the service, which is built beside phases 1 and 2, not as 007's
     last slice (lane 3's ruling, #165 6724332510 and 6726078173). Under (b), act
     4 waits for the service, and the direct read stays the fallback (Q11(a)).
@@ -3675,7 +3675,7 @@ the rest of the design relies on.
   without the service, the fallback of Q11(a). Under Q29(a) the cutover waits
   for the service only if the measured direct guard is over Brett's 1 s, and it
   is: from Eagle that guard takes about 1.2 to 2.1 s (lane 5, #165 6725361742).
-  So the cutover and the v1.2.0 tag wait for the service, which is built beside
+  So the cutover and the v1.3.0 tag wait for the service, which is built beside
   phases 1 and 2, not last (lane 3's ruling, #165 6724332510 and 6726078173).
 
 ### The register service's internals
@@ -4870,7 +4870,7 @@ The frame's wording governs (Q6, 1A, `design.md:131–135`; the rollout, `:3429�
 1. **Phase 1, now, on `2a057a6d`.** Everything that does not run through `lanes-edit.sh`'s three write seams: the resolver (`code/lanes-edit.sh:1053–1056`), `handle_preexisting` (`:2701`) and `commit_push` (`:2292`).
 2. **Phase 2, after slices 1a (#282) and 1b (#307) land in the code leg.** The write path: S1's attempt loop at the commit seam, the refusals of direct writes, S6's checks, and the marker check after S3's fetch and in the publish act.
 3. **Phase 3, then.** The renderer's git half, rollback's push, and agreement tests 3, 5 and 6. Its last PR lifts Q6(c)'s refusal.
-4. **The service** (`lanes-index serve`, SVC-3) is built beside phases 1 and 2, not after phase 3 as 007's last slice: Q29(a)'s condition is met, since from Eagle the guard without the service misses Brett's 1 s (lane 5, #165 6725361742), so the cutover and the v1.2.0 tag wait for it (lane 3's ruling, #165 6724332510 and 6726078173; SVC-5).
+4. **The service** (`lanes-index serve`, SVC-3) is built beside phases 1 and 2, not after phase 3 as 007's last slice: Q29(a)'s condition is met, since from Eagle the guard without the service misses Brett's 1 s (lane 5, #165 6725361742), so the cutover and the v1.3.0 tag wait for it (lane 3's ruling, #165 6724332510 and 6726078173; SVC-5).
 
 | Interface | Phase 1 ships, final | Phase 2 uses | Phase 3 uses |
 |---|---|---|---|
@@ -6332,10 +6332,10 @@ The runbook is `operations.md`, summarised below. In order:
    about 86 ms at best, 205 ms at the median and 456 ms at the p90 (#165
    6725361742): the guard without the service takes about 1.2 to 2.1 s, which
    misses the 1 s, and about 0.5 to 0.7 s through it. So Q29(a)'s condition is
-   met: the cutover waits for the service, and by lane 3's ruling the v1.2.0 tag
+   met: the cutover waits for the service, and by lane 3's ruling the v1.3.0 tag
    waits for it too (#165 6724332510 and 6726078173). Tests 9 and 10 still
    measure the direct guard.
-5. **The release** (Q24(a)): v1.2.0 with an rc1, the workBenches re-vendor and
+5. **The release** (Q24(a)): v1.3.0 with an rc1, the workBenches re-vendor and
    one image rebuild carrying the configuration mount (Q23(a)) and PostgreSQL
    16 (1A). The re-vendor vendors the release as a package, as Q24 (a) above says (Brett's "Vendor release as package (Recommended)", 2026-11-13).
 6. **The readiness check** in every environment that writes the register
@@ -6478,7 +6478,7 @@ Q21(b)), whether every environment has git 2.32 or later, which
 right (`git push --dry-run` over SSH). Whether Eagle and Raven install by pipx
 or `./setup.sh` (Q24) is answered: `./setup.sh`, option b of lane 3's question, which Brett chose with "1a 2b", typed in lane 3's session at about 04:00Z on 2026-11-12 (lane 3, #165 6814260122). Whether v1.2.0 carries #165 alone is answered: it carries
 #165 and T017's five fixes, on Brett's split of the release (#165 6721648587 and
-6721870837).
+6721870837); Brett's "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; #165 6768477034) then shipped v1.2.0 without #165, which v1.3.0 carries.
 
 **A dead holder's `HOLD` (U6):** no verb writes `HOLD EXPIRED` today, in files
 mode or in the register (lane 1, #165 6722618324). Releasing a dead holder's

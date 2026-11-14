@@ -1,6 +1,6 @@
 # Proposal: the SQL register under `lanes-edit.sh` (Amendment 22, act 2)
 
-Governing issue: opensoft/openRepoTools#165, milestone `v1.2.0`, claimed by lane
+Governing issue: opensoft/openRepoTools#165, milestone `v1.3.0` (`v1.2.0` until Brett's "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; #165 6768477034)), claimed by lane
 openRepoTools-3 on 2026-10-05. Sole implementation feature: Speckit
 `007-sql-register`, not yet created (see "Speckit handoff"). This change lives in
 the spec leg, opensoft/openRepoTools-spec. The code it governs is
@@ -1140,7 +1140,7 @@ R3 completes this order, as a proposal (Q24 and Q25 carry its questions):
   half), serialized on `lanes-edit.sh`; the spec docs PR; a draft root PR bumping
   both legs to the PR heads, so `exact-pins` proves code, spec and root docs
   together, the only run that does; the legs landed on the proven heads, then
-  the final root bump; v1.2.0 (Q24); the installs, acts 3 and 4, and the archive
+  the final root bump; v1.3.0 (Q24); the installs, acts 3 and 4, and the archive
   PR with one more bump.
 
 ## Open design questions
@@ -1206,7 +1206,7 @@ rollback's start declares one too, which narrows Amendment 22; Q28 (i) and (a),
 the cutover waits for Amendment 23's six act-2 PRs, which lane openRepoShape-2
 re-homes; and Q29 (a), the cutover waits for the service only if the guard,
 measured without it, is slower than a limit he names; lane 5's figure puts it
-over his 1 s (#165 6725361742), so the cutover and the v1.2.0 tag wait for the
+over his 1 s (#165 6725361742), so the cutover and the v1.3.0 tag wait for the
 service, built beside the first two groups of 007's slices, not last (lane 3's
 ruling, #165 6724332510 and 6726078173). **Named on 2026-11-08:** Q29's time
 limit, "1 s (Recommended)"; Q22's database host, its backups and how long it may
@@ -2018,7 +2018,7 @@ org's GitHub plan supports such a ruleset, which nobody has checked yet.
     **Answered, Brett's, on 2026-11-08:** v1.2.0 carries #165 and T017's five
     fixes, #290, #291, #295, #301 and #302, and the other issues milestoned
     v1.2.0 move to v1.2.1: "set 1.2.0 for 165 alone, 1.2.1 for the rest", then
-    "let T017 ride in 1.2.0, retitle #343" (#165 6721648587 and 6721870837).
+    "let T017 ride in 1.2.0, retitle #343" (#165 6721648587 and 6721870837). Brett's "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; #165 6768477034) then moved #165 to v1.3.0: v1.2.0 shipped without it, and what this question asks of v1.2.0's routes, its pipx artifact and its rc1 holds for v1.3.0.
     Whether Eagle and Raven use pipx or `./setup.sh` is answered: `./setup.sh`, option b of lane 3's question, which Brett chose with "1a 2b", typed in lane 3's session at about 04:00Z on 2026-11-12 (lane 3, #165 6814260122).
 25. **The landing's mechanics (R3c's questions 1, 2 and 9; for Brett).**
     - (a) The merge method per leg: (i) a merge commit on both legs, as spec #1,

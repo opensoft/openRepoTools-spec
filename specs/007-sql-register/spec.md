@@ -721,7 +721,7 @@ still works without it.
 
 - byte-identical answers;
 - the fallback line;
-- the service's answer under 50 ms on the fixture register.
+- the service's answer time against 50 ms on the fixture register, recorded with a warning; SC-005 gates it at the release, in T343's run on its scratch database.
 
 **Acceptance Scenarios**:
 
@@ -1128,7 +1128,7 @@ are lane 3's rulings memo's).
 
   Each writer process MUST ask the mode once, before slice 1a's routing. On
   primary it MUST NOT enter the lane checkout by 1a's routing: it takes `<c>`
-  from `lane_checkout_path`, with no S3 work, and refuses with 2, naming
+  from `lane_checkout_path`, with no S3 work, and refuses with 2 (but `request-handoff`, which refuses 64 there, as for each of its refusals before the claim: its missing lane, `LANES_NO_GIT=1`, `pw_lane_given`, a missing `<c>`, a pending hand edit and no author identity (T415, tasks:1155; `pw_checkout` exits `pw_pre_rc`'s code, `lanes-edit.sh:8764` at line R's merge104 `142afd90`, and `pw_pre_rc` prints 64 for `request-handoff` and 2 for every other writer, `:8737–8738`; lane 4, #165 6877053562; lane 3's ruling, commit 17's post)), naming
   `lanes-edit.sh lane-checkout <lane> --create`, which makes it,
   where that checkout does not exist, an explicit `LANES_REPO` included (R17;
   lane 3, #165 6769061039 and 6841265575). Sources: "How an attempt runs the verb"
@@ -1537,8 +1537,8 @@ are lane 3's rulings memo's).
 - **SC-004**: Answer 2 exits 2 with "BINDING" within 0.1 s after the guard's
   read returns, while a stub bind sleeps 15 s (AT-F6 (1); Y:5563).
 - **SC-005**: The service answers the guard's read in under 50 ms on the
-  fixture register, from the client's connect to the last byte of a
-  digest-checked answer (svc:278; SVC-10, Y:4387).
+  scratch database of T343's quickstart run, from the client's connect to the last byte of a
+  digest-checked answer (svc:278; SVC-10, Y:4387). It gates at the release, not in CI: T343's run, on a workstation with PostgreSQL 16, records the warm p95 of that time over its repetitions, rounded up to whole milliseconds, and fails at 50 ms or above. CI's figure, T237's on the test fixture's register, only warns (lane 3, commit 17's post).
 - **SC-006**: No write is lost or doubled in the tests (spec:236).
   - Test 12: exactly one journal entry per `write_id`, and exit 0 after a
     clean retry.
