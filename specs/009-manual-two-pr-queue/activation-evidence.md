@@ -782,3 +782,58 @@ T059-T061 govern the next narrow metadata repair and a genuinely fresh retry,
 never a requeue of this failed specimen after changing policy. No complete
 heavy, landing, one-heavy efficiency, broader adoption or release is accepted.
 All excluded settings/app/paid/tool/assembly/lane boundaries remain in force.
+
+## CI-METADATA-15 checked source landings and local R6 preparation — 2026-11-14
+
+Exact reviewed code `a2b487b812fab6f35dce87701bc3fde20e30edeb` passed ordinary
+run43538976048 (15/15), reusable43538975985 (17/17) and fast43538976079 (1/1),
+all first attempts, with every full job successful. All four complete inventories
+contain5418unique cases, retain all5365prior identities and execute exactly53
+new passing regressions. No removed/duplicate cases, failures/errors or changed
+skip identities. Normal variants:5245passed/173existing skips; no-submodule
+variants:3896passed/1522existing skips. No coverage, baseline or selector reduction.
+
+Exact reviewed spec `2d88e4c8c299e01bf9da7e58a0081f6b5c775179` passes both
+governing strict OpenSpec validations. Master/nine standard expert roles/CI
+specialist review is clean; hosted Codex quota responses are not completed
+reviews. Both PRs had complete empty review-thread lists and clear coordination.
+Existing unrelated historical log-parser warnings were checked against the
+current remote and did not name this project; no append-only history was rewritten.
+
+Normal protected squash merges, with no bypass or branch deletion:
+
+- [code74](https://github.com/opensoft/openRepoTools-code/pull/74) landed at
+  `a15a6b54f4b8b6ebb9e7ced8aa9d2b8cdd4e078d`, sole parent908d815,
+  tree `23a723b9dbc8a7a0251fbe96c95b33b7556c090e` exactly equal to reviewed code.
+- [spec49](https://github.com/opensoft/openRepoTools-spec/pull/49) landed at
+  `71a5456f4a8b3205c9fa3ab8fd73572460d71fad`, sole parentd266136,
+  tree `602ed8940ae2d8d3559204207aa4be876175d999` exactly equal to reviewed spec.
+
+Actual-main push run43542918725 is in progress on exacta15a6b5, first attempt.
+Its complete15-job and both5418-case inventory qualifications are still required
+before any fresh source publication or queue request. Source qualification and
+landed-tree equality do not substitute for this actual-main gate.
+
+The new R6 members are LOCAL ONLY, not yet published PRs or source events:
+
+- A `624986b42682604b836a23888432e358fa018d74`, sole parenta15a6b5,
+  tree `0239db2b13d73d38e526904b1ac705db6249206d`: three literal help lines in
+  unchanged-mode100755 `claude-current`. The test-file blob still equals base.
+- B `4ec0fbad0275cf85331fddc9cd63f8c768885108`, sole parenta15a6b5,
+  tree `9fca133f676cd4430bfe18ecd1d0cffab20f92e1`: eight help-before-malformed-bound
+  tests in unchanged-mode100644 `tests/test_claude_current.py`. Resolver blob
+  still equals base; the tests exercise existing behavior independently of A.
+
+Exact bundled offline non-root canonical QA passed A19cases/5399deselected,
+B27cases/5399deselected, and all8new B cases without the submodule with5418
+deselected, all0skip; Bash parsing passes. A/B patch SHA-256 identities are
+8199D0AA0DD12A12BA8AD0CF08D1E782ABFED9BA3B5D7DB3E754FB9D316016B8 and
+3BAE906ADE8051D51003DFB8CAFF51362BDAC7F08DA317E63482F9F619568C26.
+Expected full collections are5418/5426; live inventories must independently prove
+the final member scope and coverage. No acceptance receipt or queue command was
+posted for these local commits. Failed R5 PR71/72 stay dequeued/open until actual
+fresh replacements exist; their branches and evidence remain preserved.
+
+T061 and every fresh live-acceptance/adoption gate stay open. Both running bench
+views still use assembly4b3c3f3; no shared checkout, lane/session, installed-tool,
+assembly pin, settings/app/paid access, active-plan or release change occurred.

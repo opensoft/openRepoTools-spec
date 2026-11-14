@@ -347,3 +347,11 @@ task set and its checked landings/fresh retry; no excluded authority follows.
 - [x] T059 [O] Record R5 source/admission success separately from candidate full-fallback failure and safe stop; define bounded initial candidate-description handling and privacy-safe diagnostics — files: fix-source-delivery-metadata OpenSpec artifacts, feature009 spec/tasks/evidence — verify: strict OpenSpec, exact run/edit/stop readbacks and no duplicate task list
 - [x] T060 [O] Reproduce pre-routing candidate prose differences red-first, repair only the initial comparison and add field-name diagnostics; preserve invalid-type/identity/admission/final-reread refusals — files: code delivery_route.py, focused regression tests, cutover runbook and dated activation-record pointer — verify: canonical CI contracts, no-submodule added cases, exact-head local expert review
 - [ ] T061 [O] Open paired code/spec PRs, qualify full ordinary/reuse inventories, normally merge checked heads and verify landed trees/actual main; resume genuinely fresh R6 sources and complete T051/T048 — files: paired PRs and evidence — verify: full source/main identity/skip parity, fresh reviews/receipts, actual two-member/one-heavy/prefix/final/no-duplicate proof; no archive or assembly adoption
+
+T061 source qualification and checked landings are complete: code74/spec49 at
+revieweda2b487b/2d88e4c passed ordinary15/reusable17 and all four5418-case inventories
+with53new passes and no baseline/skip drift, then normally landed asa15a6b5/71a5456
+with exact reviewed trees. Actual-main43542918725 remains in progress. R6A624986b
+and B4ec0fba are only local independent preparations with exact-bundle focused
+QA19/27/new8passing0skip, not published PRs, receipts or queue authority. Main,
+fresh-event, member/heavy/tree/no-duplicate and adoption gates remain pending.
