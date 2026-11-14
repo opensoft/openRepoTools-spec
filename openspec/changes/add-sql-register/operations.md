@@ -632,8 +632,8 @@ Every PR lands on Brett's typed word, by merge commit (Q25(a) (i), `proposal.md:
    - lane 1 opens the root bump (Q25(b), `proposal.md:1860-1862`; `r3c/REPLY.md:139-141`).
 
    R3c has one rehearsal. This part proposes one per group, each costing 64 to 87 minutes of `exact-pins` (`proposal.md:1067-1068`).
-9. **After group C:**
-   1. the release commit proven, the v1.3.0 notes, a TestPyPI rc1, the tag and `release/v1.3` (`r3c/REPLY.md:142-147`);
+9. **After group C, the service and a successful T343** (SC-005's release gate: T343 waits for T347, which waits for T124 (itself after T282 and T218) and T346; spec#17's re-review r5, its first BLOCKING finding; lane 3's ruling, commit 22's post):
+   1. T343's successful run, then the release commit proven, the v1.3.0 notes, a TestPyPI rc1, the tag and `release/v1.3` (`r3c/REPLY.md:142-147`);
    2. the hosts reached (Q24, `r3c/REPLY.md:148-151`);
    3. act 3;
    4. act 4, which under Q28 (i) also waits for Amendment 23's 2a, 2b and 3 (`proposal.md:1946-1954`);

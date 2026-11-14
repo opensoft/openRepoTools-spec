@@ -466,7 +466,7 @@ Checkpoint A+B [L3]: group B's tests pass against the real lanes-index (a copy
 Group C, phase 3 ............................... [L3] [L2: tests G]
    |       lanes-index and tests/ only; its last PR flips RENDER_GIT_HALF
    v
-The tag, v1.3.0, on Brett's own word, after group C and the service ... [L3]:
+The tag, v1.3.0, on Brett's own word, after group C, the service and a successful T343, which waits for T347, which waits for T124 (itself after T282 and T218) and T346 (spec#17's re-review r5, finding 1) ... [L3]:
    :       rc1 on TestPyPI, the tag, release/v1.3, PyPI, the notes, the workBenches
    :       re-vendor, which also carries the launcher's window reads ("5A") and vendors the release as a package ("Vendor release as package")
    :
@@ -520,7 +520,7 @@ The tag, v1.3.0, on Brett's own word, after group C and the service ... [L3]:
   - Its last pull request flips the constant, with test 14's flipped state
     and the test that the constant is True exactly when
     `render --checkout` exists.
-- **The tag** waits for group C and the service. It needs Brett's own word,
+- **The tag** waits for group C, the service and a successful T343, which waits for T347, which waits for T124 (itself after T282 and T218) and T346 (spec#17's re-review r5, its first BLOCKING finding; lane 3's ruling, commit 22's post). It needs Brett's own word,
   as do the rc1 and the upload.
 - **Acts 3 and 4** follow the tag, outside 007. They wait on the install,
   which Brett has said comes first ("Wait for the install", #165

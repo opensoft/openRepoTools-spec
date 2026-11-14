@@ -1,6 +1,6 @@
 # Proposal: the SQL register under `lanes-edit.sh` (Amendment 22, act 2)
 
-Governing issue: opensoft/openRepoTools#165, milestone `v1.3.0` (`v1.2.0` until Brett's "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`)), claimed by lane
+Governing issue: opensoft/openRepoTools#165, milestone `v1.3.0` (`v1.2.0` until Brett's "v1.2.0 now, 007 later (Recommended)" (answered by 2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`)), claimed by lane
 openRepoTools-3 on 2026-10-05. Sole implementation feature: Speckit
 `007-sql-register`, not yet created (see "Speckit handoff"). This change lives in
 the spec leg, opensoft/openRepoTools-spec. The code it governs is
@@ -36,7 +36,7 @@ Brett Heap ruled on 2026-10-05, in Amendment 22 ("ratify 50"), that on a
 workstation configured `mode=primary` the register is a Postgres database: each
 write is one transaction, the git files are its rendered mirror, and nothing
 falls back to writing the files. Act 2 of that amendment, the tooling, is this
-change. It was scheduled for v1.2.0 after the release work, and Brett's "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`) moved it to v1.3.0; v1.1.0 is tagged, and
+change. It was scheduled for v1.2.0 after the release work, and Brett's "v1.2.0 now, 007 later (Recommended)" (answered by 2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`) moved it to v1.3.0; v1.1.0 is tagged, and
 Brett started it on 2026-10-31.
 
 ### What Amendment 23's act 2 leaves for this change
@@ -2018,7 +2018,7 @@ org's GitHub plan supports such a ruleset, which nobody has checked yet.
     **Answered, Brett's, on 2026-11-08:** v1.2.0 carries #165 and T017's five
     fixes, #290, #291, #295, #301 and #302, and the other issues milestoned
     v1.2.0 move to v1.2.1: "set 1.2.0 for 165 alone, 1.2.1 for the rest", then
-    "let T017 ride in 1.2.0, retitle #343" (#165 6721648587 and 6721870837). Brett's "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`) then moved #165 to v1.3.0: v1.2.0 shipped without it, and what this question asks of v1.2.0's routes, its pipx artifact and its rc1 holds for v1.3.0.
+    "let T017 ride in 1.2.0, retitle #343" (#165 6721648587 and 6721870837). Brett's "v1.2.0 now, 007 later (Recommended)" (answered by 2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`) then moved #165 to v1.3.0: v1.2.0 shipped without it, and what this question asks of v1.2.0's routes, its pipx artifact and its rc1 holds for v1.3.0.
     Whether Eagle and Raven use pipx or `./setup.sh` is answered: `./setup.sh`, option b of lane 3's question, which Brett chose with "1a 2b", typed in lane 3's session at about 04:00Z on 2026-11-12 (lane 3, #165 6814260122).
 25. **The landing's mechanics (R3c's questions 1, 2 and 9; for Brett).**
     - (a) The merge method per leg: (i) a merge commit on both legs, as spec #1,
