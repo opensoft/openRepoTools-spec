@@ -837,3 +837,45 @@ fresh replacements exist; their branches and evidence remain preserved.
 T061 and every fresh live-acceptance/adoption gate stay open. Both running bench
 views still use assembly4b3c3f3; no shared checkout, lane/session, installed-tool,
 assembly pin, settings/app/paid access, active-plan or release change occurred.
+
+## Actual-main qualification and fresh R6 A source acceptance — 2026-11-14
+
+Actual-main43542918725 completedSUCCESS15/15 on exacta15a6b5, first attempt.
+Both complete5418-case inventories exactly match reviewed source: normal
+5245passed/173existing skips; no-submodule3896passed/1522existing skips.
+No added/removed/duplicate/failed cases or skip-identity drift. This separately
+completes the actual-main publication gate; it is not live batching acceptance.
+
+Fresh [A PR75](https://github.com/opensoft/openRepoTools-code/pull/75) was then
+created at reviewed624986b, basea15a6b5, tree0239db2b. Actual fast43546968786 /
+job132300443144 passed first attempt:455passed/18existing skips/4945deselected.
+Its tested merge `f5fb13348084afc126c453c96508c5e4e542af78` has ordered parents
+a15a6b5/624986b and tree0239db2b exactly equal to the reviewed source, independently
+read through GitHub Git API. Fast JSON full_ci_required:true is static tested-
+merge metadata, not the actual source routing result.
+
+Actual source43546968744 completedSUCCESS8/8 roles, first attempt: two controls
+successful and all six full roles skipped, with no full job started. Route
+job132300442501 logged at02:36:36.797Z source/omit_full:true with proof
+73da5027b3de5e07b78f959a8a390fa2007b5a43c79dabcdca97527b6e10491a.
+Hosted Codex request6870287514 received quota response6870290112, not a review.
+The exact-head local static expert report is comment6870288070.
+
+Fresh writer acceptance is [receipt6870354342](https://github.com/opensoft/openRepoTools-code/pull/75#issuecomment-6870354342),
+authenticated as Userbrettheap/id1513478 with current admin permission. Complete
+empty review threads, exact head/base and current main were read back. A real
+read-only production source_pr preflight independently passed Git scope/ancestry,
+actual fast/check/run provenance, current local receipt/comment/permission/GraphQL
+metadata and live intent; component digest
+b229aa1a74968cc1267e23af99a2cd2578c8955357b747b461edb3f7a9089771.
+No candidate event or environment was manufactured, and no status/queue write
+was performed by that preflight. T042 is complete as source implementation and
+review acceptance, not heavy, membership, landing or release acceptance.
+
+Fresh [B PR76](https://github.com/opensoft/openRepoTools-code/pull/76) exists at
+reviewed4ec0fba/basea15a6b5. Its source43547439889 and fast43547439630 are in
+progress; hosted request6870352264 and static report6870352796 are posted.
+No B writer receipt or R6 queue command has been posted. T043 and all live/
+heavy/tree/no-duplicate gates stay open. The failed R5 pair remains dequeued;
+retire only the unchanged superseded PRs now that actual replacements exist,
+preserving every branch and historical failure record.
