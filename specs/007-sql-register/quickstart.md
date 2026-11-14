@@ -50,7 +50,7 @@ install", #165 6723925474).
    carries the re-vendor, the configuration mount and `postgresql-16`, and
    ends every lane in its container, so notice N1 goes out first. Its check
    is `ready`, below (ops:213–216).
-6. **The install,** in each host shell: pipx v1.3.0 (ops:218–219).
+6. **The install,** in each host shell, by its host's route (ops:218–219): on Eagle and Raven, `./setup.sh`, at the planned workBenches re-vendor, which vendors v1.3.0 as a package, its `payload/` files plus the wheel's stamped `_release.py`, installed with `payload/openRepoTools --install`, so that `ready`'s check 1 keeps its meaning, and whose way back is the prior re-vendor; in every other host shell, pipx v1.3.0, with the root one-liner only as a stopgap, and whose way back is `pipx install --force openrepotools==1.2.0`, then `openRepoTools --install`.
 
 ## An engineer's workstation
 

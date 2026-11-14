@@ -4439,14 +4439,14 @@ the 50 ms is **the service's answer time**:
 
 - **What is timed:** inside the client, from the `connect()` call to the last
   byte of a digest-checked answer, for one `register read --for guard
-  --prefetch` of the three files, against a warm service on the suite's
+  --prefetch` of the three files, against a warm service on the scratch database of 007's T343 (quickstart's, on a workstation with PostgreSQL 16), and in CI on the suite's
   fixture register.
 - **Not included,** and recorded beside it: the client's process start, the
   hook's fixed parts, today's parses, and a cold start of the service, which
   the guard never waits for (SVC-4).
-- **The statistic,** as Q10 settles: the median and p95 over at least 20 warm
-  requests, with the cold first request beside them (the QA seat), recorded in
-  the PR body, not asserted on shared runners (#165's body: "recorded in the
+- **The gate,** at the release (SC-005): T343, on that scratch database, records the median and the p95 over at least 20 warm
+  requests, as Q10 settles, the p95 rounded up to whole milliseconds, with the cold first request beside them (the QA seat), and fails at 50 ms or above.
+- **In CI, a warning only:** on the suite's fixture register, lane 2's T237 records its figure, the served median of the whole hook, beside the 50 ms in the PR body, with a warning past it, never asserted on shared runners, whose times vary too much for a 50 ms gate (#165's body: "recorded in the
   PR body").
 - **Beside it,** the whole hook's wall time through the service and through
   the direct read, and today's files-mode guard, each in the four parts above
@@ -4458,7 +4458,7 @@ The probes' toy service answered a warm request in about 3 to 5 ms (3.8 ms
 median in `run/b2.out`; 4.5 ms in the check's re-run, `run/check-b2-rerun.out`)
 and a 1.35 MB answer in 2.35 ms; the real service adds one transaction on a
 held connection, about a millisecond by R1's session figure. The 50 ms should
-hold with room on the fixture, where the database is local. Against the
+hold with room on T343's scratch database and on the fixture, where the database is local. Against the
 remote server the service's answer is one round trip more, about 27 to 156 ms
 at round-trip times of 20 to 150 ms (SVC-6), so over 50 ms above about 40 ms;
 act 3 records it against the server beside Q29's figure (lane 2's act 3 rows,

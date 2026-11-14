@@ -215,9 +215,9 @@ Brett's ruling (#165 6723925474): the register's database is "CNPG in the instal
    - **Before it:** a rebuild ends every lane in its container (`council-product/REPORT.md:161`), so notice N1 (2.6) goes out first.
    - **Check:** `ready` (step 6).
    - **Way back:** the previous image. The register is unchanged.
-5. **The install elsewhere.** Brett acts, in each host shell.
-   - **Command:** pipx v1.3.0, or the root one-liner as a stopgap (`proposal.md:1840-1853`; `r3c/REPLY.md:53-57`).
-   - **Way back:** reinstall v1.2.0. On `mode=index` nothing changes.
+5. **The install in each host shell.** Brett acts. The route is the host's: Eagle and Raven install by `./setup.sh` (Q24; Brett's "1a 2b", 2026-11-12, #165 6814260122), and every other host shell by pipx.
+   - **Eagle and Raven:** `./setup.sh`, at the planned workBenches re-vendor, which vendors v1.3.0 as a package: its `payload/` files plus the wheel's stamped `_release.py`, installed with `payload/openRepoTools --install`, so that `ready`'s check 1 keeps its meaning (Brett's "Vendor release as package (Recommended)", picked in lane 3's session on 2026-11-13; T346). **Way back:** the prior re-vendor, installed by `./setup.sh` the same way.
+   - **Every other host shell:** pipx v1.3.0, with the root one-liner only as a stopgap (`proposal.md:1840-1853`; `r3c/REPLY.md:53-57`). **Way back:** `pipx install --force openrepotools==1.2.0`, then `openRepoTools --install`. On `mode=index` nothing changes, on either route.
 6. **Readiness, in every writing environment.** The operator lane acts.
    - **Command:** `lanes-index ready --expect index` **(new)** (2.4), run in each environment on P19's list (`clarifications.md:127-133`): each bench container on each host, each host shell, Raven's install and each later workstation's, and the Codex lane's tools, through Brett (`proposal.md:984-986`).
    - **Confirming the list:** this step confirms that list, which is Brett's act (`clarifications.md:131-133`).

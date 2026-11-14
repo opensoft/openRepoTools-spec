@@ -64,7 +64,7 @@ and the only scope it takes, are:
 - [clarifications.md](../../openspec/changes/add-sql-register/clarifications.md).
 - The two delta specs:
   - [sql-register](../../openspec/changes/add-sql-register/specs/sql-register/spec.md),
-    with 69 requirements at Y;
+    with 69 requirements at Y, and a seventieth, FR-064's, since the follow-up's commit 18;
   - [register-service](../../openspec/changes/add-sql-register/specs/register-service/spec.md),
     with 19.
 - [test-plan.md](../../openspec/changes/add-sql-register/test-plan.md), lane
@@ -1471,6 +1471,19 @@ are lane 3's rulings memo's).
 - **FR-063**: New bash MUST hold to bash 3.2, and new Python to the standard
   library on Python 3.9 or later. `dependencies = []` MUST stay. Source:
   "New code keeps to the toolchain floor" (svc:51).
+- **FR-064**: `lanes-index` MUST start from PC-2's cached module, which
+  Brett's "(d) Both (a) and (c) (Recommended)" (2026-11-13) takes into 007: a
+  short launcher runs its body from a module beside it, `lanes_index_main.py`,
+  whose name lane 1 fixes, by that module's checked-hash cached bytecode (PEP
+  552), and every subcommand's argv, stdout, stderr and exit code MUST stay as
+  they are. Bytecode whose module source has changed MUST never run; where the
+  module has no valid bytecode, as where the install could not write it, the
+  launcher MUST run the module's source. `openRepoTools --install` MUST place the
+  module beside `lanes-index` and write its checked-hash bytecode for the
+  interpreter `lanes-index` runs on, and the release's digest list MUST name the
+  module, which `ready`'s check 1 digests, and not its bytecode. Sources:
+  "`lanes-index` starts from its cached module" (the sql-register delta, since
+  the follow-up's commit 18); PC-2; T124, T347.
 
 ### Key Entities
 

@@ -36,7 +36,7 @@ Brett Heap ruled on 2026-10-05, in Amendment 22 ("ratify 50"), that on a
 workstation configured `mode=primary` the register is a Postgres database: each
 write is one transaction, the git files are its rendered mirror, and nothing
 falls back to writing the files. Act 2 of that amendment, the tooling, is this
-change. It was scheduled for v1.2.0 after the release work; v1.1.0 is tagged, and
+change. It was scheduled for v1.2.0 after the release work, and Brett's "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; #165 6768477034) moved it to v1.3.0; v1.1.0 is tagged, and
 Brett started it on 2026-10-31.
 
 ### What Amendment 23's act 2 leaves for this change
@@ -867,7 +867,7 @@ also open a database connection per prompt.
   read; the
   hook's environment, and every environment a session inherits, carries no
   database URL or password (Amendment 14(c)); the service answers the guard's
-  read in under 50 ms on the suite's fixture register, its answer time,
+  read in under 50 ms, its answer time, gated at the release by 007's T343 (a warm p95 on quickstart's scratch database, on a workstation with PostgreSQL 16, from the client's connect to the last byte of a digest-checked answer, rounded up to whole milliseconds, failing at 50 ms or above), and on the suite's fixture register CI's figure, T237's, is a warning only,
   measured as Q10 settles and recorded in the PR body, with the whole guard's
   figure, which is Q29's, and today's direct guard recorded beside it (P5;
   design SVC-10).
@@ -935,7 +935,7 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 10. The guard through the service: byte-identical answers (stdout, stderr less
     the fallback line, and the exit code), the fallback line, no credential in
     any environment a session inherits, and the service's answer to the
-    guard's read under 50 ms on the suite's fixture register, recorded in
+    guard's read under 50 ms, gated at the release by 007's T343's warm p95 on quickstart's scratch database, failing at 50 ms or above, and on the suite's fixture register CI's figure, a warning only, recorded in
     the PR body (Q10), with today's direct guard beside it, and the whole
     guard's figure, which is Q29's, taken at act 3 against the server (P5;
     design SVC-10); and the hook inside its 5 s against a database that does not

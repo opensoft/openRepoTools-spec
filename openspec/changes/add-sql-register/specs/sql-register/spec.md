@@ -1116,3 +1116,32 @@ The manual SHALL carry a runbook for acts 3 and 4 and the rollback: every act, w
 #### Scenario: The rollback's triggers
 - **WHEN** the runbook is read for the rollback
 - **THEN** it names the triggers, the words and the owner of each step
+
+### Requirement: `lanes-index` starts from its cached module
+`lanes-index` SHALL be a short launcher that runs its body from PC-2's cached module, a file beside it (`lanes_index_main.py`, whose name lane 1 fixes), by that module's checked-hash cached bytecode (PEP 552), so that a start does not compile the whole script. Every subcommand's argv, stdout, stderr and exit code SHALL stay as they are without the module. Bytecode whose module source has changed SHALL never run, since the launcher checks it against the module's bytes; where the module has no valid bytecode, as where the install could not write it, the launcher SHALL run the module's source. `openRepoTools --install` SHALL place the module beside `lanes-index` and write its checked-hash bytecode for the interpreter that `lanes-index` runs on, and on a `./setup.sh` host the module SHALL arrive with the package re-vendor. The release's digest list SHALL name the module, which `ready`'s check 1 digests beside `lanes-index` and `lanes-edit.sh`, and SHALL NOT name its bytecode.
+
+> Brett's answer of 2026-11-13 on D7's 30 s deadline against the ten-writer burst: "(d) Both (a) and (c) (Recommended)", whose option read "Precompile lanes-index AND run AT-4 (c) under a per-workstation D7."; the question's (a): "Precompile `lanes-index` in 007, taking PC-2's cached module now." (lane 3's record of the dialog, `RULINGS-brett-20261113e-q1-q6.md`).
+
+#### Scenario: A start runs the cached module
+- **WHEN** `lanes-index` starts and the module's checked-hash bytecode carries the hash of the module's bytes
+- **THEN** the launcher runs that bytecode and does not compile the module's source
+
+#### Scenario: Stale bytecode never runs
+- **WHEN** the module's bytes have changed since its bytecode was written
+- **THEN** the launcher never runs that bytecode, and runs the module's current source
+
+#### Scenario: The source runs where the module has no bytecode
+- **WHEN** the module has no valid bytecode, as where the install could not write it
+- **THEN** the launcher runs the module's source, and the subcommand's stdout, stderr and exit code are those of a start from valid bytecode
+
+#### Scenario: Every subcommand behaves as before
+- **WHEN** any `lanes-index` subcommand runs from the cached module
+- **THEN** its argv, stdout, stderr and exit code are as they were before the module
+
+#### Scenario: The install places the module and its bytecode
+- **WHEN** `openRepoTools --install` installs the release
+- **THEN** `lanes_index_main.py` is beside `lanes-index`, with its checked-hash bytecode written for the interpreter that `lanes-index` runs on
+
+#### Scenario: The release's digest list names the module
+- **WHEN** the release builds its digest list
+- **THEN** the list names `lanes_index_main.py` beside `lanes-index` and `lanes-edit.sh`, which `ready`'s check 1 digests, and names no bytecode

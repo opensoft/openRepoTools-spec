@@ -451,12 +451,12 @@ written out below. This plan always says which set it means.
     - #282 (1a) and #307 (1b) as draft PRs by 2026-11-10, ready by
       2026-11-12;
     - #312, #316, #311 and #308 open by 2026-11-12, ready by 2026-11-17.
-  - **Q24, the release:** v1.2.0 carries #165 and T017's five fixes, #290,
-    #291, #295, #301 and #302, and the other issues milestoned v1.2.0 move
+  - **Q24, the release:** v1.3.0 carries #165. Brett's answer of 2026-11-08 gave v1.2.0 #165 and T017's five fixes, #290,
+    #291, #295, #301 and #302, and moved the other issues milestoned v1.2.0
     to v1.2.1 ("set 1.2.0 for 165 alone, 1.2.1 for the rest", then "let
     T017 ride in 1.2.0, retitle #343": comments 6721648587 and
-    6721870837). Eagle and Raven install by `./setup.sh` (Brett's "1a 2b",
-    2026-11-12; lane 3, comment 6814260122), and check 1 there rests on the re-vendor's package (Brett's "Vendor release as package (Recommended)", 2026-11-13).
+    6721870837); his "v1.2.0 now, 007 later (Recommended)" (2026-11-10T13:22:23Z; comment 6768477034) then shipped v1.2.0 without #165, which v1.3.0 carries. Eagle and Raven install by `./setup.sh` (Brett's "1a 2b",
+    2026-11-12; lane 3, comment 6814260122), and check 1 there rests on the re-vendor's package (Brett's "Vendor release as package (Recommended)", 2026-11-13). Every other host shell installs by pipx v1.3.0, with the root one-liner only as a stopgap (operations.md, act 3, step 5).
 - **Still open** (the design's "Open questions" at W):
   - The expiry of any outage Brett declares, which he names later. No test
     reads it: AT-D20 expires a declaration with a UTC already past.
@@ -1885,8 +1885,8 @@ rename.
   - a write by another process between two requests is in the next answer;
   - no environment a session inherits carries a database URL or password
     (Amendment 14(c));
-  - the service's answer time is recorded against SVC-10's 50 ms on the
-    fixture register, with today's direct guard beside it (P5). Every
+  - the service's answer time is recorded beside SVC-10's 50 ms on the
+    fixture register, with a warning past it and never a failure, since SC-005 gates the 50 ms at the release, in 007's T343 run on its scratch database (section 5.4), and with today's direct guard beside it (P5). Every
     answer crosses to the database (SVC-7), so act 3 records it against
     Brett's managed PostgreSQL with its RTT and Query count (section 5.6);
   - the `CLAUDE_NO_LANE=1` exception still exits 0 before any input
@@ -2563,7 +2563,7 @@ rename.
       "Readers under the refusal"; the phase plan's "D3's refusal").
   - **With the constant flipped,** the same write goes to SQL.
 
-  The readiness check's item fails the first state (P612–617, P626).
+  The readiness check's item fails the first state (P612–617, P626). And T124's cached module (PC-2; FR-064; the sql-register delta's "`lanes-index` starts from its cached module", added since W): a start runs the module's checked-hash cached bytecode, never bytecode whose source has changed, and the module's source where it has no bytecode, with every subcommand's output and exit as before; T347's install places the module and its bytecode beside `lanes-index`, and the release's digest list names the module and not its bytecode (lane 3, commit 18's post, on spec#17's re-review).
 - **Phase and kind.** N and W. It stays in the suite after G, which builds the
   refusing state from the flipped one. The refusing state is FP, so it always
   runs. The flipped state is RE: its write is a `register snapshot` reply
@@ -2571,7 +2571,7 @@ rename.
   `design.md` S1) and a commit, which a fake cannot fabricate faithfully.
 - **Fixture.**
   - Two test copies of `lanes-index` under the test's temporary directory:
-    one with the constant refusing, one with it flipped (open point 3).
+    one with the constant refusing, one with it flipped (open point 3). For T124's cases, the refusing copy, with `lanes_index_main.py` beside it as `flipped_copy` places it (T124), on the refusing state's configuration, and a checked-hash `.pyc` (PEP 552) that the test writes where T124's launcher reads the module's bytecode, built from a marker module that prints `cached-marker` and exits 0, and carrying the hash of the real module's bytes (`importlib.util.source_hash`); for T347's, an install by `openRepoTools --install` into a temporary directory, and the digest list `release.yml` builds.
   - The checkout's `lanes-edit.sh`, pointed at each copy by the means it
     already uses to find the `lanes-index` executable
     (`code/lanes-edit.sh:2554–2568`).
@@ -2657,7 +2657,7 @@ rename.
   - `test_a_primary_write_forks_render_checkout_on_the_lane_checkout_detached[plain|no-fetch-set|index-off-set]`
     (the phase-W stub test of the render fork's argv);
   - `test_readers_under_the_refusal_answer_the_78_as_a_failed_read[<read>|listing|session-start|guard|projection]`.
-  - The readiness item is in P8's test (below).
+  - The readiness item is in P8's test (below). **T124's cases** (lane 2's T282, in this module; FR-064), each starting the refusing copy's `lanes-index mode`, whose source exits 78 with the text above: `test_a_start_runs_the_cached_module_whose_checked_hash_matches_its_source`: with the marker `.pyc` in place, the start prints `cached-marker` and exits 0, which only the cached bytecode can do; `test_a_start_never_runs_cached_bytecode_whose_source_has_changed`: with the same `.pyc` and one byte then added to the module, the start never prints `cached-marker`, and exits 78 with the text, as the source does; `test_a_start_runs_the_module_source_where_it_has_no_bytecode`: with no bytecode where the launcher reads it, as after an install that could not write it, the start exits 78 with the text, its stdout, stderr and exit equal to those of a start with the module's own valid bytecode. **T347's cases,** in its own modules: `test_install_places_the_cached_module_and_its_checked_hash_bytecode_beside_the_launcher` (`tests/test_install_payload_source.py`): after the install, `lanes_index_main.py` is beside `lanes-index`, byte for byte the payload's, and its bytecode, where T124's launcher reads it, has a header that marks it checked-hash (flags 0b11) and carries `importlib.util.source_hash` of the module's bytes and the magic number of the interpreter `lanes-index` runs on; `test_the_release_digest_list_names_the_cached_module_and_not_its_bytecode` (`tests/test_release_workflow.py`): the digest list names `lanes_index_main.py` beside `lanes-index` and `lanes-edit.sh`, and names no `.pyc`.
 - **Run time.** About 1–3 s for 14 verbs in the refusing state and one flipped
   write, about 1–2 s more for the readers' cases, and about 1 s for each
   of the render fork's three.
@@ -8047,9 +8047,9 @@ follows.
   - Act 3's rows come after the PR merges, so they are not in its body.
     They are recorded where lane 3 places them, and Q29's decision cites
     them (section 5.6).
-- **The 50 ms.** SVC-10 states it on the suite's fixture register. There it
-  is recorded, and the test prints a warning when the median exceeds it,
-  without failing, and it gates nothing there, since the spec puts its gate on another
+- **The 50 ms.** SVC-10 states it against the scratch database of 007's T343, which gates it (below). On the suite's fixture register it
+  is CI's figure, T237's, the served median of the whole hook: recorded, with a warning when it exceeds 50 ms,
+  without failing, a warning only and never a gate there, since the spec puts its gate on another
   register. Against the Azure server every answer is at least one round
   trip to the database (SVC-7), and lane 5's netem run puts it over 50 ms
   above an RTT of about 40 ms (#165 6722703424). Act 3 records it beside
@@ -8443,7 +8443,7 @@ subsections at V and W, under the headings it had at `21f0191c`. Ten are rows
 below. The other two, the agreement tests and the manual, are this plan's
 tests and documentation, and the last five rows are Brett's answers of round
 1 and Q1's. The `P<n>` ranges stay at `21f0191c`, as "How it cites" says. W
-changed the proposal's test 10, where the 50 ms is now the fixture's, and its
+changed the proposal's test 10, where the 50 ms then became the fixture's (since the follow-up's commit 17 its gate is 007's T343 on its scratch database, and the fixture's figure only warns), and its
 answers to Q22, Q24, Q28 and Q29. Its twelve subsections keep their names.
 
 | Requirement | Tests |
@@ -8504,7 +8504,7 @@ at commit I. Four marks say what changed:
 Each row's tests are written against the text at W. 79 of the 88 have tests;
 nine have none or only a partial one (below).
 
-`specs/sql-register/spec.md`, 69 requirements:
+`specs/sql-register/spec.md`, 69 requirements at W. A seventieth, "`lanes-index` starts from its cached module", added in the follow-up's commit 18, has no row of its own, so that no line moves: its tests are AT-14's T124 cases, `test_a_start_runs_the_cached_module_whose_checked_hash_matches_its_source`, `test_a_start_never_runs_cached_bytecode_whose_source_has_changed` and `test_a_start_runs_the_module_source_where_it_has_no_bytecode`, and T347's two, `test_install_places_the_cached_module_and_its_checked_hash_bytecode_beside_the_launcher` and `test_the_release_digest_list_names_the_cached_module_and_not_its_bytecode`, with T124's own verify for its unchanged subcommands:
 
 | Requirement | Tests |
 |---|---|
