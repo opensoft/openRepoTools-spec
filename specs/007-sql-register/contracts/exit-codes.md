@@ -303,6 +303,7 @@ Each lane adds its callers' arms below, in a section of its own, keyed to Y and 
 | Process | Exit | When, and the record after |
 |---|---|---|
 | `guard-bind <uuid>`, the outer | 2 | its usage, not one argument; an argument that is no safe name for `offers/<uuid>`; no record there, or one it cannot open; a record not in `mode=binding`; or one that already holds a `pid`, an outer before it. Nothing ran, and the record is as it was |
+| | 2 | since T502's part 21, at its start: the record was gone at its start rewrite's test that it exists or at its open, or no longer said `mode=binding`. Nothing was written to it, and nothing ran: no record is made, and an offer that took the record's place is left as it is (bind-record.md sections 1 and 7) |
 | | 1 | the record could not be rewritten at its start. Nothing ran, and the guard reads the `binding`, which holds no `pid`, as bind-record.md section 5 gives |
 | | 1 | the outcome could not be written: its rewrite's 1, an I/O failure. This rewrite did not change the record; it is as another writer may have left it. The outcome is in its `.out` only, and its facts file is removed (bind-record.md section 1) |
 | | 0 | the outcome is written: the bind's own code is the record's `rc`, a `TERM` its trap caught included, and its facts file is removed (bind-record.md section 1) |
