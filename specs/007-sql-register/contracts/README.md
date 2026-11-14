@@ -3,11 +3,11 @@
 This directory holds the contract files that plan.md lists. Each is written
 by the lane that owns it, and lands before the code that rests on it.
 
-## `register-cli.md`: lane 1's contract draft 4.27, keyed to Y
+## `register-cli.md`: lane 1's contract, draft 4.28, keyed to Y
 
-[register-cli.md](register-cli.md) is lane 1's contract draft 4.27, keyed to
-Y (`a6497d00`), copied here by lane 3 as it is, in 007's follow-up spec PR, on
-2026-11-12. It replaces draft 4.20 with lane 3's two words (B16), which replaced draft 4.19 (B15), which replaced draft 4.16, copied in at B13's
+[register-cli.md](register-cli.md) is lane 1's contract, draft 4.28, keyed to
+Y (`a6497d00`): lane 1's draft 4.27, copied here by lane 3 as it is, in 007's follow-up spec PR, on
+2026-11-12, with lane 3's K9 made in it on 2026-11-14 (#165 6870473237). Draft 4.27 replaced draft 4.20 with lane 3's two words (B16), which replaced draft 4.19 (B15), which replaced draft 4.16, copied in at B13's
 second commit (`a38d85a9`); draft 4.15 came in at its first commit
 (`95c19400`), draft 4.14 at round B12b, draft 4.13 at
 round B11, draft 4.12 at round B10, part 1, draft 4.11
@@ -15,18 +15,18 @@ at round B9, part 1c, draft 4.10 at round B6, draft 4.7 at round B5, draft
 4.6 at round B4, draft 4.5 at round B3, draft 4.4 at fix round B2, draft 4.2
 at fix round B, and draft 4.1 at assembly phase A.
 
-- **Source:** lane 1's contract draft 4.27, `contracts-register-cli.v4.27.md` (#165 6834642319),
+- **Source:** for draft 4.28, lane 1's contract draft 4.27, `contracts-register-cli.v4.27.md` (#165 6834642319),
   B16's file with lane 1's H1 to H3 and J1 to J4, so with lane 3's ruling for E1 (#165 6807694145), lane 3's two words,
-  F7 `reader_url=` (#165 6813103156) and F6 `Y:5059`, AT-P3's host cap (lane 3, #165 6814260122), and J1 to J4: batch h's text 1 at :379 (#165 6814531692), the guard's quote as built at :768 (lane 3's ruling (a), #165 6826938656), and lane 5's items 30.2 at :451 and 30.4 at :768. Since draft 4.23 it also holds lane 1's F-a, K1 to K3 (draft 4.25; #165 6828035829, 6828734639), K5 and K6 (draft 4.26; lane 1's U5 review of T511's draft 9, #165 6833947627), and K7 and K8 (draft 4.27: `rename-lane`'s move of a lane's log named as a rename the verb makes, at :492 and :932; #165 6834413025, 6834642319).
+  F7 `reader_url=` (#165 6813103156) and F6 `Y:5059`, AT-P3's host cap (lane 3, #165 6814260122), and J1 to J4: batch h's text 1 at :379 (#165 6814531692), the guard's quote as built at :768 (lane 3's ruling (a), #165 6826938656), and lane 5's items 30.2 at :451 and 30.4 at :768. Since draft 4.23 it also holds lane 1's F-a, K1 to K3 (draft 4.25; #165 6828035829, 6828734639), K5 and K6 (draft 4.26; lane 1's U5 review of T511's draft 9, #165 6833947627), and K7 and K8 (draft 4.27: `rename-lane`'s move of a lane's log named as a rename the verb makes, at :492 and :932; #165 6834413025, 6834642319). Draft 4.28 adds lane 3's K9 at :5 and :495: the seam's `msg` held as files mode's `git commit -m` stores it (lane 1, #165 6869810000; lane 3, #165 6869860086 and 6870473237; W45-SEAM's words, lane 4, #165 6870452610).
 - **sha256:**
-  `7959603a85d8ab1f01f8d8262ec186a584d7e2a9393ad7769829f57d68e38f3c`, 1023
-  lines, lane 1's file as it is. Drafts 4.3 to 4.11 keep every
+  `b65972363b49912b47744e6c81e182ca0eb123979e95ce713f2c780d05f62ced`, 1023
+  lines, lane 1's file with lane 3's K9. Drafts 4.3 to 4.11 keep every
   line number of draft 4.2; draft 4.12 keeps them to :637 and moves each
   later line down one; draft 4.13 keeps every line number of draft 4.12,
   draft 4.14 every line number of draft 4.13, draft 4.15 every line number
   of draft 4.14, adding §10's ten lines after the last, draft 4.16 every
   line number of draft 4.15, draft 4.17 every line number of draft 4.16,
-  adding §11's 49 lines after the last, and drafts 4.18 to 4.27 every line
+  adding §11's 49 lines after the last, and drafts 4.18 to 4.28 every line
   number of draft 4.17.
 - **What draft 4.19 changes:** it is draft 4.18 (`09be7c2c…`, #165
   6784210333) with lane 1's E1 and E2 (#165 6798746256), each inside an
@@ -186,7 +186,7 @@ at fix round B, and draft 4.1 at assembly phase A.
   660 lines, #165 6745214166) replaces it for 007's tasks, and keeps its
   line numbers: it is block v4.4 (`a4ce9e3b…`, #165 6742356416) with T119's
   check 11 and its tests naming the prod OpenXPKI's root (:386, :388). The
-  contract, at draft 4.27 as at 4.1, gives no restore order. Block v4.11
+  contract, at draft 4.28 as at 4.1, gives no restore order. Block v4.11
   (`625a0b84…`, 667 lines, #165 6754645319) replaces v4.10 for 007's tasks
   since round B9, part 1c, and keeps its line numbers to :660: it pairs
   with draft 4.11 and takes round B8's changes to lane 1's lines (:142,
@@ -231,7 +231,7 @@ at fix round B, and draft 4.1 at assembly phase A.
   `register snapshot`, `register commit` and `journal --write-id`, keeps the
   form of the phase plan's interfaces table (Y:4834).
 - **Its landing:** tasks.md's T101 rides the spec PR, since its output is
-  this file, in the spec branch at draft 4.27 (lane 3, #165 6745826156). A
+  this file, in the spec branch at draft 4.28 (lane 3, #165 6745826156). A
   later draft replaces this copy as a fix before the spec PR leaves draft,
   with its own source and digest here.
 

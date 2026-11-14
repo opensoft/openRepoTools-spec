@@ -5105,7 +5105,7 @@ It is a child process, not the frame's subshell (`design.md:568`, `:1705`), beca
 **What replaces `:2335–2500`:**
 1. An empty `diff --cached` is no change: the seam returns 0 with no handshake, as `:2339–2340` does today.
 2. Every staged path must be in this write's pathspecs plus `LOG_RENAMED_FROM` (`:2370–2371`'s check, extended to every write) and in Q18(A)'s render set; otherwise exit 2 naming the path, nothing sent.
-3. The seam writes `changes.tsv` (status, path, the base blob at `n`, the new blob, from `git diff --cached --no-renames --raw HEAD`), the new images from the index, and `msg`, holding `$msg` as files mode's `git commit -m` stores it: cleaned once by `git stripspace`, git's default cleanup (`whitespace`), with no final LF of its own, so both modes store the same message (lane 3's ruling, #165 6859073786; lane 1, #165 6869810000).
+3. The seam writes `changes.tsv` (status, path, the base blob at `n`, the new blob, from `git diff --cached --no-renames --raw HEAD`), the new images from the index, and `msg`, holding `$msg` as files mode's `git commit -m` stores it: cleaned once by `git stripspace`, git's default cleanup (`whitespace`), with no final LF of its own; files mode's commit message ends in the one LF git adds, which the twin test allows (lane 3's ruling, #165 6859073786; lane 1, #165 6869810000; lane 4, #165 6870452610).
 4. The handshake.
 
 | Site | Caller | What changes at the site |

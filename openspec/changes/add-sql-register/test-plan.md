@@ -577,7 +577,7 @@ rename.
     - every path outside those four is unchanged.
   - **The journal.**
     - It gains exactly one entry, at the old head plus one.
-    - Its message equals the twin's commit message, byte for byte, but `rename-lane`'s on primary, which is the message the design names under Q13(a) (Y:3451), since the handoff is not in its entry (lane 3, #165 6859179515).
+    - Its message equals the twin's commit message less that message's one final LF, byte for byte, but `rename-lane`'s on primary, which is the message the design names under Q13(a) (Y:3451), since the handoff is not in its entry (lane 3, #165 6859179515; lane 4, #165 6870452610).
     - It carries a `write_id`, unique in the journal.
   - **The rows.** Every row the entry touched reads `primary` as its last
     writer's mode.
