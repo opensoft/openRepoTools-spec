@@ -3564,7 +3564,7 @@ trip and starts, and never below the figure the row gives; a figure at `c` =
 |---|---|---|---|---|---|
 | the guard's direct read | `c` | 1000 ms | 1500 ms | cut to the parse's start line, `T0 + 3.75 s`, so never above 3.75 s, or to `T0 + 3.65 s` where an unexpired declaration names this database (SVC-8, SVC-12) | 2, also where a lost SYN, or a whole-file fetch, at a remote RTT reaches the cut (SVC-8); but where an unexpired declaration that is not a rollback's names this database, a read cut at its cap, `T0 + 3.65 s`, is 69 with `.outage`, so that the mirror path starts by `T0 + 3.75 s` (SVC-12; the floor below gives that read at least 0.5 s; contract §3.6 :776; lane 3, #165 6807694145) |
 | the service's connection, per request | `c`, in the background only, outside any share (SVC-6) | 150 ms | 180 ms | 200 ms, or the workstation's round trip plus 100 ms where it is over 100 ms (SVC-6), inside the client's wait, the timer plus 100 ms | `unavailable`, and the client reads directly (SVC-8); `refuse db <cause>` only where the refusal is definitive (SVC-7) |
-| the guard's answer 2 | — | — | — | nothing on the hook's time: the guard records the bind in the session's offer file, starts it as a `setsid` child, `guard-bind`, and exits 2 with "BINDING"; the bind runs with a writer's bounds and D7's deadline, the whole bind, `guard-bind`'s body under one `timeout`, bounded by the phase plan's computed sum, `bound_s`: 500 s at `c` = 2 and 530 s at `c` = 3 with one address, and 550 s and 610 s with two (560 s and 620 s with the service) (SVC-8; the phase plan's "Answer 2's detached bind") | as a writer's; the guard reports the outcome from the offer file's record, by the phase plan's eleven-case table |
+| the guard's answer 2 | — | — | — | nothing on the hook's time: the guard records the bind in the session's offer file, starts it as a `setsid` child, `guard-bind`, and exits 2 with "BINDING"; the bind runs with a writer's bounds and D7's deadline, the whole bind, `guard-bind`'s body under one `timeout`, bounded by the phase plan's computed sum, `bound_s`: 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `:5483`), and 550 s and 610 s with two (560 s and 620 s with the service) (SVC-8; the phase plan's "Answer 2's detached bind") | as a writer's; the guard reports the outcome from the offer file's record, by the phase plan's eleven-case table |
 | the mode query, `lanes-index mode`, which reads only the configuration (D3) | — | — | — | 2 s | the query is killed, and the verb runs in files mode with a warning naming the timeout (F8); on a SQL estate the marker check then refuses with 69 (lane 3's ruling, #165 6711028142) |
 | a writer's snapshot, and `act-begin`'s (the phase plan's "The acts and their expectations") | `c` | 2000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | a failed read: 69, or in doubt where an earlier commit of the same write was |
 | a writer's commit | `c` | 2000 ms | 5000 ms | `N_a`·`c` + 6 s: 8 s at `c` = 2, 9 s at `c` = 3 | in doubt |
@@ -4027,8 +4027,8 @@ primary ones.
   driver, and `dependencies = []`
   stays (the spec's third requirement).
 - **One request at a time on it.** The service handles connections
-  concurrently but sends one query at a time; each query ends with an `\echo`
-  of a per-request marker, and the service reads `psql`'s output until it.
+  concurrently but sends one query at a time; each query ends with a `\warn`
+  of a per-request marker and `:SQLSTATE`, which `psql` prints on its standard error, and the service reads `psql`'s output until it (ERR-57: the frame said `\echo`).
 - **One round trip per request.** The request's statements, from `BEGIN
   ISOLATION LEVEL REPEATABLE READ READ ONLY` to `COMMIT`, are joined with
   psql's `\;`, so `psql` sends them as one query. The query asks for the
@@ -4356,7 +4356,7 @@ with "BINDING", and the bind runs detached,** with a writer's bounds and D7's
 ("Answer 2's detached bind"; lane 3's acceptance, #165 6708889286): the guard
 rewrites the session's offer file to `mode=binding`, starts `lanes-edit.sh
 guard-bind` as a `setsid` child with the hook's descriptors closed, bounded
-over its whole body by the phase plan's computed `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, prints "BINDING" and exits 2. The offer file is the bind's record, and
+over its whole body by the phase plan's computed `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `:5483`), prints "BINDING" and exits 2. The offer file is the bind's record, and
 the bind counts as live only while its pid is live with the start time the
 record holds (`pid_start_of`), where it holds one: the pid is always there, and the start time only where it can be read (lane 3's rulings 19 and 22, #165 6879754335). While it runs, and once when it ends, the guard
 answers each prompt of that session from the record by an eleven-case table:
@@ -4587,7 +4587,7 @@ The frame review (`REVIEW-frame-20261102.md`, sha256 `0689dde8…`, section
 | The record walk: 410 ms cold, 58–96 ms warm | probe F, by count only |
 | The four parts' figures | probes C, C2 and C3, on synthetic records and a synthetic register |
 | R1's 14.7 ms and 0.97 ms (one write); ADV-C4's timeouts | the proposal and `clarifications.md`, not re-measured |
-| **Not shown:** the whole of SVC-6: `psql` on pipes, the `\echo` framing, the `SIGINT` cancel, and the 150, 180, 200 and 100 ms values | no PostgreSQL on py-bench until 1A; lane 2's fixture |
+| **Not shown:** the whole of SVC-6: `psql` on pipes, the `\warn` marker's framing (ERR-57; the frame said `\echo`), the `SIGINT` cancel, and the 150, 180, 200 and 100 ms values | no PostgreSQL on py-bench until 1A; lane 2's fixture |
 | **Shown, since lane 4's hook probe:** that a detached child started from a hook in a session of its own (`setsid`) outlives the hook under Claude Code 2.1.319, which covers the service's start (SVC-4, `start_new_session=True`) and answer 2's detached bind. At the hook's timeout Claude Code sends SIGTERM to the hook's whole process group, which a `setsid` child is outside, and a `( … & )` child in that group dies; on a normal exit it kills nothing; and it does not wait on pipes a child inherits. **Not shown:** an escalation to SIGKILL after the SIGTERM, which cannot reach a `setsid` child either | lane 4's hook probe: `claude -p` with a project-only `UserPromptSubmit` hook, five runs (`runs-165/HOOKPROBE-report.md`, sha256 `373992bb…`, R1, R1b, R2 and R3; the phase plan's "It survives the hook"), and PP-D's P1 to P4 for group and pid kills |
 | **Not shown:** a socket on the shared disk reached from another container; `flock` on it from two containers | a bind in one container and a connect from the other |
 | **Not shown:** `SO_PEERCRED` with a second uid or across pid namespaces; macOS's `LOCAL_PEERCRED` | one uid and one namespace here; SVC-2's owner file does not rely on them |
@@ -4818,7 +4818,7 @@ written before these rulings, so a row may still read "lane 3" or "open":
   by `guard-bind` from its steps' timers: 200 + 2`D` + 3`S` + 3`C` + 3`R` +
   3`T_L` + 2·max(`v`, 2 s) + (`N_r` + 1)(`T_r` + `w_s`), plus one read and the
   10 s of `-k`, rounded up to 10 s: 500 s at `c` = 2 and 530 s at `c` = 3 with
-  one address, with or without the service, and 550 s and 610 s with two; with
+  one address, with or without the service, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `:5483`), and 550 s and 610 s with two; with
   `LANES_GIT_TIMEOUT=45` in the child, accepted as arithmetic; phase 1's tests
   measure the child's bind against it.
 - **Rows 18, 22 and 40** are Brett's, and go to him with the spec PR (the
@@ -5473,7 +5473,7 @@ The record is the offer file itself, `$CLAUDE_CONFIG_DIR/lanes/offers/<session u
 |---|---|
 | `mode` | `binding`, `bound`, `bind-failed`, or `name-drift` once the offer is restored |
 | `from`, `to`, `session`, `uuid`, `window`, `pane` | the offer's identity, as today's file has it (`:10965–10973`) |
-| `bind`; `started_utc`, `bound_s`, `bounded`, `deadline_epoch` | the attempt, 1 to 3; the start; the bound, computed at the start by the sum below: 500 s at `c` = 2 and 530 s at `c` = 3 (`LANES_BIND_BOUND_S` for tests); `yes` where `timeout` exists, else `no`; the start plus `bound_s` plus 5 s, the 5 s being for the outer to write the outcome after `timeout`'s `KILL` |
+| `bind`; `started_utc`, `bound_s`, `bounded`, `deadline_epoch` | the attempt, 1 to 3; the start; the bound, computed at the start by the sum below: 500 s at `c` = 2 and 530 s at `c` = 3, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `:5483`; `LANES_BIND_BOUND_S` for tests); `yes` where `timeout` exists, else `no`; the start plus `bound_s` plus 5 s, the 5 s being for the outer to write the outcome after `timeout`'s `KILL` |
 | `pid`, and `pidstart` where `pid_start_of` can read it; `host`, `container` | the child; `LANES_WORKSTATION` (else the hostname) and `LANES_CONTAINER` |
 | `out`; `act`, `write_id`, `generation`, `not_after`, `write_lane`, `args_sha256` | the attempt's output file; phase 2 only, `act` being the guard's base `<act-id>@<n>:<generation>`, from the `n` and `generation` of the prefetch that made the offer. The other five are copied by the outer when it writes an outcome other than 0, or by the guard at the stale row where the outer left none ("What the guard answers"). It copies them from `start-record`'s pending record, the newest whose `verb` is `start-record` and whose `session` is this transcript's uuid: its `write_id`, `generation`, `lane` (as `write_lane`) and `args_sha256`, and the largest `not_after` among its `call` lines. They are copied, never derived from `to`, because `start-record` writes `lane-start`'s canonical lane. Where that record holds no `call` line, or there is none, the outer copies nothing: no call of the write can have been sent ("The pending record") |
 | `rc`, `why`, `note=` lines, `ended_utc` | the outcome, with one `note=` per act still owed and its command |
@@ -6050,7 +6050,7 @@ Every item in "What lane 4's phase plan must confirm for S1" (`design.md:1823–
 | 26 | Question 11: `code/lanes-index:1315` | `:3557–3559`, `:3293–3296` | Phase 1, "Question 11" | The URL moves to `PG*` variables in `_env`; every connection, the admin's too, goes through the environment; phase 1's first PR |
 | 27 | `find_write` in the in-doubt lookup | `:3559–3560` | Phase 2, "The in-doubt rule"; "Answer 2's detached bind", reruns | Yes, v2.6's form, at every non-0 end after a doubt: found, 0 and the tail once; absent with the lock held, the code the last attempt earned; otherwise (55P03, LR011, or no answer) 3 |
 | 28 | The generation in the printed rerun | `:3560` | Phase 2, "The pending record" | `LANES_WRITE_GENERATION=<generation>` beside `LANES_WRITE_ID`; `commit_write` refuses another generation with LR007 |
-| 29 | How the detached bind runs, and what the guard answers meanwhile | `:3560–3562`; 6579459518 | "Answer 2's detached bind" | `guard-bind` in a `setsid` child with the hook's descriptors closed, recorded in the offer file and bounded over its whole body by its computed `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3; the guard answers 2 from an eleven-case table, "BINDING IN PROGRESS" while it runs |
+| 29 | How the detached bind runs, and what the guard answers meanwhile | `:3560–3562`; 6579459518 | "Answer 2's detached bind" | `guard-bind` in a `setsid` child with the hook's descriptors closed, recorded in the offer file and bounded over its whole body by its computed `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `:5483`); the guard answers 2 from an eleven-case table, "BINDING IN PROGRESS" while it runs |
 | 30 | `lane-start`'s bind as one verb, one transaction carrying F5's expectations, or the reason it cannot | `:3562–3564`; 6579459518 | "Answer 2's detached bind", "The bind as one verb" | `start-record`, one transaction with the union of W2, W6 and W7; the stamp, the sidecar and the lane left stay outside, each for a stated reason |
 | 31 | The final-trailer mechanics | `:3564–3566` | The prototype, "F29" | `lanes-index` composes the message: `Register-Seq: <k>` appended to a final trailer block, or as a new last paragraph; no `interpret-trailers` |
 | 32 | The `flock`'s proof | `:3566–3567` | Phase 3, "The render lock"; the prototype, [L4-4] | After a SIGKILL, `flock` let the next render push seqs 2..4; the `mkdir` mutex left the mirror at seq 1 with the head at 4 |
