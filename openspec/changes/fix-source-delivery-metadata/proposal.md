@@ -40,6 +40,12 @@ code/spec merges and fresh canaries on 2026-11-13; assembly pins stay excluded.
 - Review and qualify the code/spec PRs with full ordinary/reuse CI, verify the
   actual main result, then run a fresh independent two-member canary. Preserve
   the failed initial attempt as failed evidence; never rerun it into acceptance.
+- R6 sources75/76 passed fast-only and genuine two-member admission, but draft77
+  explicitly refused at candidate-reread while Mergify edited its description
+  in the same second. The exact original differing field is not logged. Reproduce
+  authenticated final-view movement and permit only bounded fresh re-observation
+  without proof, never normalized acceptance. Keep hard identity/proof refusals,
+  raw equality for accepted proof, the existing retry budget and gate digest.
 
 ## Capabilities
 

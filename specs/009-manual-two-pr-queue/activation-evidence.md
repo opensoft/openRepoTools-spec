@@ -917,3 +917,68 @@ Only after real replacements75/76 existed, unchanged old R5 PR71/72 were checked
 open/unmerged, authored by this operator and explicitly dequeued with neutral
 completed queue checks, then closed as superseded. Their remote branches still
 resolve to originalc5d0a4e/41e3f3a. No branch/history deletion or requeue occurred.
+
+## R6 stopped — final candidate consistency reread refused
+
+Main baselinea15a6b54f4b8b6ebb9e7ced8aa9d2b8cdd4e078d was fully qualified:
+actual-main43542918725SUCCESS15/15, both complete5418 inventories exactly equal
+reviewed source. Fresh PR75/76 passed fast-only source CI and accepted real
+writer-authenticated exact-head local reviews. Production source preflight
+passed both. This is source evidence, not heavy/landing acceptance.
+
+Queue requests6870488938/6870489292 were posted02:50:11Z/02:50:13Z, two seconds
+apart. Mergify confirmed both tested together. Actual draftPR77:
+head d1b8a63f4a6b1339b3570aa09e81a40de778daf0,
+branch mergify/merge-queue/900f58a5f7, basea15a6b5, created02:50:41Z.
+One actual first-attempt heavy caller43548498000 was observed for that head.
+
+Actual admission was independently validated before stopping, using unchanged
+trusted production validators and the real archive bytes:
+
+- Artifact14095012836, namecandidate-admission-d1b8a63f4a6b1339b3570aa09e81a40de778daf0-a1,
+ 574bytes, digestsha256:ae25793c4356ec93fa571ef9dde99af49c7e679987d6bc22712d2e88e908f767.
+- Record digestc5933cb1d9d13c3bf4456a7a034a13046881d2f124e8975c0527ed8e68cbaed0.
+- Ordered member75/624986b, prefixefd06269d1d4aaa78d608b7e99e8076a4e7ed3ad,
+ tree0239db2b13d73d38e526904b1ac705db6249206d.
+- Ordered member76/4ec0fba, finalprefixd1b8a63f, finaltree94ddb2eab4cee5fb6e6213b89775237b4fa97302.
+
+This proves genuine two-member admission only. The qualified artifact, complete
+heavy result and landing/no-duplicate gates did NOT complete.
+
+Candidate ordinary run43548502984, routejob132305281204, logged at
+2026-11-14T02:51:19.8039496Z:
+candidate / candidate-reread, then full / omit_full:false.
+Actual full guard/package/shards started alongside the held heavy run.
+Therefore this is FAILED efficiency acceptance, irrespective of later cancellation.
+
+The diagnostic identifies the final compound candidate PR/branch/caller reread,
+not which original raw field differed. Routing step ran02:50:51Z–02:51:19Z.
+Complete four-entry edit history shows initial description02:50:41Z,
+Sourcery edit02:50:50Z, Mergify edit02:51:19Z and stop-status edit02:54:07Z.
+All diffs are nonempty. The coincident edit is evidence of a live metadata race,
+not proof of the sole historical differing field. No body values were logged.
+
+After exact run/head/branch/path/event/attempt and source/candidate identity
+guards, only owned43548502984 and43548498000 were cancelled. Both are confirmed
+terminalcompleted/cancelled. Dequeue comments6870538110/6870538429 were posted
+02:53:48Z/02:53:49Z. Both sources remain open/unmerged, no queued label, with
+completedneutral "Dequeued — pull request manually dequeued" checks. Draft77 is
+closed/unmerged. Main remains exacta15a6b5. No branch or history was deleted.
+Cancellation-induced aggregate failures/skips are not demonstrated assertion failures.
+
+Next: reproduce the authenticated final-read transition; retain strict complete
+fresh proof and full fallback, and consider only the existing bounded no-proof
+retry for an authenticated race. Add field-name/category-only diagnostics and
+test the route and final gate. Qualify any repair through exact-head local review,
+full ordinary/reuse inventories, checked source merges and actual main before
+genuinely fresh R7 PRs/receipts. Never requeue or rerun R6 into clean acceptance.
+
+Reconciles https://github.com/opensoft/openRepoTools-spec/issues/26.
+All running benches, lanes1–5, tools, assembly pins, settings/app/paid access,
+active plan and releases remain unchanged. No bypass, tag or live success claim.
+
+The retained admission proof JSON canonical digest independently matches the
+record validated from the live archive before cancellation. Failure evidence is
+also preserved in spec issue26/comment6870634137 and source75/comment6870634669,
+source76/comment6870635246. CI-METADATA-16/T062-T064 govern the next repair and
+genuinely fresh retry; no exact first field or completed heavy proof is invented.

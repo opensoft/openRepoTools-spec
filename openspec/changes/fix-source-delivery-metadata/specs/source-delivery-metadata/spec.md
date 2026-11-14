@@ -137,3 +137,35 @@ including descriptions. Invalid description types or uncertain proof retain full
 #### Scenario: Another identity or a final description reread changes
 - **WHEN** an initial non-description identity fails or the current body changes later
 - **THEN** the existing full refusal SHALL remain without normalization of live proof
+
+### Requirement: Authenticated final candidate movement grants only bounded re-observation
+After all initial candidate identity, tested Git, fixed scope, real admission
+and independent live-source/review evidence qualify, a final changed raw PR or
+caller view MAY use only the existing bounded no-proof wait when its current
+identity remains valid. Every fresh observation SHALL revalidate all evidence.
+Accepted proof SHALL retain exact final raw equality; raced snapshots SHALL NOT
+be normalized, cached or combined into acceptance. Changed branch heads,
+invalid/moved identities, malformed descriptions/hints, failed/foreign/rerun
+callers, invalid source/artifact evidence and generic API failures retain full
+refusal. No per-invocation attempt/delay bound, permission or artifact schema is
+increased; candidate gate uses the existing limit without a nested budget.
+
+Candidate omitted-work gate verification MAY use the same bounded fresh reads
+but SHALL still match the original route mode and proof digest. Exhausted route
+observation retains full; exhausted or changed gate proof refuses. Source gate
+semantics remain unchanged. Diagnostics SHALL contain only fixed categories or
+field names, never values. This refines final-race handling above without
+relaxing equality required for accepted proof or any hard identity/ref refusal.
+
+#### Scenario: Valid candidate metadata or caller progress moves during verification
+- **WHEN** an authenticated still-valid view changes at its final consistency read
+- **THEN** return no proof or omission, revalidate afresh within the existing bound,
+  and accept only a later independently stable complete proof
+
+#### Scenario: A fresh view is invalid or the wait never stabilizes
+- **WHEN** identity/proof validation fails on re-observation or the bound is exhausted
+- **THEN** no omitted-work success SHALL be granted; route remains full and gate refuses
+
+#### Scenario: Candidate gate obtains a different proof after waiting
+- **WHEN** the later proof differs from the original successful route mode or digest
+- **THEN** the gate SHALL refuse rather than silently substitute the new proof

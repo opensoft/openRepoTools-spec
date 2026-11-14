@@ -355,3 +355,15 @@ with exact reviewed trees. Actual-main43542918725 remains in progress. R6A624986
 and B4ec0fba are only local independent preparations with exact-bundle focused
 QA19/27/new8passing0skip, not published PRs, receipts or queue authority. Main,
 fresh-event, member/heavy/tree/no-duplicate and adoption gates remain pending.
+
+### R6 authenticated final-read movement — CI-METADATA-16 (2026-11-14)
+
+Draft77 explicitly logged candidate-reread after genuine two-member admission;
+duplicate full jobs started. The exact raw field is unknown. A Mergify body edit
+occurred in the same second. The owned specimen was stopped/dequeued before
+landing; preserve R6 as failed efficiency evidence. Standing scoped repair
+approval covers this follow-up, not any excluded resources or weaker proof.
+
+- [x] T062 [O] Record exact R6 source/admission evidence, final-reread refusal and terminal safe stop; define no-proof fresh re-observation with unchanged accepted-proof equality and hard refusals — files: governing OpenSpec artifacts, feature009 spec/tasks/evidence — verify: actual run/edit/artifact/stop readbacks and strict OpenSpec; sole checklist
+- [ ] T063 [O] Reproduce authenticated final-read transitions red-first; implement only bounded fresh candidate route/gate observation and privacy-safe mismatch diagnostics, preserving invalid identity/ref/proof and exhaustion refusals — files: code delivery_route.py, focused regressions, cutover runbook and dated activation pointer — verify: canonical CI contracts, no-submodule added cases, unchanged proof/schema/budget and exact-head local expert review
+- [ ] T064 [O] Open paired code/spec repair PRs, fully qualify current-head ordinary/reuse inventories, normally merge checked heads and verify actual-main parity, then run genuinely fresh R7 source/receipt/batch acceptance and reconcile final evidence — files: PRs and canonical evidence — verify: exact source/main identities/skips, actual member/order/one-heavy/prefix/final/no-duplicate proofs; no archive, assembly adoption or R6 rerun
