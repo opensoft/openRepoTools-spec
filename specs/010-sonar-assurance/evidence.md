@@ -497,3 +497,40 @@ prevented a completed review and is not approval. Normal repository checks and
 merge rules governed landing; no admin bypass or queue was used.
 All T001–T012 obligations are complete. This final Spec publication records
 the immutable accepted main revision; it does not advance assembly pins again.
+
+## S05 pin-only PR compatibility follow-up — 2026-11-14
+
+Assembly PR363 at a08e8fe31d45f872160202ac50b8934f9e228a1b failed run
+43594656117 attempt1 after both full suites succeeded. The independent Sonar
+verification raised `Sonar did not report PR coverage eligibility`. Sonar's PR
+API reported zero changed components, no new-code metrics, and overall metrics
+only. The original failed run is retained; SonarCloud's successful scan did not
+replace the required independent verification.
+
+Brett then approved the narrow verifier repair and checked assembly adoption.
+Code PR84 at6e324e27af450de89def44ccd4f7226024af364c accepts the omitted metric
+only with positive event/inventory/local-Git proof of a main-target same-repo
+PR test merge whose entire root diff is modified paired gitlinks/pin files.
+It rejects other paths, modes/types, incomplete pairs, dirty/unknown identities,
+unavailable objects and contradictory component/new-code metrics. No eligibility
+metric is fabricated; main's index/coverage/revision requirements are unchanged.
+
+Local evidence: initial red-first selection31fail/49pass against the old
+verifier; final offline non-root existing-image selection89pass, including40
+new regressions and all49 retained Sonar cases. Local actual-object replay
+verified base4377a702913f3a096eae42131d131bdf4480b0e3,
+heada08e8fe31d45f872160202ac50b8934f9e228a1b and
+merge7f7e4fd833348ad56f5d8fbfd26411ab38211a78 with exactly code/spec and their
+two pin records. This replay is not live Sonar acceptance. The local expert
+panel found no actionable issue at the final code head. An initial hosted
+S6350 finding led to source tightening: Git comparisons now use matching local
+object IDs, while file-derived values are validated expectations only. The
+latest source Sonar check passes; no disposition or threshold/settings change
+was used.
+
+T015 remains pending: fresh complete source CI and normal source/spec landings,
+official coherent PR363 pin update, fresh complete composed/provider/Sonar
+qualification, actual post-merge main verification and fresh exact-target SAFE
+from all affected lane owners before one guarded operating-checkout refresh.
+No running checkout/session/worktree/tool, app access, ruleset, paid plan,
+release/tag or wider efficient CI scope has been changed by S05.

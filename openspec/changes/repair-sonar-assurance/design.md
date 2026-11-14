@@ -19,6 +19,23 @@ Non-goals: queue activation, CI skip optimization, required-check migration, rel
 
 ## Risks / Trade-offs
 
+### Pin-only PR eligibility follow-up (2026-11-14)
+
+Sonar can omit every new-code metric when a root PR modifies only existing leg
+gitlinks and their pin records. An absent metric is not generally zero. Permit
+that response only when Sonar reports no changed components and no new-code
+metrics, and local Git positively proves the exact same-repository main-target
+PR test merge named by the CI event, with parents equal to the event's exact
+base/head and checkout equal to the recorded inventory and CI SHA. Its complete
+base-to-tested-merge diff must contain only modified code/spec gitlinks and
+their corresponding modified regular pin files, in matching pairs. Add/delete,
+rename, mode/type changes, other paths, unavailable objects or uncertain event
+identity refuse the exception. Retain the actual base/head/merge/path proof in
+the receipt; never manufacture an eligibility metric or main coverage proof.
+Explicit eligibility and complete main verification retain their existing
+requirements. Full suites, real measured artifacts and unchanged computed gate
+thresholds still precede acceptance; no scanner/settings/workflow bypass.
+
 - Coverage instrumentation may affect child environments: prove smoke and integration behavior in isolated, unprivileged processes before full CI.
 - Tests copy commands into fixtures: map hits only when source bytes match a committed file exactly.
 - New analysis scope can expose real pre-existing problems: retain failing results and repair or explicitly triage them; keep thresholds unchanged.

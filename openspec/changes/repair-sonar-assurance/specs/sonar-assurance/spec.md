@@ -37,6 +37,14 @@ The assigned Sonar way conditions and thresholds SHALL remain unchanged. Main SH
 - **WHEN** a condition is violated
 - **THEN** the workflow SHALL report failure and retain the failed analysis evidence
 
+#### Scenario: Pin-only PR has no reported coverage eligibility
+- **WHEN** Sonar reports zero changed components and no new-code metrics, and the exact CI-event-bound PR merge changes only existing paired leg gitlinks and regular pin records
+- **THEN** verification MAY accept the absent eligibility metric without claiming complete source indexing or coverage import, SHALL retain the positive exact-merge/path proof, and SHALL still require the computed unchanged gate and both complete measured suites
+
+#### Scenario: Missing metric has no positive pin-only proof
+- **WHEN** a PR changes any other path, lacks trustworthy exact event/merge identity, changes file modes/types, lacks a paired pin/gitlink modification, has unavailable comparison objects, or reports contradictory new-code/component evidence
+- **THEN** missing coverage eligibility SHALL remain a verification failure; main SHALL always require complete indexing, measured coverage and exact server revision
+
 ### Requirement: Auditable security triage
 Each of the twelve recorded findings and any additional reliability/security finding exposed by the complete main analysis SHALL have a source-owner, evidence-backed disposition. Substantiated issues MUST be fixed in the owning source and consumed through ordinary pins. False positives MUST include source-flow and regression evidence; acceptance or scope exclusion MUST NOT hide a real finding.
 
