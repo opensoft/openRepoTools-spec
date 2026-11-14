@@ -351,10 +351,12 @@ task set and its checked landings/fresh retry; no excluded authority follows.
 T061 source qualification and checked landings are complete: code74/spec49 at
 revieweda2b487b/2d88e4c passed ordinary15/reusable17 and all four5418-case inventories
 with53new passes and no baseline/skip drift, then normally landed asa15a6b5/71a5456
-with exact reviewed trees. Actual-main43542918725 remains in progress. R6A624986b
-and B4ec0fba are only local independent preparations with exact-bundle focused
-QA19/27/new8passing0skip, not published PRs, receipts or queue authority. Main,
-fresh-event, member/heavy/tree/no-duplicate and adoption gates remain pending.
+with exact reviewed trees. Actual-main43542918725 passed15/15 and both5418-case
+inventories matched source exactly. Published R6 PR75/76 qualified fast-only and
+received real accepted reviews, then draft77 proved two-member admission but
+selected duplicate full work. The specimen was cancelled/dequeued before landing.
+R6 remains failed efficiency evidence; heavy/tree/no-duplicate and adoption gates
+remain pending. The detailed dated evidence is in activation-evidence.md.
 
 ### R6 authenticated final-read movement — CI-METADATA-16 (2026-11-14)
 
@@ -365,5 +367,17 @@ landing; preserve R6 as failed efficiency evidence. Standing scoped repair
 approval covers this follow-up, not any excluded resources or weaker proof.
 
 - [x] T062 [O] Record exact R6 source/admission evidence, final-reread refusal and terminal safe stop; define no-proof fresh re-observation with unchanged accepted-proof equality and hard refusals — files: governing OpenSpec artifacts, feature009 spec/tasks/evidence — verify: actual run/edit/artifact/stop readbacks and strict OpenSpec; sole checklist
-- [ ] T063 [O] Reproduce authenticated final-read transitions red-first; implement only bounded fresh candidate route/gate observation and privacy-safe mismatch diagnostics, preserving invalid identity/ref/proof and exhaustion refusals — files: code delivery_route.py, focused regressions, cutover runbook and dated activation pointer — verify: canonical CI contracts, no-submodule added cases, unchanged proof/schema/budget and exact-head local expert review
+- [x] T063 [O] Reproduce authenticated final-read transitions red-first; implement only bounded fresh candidate route/gate observation and privacy-safe mismatch diagnostics, preserving invalid identity/ref/proof and exhaustion refusals — files: code delivery_route.py, focused regressions, cutover runbook and dated activation pointer — verify: canonical CI contracts, no-submodule added cases, unchanged proof/schema/budget and exact-head local expert review
 - [ ] T064 [O] Open paired code/spec repair PRs, fully qualify current-head ordinary/reuse inventories, normally merge checked heads and verify actual-main parity, then run genuinely fresh R7 source/receipt/batch acceptance and reconcile final evidence — files: PRs and canonical evidence — verify: exact source/main identities/skips, actual member/order/one-heavy/prefix/final/no-duplicate proofs; no archive, assembly adoption or R6 rerun
+
+T063 local qualification is complete at code8de8e499b5f9a8d35ae46c885370f2d716f881fa:
+four red-first cases failed on unchanged main, then passed after the repair.
+Expanded targeted QA passed85cases. The final canonical CI selection passed1051,
+4398deselected, no skips; all31new regressions also passed without upstream.
+Collection preserved all5418baseline IDs, adding exactly31unique cases for5449
+total, with zero removals/duplicates. Three existing test IDs retain their
+identities while distinguishing raced no-proof candidate decisions from stable
+accepted proof; source immediate refusals remain. Exact-head master, nine
+standard expert roles and CI review found no actionable findings. Both governing
+changes pass strict OpenSpec. These are local source checks, NOT full hosted,
+actual-main, fresh heavy/landing acceptance or assembly adoption.

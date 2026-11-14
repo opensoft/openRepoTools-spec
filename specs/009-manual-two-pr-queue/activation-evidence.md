@@ -982,3 +982,42 @@ record validated from the live archive before cancellation. Failure evidence is
 also preserved in spec issue26/comment6870634137 and source75/comment6870634669,
 source76/comment6870635246. CI-METADATA-16/T062-T064 govern the next repair and
 genuinely fresh retry; no exact first field or completed heavy proof is invented.
+
+## CI-METADATA-16 local repair qualification — 2026-11-14
+
+Code8de8e499b5f9a8d35ae46c885370f2d716f881fa againsta15a6b5 implements only
+authenticated final candidate consistency waiting under FR-046. A changed valid
+final PR/caller view returns full-with-retry without proof. Every observation
+revalidates the entire decision; accepted observations still require exact raw
+equality. Candidate gate uses the existing30ten-second per-invocation bound and
+must recover the original mode/proof digest. Hard invalid identity/ref/body/hint,
+caller, source and artifact evidence still refuses immediately. Source gate,
+workflow definitions, queues, flags, proof schemas and job timeouts are unchanged.
+
+Four red-first regressions failed on unchangeda15; all four then passed after
+the repair. Expanded targeted QA passed85cases with0skips. First broad QA found
+one existing assertion still expecting hard candidate refusal for a valid
+current-to-null generated hint transition:1050passed/1failed. Its existing ID
+now requires no-proof candidate waiting, a separately stable proof and unchanged
+source immediate refusal. No production relaxation was added for that assertion.
+The final exact-code canonical CI selection passed1051/0skips/4398deselected.
+
+Independent collection before/after the exact patch proved5418baseline IDs all
+preserved and31unique new IDs,5449total,0removed/duplicate. The31newcases passed
+without upstream,5418deselected/0skips. This establishes no hidden dependency
+skip for the repair. Full ordinary/reuse and actual-main inventories remain
+future qualification gates. Canonical tests/run.sh was used in disposable
+offline existing bench-image containers, with private temporary clones and no
+running bench/session/worktree changes.
+
+Exact-head master independent inspection and nine standard expert roles plus CI
+review are clean. Expert reviews were static/read-only; coordinator QA is
+separate evidence. Both governing changes pass strict OpenSpec. A local typo in
+one validation invocation named a nonexistent change; the corrected command for
+activate-claude-current-ci-cutover and fix-source-delivery-metadata passed.
+
+The spec branch also merged current spec main59183ec normally, preserving the
+unrelated feature010 assurance evidence unchanged. No assembly pin was adopted.
+T063 is complete locally; T064/full source/main qualification, genuinely fresh
+R7 source receipts, real member/heavy/tree/no-duplicate gates and final evidence
+remain open. R6 will not be requeued or rerun into clean acceptance.
