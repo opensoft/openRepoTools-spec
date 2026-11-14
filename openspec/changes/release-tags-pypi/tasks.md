@@ -94,6 +94,19 @@ only when the step it names has actually happened, and with its evidence.
 - [ ] 6.3 Create the GitHub Release from `docs/release-notes/v1.1.0.md`
   after PyPI serves 1.1.0, then cut `release/v1.1` at `v1.1.0`; verify both
   exist and the Release's body is the notes file's text.
+  - **Departure noted 2026-11-14, on Brett Heap's "1a"** (feature 007's task
+    T346): this task now follows T346's draft flow, which Brett Heap chose
+    with "3a" (2026-11-11). After PyPI serves the version, verify that the
+    draft GitHub Release that `release.yml`'s `asset` job made holds
+    `openRepoTools-<version>.sha256`; on Brett Heap's word, publish that
+    draft with the notes file (`gh release edit v<version> --repo
+    <repository> --draft=false --verify-tag --notes-file
+    <spec>/docs/release-notes/v<version>.md`); then cut `release/v1.1` at
+    `v1.1.0`. If `asset` failed, re-run it before publishing: the release is
+    never published without the list. The task above is left as it stood.
+    `design.md`'s Decision 11 and the `release-tags-and-branches` delta
+    spec's "Release notes and GitHub Releases" carry the note whole, with
+    Brett Heap's "3a" and "1a".
 - [ ] 6.4 Open the assembly's README PR with the pipx route's text once PyPI
   serves 1.1.0 and the workBenches condition holds (lane openRepoTools-3);
   verify the README's text matches the proposal's.
