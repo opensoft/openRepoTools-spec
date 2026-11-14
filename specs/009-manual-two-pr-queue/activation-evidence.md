@@ -7,6 +7,12 @@ failed checkpoints below are retained as history, not current status. This is
 source-repository activation for the fixed `claude-current` scope, not assembly
 adoption, installed-session delivery or efficiency for every component.
 
+Final artifact reconciliation (06:48Z): code82 and spec52 have now landed with
+their exact reviewed trees; the final checked-landings section records the
+actual receipts and closes T041. All 64 feature009 source/reconciliation tasks
+are complete. New code-main qualification is still pending separately, and
+assembly/session adoption, wider efficiency and archive remain unfinished.
+
 ## CI-METADATA-15 local repair qualification — 2026-11-14
 
 Code head `a2b487b812fab6f35dce87701bc3fde20e30edeb` is based on actual
@@ -1290,3 +1296,60 @@ component efficiency and archive remain separate unfinished work. The standing
 approval expressly excludes assembly pins and running-lane changes. No project
 wide or workstation-wide deployment is claimed. Existing full CI continues for
 mixed, uncertain, dependent and out-of-scope changes; admission is still manual.
+
+## Final checked evidence landings — 2026-11-14
+
+The paired evidence PRs have landed, not merely been prepared:
+
+- [Spec52](https://github.com/opensoft/openRepoTools-spec/pull/52) merged normally
+  at 06:21:44Z as `bbbee0d7313af8104c20ed27be43268f6c8c1039`, sole parent
+  `e72ca656dbfa721a27af099b95104cf8365ff7e3`, tree
+  `28ec2c6772a0a1419235a47e158be329e26d91f6`, exactly reviewed head `3216a60`.
+  Effective rules require a PR but no CI contexts in this spec repository;
+  exact-head expert review, strict OpenSpec and fresh complete-thread/main/
+  mergeability/landing checks passed. Its source branch is preserved.
+- [Code82](https://github.com/opensoft/openRepoTools-code/pull/82) merged normally
+  at 06:48:40Z as `eff8459657e9a970d46a0cdef5cbd531cbe0e9cd`, sole parent
+  `11964a6be2bcc2c591fba2ed3c399787bbe34d18`, tree
+  `ef2e2504007cc34ccf83a790de7bc0a8b1f4f6cb`, exactly reviewed head `6fd08f9`.
+  All fresh head/base/main, actual required checks, complete empty review
+  threads and current landing/warning guards passed before the protected act.
+  Its source branch is also preserved; neither merge used bypass or force.
+
+Master plus nine standard expert roles and CI specialist found no actionable
+issue at exact code `6fd08f9` / spec `3216a60`. The full source run
+[43564910709](https://github.com/opensoft/openRepoTools-code/actions/runs/43564910709)
+passed all 15 exact expected jobs, first attempt, completing at 06:46:18Z.
+Fast `43564910823` also passed. This documentation-only pointer touches no
+reusable-qualification trigger or CI control; no extra reusable run is claimed.
+Hosted requests returned quota, not reviews. See the actual
+[source qualification receipt](https://github.com/opensoft/openRepoTools-code/pull/82#issuecomment-6873350430).
+
+Both complete source inventories exactly match the qualified R7 heavy:
+5,457 unique cases each, normal 5,284 passes / 173 existing skips and deliberate
+no-submodule 3,935 passes / 1,522 existing skips. Zero added, removed, duplicate
+or failed cases and zero changed skip identities. Actual packaging job
+`132356561452` logged tested merge `f5df9fec181ed5c536d05c1bd13a2643cc61278d`;
+Git objects independently confirm ordered parents `11964a6` / `6fd08f9` and
+the same reviewed tree `ef2e250`. Packaging separately passed 285 cases.
+
+The paired actual landing readbacks are recorded in
+[issue26 receipt6873364878](https://github.com/opensoft/openRepoTools-spec/issues/26#issuecomment-6873364878).
+They satisfy T041's final checked-evidence landing condition. Closing that
+artifact-reconciliation task does not claim this spec follow-up has already
+merged, or that all deployment work is complete.
+
+Actual new-main push run
+[43568137721](https://github.com/opensoft/openRepoTools-code/actions/runs/43568137721)
+is executing on exact `eff8459`, attempt 1, at this checkpoint. Its full jobs
+and complete case inventories still need independent qualification. This full
+run belongs to the separate out-of-scope documentation PR82, not a duplicate
+canary-source landing run; the completed R7 acceptance is not reinterpreted.
+
+All 64 feature009 source/reconciliation tasks are now complete. Assembly pins,
+composed exact-pin acceptance, SAFE-gated shared-checkout/session adoption,
+wider efficient coverage and archive remain separate, unfinished and excluded
+without new authority. Current remote assembly `4377a70` contains newer
+HTTPS/Sonar work and must be preserved in any later approved adoption. No
+settings, app/paid access, release/tag, installed-tool or running-lane change
+follows from task closure or from publication of these receipts.

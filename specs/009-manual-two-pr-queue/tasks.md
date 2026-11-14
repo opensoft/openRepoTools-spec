@@ -233,7 +233,7 @@ acceptance evidence are additionally required before marking their task done.
 - [x] T038 [O] Enable only the prepared flag, preserve explicit disabled/fallback tests, update shared instructions and open locally reviewed paired PRs — files: `.github/ci/delivery-policy.json`, `.github/ci/delivery-cutover.md`, `.github/ci/task-set-delivery.md`, `tests/test_ci_cutover.py`, `tests/test_ci_local_review.py`, `tests/test_ci_pilot_queue.py`, `features/009-manual-two-pr-queue/openspec/activation.md` — verify: `bash tests/run.sh -k 'ci_ or full_ci_coverage_parity or tests_workflow or ci_shards'`
 - [x] T039 [O] Qualify exact-head ordinary/reuse CI and review, normally merge the enablement/governance PRs and verify landed trees plus actual main CI before queue use — files: `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${ENABLEMENT_MAIN_RUN_ID:-}" && gh run watch "$ENABLEMENT_MAIN_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
 - [x] T040 [O] Run refusal/recovery fixtures, then the authorized two-member independent-main canary with explicit local-review acceptance; verify actual fast-only source/candidate runs, one complete heavy call and matching prefix/final trees — files: `claude-current`, `tests/test_claude_current.py`, `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${CANARY_HEAVY_RUN_ID:-}" && gh run watch "$CANARY_HEAVY_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
-- [ ] T041 [O] Reconcile actual settings/run/artifact/tree evidence and remaining adoption boundaries without advancing assembly pins or archiving — files: `features/009-manual-two-pr-queue/openspec/activation.md`, `specs/009-manual-two-pr-queue/activation-evidence.md`, `specs/009-manual-two-pr-queue/tasks.md` — verify: `openspec validate activate-claude-current-ci-cutover --strict`
+- [x] T041 [O] Reconcile actual settings/run/artifact/tree evidence and remaining adoption boundaries without advancing assembly pins or archiving — files: `features/009-manual-two-pr-queue/openspec/activation.md`, `specs/009-manual-two-pr-queue/activation-evidence.md`, `specs/009-manual-two-pr-queue/tasks.md` — verify: `openspec validate activate-claude-current-ci-cutover --strict`
 
 T036–T038 preparation/publication receipt: code PR56 is open at
 `d4d42f936eb1c3f0cd416112fca014c829e4ae19`; spec PR39 carries this governance.
@@ -413,3 +413,17 @@ task until the paired final code-pointer/spec evidence PRs have latest-head
 review, checks, normal protected landings and actual readbacks recorded in
 issue26. No self-referential future merge is claimed here. Assembly/session
 adoption and archive remain separately excluded and unfinished.
+
+T041 is complete after the actual checked final evidence landings, not an
+asserted future merge: spec52 landed `bbbee0d` at06:21:44Z and code82 landed
+`eff8459` at06:48:40Z, both normally with exact reviewed trees. Code82's full
+source43564910709 passed15/15 first-attempt jobs; both complete5,457-case
+inventories exactly match qualified R7 heavy, including all skip identities.
+The actual head/base/main/threads/check/landing readbacks and commit/tree
+receipts are in activation-evidence.md and issue26/comment6873364878.
+
+This closes all64feature009 source/reconciliation tasks only. New-main
+qualification43568137721 remains a separate pending gate, not inferred from
+source success. Assembly pins, composed qualification, shared checkout/session
+adoption, wider efficiency and archive remain unfinished and separately
+excluded. No active plan, installed tool, release, permission or lane is changed.
