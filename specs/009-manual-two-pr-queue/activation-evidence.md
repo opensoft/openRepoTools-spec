@@ -1,5 +1,30 @@
 # CI-ACTIVATION-11: scoped source activation and two-member canary
 
+## CI-METADATA-15 local repair qualification — 2026-11-14
+
+Code head `a2b487b812fab6f35dce87701bc3fde20e30edeb` is based on actual
+main `908d815db2b2789b44828248a83bc8991ad71454`. The new description
+regressions failed18/18 on unchanged main, with5400deselected. After the bounded
+comparison-copy repair,53new cases plus the existing final-body-reread test
+passed without the upstream submodule:54passed/0skip/5364deselected. The broader
+cutover/local-review/delivery selection passed532/0skip/4886deselected with the
+exact pinned standard. The complete `-k ci_` selection passed1020/0skip with
+4398deselected. Tests used an offline non-root disposable bench-image container,
+private HOME and2CPU/2GiB, not any running lane's checkout or installed tools.
+
+Master plus all nine standard expert roles and the CI specialist found no
+actionable issues at exact codea2b487b and specaea8db4. Expert reviews were
+static/read-only; coordinator QA is distinct. Strict validation passes for
+both governing OpenSpec changes. T060 is complete; T061 and all fresh live
+acceptance/adoption gates remain open. Exact committed collection proves5418
+unique cases, including53new cases; hosted complete inventories must preserve
+all prior identities/skips and execute every addition.
+
+Paired source PRs are code74 and spec49. Full ordinary/reusable CI is running
+for the actual code head; no hosted completion, merge, main qualification or
+fresh R6 acceptance is claimed here. Hosted Codex was explicitly requested;
+quota is not a completed review. Failed R5 remains failed and stopped.
+
 Progress record: source activation is qualified. The first source-routing
 attempt failed efficiency acceptance before queue use. No heavy or landing
 acceptance is claimed; T040/T041 and the canary task sets remain incomplete.
