@@ -213,8 +213,8 @@ canaries without per-PR approval stops. Earlier failed evidence stays failed.
 - FR-043: the R3 generated-hint repair permits only missing/null or trusted
   GITHUB_SHA hints at initial source/candidate event comparisons. All other
   identities, actual tested-merge parent checks, source intent, fast/review and
-  genuine candidate-admission proofs remain mandatory; candidate bodies and
-  later live rereads stay strict. Unknown non-null hints retain full even when
+  genuine candidate-admission proofs remain mandatory; initial candidate
+  descriptions follow FR-045 and later live rereads stay strict. Unknown non-null hints retain full even when
   both snapshots agree. No new retry, schema, permission or hint-fetching path.
 - FR-044: after all initial fast identity, source/base-history, job and state
   checks pass, a source's authenticated pending observation returns only the
@@ -225,3 +225,10 @@ canaries without per-PR approval stops. Earlier failed evidence stays failed.
   The genuine candidate duplicate's explicitly pending-enabled absent-admission
   observation follows the same no-proof boundary; caller evolution requires a
   fresh poll. Invalid/default readers refuse and artifact-present proofs remain strict.
+- FR-045: at the initial genuine candidate event/live comparison only, string or
+  null descriptive prose may differ. It grants no member/review/admission or
+  merge authority. Keep every other identity, bounded hint, tested-parent,
+  genuine queue, fixed-scope, real-artifact and independent live-source/review
+  check. Preserve original current PR data and strict final body/branch/caller/
+  artifact rereads. Invalid body types, uncertain proof and later races retain
+  full. Candidate snapshot diagnostics use fixed field names/codes, never values.

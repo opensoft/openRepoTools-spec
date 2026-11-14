@@ -22,7 +22,7 @@ code/spec merges and fresh canaries on 2026-11-13; assembly pins stay excluded.
 - Fresh PR65 then proved that the initial snapshot differs on merge_commit_sha.
   Permit only missing/null or the trusted GITHUB_SHA as generated hints at the
   initial source/candidate event comparison. All actual Git/provenance proofs
-  remain mandatory; other non-null hints retain full. Candidate bodies stay exact.
+  remain mandatory; other non-null hints retain full. Later candidate bodies stay exact.
 - Fresh PR67 reached fast evidence but refused its reread during fast-workflow
   finalization. Reproduce completion during authenticated pending reads and
   return only the existing bounded wait before completed-proof stability checks.
@@ -30,6 +30,13 @@ code/spec merges and fresh canaries on 2026-11-13; assembly pins stay excluded.
 - Apply the same no-proof waiting boundary to an authenticated candidate caller
   with no admission artifact yet. Reproduce queued-caller evolution during the
   empty-list read; preserve default-reader refusal and strict real-artifact proofs.
+- R5 sources 71/72 qualified fast-only and entered one genuine two-member batch,
+  but draft 73 selected full fallback. Edit history confirms a description edit
+  before routing; the generic log does not identify the exact first predicate.
+  Reproduce initial candidate-description differences and permit only descriptive
+  string/null prose to differ at that first comparison. Keep genuine queue
+  identity, real admission, independent source reviews and all final rereads.
+  Add fixed-vocabulary candidate mismatch field diagnostics, never body values.
 - Review and qualify the code/spec PRs with full ordinary/reuse CI, verify the
   actual main result, then run a fresh independent two-member canary. Preserve
   the failed initial attempt as failed evidence; never rerun it into acceptance.

@@ -1,5 +1,30 @@
 # CI-ACTIVATION-11: scoped source activation and two-member canary
 
+## CI-METADATA-15 local repair qualification — 2026-11-14
+
+Code head `a2b487b812fab6f35dce87701bc3fde20e30edeb` is based on actual
+main `908d815db2b2789b44828248a83bc8991ad71454`. The new description
+regressions failed18/18 on unchanged main, with5400deselected. After the bounded
+comparison-copy repair,53new cases plus the existing final-body-reread test
+passed without the upstream submodule:54passed/0skip/5364deselected. The broader
+cutover/local-review/delivery selection passed532/0skip/4886deselected with the
+exact pinned standard. The complete `-k ci_` selection passed1020/0skip with
+4398deselected. Tests used an offline non-root disposable bench-image container,
+private HOME and2CPU/2GiB, not any running lane's checkout or installed tools.
+
+Master plus all nine standard expert roles and the CI specialist found no
+actionable issues at exact codea2b487b and specaea8db4. Expert reviews were
+static/read-only; coordinator QA is distinct. Strict validation passes for
+both governing OpenSpec changes. T060 is complete; T061 and all fresh live
+acceptance/adoption gates remain open. Exact committed collection proves5418
+unique cases, including53new cases; hosted complete inventories must preserve
+all prior identities/skips and execute every addition.
+
+Paired source PRs are code74 and spec49. Full ordinary/reusable CI is running
+for the actual code head; no hosted completion, merge, main qualification or
+fresh R6 acceptance is claimed here. Hosted Codex was explicitly requested;
+quota is not a completed review. Failed R5 remains failed and stopped.
+
 Progress record: source activation is qualified. The first source-routing
 attempt failed efficiency acceptance before queue use. No heavy or landing
 acceptance is claimed; T040/T041 and the canary task sets remain incomplete.
@@ -559,3 +584,201 @@ The combined updated tree passed 23 focused no-submodule cases, zero skips/
 the candidate red reproducer remains two failures before its repair. Current
 collection is expected to be 5,365, including 23 additions to qualified main.
 Neither local success nor superseded-head CI qualifies the updated PR head.
+
+### Pending-observation repair: exact-head source qualification and landings
+
+The final integrated code head was
+`c97a6e8b5aeb9e55dc98d2826954c8939f5ad8a7`, based on qualified `660459f`; paired
+spec head was `16d7ecf8605583877b0c10a409309647f06e3291`, based on `375666d`.
+The master, nine standard expert roles and CI specialist reviewed these exact
+integrated refs without actionable findings. Expert inspection was static;
+coordinator-executed QA is separate evidence. Strict OpenSpec passed on the
+exact spec head. Explicit hosted requests received quota-limit responses, not
+completed Codex reviews; the owner-approved local expert review applies.
+
+Latest-head hosted results, all first attempts:
+
+| Run | Role | Successful jobs |
+| --- | --- | ---: |
+| [43521046751](https://github.com/opensoft/openRepoTools-code/actions/runs/43521046751) | Ordinary complete CI | 15/15 |
+| [43521046869](https://github.com/opensoft/openRepoTools-code/actions/runs/43521046869) | Reusable complete CI | 17/17 |
+| [43521046787](https://github.com/opensoft/openRepoTools-code/actions/runs/43521046787) | Fast preparation | 1/1 |
+
+The run/head/event/attempt and every job's unique identity, run association,
+head and first-attempt successful conclusion were checked independently.
+Five normal and four deliberate no-submodule shard artifacts from each full
+run supplied four complete JUnit inventories. Each has 5,365 unique cases:
+normal 5,192 passed/173 existing skips; no-submodule 3,843 passed/1,522 existing
+skips. Compared to actual qualified `660459f` main, every variant has exactly
+the 23 expected new passing regressions, zero removed or duplicate cases,
+failures/errors or changed skip identities. No new regression was skipped.
+Superseded `28eda11` runs and partial downloads were excluded from this proof.
+
+Fast job/check `132215084827` independently logged tested merge
+`41a4ac11c50537240ae71b461601aa637358e123`, with ordered `660459f` / `c97a6e8`
+parents. Its tree `15996d375d01312b2affdc6622e4c2c73f032d27` equals the reviewed
+source tree. Its own test result was 455 passed/18 existing skips/4,892
+deselected; this is fast tested-object evidence, not full or live acceptance.
+
+Checked normal squash landings, without bypass or branch deletion:
+
+- [Code PR68](https://github.com/opensoft/openRepoTools-code/pull/68) landed
+  `908d815db2b2789b44828248a83bc8991ad71454` at 2026-11-13T23:23:22Z, sole
+  parent `660459f`, tree `15996d375d01312b2affdc6622e4c2c73f032d27`.
+- [Spec PR45](https://github.com/opensoft/openRepoTools-spec/pull/45) landed
+  `d266136dfd0e27ca258a55131898b221f7807c61` at 2026-11-13T23:24:11Z, sole
+  parent `375666d`, tree `4efc06a3a33767e4a4d1103a01a25fdb3e7fb2a7`.
+
+Both actual main refs, parents and trees were read back and match the reviewed
+heads. Primary Rule 6 checks reported no open landing hold immediately before
+each merge. The 15 secondary historical parser warnings were checked against
+current remote registry content; none mentions this project. Append-only
+records were preserved. Qualification and landing evidence is also retained in
+[issue 26](https://github.com/opensoft/openRepoTools-spec/issues/26#issuecomment-6867496775).
+
+Actual code-main run
+[43526748400](https://github.com/opensoft/openRepoTools-code/actions/runs/43526748400)
+is still pending on `908d815`, first attempt. Successful route job
+`132234277874` logged full mode with `omit_full:false`; this normal squash
+repair must not inherit a historical batch omission. Its eventual complete
+15-job result and both full inventories remain required before fresh source
+events. This completes T057, not T058 or live T040/T042/T043/T048/T051.
+
+#### Post-landing snapshot before local R5 commits (23:25Z)
+
+Only local patch preflight for future R5 has run against the equivalent reviewed
+tree: A19/B27 passed, and all eight new B cases passed without the submodule,
+zero skips. No R5 source commit/PR, acceptance receipt, queue request, heavy
+candidate or live result exists yet. Keep PR67 and PR61 as failed evidence until
+their respective actual replacements exist; do not reuse their events.
+Both shared bench views remain at assembly `4b3c3f3`. No assembly pins, tools,
+settings, app/paid access, releases, active plan, lanes or sessions changed.
+No archive or broader adoption is authorized by this source qualification.
+
+### R5 local-only preparation while actual-main validation runs
+
+Local preparation was subsequently parallelized with the still-running main
+qualification, without relaxing the live source-event gate. The earlier
+pre-commit snapshot above remains historical, not the current inventory of
+local commits. Both commits have `908d815` as their sole parent:
+
+- A `c5d0a4ee33110f2ed2089889ba420d34aa8084bb`, tree
+  `42acf4a982861166fa71fa0b7282a62836589ca6`: three literal help lines only,
+  `claude-current` mode `100755`; its test blob equals main.
+- B `41e3f3adeffc29a4fddb5aedf029aeff603e7808`, tree
+  `35c9ee37f3d938781fe8ce00dbf0ff89d0e11c31`: eight parameterized cases in
+  twelve test lines only, mode `100644`; its resolver blob equals main.
+
+These are independent T042/T043 outcomes, not an artificial dependency stack.
+Committed patch bytes exactly equal the tested preflight patches: A SHA256
+`8199D0AA0DD12A12BA8AD0CF08D1E782ABFED9BA3B5D7DB3E754FB9D316016B8`, B
+`3BAE906ADE8051D51003DFB8CAFF51362BDAC7F08DA317E63482F9F619568C26`.
+
+Fresh bundles of these exact commits passed canonical offline non-root
+bench-image QA with private HOME and a 2CPU/2GiB cap. A passed 19 with 5,346
+deselected; B passed 27 with 5,346 deselected; all eight new B cases passed in a
+deliberate no-submodule checkout with 5,365 deselected. Every selection had zero
+skips. Normal runs initialized exact shape `4bf963f`; Bash parsing passed too.
+These are local exact-head results, not hosted source or live acceptance.
+
+Actual-main `43526748400` is still pending. Neither local branch has been
+pushed, no new PR/source event or acceptance receipt exists, and no queue or
+heavy candidate was requested. Publication remains gated on complete successful
+actual-main qualification and exact-head local review. Source/queue events,
+settings and active bench state are unchanged by this preparation.
+
+### Actual-main qualification and fresh R5 A publication — 2026-11-14
+
+Actual-main run
+[43526748400](https://github.com/opensoft/openRepoTools-code/actions/runs/43526748400)
+passed all 15 jobs on `908d815`, first attempt. Both complete inventories contain
+5,365 unique cases and exactly match the qualified ordinary source variants:
+normal 5,192 passed/173 existing skips; no-submodule 3,843 passed/1,522 existing
+skips. Zero added, removed, duplicated or failed cases and zero skip-identity
+drift. Main still pointed to `908d815` and spec main to `d266136` at publication.
+This satisfies the main gate; it was not waived for local preparation.
+
+The exact local code heads above completed master, nine-standard-role and CI
+expert review without actionable code findings. Static expert inspection is
+distinct from the coordinator's successful committed-bundle QA. One P3 in the
+spec draft concerned its previously undated no-local-commit snapshot. The draft
+now explicitly labels that historical paragraph and records subsequent local
+commits; the reporting expert rechecked the correction and confirmed resolved.
+The final governance head will receive review after later actual evidence.
+
+A was then published as
+[PR71](https://github.com/opensoft/openRepoTools-code/pull/71), exact head
+`c5d0a4ee33110f2ed2089889ba420d34aa8084bb`, base `908d815`. Its explicit hosted
+Codex request is [recorded](https://github.com/opensoft/openRepoTools-code/pull/71#issuecomment-6868167035);
+a request is not a completed review. Actual first-attempt ordinary source run
+`43532038713` and fast run `43532038721` are live, not yet qualified. No
+fast-only/source-success claim follows merely from their pending state.
+
+Only after actual replacement PR71 existed was superseded failed PR67 closed,
+without merging or deleting its branch. Its cancelled full fallback and fast
+result remain failed R4 efficiency evidence. B remains local; failed B PR61 is
+not closed before its actual replacement exists. No fresh local acceptance
+receipt, queue command, heavy candidate or live acceptance has occurred. The
+next gate is real source-mode/fast-only success for A before publishing B.
+
+### R5 source qualification, real admission and failed candidate omission
+
+PR71/72 both independently qualified against908d815. A fast43532038721 passed
+455 cases/18 existing skips; source43532038713 completed both verification
+controls successfully and honestly skipped six full-work roles. Route132251860889
+logged source/omit_full:true at00:11:15.372Z. Its actual tested merge7b054e0
+has ordered908d815/c5d0a4e parents and reviewed tree42acf4a9. B was published
+only afterward as PR72 at41e3f3a; fast43532690156 passed463/18, and source
+43532690132 had the same two-success/six-skip shape. Route132254025235 logged
+source/omit_full:true at00:16:13.906Z. Tested532e69a has ordered908d815/41e3f3a
+parents and reviewed tree35c9ee37. No full-work job started in either source run.
+
+Fresh unedited writer-accepted receipts are PR71/comment6868374946 and
+PR72/comment6868376224. Authenticated author brettheap/1513478 had repository
+admin permission; both exact-head local panels and committed-bundle QA were
+clean. Hosted requests received quota responses. The trusted source-admission
+reader checked both real records read-only and accepted their components, not
+a fabricated event or candidate. This is distinct from batch qualification.
+
+Manual queue comments6868448679/6868449053 were created00:25:57Z/00:25:59Z, two
+seconds apart. Mergify confirmed rule openrepotools-claude-current and grouped
+71/72 in genuine draft PR73, head84af43a4f1aabb77d95d236b799ab2d96e19672e,
+branch mergify/merge-queue/246bbb3897. Caller43534248306 began00:26:55Z, first
+attempt. Probe132259255522 and Verify queue candidate132259413474 succeeded.
+
+Admission artifact14089046668 was downloaded and its raw ZIP digest verified:
+sha256:12e6eb1eb2ab545614b3f1602658fa227e16ab94c0ddf27b0534db347cb117a8.
+Its actual order is71/c5d0a4e, then72/41e3f3a, base908d815. First prefix
+15c0dfae72dd8e12d8708d37189fd1d718add2d6 has tree42acf4a9; final prefix84af43a4
+has tree1da5bbc3f804552e02a98a8dd1fc91cf6ff58ed3. This is historical admission
+only, not a qualified artifact or a completed heavy/landing result.
+
+Draft PR73 ordinary43534255339, route132259280594, logged candidate/
+incomplete-evidence at2026-11-14T00:27:07.9741289Z and full/omit_full:false.
+Duplicate full jobs actually started alongside the genuine heavy call. This
+fails clean efficiency acceptance regardless of later job results. No rerun or
+partial admission result can reclassify it as successful.
+
+GitHub's complete four-entry userContentEdits history records initial description
+00:26:55Z, nonempty Sourcery edit00:27:05Z, Mergify edit00:27:12Z and stop-status
+edit00:35:59Z. Only timings, editor identities and nonempty-diff facts were
+recorded, not body values. Public opened event20076057639 has minimal head/base
+metadata, not the full original description/hint. The generic refusal does not
+identify the exact first predicate; the pre-routing description change exposes
+a concrete necessary incompatibility to reproduce, not a sole-cause assertion.
+
+After exact head/path/event/attempt checks, both owned specimen runs43534255339
+and43534248306 were cancelled; terminal cancelled is confirmed. Resulting
+aggregate failures/skips were caused by cancellation, not demonstrated test
+assertion failures. Explicit dequeue comments6868588415/6868589140 were posted
+00:35:28Z/00:35:30Z. Mergify confirms PR71/72 manually dequeued, open/unmerged;
+draft73 is closed/unmerged. Main remains908d815. Branches, runs and historical
+admission evidence are preserved. Superseded failed67/61 were closed only after
+actual replacements71/72 existed, without deleting their branches.
+
+Evidence is also retained in
+[issue26](https://github.com/opensoft/openRepoTools-spec/issues/26#issuecomment-6868752674).
+T059-T061 govern the next narrow metadata repair and a genuinely fresh retry,
+never a requeue of this failed specimen after changing policy. No complete
+heavy, landing, one-heavy efficiency, broader adoption or release is accepted.
+All excluded settings/app/paid/tool/assembly/lane boundaries remain in force.
