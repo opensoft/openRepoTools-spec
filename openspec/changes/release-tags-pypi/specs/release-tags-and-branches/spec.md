@@ -112,6 +112,27 @@ before its tag is made. A release's GitHub Release SHALL be created from its
 notes file, and, for a version published on PyPI, only after PyPI serves that
 version. No step of the release workflow SHALL read the notes.
 
+- **Departure noted 2026-11-12, on Brett Heap's "1a"** (feature 007's task
+  T346): the release no longer creates its GitHub Release from the notes
+  file. It follows T346's draft flow.
+  - `release.yml`'s `asset` job creates the GitHub Release as a draft
+    holding check 1's digest list, `openRepoTools-<version>.sha256`, and the
+    release owner publishes that draft with the notes file.
+  - Brett Heap chose the draft flow with "3a" (2026-11-11, in lane
+    openRepoTools-3's session): "a. Accept the draft flow, and amend FR-034,
+    FR-042 and `data-model.md` (Recommended)". T346's spec
+    PR amends feature 006's FR-034 and FR-042
+    (`specs/006-release-pypi/spec.md`) and its `data-model.md` to say so.
+  - `asset` needs the `pypi` job, which ends with PyPI serving the version,
+    and it reads no notes file. So the draft still waits for the index, and
+    no release step reads the notes.
+  - This requirement's words are left as they stood. This note is placed
+    here, in `design.md`'s Decision 11, and, as a shorter note, in
+    `proposal.md`'s "Each GitHub Release" bullet, on Brett Heap's "1a"
+    (2026-11-12, typed as "1a 2b" in lane openRepoTools-3's session), which
+    chose "a. A dated departure note in `release-tags-pypi` itself, citing
+    "3a", in T346's spec PR (Recommended)".
+
 #### Scenario: The baseline notes
 
 - **WHEN** `docs/release-notes/v1.0.0.md` is compared with the body

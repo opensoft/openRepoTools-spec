@@ -495,6 +495,13 @@ while they track `main`, which is the failure the Why exists to prevent.
   filled in or cut before the tag.
 - **Each GitHub Release** is created from its file, after PyPI serves the
   version, so the notes never name a version that PyPI lacks.
+  - **Departure noted 2026-11-12, on Brett Heap's "1a"** (feature 007's task
+    T346): the release now follows T346's draft flow, in which `release.yml`'s
+    `asset` job creates the GitHub Release as a draft holding check 1's digest
+    list, and the release owner publishes it with the notes file. The bullet
+    above is left as it stood. `design.md`'s Decision 11 and the
+    `release-tags-and-branches` delta spec's "Release notes and GitHub
+    Releases" carry the note whole, with Brett Heap's "3a" and "1a".
 - **README.md's paragraph** that says "There is no version number here" is
   rewritten. It says that releases are annotated tags, that the version comes
   only from the tag, and what `--version` prints when stamped and when
