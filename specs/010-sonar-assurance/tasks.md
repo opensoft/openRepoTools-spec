@@ -35,7 +35,7 @@ Sonar returned zero changed components and omitted new-code metrics, rather
 than reporting explicit zero eligible lines. No prior failed result is erased.
 
 - [x] T013 [O] Record the real absent-metric/empty-component response and define a positive exact-merge pin-only proof, retaining fail-closed real/uncertain source handling — files: this checklist, OpenSpec design and delta spec — verify: failed run43594656117 and PR363 API readbacks
-- [ ] T014 [O] Reproduce the compatibility failure, implement only the proven pin-only exception and add positive/negative regression tests — files: code `.github/ci/sonar_assurance.py`, `tests/test_sonar_assurance.py` — verify: canonical `tests/run.sh -k sonar` and exact-head local expert review
+- [x] T014 [O] Reproduce the compatibility failure, implement only the proven pin-only exception and add positive/negative regression tests — files: code `.github/ci/sonar_assurance.py`, `tests/test_sonar_assurance.py` — verify: canonical `tests/run.sh -k sonar` and exact-head local expert review
 - [ ] T015 [O] Normally land fully qualified source/governance PRs, update PR363 using official coherent pin tooling, require fresh composed/provider/Sonar qualification and actual-main verification, then obtain fresh exact-target SAFE from every affected lane owner before one guarded shared-checkout refresh — files: source PRs, assembly pins, this feature's evidence — verify: actual checks/trees, computed main gate, owner receipts and preservation readback
 
 S05 is one bounded verifier repair with its regressions and governance. It does
@@ -45,3 +45,12 @@ worktrees are preserved. A pin-only PR exception never establishes complete
 main coverage; main's complete-index, measured-coverage and exact-revision
 requirements remain mandatory. The refresh is newly and separately approved,
 only after all affected owners give fresh SAFE confirmation.
+
+T014 local acceptance: code6e324e27af450de89def44ccd4f7226024af364c passes
+89 Sonar-focused cases (40 new,49 retained), no skips/failures; all ten local
+specialists plus the coordinator reviewed the exact head without actionable
+findings. Local replay against PR363's actual base/head/test-merge proves the
+intended four paths. Hosted source Sonar passes after using matched local Git
+IDs, rather than event/report-file values, in actual command arguments. No issue
+was dismissed. These local/source results do not complete T015's full source,
+assembly/main, computed coverage or SAFE-gated operating-checkout acceptance.
