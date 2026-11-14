@@ -187,7 +187,7 @@ one-line install.
   - D7's 30 s;
   - `T_write` = 62.5 + 3·`N_a`·`c` s, which is 68.5 s at `c` = 2;
   - the bind's `bound_s` is 500 s at `c` = 2 and 530 s at `c` = 3, with one
-    address, 540 s at `c` = 3 from `w_s_ms` = 474, where 473 gives 530, and 590 s at Eagle's p90 (Y:5459; spec#47's bind-record.md, "The 540 s band, in those integers").
+    address, 510 s at `c` = 2 from `w_s_ms` = 369, where 368 gives 500, 540 s at `c` = 3 from `w_s_ms` = 474, where 473 gives 530, and 590 s at Eagle's p90 (Y:5459; spec#47's bind-record.md, "The 540 s band, in those integers").
 - **The renderer**: at most 64 seqs a pass, six push attempts, and 16
   passes, then one handover `[PLAN CHOICE: the renderer's batch and cap]`.
 
