@@ -661,3 +661,37 @@ pushed, no new PR/source event or acceptance receipt exists, and no queue or
 heavy candidate was requested. Publication remains gated on complete successful
 actual-main qualification and exact-head local review. Source/queue events,
 settings and active bench state are unchanged by this preparation.
+
+### Actual-main qualification and fresh R5 A publication — 2026-11-14
+
+Actual-main run
+[43526748400](https://github.com/opensoft/openRepoTools-code/actions/runs/43526748400)
+passed all 15 jobs on `908d815`, first attempt. Both complete inventories contain
+5,365 unique cases and exactly match the qualified ordinary source variants:
+normal 5,192 passed/173 existing skips; no-submodule 3,843 passed/1,522 existing
+skips. Zero added, removed, duplicated or failed cases and zero skip-identity
+drift. Main still pointed to `908d815` and spec main to `d266136` at publication.
+This satisfies the main gate; it was not waived for local preparation.
+
+The exact local code heads above completed master, nine-standard-role and CI
+expert review without actionable code findings. Static expert inspection is
+distinct from the coordinator's successful committed-bundle QA. One P3 in the
+spec draft concerned its previously undated no-local-commit snapshot. The draft
+now explicitly labels that historical paragraph and records subsequent local
+commits; the reporting expert rechecked the correction and confirmed resolved.
+The final governance head will receive review after later actual evidence.
+
+A was then published as
+[PR71](https://github.com/opensoft/openRepoTools-code/pull/71), exact head
+`c5d0a4ee33110f2ed2089889ba420d34aa8084bb`, base `908d815`. Its explicit hosted
+Codex request is [recorded](https://github.com/opensoft/openRepoTools-code/pull/71#issuecomment-6868167035);
+a request is not a completed review. Actual first-attempt ordinary source run
+`43532038713` and fast run `43532038721` are live, not yet qualified. No
+fast-only/source-success claim follows merely from their pending state.
+
+Only after actual replacement PR71 existed was superseded failed PR67 closed,
+without merging or deleting its branch. Its cancelled full fallback and fast
+result remain failed R4 efficiency evidence. B remains local; failed B PR61 is
+not closed before its actual replacement exists. No fresh local acceptance
+receipt, queue command, heavy candidate or live acceptance has occurred. The
+next gate is real source-mode/fast-only success for A before publishing B.

@@ -325,9 +325,11 @@ Exact-head local expert review is clean; hosted requests received quota replies,
 not completed reviews. Strict OpenSpec and the recorded local red/green QA pass.
 
 The checked code/spec merges landed as `908d815` / `d266136`, with exact reviewed
-trees and sole expected parents. Actual-main run `43526748400` is still pending.
-Consequently T058 and every fresh live-acceptance task remain open. No fresh R5
-source event, PR, acceptance receipt, queue request or live qualification is
-recorded by this update. Subsequent local-only R5 commits and their exact-bundle
-QA are distinguished from publication in activation-evidence.md, alongside the
-full dated source/landing facts.
+trees and sole expected parents. Actual-main run `43526748400` passed all 15 jobs
+on `908d815`, first attempt; both complete 5,365-case inventories exactly match
+qualified source, with no added/removed/duplicate/failed cases or skip drift.
+Fresh independent A is now PR71 at `c5d0a4e`; its real fast and source-routing
+runs are pending. B `41e3f3a` remains local. T058 and every fresh live-acceptance
+task remain open: no acceptance receipt, queue request or live qualification is
+recorded by this update. Dated publication, exact-bundle QA and qualification
+facts are distinguished in activation-evidence.md.
