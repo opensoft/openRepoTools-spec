@@ -344,7 +344,7 @@ No supervisor of its own: no systemd and no launchd (svc:41; Y:3872–3876).
 ### 11.1 One client
 
 - **`lanes-index register read` asks the socket first,** and reads directly when the service is unavailable (Y:3843–3845; tasks:1394). "One socket client, one fallback, one set of timeouts" (Y:3847–3848).
-- **Phase 1's `register read` has only its direct path.** The socket, the `.direct` flag and the write-through come with `serve` (Y:4868–4870; CLI46:653). Phase 1 fixes what `serve` must also return: "the files at `n` with per-file digests, written by the client into the cache files" (Y:4868).
+- **Phase 1's `register read` has only its direct path.** The socket, the `.direct` flag and the write-through come with `serve` (Y:4868; CLI46:653). Phase 1 fixes what `serve` must also return: "the files at `n` with per-file digests, written by the client into the cache files" (Y:4868).
 - **By form** (CLI44:655–662): form 1, the readers' prefetch, asks the socket; form 2, the guard's prefetch, asks it; form 3, the readers' second read, asks it first, and reads `.direct` as forms 1 and 2 do (lane 1's answer, #165 6746620707, OP-7; CLI47:730); form 4 never asks it (B7). Section 13.9 says what each form sends.
 
 ### 11.2 The fallback, and its line
@@ -851,7 +851,7 @@ Reason: one deadline is Y's "connect and answer together" (Y:4182), and checking
   - **N-7** (the status line): above.
   - **N-2, lane 1's NIT-e:** no change. Lane 5's route stands: T512's comments stop citing section 7, and the contract adds no rule its sources do not give (lane 3's review, N-2). So section 7 gains no clause for T512's reconnect on a changed configuration or for its 1 s between starts, and lane 5's code-side NIT round changes the comments.
 - **Where draft 11's text changed:**
-  1. **S-2's cite** (11.1): `(Y:4870)` is now `(Y:4868)`.
+  1. **S-2's cite** (11.1): `(Y:4870)` is now `(Y:4868)`. For the same reason, the bullet's first cite, `(Y:4868–4870; CLI46:653)`, for "The socket, the `.direct` flag and the write-through come with `serve`", is now `(Y:4868; CLI46:653)`: Y:4868 holds those words, and the range ran on into a blank line and D3's heading. CLI46:653 still gives them, citing Y:4868.
   2. **`.paths`' scope** (13.2): "and `.paths` where form 1 or form 3 asks for it, from the list" is now "and `.paths`, from the list, where form 1 asks for it or where form 3's family holds it or `--files` names it", and the sentence gains "form 3's `list` on every call is its digest source and makes `.paths` no member (13.9)", with T113's lines and lane 1's NIT-d as its cites.
   3. **The refetch's opening** (13.9): "A log created since `.head` refetches the family once" is now "A log created since `.head`, where `.paths` is cached, refetches the family once".
   4. **The request limit** (11.3 and 13.3): "Where a request would pass 65,536 bytes" (11.3) and "A client whose request would pass 65,536 bytes" (13.3) now each add "its `end` line included"; and "or more than 65,536 bytes before `end`" (13.3) is now "or more than 65,536 bytes, its `end` line included".
