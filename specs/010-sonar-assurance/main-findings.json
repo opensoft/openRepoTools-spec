@@ -46,7 +46,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W13UfOgUsHz1t3b",
+        "rule": "python:S5332",
+        "component": "opensoft_openRepoTools:code/lane-worktrees",
+        "line": 970,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:13+0000"
+      }
     },
     {
       "key": "AaHV0W13UfOgUsHz1t4U",
@@ -91,7 +103,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W13UfOgUsHz1t4U",
+        "rule": "python:S5443",
+        "component": "opensoft_openRepoTools:code/lane-worktrees",
+        "line": 4839,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:16+0000"
+      }
     },
     {
       "key": "AaHV0W13UfOgUsHz1t4V",
@@ -136,7 +160,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W13UfOgUsHz1t4V",
+        "rule": "python:S5443",
+        "component": "opensoft_openRepoTools:code/lane-worktrees",
+        "line": 4839,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:17+0000"
+      }
     },
     {
       "key": "AaHV0W2kUfOgUsHz1t7j",
@@ -182,7 +218,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W2kUfOgUsHz1t7j",
+        "rule": "python:S5332",
+        "component": "opensoft_openRepoTools:code/lanes-index",
+        "line": 372,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:14+0000"
+      }
     },
     {
       "key": "AaHV0W2kUfOgUsHz1t7-",
@@ -228,7 +276,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W2kUfOgUsHz1t7-",
+        "rule": "pythonsecurity:S8707",
+        "component": "opensoft_openRepoTools:code/lanes-index",
+        "line": 2564,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:19+0000"
+      }
     },
     {
       "key": "AaHV0W2kUfOgUsHz1t7_",
@@ -274,7 +334,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W2kUfOgUsHz1t7_",
+        "rule": "pythonsecurity:S8707",
+        "component": "opensoft_openRepoTools:code/lanes-index",
+        "line": 2576,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:20+0000"
+      }
     },
     {
       "key": "AaHV0W5-UfOgUsHz1ueK",
@@ -319,7 +391,20 @@
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
-      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+      "repair": "Merged code PR63 (338eb42641c8f0486099b0f5e0827bc0d6b8625b), canonical-launcher regression PR64 (bb253610a46d8f06d60b0b1c371102606cf70bdb), and assembly PR362 (4377a702913f3a096eae42131d131bdf4480b0e3).",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W5-UfOgUsHz1ueK",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      "serviceTransition": "Automatically CLOSED/FIXED by fresh main analysis; no manual resolution."
     },
     {
       "key": "AaHV0W5-UfOgUsHz1ufW",
@@ -364,7 +449,20 @@
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
-      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+      "repair": "Merged code PR63 (338eb42641c8f0486099b0f5e0827bc0d6b8625b), canonical-launcher regression PR64 (bb253610a46d8f06d60b0b1c371102606cf70bdb), and assembly PR362 (4377a702913f3a096eae42131d131bdf4480b0e3).",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W5-UfOgUsHz1ufW",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      "serviceTransition": "Automatically CLOSED/FIXED by fresh main analysis; no manual resolution."
     },
     {
       "key": "AaHV0W5-UfOgUsHz1ufc",
@@ -409,7 +507,20 @@
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
-      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+      "repair": "Merged code PR63 (338eb42641c8f0486099b0f5e0827bc0d6b8625b), canonical-launcher regression PR64 (bb253610a46d8f06d60b0b1c371102606cf70bdb), and assembly PR362 (4377a702913f3a096eae42131d131bdf4480b0e3).",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W5-UfOgUsHz1ufc",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      "serviceTransition": "Automatically CLOSED/FIXED by fresh main analysis; no manual resolution."
     },
     {
       "key": "AaHV0W5-UfOgUsHz1ufi",
@@ -454,7 +565,20 @@
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
-      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+      "repair": "Merged code PR63 (338eb42641c8f0486099b0f5e0827bc0d6b8625b), canonical-launcher regression PR64 (bb253610a46d8f06d60b0b1c371102606cf70bdb), and assembly PR362 (4377a702913f3a096eae42131d131bdf4480b0e3).",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W5-UfOgUsHz1ufi",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      "serviceTransition": "Automatically CLOSED/FIXED by fresh main analysis; no manual resolution."
     },
     {
       "key": "AaHV0W5_UfOgUsHz1ujV",
@@ -499,7 +623,20 @@
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
-      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+      "repair": "Merged code PR63 (338eb42641c8f0486099b0f5e0827bc0d6b8625b), canonical-launcher regression PR64 (bb253610a46d8f06d60b0b1c371102606cf70bdb), and assembly PR362 (4377a702913f3a096eae42131d131bdf4480b0e3).",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W5_UfOgUsHz1ujV",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      "serviceTransition": "Automatically CLOSED/FIXED by fresh main analysis; no manual resolution."
     },
     {
       "key": "AaHV0WtWUfOgUsHz1t2e",
@@ -545,7 +682,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0WtWUfOgUsHz1t2e",
+        "rule": "python:S5708",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+        "line": 9191,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:18:58+0000"
+      }
     },
     {
       "key": "AaHV0WtWUfOgUsHz1t2f",
@@ -591,7 +740,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0WtWUfOgUsHz1t2f",
+        "rule": "python:S5708",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+        "line": 10763,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:08+0000"
+      }
     },
     {
       "key": "AaHV0WtWUfOgUsHz1t2h",
@@ -637,7 +798,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0WtWUfOgUsHz1t2h",
+        "rule": "python:S5708",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+        "line": 12860,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:10+0000"
+      }
     },
     {
       "key": "AaHV0WtWUfOgUsHz1t2i",
@@ -683,7 +856,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0WtWUfOgUsHz1t2i",
+        "rule": "python:S5708",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+        "line": 13199,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:11+0000"
+      }
     },
     {
       "key": "AaHV0WuUUfOgUsHz1t2n",
@@ -729,7 +914,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0WuUUfOgUsHz1t2n",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+        "line": 2929,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:21+0000"
+      }
     },
     {
       "key": "AaHV0WuUUfOgUsHz1t2o",
@@ -775,7 +972,19 @@
       "proposedDisposition": "FALSE_POSITIVE",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
       "regressionEvidence": "main-findings-proof.json",
-      "serviceTransition": "pending evidence publication"
+      "serviceTransition": "RESOLVED/FALSE-POSITIVE after published source/runtime/regression proof and per-issue comment; read back on accepted main.",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0WuUUfOgUsHz1t2o",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+        "line": 3900,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:22+0000"
+      }
     },
     {
       "key": "AaHV0W-QUfOgUsHz1uvp",
@@ -820,7 +1029,20 @@
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
-      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+      "repair": "Merged code PR63 (338eb42641c8f0486099b0f5e0827bc0d6b8625b), canonical-launcher regression PR64 (bb253610a46d8f06d60b0b1c371102606cf70bdb), and assembly PR362 (4377a702913f3a096eae42131d131bdf4480b0e3).",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W-QUfOgUsHz1uvp",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      "serviceTransition": "Automatically CLOSED/FIXED by fresh main analysis; no manual resolution."
     },
     {
       "key": "AaHV0W-QUfOgUsHz1uvx",
@@ -865,7 +1087,20 @@
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
-      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+      "repair": "Merged code PR63 (338eb42641c8f0486099b0f5e0827bc0d6b8625b), canonical-launcher regression PR64 (bb253610a46d8f06d60b0b1c371102606cf70bdb), and assembly PR362 (4377a702913f3a096eae42131d131bdf4480b0e3).",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W-QUfOgUsHz1uvx",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      "serviceTransition": "Automatically CLOSED/FIXED by fresh main analysis; no manual resolution."
     },
     {
       "key": "AaHV0W-QUfOgUsHz1uv0",
@@ -910,7 +1145,22 @@
       "lastChangeSource": "ANALYSIS",
       "proposedDisposition": "FIX_IN_OWNER",
       "evidenceRevision": "dab458e2f774637cccea490bfc6bdb1a5dafe212",
-      "repair": "openRepoTools-code PR63 plus assembly three-call repair"
+      "repair": "Merged code PR63 (338eb42641c8f0486099b0f5e0827bc0d6b8625b), canonical-launcher regression PR64 (bb253610a46d8f06d60b0b1c371102606cf70bdb), and assembly PR362 (4377a702913f3a096eae42131d131bdf4480b0e3).",
+      "finalServiceReadback": {
+        "analysis": "52558a56-c6f2-432b-a179-102a63bd4a57",
+        "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+        "key": "AaHV0W-QUfOgUsHz1uv0",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      "serviceTransition": "Automatically CLOSED/FIXED by fresh main analysis; no manual resolution."
     }
-  ]
+  ],
+  "historicalSnapshotNote": "Top-level analysis/rootRevision and original issue status fields preserve the initial diagnostic snapshot. finalServiceReadback records the accepted main result.",
+  "finalAcceptanceEvidence": "final-acceptance.json"
 }

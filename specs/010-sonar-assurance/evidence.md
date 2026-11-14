@@ -395,3 +395,105 @@ and native transport red/green (8 failures before repair, 8 passes afterward).
 Dependency-related local skips were rerun in an isolated prepared environment
 with the exact same full provider tree; they are not counted as acceptance.
 Full source and fresh composed/current-main CI remain required for T009/T012.
+
+## Final accepted main — 2026-11-14 UTC
+
+[Assembly PR362](https://github.com/opensoft/openRepoTools/pull/362) landed
+normally as `4377a702913f3a096eae42131d131bdf4480b0e3`; its tree matches
+tested PR head `4fe566ef4c2e3cf2cfc5d06c59816cf9856fbd9c`.
+[Fresh main workflow 43520716726](https://github.com/opensoft/openRepoTools/actions/runs/43520716726)
+passed composed-tests, provider-tests, report checks/combination, Sonar and
+exact-pins. Composed: 5,255 passed, 6 explained skips, zero failures,
+11,751.79 seconds. Provider: 22,480 passed, 360 explained skips, zero
+failures, 10,428.19 seconds. Neither suite was replaced by a targeted run.
+[Manual main validation](https://github.com/opensoft/openRepoTools/actions/runs/43520727124)
+also passed on that exact revision: real legs fetched and naming, manifest
+and lockstep checks ran. Credential-absent fallback/failure steps correctly
+did not execute. All six commit check-runs are SUCCESS.
+
+The [machine-readable final receipt](final-acceptance.json) records analysis
+`52558a56-c6f2-432b-a179-102a63bd4a57`, CE task `AaHXxyeZXdkJaFulXfOW`,
+server revision matching main, full inventory and coverage import verified.
+The unchanged Sonar way gate #9 computes all six conditions OK with
+`ignoredConditions=false`: reliability/security/maintainability A, new
+coverage 86.1%, new duplication 2.6%, hotspot review 100%. Its manual
+baseline remains 2026-09-10T20:01:30+0000, not today's date.
+
+Independent API pagination finds all 497 expected Python/shell files with
+correct languages, including all 18 extensionless commands (514 indexed
+files across all languages). Coverage XML has all 64 production files.
+Every one of the 62 files with executable statements exactly matches live
+per-file lines-to-cover/uncovered metrics. The two package __init__.py markers
+have empty executable maps and correctly have no numeric server metrics.
+
+Independent report recombination confirms identical per-file line keys and
+boolean OR hits: Python 31,923/36,045 and shell 16,398/20,088; total
+48,321 covered of 56,133 executable lines, 7,812 uncovered, 86.1%.
+Both separate provenance probes have 190 exact-copy observations and zero
+modified-copy observations; they are not added to suite coverage.
+Root's three changed curl lines 279/311/344 are genuinely covered, each
+with live server lineHits=1.
+
+### Source-owner changes and final integration
+
+[Code PR63](https://github.com/opensoft/openRepoTools-code/pull/63) merged
+the five implementation-call transport constraints as
+`338eb42641c8f0486099b0f5e0827bc0d6b8625b`. Eight real function/loopback
+transport regressions reproduced the original downgrade defects, then passed.
+[Code PR64](https://github.com/opensoft/openRepoTools-code/pull/64) adds the
+ninth regression: the complete canonical Root launcher must refuse a partial,
+failed download without executing its payload. A fresh actual Bash collector
+proof credits the three canonical Root lines, separate from suite acceptance.
+No assertion, timeout, expected refusal or certificate check was weakened.
+
+Code PR64 landed as `bb253610a46d8f06d60b0b1c371102606cf70bdb` after the
+independent owner PR62 merged. The landed tree therefore differs from our
+PR head only by that published delivery-diagnostic change, which was inspected
+and preserved. Combined targeted integration passed 312 cases; actual Code
+main full CI [43487813248](https://github.com/opensoft/openRepoTools-code/actions/runs/43487813248)
+then passed all 19 actual CI checks: 5,261 unique cases in each mode,
+ordinary 5,088 passed/173 explained skips, no-submodule 3,739 passed/1,522
+expected skips, and all 285 built-wheel cases passed without skips.
+The seven owner-added cases passed; no new skip reasons were introduced.
+The separately neutral standalone Code Sonar project is outside the user's
+explicit complete-assembly scope and is not counted as assembly acceptance.
+
+Root consumed the merged Code commit, Spec
+`dedef8348f32802af87f1ff23dfc661c68f31e66` and provider
+`4bf963f0ca416b142652bb608cafe5c76d893faa` with the official pin tool.
+PR [43489328096](https://github.com/opensoft/openRepoTools/actions/runs/43489328096)
+passed both complete suites and all six evaluated Sonar conditions before
+normal landing; the later main workflow above is the authoritative complete
+index/import and main-period acceptance. Historical failed/cancelled runs
+remain diagnostic evidence and are never rebound to this revision.
+
+### Final finding and preservation verification
+
+Original twelve: 8 CLOSED/FIXED, 4 RESOLVED/FALSE-POSITIVE; additional twenty:
+8 automatically CLOSED/FIXED download defects, 12 evidence-backed
+RESOLVED/FALSE-POSITIVE. The project has zero open bugs/vulnerabilities.
+See [triage](triage.md) for why two original false positives closed
+automatically; that is not credited as two extra source repairs.
+
+The operating root and all three nested checkout heads, tracked diffs and
+staged diff hashes match their preservation baselines. All original worktree
+registrations remain and all seven named tmux sessions are present.
+One additional preservation worktree, untracked PROGRESS.md and a changed
+window/pane identity in one session were observed and left intact; exact pane
+inventory is not claimed unchanged. No operating-checkout refresh,
+session-control command, lane/register/handoff rewrite, installed-tool update,
+bench restart or cleanup was performed. The attached Windows xFactory
+checkout remains clean at df83b53f03f1fb15c406aeec1dc23a1cff79bb3c.
+
+The scanner still reports the same 13 native Shell parse warnings on valid
+Bash, the intentional UTF-8 negative-test warnings and an additional surrogate
+warning. Every warned shell file passes native bash -n; complete indexing and
+coverage do not prove complete native-rule parsing. Missing blame on nested
+submodule files remains documented; no SCM suppression or fabricated history
+was used. The green gate is not a claim of zero maintainability smells.
+
+Codex review was explicitly requested for meaningful heads; hosted quota
+prevented a completed review and is not approval. Normal repository checks and
+merge rules governed landing; no admin bypass or queue was used.
+All T001–T012 obligations are complete. This final Spec publication records
+the immutable accepted main revision; it does not advance assembly pins again.

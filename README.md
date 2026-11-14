@@ -47,3 +47,5 @@ The [original twelve finding dispositions](specs/010-sonar-assurance/triage.md),
 The feature 010 complete-main [additional finding inventory](specs/010-sonar-assurance/main-findings.json) is explained in its [triage record](specs/010-sonar-assurance/triage.md).
 
 Feature 010 also retains [runtime and regression proof for the complete-main findings](specs/010-sonar-assurance/main-findings-proof.json).
+
+Feature 010 is complete: [final main acceptance and per-issue readback](specs/010-sonar-assurance/final-acceptance.json).
