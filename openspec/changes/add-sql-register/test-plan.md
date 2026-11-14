@@ -455,12 +455,12 @@ written out below. This plan always says which set it means.
     #291, #295, #301 and #302, and the other issues milestoned v1.2.0 move
     to v1.2.1 ("set 1.2.0 for 165 alone, 1.2.1 for the rest", then "let
     T017 ride in 1.2.0, retitle #343": comments 6721648587 and
-    6721870837). Whether Eagle and Raven install by pipx or by `./setup.sh`
-    stays open.
+    6721870837). Eagle and Raven install by `./setup.sh` (Brett's "1a 2b",
+    2026-11-12; lane 3, comment 6814260122), and check 1 there rests on the re-vendor's package (Brett's "Vendor release as package (Recommended)", 2026-11-13).
 - **Still open** (the design's "Open questions" at W):
   - The expiry of any outage Brett declares, which he names later. No test
     reads it: AT-D20 expires a declaration with a UTC already past.
-  - Whether Eagle and Raven install by pipx or by `./setup.sh` (Q24).
+  - Answered since, and kept here so that no line moves: Eagle and Raven install by `./setup.sh` (Q24; Brett's "1a 2b", 2026-11-12), and check 1 there rests on the re-vendor's package (Brett's "Vendor release as package (Recommended)", 2026-11-13).
   - Whether the organisation's GitHub plan supports the ruleset, and whether
     it can name the render set exactly (Q21(b), D23). Nobody has checked.
   - Whether every environment has git 2.32 or later, which the deploy key's
@@ -543,7 +543,7 @@ rename.
   P501–506). With it, the test checks four more things:
   - every row the write touched reads back `primary` as the mode that wrote it
     last (P183–188);
-  - the journal entry carries the write's commit message exactly as today
+  - the journal entry carries the write's commit message exactly as today, `rename-lane`'s on primary excepted (Y:3451)
     (P299–303);
   - the line's UTC is the database's, in whole seconds (P665–674);
   - the renderer touches nothing outside its four paths (P307–309).
@@ -577,7 +577,7 @@ rename.
     - every path outside those four is unchanged.
   - **The journal.**
     - It gains exactly one entry, at the old head plus one.
-    - Its message equals the twin's commit message, byte for byte.
+    - Its message equals the twin's commit message less that message's one final LF, byte for byte, but `rename-lane`'s on primary, which is the message the design names under Q13(a) (Y:3451), since the handoff is not in its entry (lane 3, #165 6859179515; lane 4, #165 6870452610).
     - It carries a `write_id`, unique in the journal.
   - **The rows.** Every row the entry touched reads `primary` as its last
     writer's mode.
@@ -688,6 +688,10 @@ rename.
     so that its last structured row breaks a CHECK, as §1.3 proposes. For
     each multi-file write, the line edits and the earlier rows of the entry
     have changed inside the transaction when the CHECK fails with 23514.
+    First, as its control, the same write runs with no arm, on an estate
+    and a database of its own, and must exit 0: a write that fails on
+    primary by itself would pass this case with its own 23514, so the case
+    fails at the control instead, and says so.
 - **Oracle.**
   - **The exit and stderr.** The writer exits 69. Stderr names the store,
     without credentials, and the error (P213–214). A read verb prints nothing
@@ -894,8 +898,8 @@ rename.
     ends in a `COMMIT` too.
   - **The deadline (A″).** D7 sets it at 30 s, and
     `LANES_REGISTER_DEADLINE_S` sets it for tests, in whole seconds
-    (`design.md` S1). The burst, case (c), runs with the variable unset, at
-    D7's default; the busy case (d) sets it to 1; and case (h) leaves it
+    (`design.md` S1). The burst, case (c), sets it to the runner's own D7, as
+    case (c) says; the busy case (d) sets it to 1; and case (h) leaves it
     unset, to assert the 30 s default once.
 - **Oracle.**
   - **(a) Two claimants, W = 200 ms.**
@@ -918,7 +922,7 @@ rename.
   - **(c) The burst.** Section 4.1's oracle, with the seqs counted from the
     cutover's entry: the ten writes take seqs 2 to 11, with no gap and no
     repeat (the delta's "A burst loses no writer"). It runs with
-    `LANES_REGISTER_DEADLINE_S` unset, at D7's 30 s default.
+    `LANES_REGISTER_DEADLINE_S` set to the runner's own D7, the per-workstation formula of the phase plan's "D7 stays 30 s", `max(30 s, 10 × the runner's attempt p95)`, in whole seconds rounded up (the writer honours whole seconds only, `lanes-edit.sh`'s `pw_deadline_s`, so the test rounds the formula up itself; lane 2 confirmed, #165 6869910867), which the test sets from its own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13). Its attempts come from a measuring burst of the same shape, run just before it in an estate of its own: ten writers released together, W = 200 ms, a cold image cache, and a deadline of 120 s that none is meant to reach. Each attempt runs from its snapshot request's start to the next one's, or to its commit call's end for the deciding attempt, and the p95 is by nearest rank over all of them (lane 2, #165 6869910867). D7's default stays 30 s, and case (h) asserts it.
   - **(d) Busy.** Two writers on distinct objects, W = 2 s, deadline 1 s.
     - One exits 0. The other exits 75. The frame wins here: D7 names the
       code the proposal left to the design.
@@ -994,7 +998,7 @@ rename.
   - The barrier, not a sleep, makes the writers simultaneous.
   - The window, 200 ms or more, is far above scheduling jitter.
   - Every assertion is about counts, codes and order, except the two below.
-  - The burst runs at D7's 30 s default. Its outcome, every writer committed
+  - The burst runs at the runner's own D7, case (c)'s, never under D7's 30 s default. Its outcome, every writer committed
     and none exiting 75 (the delta's "A burst loses no writer"), depends on
     time through that deadline alone. The probes' 2.26 s drain was
     `psql` alone. A real attempt costs about 0.55–0.61 s (lane 4's section,
@@ -1004,12 +1008,12 @@ rename.
     The burst's 55 verb runs and 110 Python starts are about 28 CPU-seconds
     on the measuring host, so a runner with c cores needs at least 28/c s of
     wall time, and its margin is less. The burst's drain, from the release
-    to the last exit, is asserted under twice the deadline, 60 s (timing
-    rule 2), and recorded against the 30 s with its margin, beside each
+    to the last exit, is asserted under twice the deadline it ran under (timing
+    rule 2), 60 s at the default, and recorded against that deadline with its margin, beside each
     writer's attempts, counted as snapshot calls in the shim's log and not
     asserted. A runner that cannot drain the burst inside the deadline is a
     finding on D7's value, which the delta requires to exceed the largest
-    burst's drain, and not flake (open point 32).
+    burst's drain, and not flake (open point 32). Since case (c) sets its deadline from the runner's own attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13), a slower runner lengthens the deadline with its attempts.
   - Case (h) asserts the default by a lower bound, 29 s from the launch
     (timing rule 3), which load only lengthens, and by an upper bound at
     twice the design's (timing rule 2).
@@ -1518,6 +1522,13 @@ rename.
   - `test_the_first_write_after_cutover_is_the_cutovers_seq_plus_1_with_lag_0`;
   - `test_the_cutover_aborts_when_main_moved_under_lanes`;
   - `test_a_handoff_commit_on_the_tip_does_not_abort_the_cutover`;
+  - `test_a_first_cutover_over_a_hold_with_no_readable_time_is_refused_2_and_sets_nothing`
+    (new since v3f, T211n): over the fixture's `HOLD` with no readable time,
+    left open, the first-form cutover exits 2 before its step 1, lists the
+    take with "time unreadable", and sets nothing (`contracts/exit-codes.md`'s
+    `cutover` 2; lane 3, #165 6813195977). Every other cutover case on the
+    fixture register first has the take's holder, the operator lane, write
+    its `HOLD RELEASED`, as act 4's holders do (§2.2);
   - `test_main_slots_pairing_equals_files_mode_rule_6_on_imported_history`:
     on the imported fixture register, whose `HOLD`, `LANDING` and `LANDED`
     lines name one repository under two spellings and close takes out of
@@ -2829,7 +2840,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
       that re-reads from the mirror and prints the `read: mirror` line;
       `lane-rename:241` has new text for 3, 75 and 69; the restart skill's
       `lread` (`code/skills/restart/SKILL.md:48`, run with
-      `LANES_NO_FETCH=1`) refuses on 69, 75 and 3 through its `*)` arm
+      `LANES_NO_FETCH=1`) refuses on 69 through the `69)` arm T407 adds (lane 2, #165 6851002528; lane 3, #165 6851059362), and on 75 and 3 through its `*)` arm
       (`:70`), so the skill binds no window, writes no stamp and prints no
       resume command (`design.md` S3's table of readers; the delta's
       "Callers' own reads of the register go through verbs");
@@ -2844,8 +2855,10 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     `lane-handoff` (`:2878–2881`, `:2890–2891` and `:2913–2914`),
     `lane-end:2490`, and the skill (`:738–742`). An `expectation:` 2 at
     `lane-start:4181` dies;
-  - `lane-worktrees`' three direct reads of the register go through a verb,
-    and exit 69 with nothing deleted (`design.md` S3's table).
+  - `lane-worktrees`' three direct reads of the register go through a verb;
+    on the verb's 69 nothing is deleted and the register is named as
+    unreadable, and `lane-worktrees` ends with that site's own code, 0 under
+    `--report` (`design.md` S3's table; T404; lane 3, #165 6812295982).
 - **Phase and kind.** N: the readers' SQL path and the callers' arms. FP,
   except `managed-projection`'s equality with files mode, which is RE (R3's
   N7: a fake cannot fabricate a register's replies faithfully, as AT-14
@@ -3347,7 +3360,10 @@ lane 3's ruling 6 (#165 comment 6578020193).
     - removes the record.
   - **A second plain rerun** is a new write, under a new id.
   - **A rerun with other arguments** does not take the id.
-  - **`LANES_WRITE_ID`,** set explicitly, wins over a record.
+  - **`LANES_WRITE_ID=<id>`,** set with its generation, takes over the record
+    of the same command line that holds `<id>`, at any age; over one that
+    holds another id it is refused with 2, naming that record's write and its
+    lookup, and nothing is sent (G6).
   - **The killed write's rerun** reuses the id, exits 0, and leaves one row.
   - **`lanes-index status`** lists a pending record, and reports whether its id
     is in the journal.
@@ -3423,15 +3439,15 @@ lane 3's ruling 6 (#165 comment 6578020193).
     either way. The rerun removes the record after writing the done mark
     with `owed <utc>`, prints one WARNING, and exits 0, with no tail run.
     For `rename-lane`:
-    - `[rename-lane-stops]`, the handoff file is removed from the lane's
-      checkout, so the replay's stamp checks refuse before the seam
+    - `[rename-lane-stops]`, the handoff file is committed empty on the lanes
+      origin, so the rerun's lane checkout holds it, the checks before the stamp pass it, and the replay's stamp proof (Y:5092) refuses it with 5 before the seam
       (`code/lanes-edit.sh:16190–16195`): the text says that, replayed at
       seq `<s−1>`, the write now stops before its write, with its exit and
       last line, and names the steps that did NOT run;
-    - `[rename-lane-differs]`, the handoff file is moved to the new path by
-      hand, so the row's handoff cell no longer changes (`:16227–16229`) and
-      the replay's change set differs from the entry's: the text names the
-      first path whose digest differs.
+    - `[rename-lane-differs]`, the handoff file is removed by a commit on the
+      lanes origin, so the rerun's lane checkout lacks it, the replay notes it missing (`:16162–16163`), and the row's handoff cell no longer changes (`:16227–16229`):
+      the replay's change set differs from the entry's, and the text names the
+      first path whose digest differs, `lanes/LANES.md`. A handoff moved by hand to the new path stops instead: its replay meets `rename-lane`'s refusal of an occupied target, 2, before the seam (`:16032–16033`).
 
     `[request-handoff-differs]`: the fake `tmux` now reports the holder's
     window as gone, so the replay's request line differs. The run exits 2
@@ -3496,7 +3512,8 @@ lane 3's ruling 6 (#165 comment 6578020193).
   - `test_a_plain_rerun_reuses_the_pending_write_id_once_and_says_so`;
   - `test_a_write_killed_by_an_outer_timer_is_retried_under_its_own_id`;
   - `test_a_rerun_with_other_arguments_does_not_take_the_pending_id`;
-  - `test_lanes_write_id_wins_over_a_pending_record`;
+  - `test_lanes_write_id_of_another_write_is_refused_2_and_the_pending_record_kept`;
+  - `test_lanes_write_id_of_the_records_own_write_takes_it_over_past_its_age`;
   - `test_status_lists_and_resolves_pending_records`;
   - `test_a_rerun_that_finds_its_write_committed_runs_the_verbs_after_commit_tail`:
     `rename-lane`'s tail;
@@ -3761,7 +3778,7 @@ lane 3's ruling 6 (#165 comment 6578020193).
       time is recorded against its timer, `S` = `C` = 9 s, `T_L` = 10 s and
       a reader's 7 s, with its margin;
     - the burst, one request per call, under D7's 30 s, with
-      `LANES_REGISTER_DEADLINE_S` unset as in AT-4 (c): every writer commits
+      `LANES_REGISTER_DEADLINE_S` unset, as AT-4 (h) leaves it, not as AT-4 (c) now sets it: every writer commits
       once, or exits
       75 with nothing written, its write id absent from the journal, and no
       writer ends any other way. The new seqs have no gap and no repeat.
@@ -4180,18 +4197,32 @@ and `ready`'s checks 11 and 12.
   writes, through the real `lanes-index`; `record_marker` as each read-back
   would call it; then a rollback's first transaction (Q4(b)(iii)),
   `commit_write` with a `rollback` entry, as REGISTER-WRITER. A second
-  database for the abort, and a third for the after-loss form.
+  database for the abort, and a third for the after-loss form. The
+  cutover's own cases run `lanes-index cutover`'s whole row, T116's
+  transaction and T327's push, against a scratch schema, from the operator
+  lane's own checkout: `LANES_REPO` names a clone whose origin is a local
+  bare repository, and `LANES_WORKSPACE_ROOT` a `W` of its own. Origin's
+  `main` is a real commit C, which the import names, and origin's
+  `pre-receive` hook refuses a push where a case asks (lane 3's ruling
+  (c), comment 6828023371).
 - **Oracle.**
   - After the bootstrap: `mode = 'files'`, the marker `absent`,
     `set_seq = -1`, and the head -1.
-  - After the import (seq 0) and the cutover: the head is 1,
-    `set_seq = 1`, `mode = 'primary'`, the marker `adding` at
-    `marker_seq = 1`, and `journal.operator` is true for seq 1 only. A write
-    then fails with LR002, so 69. After `record_marker` at seq 1, the marker
-    reads `present`, `marker_commit` holds the confirmed commit, and a write
-    commits.
-  - After `import --after-loss` at `m` and `cutover --after-loss`:
-    `set_seq = m+1`, and the generation differs from the bootstrap's.
+  - After the import (seq 0) and the cutover's entry, `commit_write` with a
+    `cutover` entry: the head is 1, `set_seq = 1`, `mode = 'primary'`, the
+    marker `adding` at `marker_seq = 1`, and `journal.operator` is true for
+    seq 1 only. A write then exits 69 on the switch its snapshot reads, or
+    on LR002. After `record_marker` at seq 1, the marker reads `present`,
+    `marker_commit` holds the confirmed commit, and a write commits.
+  - After the import at C (seq 0) and `lanes-index cutover --import <C>`,
+    whose 0 is T327's whole row: the head is 1, `set_seq = 1`,
+    `mode = 'primary'`, the marker `present` at `marker_seq = 1`,
+    `marker_commit` origin's new tip, its one push, a child of C carrying
+    `Register-Seq: 1`, and `journal.operator` is true for seq 1 only.
+  - After an after-loss import at `m`, its entry naming C, and
+    `lanes-index cutover --import <C> --after-loss`, whose 0 is T327's
+    whole row: `set_seq = m+1`, the marker `present` at `m+1`, and the
+    generation differs from the bootstrap's.
   - After the rollback's first transaction, read in one snapshot:
     `mode = 'files'`, the marker `removing`, the head `k+1`,
     `set_seq = k+1`, and the entry at `k+1` is the operator entry that
@@ -4202,19 +4233,27 @@ and `ready`'s checks 11 and 12.
     the head to 0 and the switch to `files` with the marker `absent`, and
     `set_seq` to 0, the abort's base. With the marker `present`, it fails
     with LR002 and changes nothing.
-  - **The re-import form's abort** (the third database): `switch_to_files`
-    at `m+1` sets `files` with the marker `absent`, `set_seq` `m` and
-    `lanes/STORE` gone, and leaves the `database_label` and `generation`
-    its cutover set, as lane 3 ruled lane 1's point 2 (comment
-    6710770304). So a commit call carrying another generation, as a
-    pending record made against the lost database would, still fails with
-    LR007.
+  - **The re-import form's abort** (the third database), through the
+    cutover's own step 3: origin refuses the marker's push, the read-back
+    proves it absent, and `cutover` exits 2 with its `ABORTED` line. While
+    the push is held, the switch reads `primary` with the marker `adding`,
+    `set_seq` `m+1` and a generation other than the lost database's. After
+    it, `switch_to_files` at `m+1` has set `files` with the marker
+    `absent`, `set_seq` `m` and `lanes/STORE` gone, and left the
+    `database_label` and `generation` its cutover set, as lane 3 ruled lane
+    1's point 2 (comment 6710770304); origin's `main` is still C. So a
+    commit call carrying another generation, as a pending record made
+    against the lost database would, still fails with LR007.
   - **The restore form** (a fourth database, restored at `b` as AT-D22
-    makes it): after its cutover, `restore_prior` holds the switch row and
-    `lanes/STORE`'s `files` row and lines as they were; `record_marker`
-    clears it. Its abort puts them back with their old `line_id`s, the
-    switch row whole, and `set_seq` the value before the cutover (AT-D22's
-    dump). As the admin under `SET ROLE lanes_register_owner`, setting
+    makes it), each cutover its whole row: `cutover --after-loss`'s 0
+    leaves `primary` with the marker `present`, `set_seq` `b+1` and its
+    label, and its own `record_marker` has cleared `restore_prior`. A
+    second restore form, whose marker's push origin refuses, aborts at its
+    step 3, exit 2, and its `switch_to_files` puts back what
+    `restore_prior` held: `lanes/STORE`'s `files` row and lines with their
+    old `line_id`s, the switch row whole, and `set_seq` the value before
+    the cutover (AT-D22's dump); origin's `main` stays where that cutover
+    found it. As the admin under `SET ROLE lanes_register_owner`, setting
     `restore_prior` while the marker is not `adding` fails with 23514
     (`register_switch_check4`).
   - **An operator entry with a row outside `lanes/STORE`**, as lane 3 ruled
@@ -4303,7 +4342,7 @@ and `ready`'s checks 11 and 12.
 - **Proves.** A live claim records its spelling as typed, its canonical key,
   and the aliases its writer's `repos.tsv` maps to that key, and a released
   claim's spellings block nothing.
-- **Fixture.** The imported register, with aliases X and Y mapping to O in
+- **Fixture.** AT-LR006's register, with aliases X and Y mapping to O in
   `lanes/repos.tsv`. Claims through the real writer.
 - **Oracle.** `spellings` is a `text[]` whose order §1.2 does not fix, so it
   is compared as a set.
@@ -4533,7 +4572,7 @@ and `ready`'s checks 11 and 12.
   `lanes/STORE` (F2, D24).
 - **Phase and kind.** W. RE, with the shim's `edit-entry` mode, which
   rewrites one field of the commit call's entry.
-- **Fixture.** The imported register, and `log NOTED` as the write. Per case,
+- **Fixture.** AT-LR006's register, and `log NOTED` as the write. Per case,
   the shim rewrites: one `journal_files` digest to another 64-hex value; an
   edit's `old_sha256`, so the edit does not apply; an edited path left out of
   the entry's `files`; a `write` entry that edits `lanes/STORE`; an operator
@@ -5476,10 +5515,10 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - After the import: the rollback runs. While it is held at its push, one
     snapshot through the admin connection shows the switch at `files` with
     the marker `removing`, and the removal entry, an operator entry, as the
-    journal's last seq `k+1`: both or neither. A write tried meanwhile fails
-    with LR002 and journals nothing. On release, the read-back confirms the
-    push, `record_marker` sets the marker `absent`, and the rollback ends
-    with test 8 (a)'s oracle.
+    journal's last seq `k+1`: both or neither. A direct `commit_write` tried
+    meanwhile fails with LR002 and journals nothing. On release, the
+    read-back confirms the push, `record_marker` sets the marker `absent`,
+    and the rollback ends with test 8 (a)'s oracle.
   - A rerun after a kill at the push finds the marker `removing` and its own
     entry as the last seq, declares first (§2.3, step 2, "A rerun"; AT-D20
     holds that case), and goes on from the render.
@@ -5560,12 +5599,19 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - Pushed, reported failed: the read-back finds the marker, so the cutover
     completes: `record_marker` sets it `present`, and seq 1 stays.
   - Unconfirmed: `cutover` exits 3 and changes nothing more; the switch
-    stays `primary` with the marker `adding`, and every write fails with
-    LR002. Its rerun reads origin back first, and completes or aborts as the
-    two cases above. The same for the rollback's removal push: `rollback`
-    exits 3, the marker stays `removing`, and its rerun reads origin back,
-    then records the marker `absent` or pushes the removal again (§2.3,
-    step 4).
+    stays `primary` with the marker `adding`, and every write exits 69 on
+    the switch its snapshot reads, or on LR002. Its rerun reads origin back
+    first: a marker found there completes the cutover, as in "Pushed, reported
+    failed"; a marker proven absent has the rerun push again, as a rerun that
+    finds its own entry goes on to the cutover's step 2, and step 2's own ends
+    follow, its abort among them (`operations.md` §2.2, act 4's step 7; lane
+    3, #165 6770600106, T116's point 1). The same for the rollback's removal
+    push: `rollback` exits 3, the marker stays `removing`, and its rerun reads
+    origin back, then records the marker `absent` or pushes the removal again
+    (§2.3, step 4). A files-mode write that lands on origin after the 3, once
+    the removal is there (§2.3, step 3), changes neither: the rerun finds its
+    removal, pushes nothing, ends 0 with the marker `absent`, and records
+    no divergence (lane 3, #165 6814260122, T326's review MUST-1).
   - Held across git: with the push held on the wrapper's FIFO for 6 s, past
     the writer role's 5 s idle bound, the cutover still completes, since its
     transaction committed before any git step (F23, §2.1).
@@ -5575,7 +5621,9 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - `test_a_cutover_abort_deletes_seq_1_only_when_the_marker_is_proved_absent[not-pushed|pushed]`;
   - `test_an_unconfirmed_operator_push_exits_3_and_its_rerun_reads_origin_first[cutover|rollback]`;
   - `test_no_operator_command_holds_a_transaction_across_git`;
-  - `test_a_render_stops_before_an_operator_seq_not_yet_on_origin[cutover|rollback]`.
+  - `test_a_render_stops_before_an_operator_seq_not_yet_on_origin[cutover|rollback]`;
+  - and, in `code/tests/test_sql_register_rollback.py` (T273),
+    `test_a_rerun_after_an_unconfirmed_removal_and_a_files_mode_write_ends_0_with_the_marker_absent`.
 
 #### AT-F3. A write in doubt at the deadline
 
@@ -5877,7 +5925,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - The act exits with the code lane 4's arms give: `start-record`'s 2 makes
     `lane-start` die 2 (a second binding); W7's refusal stops the launch;
     the guard's child, refused 2 on its `set-row-state` of the lane left,
-    records a note in the bind's record; never 0.
+    records a note in the bind's record. That write's own code is never 0; the guard's body still exits 0, and the record ends `bound`, `rc=0` (Y:5486, Y:5552).
   - Without the rival, or with a rival that touches no listed scope, or with
     an earlier write of the same act (the same `act_id`), the write commits.
   - A `HANDOFF-REQUESTED` line is not a lane-kind line, so a requester's
@@ -6101,14 +6149,14 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
      the bound, the record still ends `rc=124`: the bound covers that call
      too;
   8. two sessions answer `2` for one lane on the primary fixture: one
-     `start-record` commits, and the other is refused 2 by `bind:<L>`;
+     `start-record` commits, and the other is refused 2 by `bind:<L>`, which the writer's `expectation:` line names in lower case (Y:5584, Y:5589) in that attempt's `out` file; its record's `why` is `lane-start`'s last refusal line (Y:5487);
   9. the bind is one register commit plus one handoff commit in files mode,
      and one journal entry on primary; a row change injected after
      `act-begin` refuses it with 2 and writes nothing. With the
      `set-row-state` on the lane left, answer 2 journals two entries;
   10. an injected `psql` exit 2 gives `rc=3` with the id: [absent], exit 2
       on every call of the bind's write from its commit call on, its
-      deadline's lookup included; [found], the shim's `after` mode on that
+      deadline's lookup included, so it ends 3 (Y:5245), not the 75 of a lookup that answers absent (Y:5244); [found], the shim's `after` mode on that
       commit call, which commits, then exit 2 on every later call. At the
       next `2` the child's `find_write` lookup runs first. Its tries, here
       and in cases 18 to 20, follow AT-F3's rule, and are asserted as
@@ -6117,12 +6165,12 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       `T_L`, 9 s at `c` = 2,
       is made again, and LR011 and LR007 are not; where no try takes the
       lock, the record ends `bind-failed`, `rc=3`, again, with the copies
-      kept. Absent binds anew under a new id. Found is the bind's "found"
+      kept. Absent binds anew under a new id, the test having disarmed its arm before the next `2`, so that the lookup answers absent (Y:5244; the bind's row, Y:5516; lane 5, #165 6858973903). Found is the bind's "found"
       row, and writes no second `RESUMED`: the child runs `start-record`'s
       pending record's `cmdline` under its `write_id`, generation, lane and
       session, which finds the entry and replays (lane 4's section,
       "The tail, once").
-      The shim's log shows `register snapshot --tree <dir> --at <s−1>`;
+      The shim's log shows `register snapshot --tree <dir> --checkout <c> --at <s−1>`;
       the replay reads the `call` line's directory, `snapshot`, `files`
       and `preimages`; its child's `seam.out` says `tail`;
       `lane_state_follow` moves the lane's `lane-state.yaml` `generation`
@@ -6200,11 +6248,11 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   21. on the primary fixture behind the delayed loopback lane 3 picks for
       lane 2's question 3 (#165 6722518182; section 7's point 23), with
       75 ms added each way and TLS on (AT-D9c (d)'s link), and
-      `connect_timeout=3` with one address in the configuration:
+      `connect_timeout=3` with one address in the configuration, with the image cache filled (the offer made over the cluster's own port, whose whole-file fetch fills it) and no service (a state home whose socket path is over 103 bytes, so the client reads directly and starts none):
       `guard-bind` records `bound_s=530`, the bind ends `bound`, which its
       `timeout` allows only inside it, with its `ended_utc` less
       `started_utc` recorded beside the 530 s, and the shim's log shows no
-      step at its timer. The guard's register read is the hook's last
+      step at its timer. The guard's register read is the `2`'s own prefetch, `register read --for guard` in form 2 (the register-read contract's section 3.6), a call through the relay at `c` = 3 under the guard's 1500 ms statement bound, and the hook's last
       database call in the shim's log, so answer 2 adds none, and the
       exit's lag after the read is asserted and recorded as case 1's is;
   22. `bound_s` as `guard-bind` computes it from the configuration, with a
@@ -6250,12 +6298,17 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     meets the ordinary table;
   - **(d) Another session wanting the same lane, in files mode.** Two
     sessions answer `2` for one lane on the files-mode fixture, the bare
-    origin (case 8 is the primary half). The bind that reaches `lane-start`'s
-    re-read of `binding` at `:2614` second is refused there, the other record
-    ends `bound`, and there is one `RESUMED` line and one stamp for the lane.
-    Lane 4's table names the re-read but gives no exit code for it, so the
-    test asserts a refusal and the absence of a second line and records the
-    code it sees.
+    origin (case 8 is the primary half). Two binds that both read the lane
+    free both land, as files mode does: each reads `binding` once, and the
+    two, answered back to back, read it before either writes. `lane-start`
+    reads `binding` again only after a handoff wait or a Claude resolution
+    (`:2611` at `2a057a6d`, set at `:2509–2510` and `:2606`), and neither
+    runs in the bind: with `LANE_START_HANDOFF_ANSWER` unset, a binding
+    elsewhere is a refusal, not a wait, and the resolution never runs under
+    `--no-launch` (`:689`). So the race is one read wide, and the lane's
+    reservation is #84's (`:2582–2588`). Both records end `bound`, and the
+    lane's log holds two `RESUMED` lines, one for each bind; the test
+    asserts both and records each record's code and notes.
 - **The record's code,** under lane 4's corrected table (comment
   6709560550). The child runs the real `lane-start --no-launch --bind`
   through AT-11's stamp shim, for a resume and for a new lane that the offer
@@ -6336,7 +6389,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - `test_a_binding_from_another_host_or_container_is_not_judged_by_its_pid_until_the_deadline_plus_60_s[host|container]`;
   - `test_an_unreadable_bind_record_is_dropped_with_exit_2`;
   - `test_two_sessions_binding_one_lane_one_start_record_commits`;
-  - `test_two_sessions_binding_one_lane_in_files_mode_the_second_is_refused_at_the_reread`;
+  - `test_two_sessions_binding_one_lane_in_files_mode_both_binds_land`;
   - `test_the_bind_is_one_register_write_and_refuses_a_changed_row`;
   - `test_a_bind_in_doubt_looks_its_write_up_before_a_rerun[found|absent]`;
   - `test_the_bind_child_records_bind_failed_with_the_code_and_binds_nothing[<kind>-<code>]`,
@@ -6411,9 +6464,10 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     of at most 1.65 s, and the mirror answers as above: a value the client
     sets from the stand-in's age, which can only have grown, so it is
     asserted as stated and is not a time the runner measures. The control is a
-    fourth run, at 3.3 s with no declaration: the cap is then `T0 + 3.75 s`
-    and no floor applies, so the read starts and the guard answers. AT-D20
-    holds no case of the floor.
+    fourth run, at an age of about 3.3 s at the client's check with no
+    declaration (the stand-in's launch age plus the client's own start): the
+    cap is then `T0 + 3.75 s` and no floor applies, so the read starts and
+    the guard answers. AT-D20 holds no case of the floor.
 - **Tests.** In `code/tests/test_sql_register_outage.py`:
   - `test_a_declared_outage_lets_the_guard_read_the_mirror_with_service_and_database_down`;
   - `test_with_no_declaration_the_guard_exits_2_with_service_and_database_down`;
@@ -6771,11 +6825,13 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     meets F13's condition by its own UTC and its `LANDING`'s (the holder,
     the PR and `repo_key` equal, more than 30 minutes apart, no close
     between) and carries the word clause. Each of these is a finding, and
-    fails the test: a typed one written 10 minutes after its `LANDING`; one
-    with no word clause; one naming another PR; one whose holder is in
-    another case, which `main_slots` closes and the awk does not. One with
-    no `for lane` imports as a line of no kind (§1.2, "A `LANDING EXPIRED`
-    line's fields").
+    the case shows it: a typed one written 10 minutes after its `LANDING`,
+    one with no word clause, and one naming another PR, each by the test's
+    own check of F13's condition, which names the line, since both readers
+    agree on a typed line (Y:5141); and one whose holder is in another
+    case, by the readers' difference, since `main_slots` closes it and the
+    awk does not. One with no `for lane` imports as a line of no kind
+    (§1.2, "A `LANDING EXPIRED` line's fields").
   - **(k) `who --landing` on primary.** The fake is a `register read`
     prefetch whose text at `n` holds the lines. After a `LANDING EXPIRED`,
     the holder's `LANDING` is not listed, and `none open — …` is printed
@@ -6866,14 +6922,15 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   fakes and test 5's `git` wrapper log their environment.
   `LANES_REGISTER_SEAM_CAP_S=3` for the cap's case.
 - **Oracle.**
-  - Each committed writer's stdout carries its success text exactly once,
-    however many attempts it made, and its stderr only the deciding
-    attempt's lines.
+  - Each committed writer prints its success text (claim's `register seq <s>`
+    line, on stderr) exactly once, however many attempts it made, and its
+    stderr only the deciding attempt's lines.
   - A writer refused at its commit (D18, D19) prints its buffered output,
     then the refusal, and no success text.
   - The fake `tmux` is called once per committed `request-handoff`, after
-    its COMMIT, and never for a refused one; the fake `gh` once per
-    committed `claim`.
+    its COMMIT, and never for a refused one; the fake `gh` comments
+    (`issue comment` or `pr comment`) once per committed `claim`; Rule 1's
+    reads, made before the seam (Y:5043), are not counted.
   - The arm that reaches the seam twice exits 2 naming the first seq, and
     the journal holds that one entry.
   - **The child at the seam** (lane 4's section, "How an attempt runs the
@@ -6891,7 +6948,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     - with its parent killed while it waits, the child writes `seam.out`
       as `none`, writes one line to fd 4, "attempt `<k>` of write `<id>`
       stopped waiting at the seam (`<why>`); nothing after the seam ran",
-      and exits 75 without its tail: the fake `gh` is not called;
+      and exits 75 without its tail: the fake `gh` makes no comment call;
     - with its parent stopped by `SIGSTOP`, the same at the cap;
     - `seam.out` is written once, with noclobber: `tail` before the child
       acts on `committed`, `none` before it acts on `abandon`.
@@ -7008,7 +7065,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - **The kept child gone** (the second): the same three, with the cap
     ending the kept child first, its line on fd 4 naming the attempt. The
     run replays: the shim's log shows one
-    `register snapshot --tree <dir> --at <s−1>` and no commit call after
+    `register snapshot --tree <dir> --checkout <c> --at <s−1>` and no commit call after
     it; the replay's change set has the sha256 of the entry's
     `journal_files`; the fake `gh` is called once; and the sidecar's
     pre-image is the one the committing call recorded. For
@@ -7036,17 +7093,17 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       ws1, it says the steps may already have run here, and names them;
     - [other-host]: with the write made from ws2, it names ws2 and the
       steps, and says to rerun there if that run ended 3.
-  - Lane 4's third test, a rerun after a 3 that replays, is AT-D8's, and
-    its seventh, the bind's found row, is AT-F6's.
+  - **Two matching call lines** (NIT-4 (b); lane 3, #165 6851422597): a killed `claim`'s record holds its one `call=` line and no `tail`. The test adds a second line with the same `<base> <clock> <not_after> <files>`, naming its own attempt directory, `<run>/2`, which holds a copy of the first's `snapshot`, `files` and `preimages`, as a resend of one change set in the same database second would. A plain rerun finds its id at the snapshot, with no kept child, and does not replay (Y:5317; tasks:1236): it exits 0 with one WARNING saying that two call lines sent the entry's change set and that it cannot be replayed, and naming the steps that did not run. The fake `gh` gets no Rule 1 read and no comment after the kill, the done mark keeps `owed <utc>`, and the record is removed. A run whose own commit answered `committed` keeps that call's line (Y:5306); this case does not build it.
+  - Lane 4's third test, a rerun after a 3 that replays, is AT-D8's, and its seventh, the bind's found row, is AT-F6's.
 - **Tests.** In `code/tests/test_sql_register_in_doubt.py`:
   - `test_a_call_in_doubt_that_committed_runs_its_tail_once_from_the_kept_child[snapshot|lr006|lookup]`;
   - `test_with_the_kept_child_gone_a_replay_runs_the_tail_once[snapshot|lr006|lookup]`;
   - `test_a_replay_of_request_handoff_types_into_no_pane`;
   - `test_a_rerun_that_finds_tail_sent_runs_no_tail_and_writes_the_done_mark`;
   - `test_a_replay_that_stops_or_differs_runs_no_tail_and_warns[stops|differs]`;
-  - `test_a_run_with_no_record_runs_no_tail_and_names_it[done-mark|this-host|other-host]`.
-- **Run time.** About 1–1.5 min: the [lookup] cases wait about 10 s each for
-  `<n>`, and the others take 2–5 s each.
+  - `test_a_run_with_no_record_runs_no_tail_and_names_it[done-mark|this-host|other-host]`;
+  - `test_two_matching_calls_of_one_change_set_leave_the_replays_tail_owed`.
+- **Run time.** About 1.5–2 min: the [lookup] cases wait about 10 s each for `<n>`, and the others take 2–5 s each.
 - **Flakiness.** Every order is a FIFO hold, or the cap's end, which the
   test waits for through `seam.out`; no sleep decides an order.
 
@@ -7519,8 +7576,8 @@ test that asserts a time says which of the three it is.
     the barrier.
   - A window of W = 200 ms, injected by the shim's `window` mode between each
     writer's snapshot and its COMMIT.
-  - A deadline of 30 s (Q7 (A″); D7), D7's default: the burst runs with
-    `LANES_REGISTER_DEADLINE_S` unset, as AT-4 (c) does. The companion
+  - A deadline of D7's 30 s default (Q7 (A″); D7), or the runner's own D7 where that is longer: the burst runs with
+    `LANES_REGISTER_DEADLINE_S` set as AT-4 (c) sets it, `max(30 s, 10 × the runner's attempt p95)`, from the test's own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13). The companion
     case below keeps its variable.
 - **Oracle.**
   - All ten exit 0, and none exits 75 or 69.
@@ -7538,8 +7595,8 @@ test that asserts a time says which of the three it is.
     from 40 ms up, which is why (A) fails this test (P1540–1547).
 
   The asserted bound is the deadline itself: no writer exits busy (the
-  delta's "A burst loses no writer"). The drain is asserted under 60 s,
-  twice D7's 30 s (section 4's rule 2), and recorded against the 30 s with
+  delta's "A burst loses no writer"). The drain is asserted under twice the deadline it ran under,
+  60 s at D7's 30 s (section 4's rule 2), and recorded against that deadline with
   its margin.
 - **Two companion cases.**
   - **The window is effective.** The same burst with a 1 s deadline: at least
@@ -7570,10 +7627,10 @@ test that asserts a time says which of the three it is.
     database"). D7 stays 30 s, and act 3's test 4 decides it; AT-D9c (d)
     runs this burst on a delayed link, where each writer commits once or
     exits 75 with nothing written.
-  - **The drain is recorded beside D7's 30 s, and asserted only under
-    twice it, 60 s (section 4's rule 2):** the time from the barrier's
+  - **The drain is recorded beside the deadline the burst ran under, D7's 30 s or the runner's own, and asserted only under
+    twice it, 60 s at the default (section 4's rule 2):** the time from the barrier's
     release to the last writer's exit, and each writer's attempts, counted
-    as snapshot calls in the shim's log, are printed beside the result.
+    as snapshot calls in the shim's log, are printed beside the result, with the measured attempt p95 and the deadline set from it.
 - **Tests.** AT-4 owns `test_ten_writers_released_together_all_commit_in_order`,
   whose oracle section 4.1 gives. Section 4.1 adds
   `test_the_burst_window_is_effective_a_short_deadline_sends_writers_busy`.
@@ -7764,10 +7821,10 @@ test that asserts a time says which of the three it is.
     section 5.6), and a lost SYN adds 1 s. SVC-8 says how the shares hold
     it ("Over a remote database"): the direct read takes `c`, and its
     timer, not the connect bound, keeps the hook's budget; a whole-file
-    fetch meets the start line past about 165 ms of RTT, and case 6's
+    fetch meets the start line past about 165 ms of RTT, a figure its own `lanes-index` start and second connect bring lower, since the fetch is a call of its own (SVC-8; lane 1's R07, #165 6809169664; lane 3, #165 6809568632), and case 6's
     detached fetch keeps it for the next prompt. Under section 5.6's option
-    A or B, the same cases also run on a healthy delayed link, so that no
-    share expires on a link that answers.
+    A or B, a healthy delayed link is crossed by AT-F6's case 21, whose warm direct read and whole bind meet their shares, and by AT-D9c (d), where no healthy call meets its timer; the fault cases stay on loopback, where each share's expiry is exact.
+    With the image cache filled, as a joined workstation's is, a direct read is about eight round trips, inside the start line to about 375 ms of RTT, or 310 ms where a configured service is silent (SVC-8, "A whole file is never lost to the line"). A prompt that must fetch a whole file may still answer 2 on a healthy delayed link, "too late to verify", and the next prompt reads the file its fetch left in the cache, as case 6 shows (lane 5, #165 6852197902; lane 3, #165 6858923154; lane 2, #165 6859896678).
 - **Tests.** `test_a_database_that_does_not_answer_is_2_inside_4_5_s[<case>-<service>]`
   for cases 1 to 4, and AT-10's
   `test_a_connect_timeout_above_the_direct_reads_share_is_cut_at_the_parse_start_line[service-up|service-down]`
@@ -8326,10 +8383,10 @@ reworded, and add M1 in the design's form.
   which open point 11 could not.
 - **B, a delaying relay in the suite.** A standard-library relay on
   127.0.0.1, as AT-D9's F2 relay is, holds each chunk RTT/2 in each
-  direction and delays its upstream connect by one RTT. It needs no root
+  direction. As T229 built it (`code/tests/pgcluster.py`'s `DelayedLoopback`), it connects upstream at once and delays no connect, so TCP's handshake crosses it with no RTT, and a connect through it is n_c less that one round trip: 6 under the default key shares, 5 with P-256 offered first (lane 5, #165 6852197902; lane 3, #165 6858923154). It needs no root
   and runs in pytest on any host, as
   `test_each_shape_on_a_delayed_relay_is_recorded[<shape>-<rtt>]` (AT-9).
-  It models no slow start, loss or kernel timer, so it checks n for small
+  It models no slow start, loss, kernel timer or TCP handshake, so it checks n, less one round trip a connect, for small
   messages, not C.
 - **C, neither.** M13's counts, lane 5's run and act 3's rows carry the
   model.
@@ -8810,7 +8867,9 @@ frame do not yet make it. None adds a requirement.
    after the verb returns, the renderer may not yet have started, so a free
    lock proves nothing alone. Every test uses one of two waits, and no other:
    - **Where the lag is expected to reach 0,** a poll of `lanes-index status`
-     every 100 ms until its lag is 0, with a 30 s ceiling.
+     every 100 ms until its lag is 0, with a 30 s ceiling, each poll after a
+     fetch of the W `status` reads (T117), made by the test with plain git:
+     `status` never fetches, and no write on primary fetches W (D12).
    - **Where the lag is expected to stay above 0** (test 5's kill and failed
      render, test 6's stop, test D22's lag), a wait for the renderer's exit.
      Test 5's `git` wrapper logs, at each call, the pid of the
@@ -8997,7 +9056,7 @@ frame do not yet make it. None adds a requirement.
     that workstation's attempt p95)`, with `T_write` and `bound_s`
     recomputed (the phase plan's "Over a remote database"). The tests set
     D7 by `LANES_REGISTER_DEADLINE_S` for their short cases, run test 4's
-    burst with it unset, and assert the 30 s default once (AT-4 (h)). A
+    burst under the runner's own D7 by that formula, set from its own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13, which answers this point for AT-4 (c)), and assert the 30 s default once (AT-4 (h)). A
     per-workstation D7 would add a configured value for them to read.
 33. **`max_connections` against the connections the register opens.** The
     design says the server's `max_connections` must hold one service

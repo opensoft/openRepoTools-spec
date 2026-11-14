@@ -37,7 +37,7 @@
 
 ### The message
 
-- The message is "the journal entry's message byte for byte" (Y:555), and the entry's message is "today's commit message exactly" (Y:2796), in the forms `LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …` (Y:2796–2797).
+- The message is "the journal entry's message byte for byte" (Y:555), and the entry's message is "today's commit message exactly" (Y:2796), in the forms `LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …` (Y:2796–2797), `rename-lane`'s on primary excepted (Y:3451).
 - `Register-Seq: <n>` goes "in its final trailer block, its last paragraph" (Y:556).
 - Where the last paragraph is already a trailer block, the trailer is "appended as that paragraph's last line" (Y:556–557); F29 names such a block as "every line `Token: value` with a token of letters, digits and `-`" (Y:5964).
 - Otherwise it goes "after one blank line as a new last paragraph" (Y:558), "rather than starting a second block" (Y:558–559); F29's cases are "a subject alone, or a body ending in prose" (Y:5965).
@@ -135,13 +135,13 @@
 
 - At the destination: "A non-GitHub origin with `render_key=` set is refused with 2" (Y:2879–2880).
 - "A push its read-back cannot confirm takes neither the success nor the abort branch until a later read-back settles it: the command exits 3, and its rerun reads origin back before it acts" (Y:3157–3159).
-  - Cutover: "A push it cannot confirm exits 3, and the rerun reads origin back first" (Y:3195–3196); "A marker found there completes the cutover, and a marker proven absent takes the abort" (ops:275).
+  - Cutover: "A push it cannot confirm exits 3, and the rerun reads origin back first" (Y:3195–3196); "A marker found there completes the cutover; a marker proven absent has the rerun push again, as a rerun that finds its own entry goes on to step 2, and step 2's own ends follow, its abort among them" (ops:275).
   - Rollback: "Push the commit removing `lanes/STORE`, seq `k+1`, with the renderer identity, and confirm it by read-back" (Y:3253–3254), and "a push it cannot confirm exits 3" (Y:3255).
   - The abort: "where a push was made, it first proves by read-back that the marker is absent from origin" (Y:3198–3199).
 - `record_marker` after the read-back, on its timer's expiry: "69: the push stands, and the marker stays `adding` or `removing`, so writes keep refusing" (Y:3534).
 - The renderer ends after "a pass that cannot progress (an authentication failure, a divergence, an operator seq its command has not yet put on origin)" (Y:2897–2899), and the plan's stop conditions include "a fetch, authentication or six-rejection failure, recorded with the mirror state" (Y:5793).
 - "A fetch that fails ends the pass with nothing pushed" (Y:2864); at an operator seq "the pass renders nothing past it, since its command owns it" (Y:2863).
-- At `files` the pass renders nothing and records no divergence, since nothing at `files` can clear one: after finding `m` it ends with the outcome `at-files`, 0 (lane 3's ruling on open point 2 of its review of T322, 2026-11-10).
+- At `files` the pass renders nothing and records no divergence, since nothing at `files` can clear one: after finding `m` it ends with the outcome `at-files`, 0 (lane 3's ruling on open point 2 of its review of T322, 2026-11-10). The one exception is a rollback's `files`, with the marker `removing`: its entry `k+1` stands and the marker is still on origin, so the pass renders as at `primary`, up to `k` and never `k+1`, an operator entry (S5's rollback, step 2; ops:337; AT-F2, "A rollback's entry at `k+1`"). N6 does not apply there (Y:2850), and a stray after `R`, or a render set at `R` that is not the images at `m`, ends the pass with nothing rendered and nothing recorded but `last_error` (S5's remaining gap) (lane 3's ruling on T326's point 1).
 - "Killed between `commit-tree` and the push, it leaves only unreferenced objects" (Y:2908–2909).
 
 ## 4. Where Y tests it

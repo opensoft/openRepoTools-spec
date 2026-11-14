@@ -1129,9 +1129,9 @@ are lane 3's rulings memo's).
   Each writer process MUST ask the mode once, before slice 1a's routing. On
   primary it MUST NOT enter the lane checkout by 1a's routing: it takes `<c>`
   from `lane_checkout_path`, with no S3 work, and refuses with 2, naming
-  `lanes-edit.sh lane-checkout <lane> --create`, which makes it, as
-  `lane-start` does at a launch, where that checkout does not exist (R17;
-  lane 3, #165 6769061039). Sources: "How an attempt runs the verb"
+  `lanes-edit.sh lane-checkout <lane> --create`, which makes it,
+  where that checkout does not exist, an explicit `LANES_REPO` included (R17;
+  lane 3, #165 6769061039 and 6841265575). Sources: "How an attempt runs the verb"
   (Y:4981); the primary branch (Y:4983); D7 (Y:455); D12 (Y:522).
 - **FR-019**: The commit seam's primary branch MUST keep every content check,
   and MUST refuse with 2 any staged path outside the write's pathspecs or
@@ -1455,7 +1455,7 @@ are lane 3's rulings memo's).
   - each new name of "New and unproven".
 
   Each is written in the phase that builds what it checks, and lands with
-  that phase. Source: the test plan (Y:6084).
+  that phase, or before it under T280's landing gate, which skips it, naming its tasks, until they land; T281 removes the gate in the last set (Brett's "Temporary landing gate (Recommended)", 2026-11-13). Source: the test plan (Y:6084).
 - **FR-060**: `tests.yml` MUST set `OPENREPOTOOLS_REQUIRE_PG: '1'` where the
   binaries exist. It MUST keep the four required check names:
   `guard-launch-mode`, `tests`, `tests-no-submodule` and `package`. Source:

@@ -301,7 +301,7 @@ he named on 2026-11-08 ("Values Brett named on 2026-11-08", in Open questions).
 17. **Q24, how #165 reaches the hosts: (a).** The workBenches re-vendor, v1.2.0
     with a TestPyPI rc1, the one-liner as a stopgap, and one image rebuild.
     Under (b) or (c), only the route changes; the readiness check's digests
-    follow whichever artifact is installed.
+    follow whichever artifact is installed. Under (a), the re-vendor vendors the release as a package, its `payload/` files plus the wheel's stamped `_release.py`, installed with `payload/openRepoTools --install`, so that on the `./setup.sh` hosts check 1's list is placed as from the package, and check 1 keeps its meaning (Brett's "Vendor release as package (Recommended)", 2026-11-13).
 18. **Q25(a), the merge method: (i), merge commits.** Under (ii) or (iii), the
     sha that lands differs from the rehearsed head, so the composed run is
     repeated.
@@ -486,7 +486,8 @@ the section that carries it.
   until it has made F3's lookup:** it calls `find_write(<id>, <n>, <g>, <lane>, <verb>, <a>)` (§1.3.1),
   `<n>` being the largest `not_after` its commit calls carried (§1.3's step 9,
   LR008), its tries starting within the 10 s reconnect window, which starts
-  when its own wait for `<n>` ends, each running to its own timer, `T_L` = `N_a`·`c` + 7 s (9 s at `c` = 2, D9; the
+  when its own wait for `<n>` ends, each running to its own timer,
+  `T_L` = `N_a`·`c` + 7 s (9 s at `c` = 2, D9; the
   phase plan's "The in-doubt rule"). The function waits until the
   database clock has passed `<n>`, takes the head row's lock, checks the clock
   again under it, and checks the generation and looks the write id up, finding only this write's own entry, else LR007 (R2's S2; V2's NIT 1). Found, it exits 0 and
@@ -1254,7 +1255,7 @@ CREATE VIEW stale_claims AS                    -- claim_is_stale (code/lanes-edi
                     AND o.file = h.file AND o.ordinal > h.ordinal AND o.verb = 'OPENED'
                     AND h.object = ANY (string_to_array(o.payload, ' ')));
 
-CREATE TABLE register_lines (                  -- every non-row LANES.md line, parsed best effort
+CREATE TABLE register_lines (                  -- every non-row LANES.md line of a kind, parsed best effort
   line_id     bigint  PRIMARY KEY REFERENCES doc_lines (line_id) ON DELETE CASCADE
                       DEFERRABLE INITIALLY DEFERRED,
   kind        text,
@@ -2767,8 +2768,8 @@ starts when its own wait for `<n>` ends, each running to its own timer,
    most 2 s ahead, and a `<n>` further ahead is refused with LR011.
 2. **It takes the head row's lock, its tries starting within the 10 s
    reconnect window, which starts when its own wait for `<n>` ends, each
-   running to its own timer, `T_L` = `N_a`·`c` + 7 s, 9 s at `c` = 2 (D9; the phase
-   plan's "The in-doubt rule"),**
+   running to its own timer, `T_L` = `N_a`·`c` + 7 s, 9 s at `c` = 2 (D9; the
+   phase plan's "The in-doubt rule"),**
    inside `find_write`, under the caller's `lock_timeout`. The writer has no UPDATE,
    so its own `FOR UPDATE` would get 42501. Under the lock the function checks
    that the clock has passed `<n>`, the exact complement of step 9's test, and
@@ -2840,7 +2841,7 @@ Each committed write is one journal entry, the interface between S1 and S2:
 seq, `write_id`, the database UTC of its commit, verb, lane, workstation, the
 author identity (D15), the digest of the verb's arguments (`args_sha256`,
 F10), today's commit message exactly (`LANES(<lane>@<ws>): …` or
-`LOG(<lane>@<ws>): …`), the line edits across files with creates, renames and
+`LOG(<lane>@<ws>): …`; `rename-lane`'s on primary excepted (design:3498)), the line edits across files with creates, renames and
 removals, and the per-file digests after it. The mode is not on the entry:
 each line it writes records the mode in `doc_lines.written_mode`, and each
 structured row in its own `mode` (§1.2; lane 3's ruling, #165 6578020193).
@@ -3494,7 +3495,7 @@ and `aliases.tsv`, as one journal entry spanning files. Then the handoff file's
 move and Rule 3 stamp, as a git commit in the lane's checkout under Amendment
 23's S3–S4; the renderer never moves it. A failed move leaves the row's handoff
 cell naming the file not yet moved, and rerunning `lane-rename` finds the
-register already renamed and makes only the move and the stamp.
+register already renamed and makes only the move and the stamp. On primary the entry carries the message the design names for it under Q13(a), since the handoff is not in it: `LANES(<new>@<ws>): RENAMED lane <old> → <new> (Amendment 16) — the row, lanes/log/<new>.md and lanes/aliases.tsv in one register write; the handoff's move and stamp follow in the lane's checkout (Q13(a))`, where files mode's ends `the row, lanes/log/<new>.md, the handoff and lanes/aliases.tsv in one commit` (lane 3, #165 6859179515, on round 6h's twin id).
 
 ## Roles and credentials
 
@@ -5018,7 +5019,7 @@ The lifecycle scripts:
 
 #### Phase 1 under the other options
 
-Under Q26(b), the guard's outage branch and `outage declare` are not built. Under Q26(a), the guard reads the mirror on any failed read. Under Q29(b), phases 1 to 3 do not change; only the service's turn moves before act 4.
+Under Q26(b), the guard's outage branch and `outage declare` are not built. Under Q26(a), the guard reads the mirror on any failed read. Q29 is settled as (a) (Brett, #165 6710653292), and its condition is met (item 4 of "The three phases, and the interfaces between them"), so the service is built beside phases 1 and 2 and act 4 waits for it; had Q29(b) been taken, phases 1 to 3 would not have changed, and only the service's turn would have moved before act 4.
 
 ### Phase 2: the write path
 
@@ -5104,13 +5105,13 @@ It is a child process, not the frame's subshell (`design.md:568`, `:1705`), beca
 **What replaces `:2335–2500`:**
 1. An empty `diff --cached` is no change: the seam returns 0 with no handshake, as `:2339–2340` does today.
 2. Every staged path must be in this write's pathspecs plus `LOG_RENAMED_FROM` (`:2370–2371`'s check, extended to every write) and in Q18(A)'s render set; otherwise exit 2 naming the path, nothing sent.
-3. The seam writes `changes.tsv` (status, path, the base blob at `n`, the new blob, from `git diff --cached --no-renames --raw HEAD`), the new images from the index, and `msg`, holding `$msg` verbatim.
+3. The seam writes `changes.tsv` (status, path, the base blob at `n`, the new blob, from `git diff --cached --no-renames --raw HEAD`), the new images from the index, and `msg`, holding `$msg` as files mode's `git commit -m` stores it: cleaned once by `git stripspace`, git's default cleanup (`whitespace`), with no final LF of its own; files mode's commit message ends in the one LF git adds, which the twin test allows (lane 3's ruling, #165 6859073786; lane 1, #165 6869810000; lane 4, #165 6870452610).
 4. The handshake.
 
 | Site | Caller | What changes at the site |
 |---|---|---|
 | `:6161` | `write_event`, for `log` `:16465`, `claim` `:16649`/`:16651` (CLAIM-LOST `:16676`/`:16679`/`:16682`), `release` `:16742`, `request-handoff` `:17203`/`:17232` | None. The tail at `:6162–6180` runs once, after COMMIT. |
-| `:12155` | `migrate_state_cells` | None |
+| `:12155` | `migrate_state_cells` | None at the site. Under the flag, the times the verb composes are whole seconds, a minute-only time getting `:00` (D13; the `log_lines` CHECK on primary's `utc`); files mode is byte-identical. |
 | `:12941` | `retire_rows` | None; the follow loop (`:12947–12952`) runs after COMMIT |
 | `:13151` | `archive_rows` | None |
 | `:15233` | `set-row-state` | None; a no-op stamp (`REPLACE_LINE_NOOP`, `:15223`) stages nothing, so no commit call |
@@ -5140,7 +5141,7 @@ Two lines that read HEAD's sha after the write print `register seq <n>` instead 
 
 **Which verbs reach the seam twice in one run today:** `claim` through CLAIM-LOST (`:16676–16682`) after its hook returns 7 or 9; `add-row`'s compensating commit (`:3908–3912`); the captures (`:2713–2714`, `:2396`). None can fire on primary: their triggers are the rebase hooks and dirty checkouts, the loser writes nothing (Q12(a), D18), and `commit` is refused.
 
-**The rule: one run, one journal entry.** A second reach in one run exits 2: "a second register write in one run; the first committed at seq `<s>`; nothing more was sent." No verb is split and the design names no merged message, because D5 and S2 give one entry and one mirror commit per write with its own message "exactly as today", a merged message would invent text, a split would create a partial state between two entries, and `rename-lane`'s second act is a git commit, not an entry.
+**The rule: one run, one journal entry.** A second reach in one run exits 2: "a second register write in one run; the first committed at seq `<s>`; nothing more was sent." No verb is split and the design names no merged message, because D5 and S2 give one entry and one mirror commit per write with its own message "exactly as today" (`rename-lane`'s on primary is the one Q13(a) names, design:3498, since its handoff is not in the entry), a merged message would invent text, a split would create a partial state between two entries, and `rename-lane`'s second act is a git commit, not an entry.
 
 #### `LANDING EXPIRED`'s verb: `append-line --landing-expired` (F13)
 
@@ -5543,7 +5544,7 @@ The check is a branch of its own at the offer site (`:10648–10659`), after 18(
 | the answer `2` itself | 2 | `binding` | "BINDING: this window is now named `<to>` … detached (pid `<p>`, bounded at `<bound_s>` s) … send your work again in a minute or so; until it ends, each prompt is answered BINDING IN PROGRESS" |
 | same session; child live, inside the bound | 2 | unchanged | "BINDING IN PROGRESS: … it ends by `<deadline utc>` at the latest. Your prompt was NOT sent; send it again in a few seconds"; where the record says `bounded=no`, the text leaves out "at the latest" |
 | same session; child live past `deadline_epoch` | 2 | unchanged | "THE BIND HAS RUN PAST ITS `<bound_s>` s BOUND and is still running (pid `<p>`, started `<utc>`)". Where `bounded=no`: "this host has no `timeout`, so nothing stops it; it is most likely in a `git` call". Where `bounded=yes`: "its `timeout` has not ended it; it is likely stuck on the disk or the network". Then: "Waiting costs nothing, and the next prompt reads its outcome. `kill <p>` stops it, at a cost. If it is inside a register write, that write is left in doubt. On primary the record keeps its write id, and the next `2` looks it up before it binds again. In files mode a commit it made may stay local until the next write from that checkout pushes it, a push it started may still land, and the next writer takes over its lock at once. Your prompt was NOT sent." |
-| another session wanting the same lane | its own table | its own record | it never sees this record. If it answers `2`, on primary `start-record`'s `bind:<to>` expectation refuses whichever bind commits second, with 2; in files mode, `lane-start`'s re-read at `:2614` |
+| another session wanting the same lane | its own table | its own record | it never sees this record. If it answers `2`, on primary `start-record`'s `bind:<to>` expectation refuses whichever bind commits second, with 2; in files mode there is no second `binding` read: `lane-start`'s re-read at `:2614` runs only after a handoff wait or a Claude resolution (`bind_recheck`, `:2611`), and on a free lane `--no-launch --bind` has neither (there is no wait to take, and `--no-launch` resolves no Claude, `:689`); `start-record` reads no `bind:` expectation there, since files mode ignores `LANES_EXPECT`; so two binds that both read the lane free both land: the race is one read wide (`lane-start:2582–2588`), and the reservation that would close it is opensoft/openRepoTools#84's |
 | after success | 2, once | removed | "MOVED: this window is lane `<to>`, bound … at `<utc>`", one line per owed note, "This prompt was NOT sent"; the next prompt exits 0 |
 | after failure, attempt `k` below 3 | 2, once | `name-drift`, `bind=k`; window renamed back to `<from>` | "THE BIND TO LANE `<to>` FAILED (exit `<rc>`): `<why>` … the offer is KEPT: reply `1`, `2` or `3`" |
 | failure on the third attempt | 2 | `name-drift`, `bind=3` | as above, and choice 2 is no longer offered |
@@ -5997,7 +5998,7 @@ A prototype renderer in stdlib Python, the form `lanes-index render` would take,
 | Dates and time zone | `@<epoch> +0000`, `TZ=UTC` | sha differs (`+0530`) |
 | The `encoding` header | `-c i18n.commitEncoding=UTF-8` | sha differs (`encoding ISO-8859-1`) |
 | Signature | `--no-gpg-sign`, `-c commit.gpgSign=false` | **same sha:** 2.43's `commit-tree` ignores `commit.gpgSign`; only `-S` signs (probed: 0 `gpgsig` headers, and 1 with `-S`) |
-| The trailer's place (`trailer.*` config) | `interpret-trailers` run outside any repository, system and global config off, `where`, `ifexists`, `ifmissing` and `separators` given | sha differs (`trailer.where=start`) |
+| The trailer's place (`trailer.*` config) | `interpret-trailers` run outside any repository, system and global config off, `where`, `ifexists`, `ifmissing` and `separators` given | sha differs (`trailer.where=start`); superseded by D15 |
 | Inherited environment (`GIT_DIR`, `GIT_INDEX_FILE`, `GIT_CONFIG_PARAMETERS`/`COUNT`, `GIT_REPLACE_REF_BASE`, …) | all removed | not probed |
 | Mode and path bytes | always `100644`; NUL-separated paths; `-c core.precomposeUnicode=false` | macOS only, not probed |
 | Object format | every lane checkout clones the one origin | not probed |
@@ -6074,8 +6075,8 @@ Every row below waits on the decision it names.
 | 2 | The push goes to an explicit SSH URL in an isolated environment, not `git push origin` (`:1901`) | a deploy key is SSH-only; `insteadOf` and agent keys could defeat it | lane 3; facts for Brett: `GIT_CONFIG_GLOBAL` needs git 2.32 or later in every environment; whether `ready` can prove the key's write right (`git push --dry-run` over SSH) |
 | 3 | F15 adds a 64-seq batch and a 16-pass lifetime cap with one handover re-fork; no `SyncLock`-style re-mark cap | an absolute bound per process without stranding the last write; the values are unmeasured | lane 3: the two values, and whether to accept the gap after six lost races |
 | 4 | [L4-3]'s "at most two renders" holds only for a burst within one pass; "a second push is a no-op" only one after the other; "up to six times" is six attempts in all; the private index's stale `.lock` is cleared under the lock | the prototype | lane 3 |
-| 5 | D15's "(it honours `commit.gpgSign`)" (`:427`) is false for git 2.43 | the probe | lane 3 |
-| 6 | `lanes-index` composes the render commit's message, not `interpret-trailers` as D15 still says (`:428–430`); the mechanics are in "F29" | the git version and `trailer.*` configuration are otherwise inputs to the sha | lane 3 and lane 1 |
+| 5 | D15's "(it honours `commit.gpgSign`)" (`:427`) is false for git 2.43 | the probe | lane 3; applied in D15 |
+| 6 | `lanes-index` composes the render commit's message, not `interpret-trailers` as D15 still says (`:428–430`); the mechanics are in "F29" | the git version and `trailer.*` configuration are otherwise inputs to the sha | lane 3 and lane 1; applied in D15 |
 | 7 | The import way out toggles a line's history; the revert does not | the prototype | lane 3: keep, or prefer the revert |
 | 8 | Agreement test 3's unit form ships in phase 2; the frame puts the test in phase 3 | a phase must land tested (`:106–108`) | lane 3 |
 | 9 | `cutover` and `rollback`'s transactions are phase-1 code, runnable only on a scratch schema; their pushes are phase 3 | they run through no write seam | lane 3 |
@@ -6336,7 +6337,7 @@ The runbook is `operations.md`, summarised below. In order:
    measure the direct guard.
 5. **The release** (Q24(a)): v1.2.0 with an rc1, the workBenches re-vendor and
    one image rebuild carrying the configuration mount (Q23(a)) and PostgreSQL
-   16 (1A).
+   16 (1A). The re-vendor vendors the release as a package, as Q24 (a) above says (Brett's "Vendor release as package (Recommended)", 2026-11-13).
 6. **The readiness check** in every environment that writes the register
    (P19): on Eagle, the host shell and each bench container (py-bench,
    cloud-bench and any other bench image, each a separate environment because
@@ -6474,8 +6475,8 @@ exactly (Q21(b), D23), which nobody has checked yet and on which his Q21(b)
 answer rests; for the deploy key's push (the phase plan's row 2, under
 Q21(b)), whether every environment has git 2.32 or later, which
 `GIT_CONFIG_GLOBAL` needs, and whether `ready` can prove the key's write
-right (`git push --dry-run` over SSH); whether Eagle and Raven install by pipx
-or `./setup.sh` (Q24). Whether v1.2.0 carries #165 alone is answered: it carries
+right (`git push --dry-run` over SSH). Whether Eagle and Raven install by pipx
+or `./setup.sh` (Q24) is answered: `./setup.sh`, option b of lane 3's question, which Brett chose with "1a 2b", typed in lane 3's session at about 04:00Z on 2026-11-12 (lane 3, #165 6814260122). Whether v1.2.0 carries #165 alone is answered: it carries
 #165 and T017's five fixes, on Brett's split of the release (#165 6721648587 and
 6721870837).
 

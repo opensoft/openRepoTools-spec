@@ -39,7 +39,7 @@ change's two spec files on this branch, at `ad82c2f4`; `Y:<n>` is a line of
 | `lanes` | one row per lane, `LANES.md` and `archive/` together | `lane_key` | Y:1190 |
 | `log_lines` | every log line, unreadable ones kept | — | Y:1202 |
 | `object_holds` | each lane's last line per object | — | Y:1222 |
-| `register_lines` | every non-row `LANES.md` line | — | Y:1254 |
+| `register_lines` | every non-row `LANES.md` line of a kind | — | Y:1254 |
 
 **Views:** `holds` (Y:1240), `stale_claims` (Y:1245) and `main_slots`
 (Y:1283). **Functions:** `render_file` (Y:1297), and `commit_write` in full in
