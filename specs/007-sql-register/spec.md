@@ -1508,7 +1508,7 @@ are lane 3's rulings memo's).
   `<act-id>@<seq>:<generation>` or `<act-id>@files`. `LANES_EXPECT` holds
   `row:`, `bind:`, `objects:`, `alias:`, `archive:` and `sid:` scopes.
 - **The bind record**: the session's offer file, in modes `binding`,
-  `bound`, `bind-failed` and `name-drift`, with `bound_s`, the pid and its
+  `bound`, `bind-failed` and `name-drift`, with `bound_s`, the pid and, where it can be read, its
   start time, and the five copies.
 - **The image cache**: `register-images/`, with content-addressed objects,
   per-seq manifests and a forward-only head `[PLAN CHOICE: the image cache's
