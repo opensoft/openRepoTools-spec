@@ -702,9 +702,15 @@ passages, and the absence of the pipx route.
   - No rehearsal MUST use the version `1.1.0` itself.
 - **FR-034**: The release procedure (RELEASING) MUST be written in
   `release.yml`'s header, as the model's is. It MUST include the branch and
-  tag policy of FR-036 to FR-041. It MUST also include the step that creates
-  each GitHub Release by hand from its notes file, after PyPI serves the
-  version. No step of the release workflow MUST read the release notes.
+  tag policy of FR-036 to FR-041. It MUST also include the step that
+  publishes each GitHub Release with its notes file, after PyPI serves the
+  version. By then the release workflow's `asset` job (feature 007's T346)
+  has created that release as a draft holding check 1's digest list (Brett
+  Heap, 2026-11-11, "3a" in lane openRepoTools-3's session), and the
+  release owner publishes the draft with the notes, on Brett Heap's word.
+  The step MUST say to re-run `asset` before publishing if it failed, and
+  never to publish without the list. No step of the release workflow MUST
+  read the release notes.
 - **FR-035**: Every pin MUST be exact.
   - Every action the release workflow uses MUST be pinned by a full commit,
     as `tests.yml` pins its own.
@@ -781,8 +787,11 @@ passages, and the absence of the pipx route.
   - `docs/release-notes/v1.1.0.md` is a draft. Each of its placeholders MUST
     be filled in or cut before its tag. It ends with a line naming its own
     path in the spec leg.
-  - Each GitHub Release MUST be created from its notes file, and, for a
-    version published on PyPI, only after PyPI serves that version.
+  - Each GitHub Release MUST be published with its notes file, and, for a
+    version published on PyPI, only after PyPI serves that version. For
+    such a version the release workflow's `asset` job creates the release
+    as a draft holding check 1's digest list, and the release owner
+    publishes that draft with the notes (FR-034).
   - The notes stay under `docs/`, which goes to the spec leg.
 - **FR-043**: README's paragraph that says "There is no version number here"
   MUST be rewritten. It MUST say:
