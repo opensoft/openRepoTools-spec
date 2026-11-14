@@ -1,0 +1,796 @@
+{
+  "scope": {
+    "project": "opensoft_openRepoTools",
+    "branch": "main",
+    "standalone_code_project": "Excluded by explicit user scope; its neutral check is not assembly acceptance."
+  },
+  "recordedAt": "2026-11-14T02:12:07.687615+00:00",
+  "commits": {
+    ".": "4377a702913f3a096eae42131d131bdf4480b0e3",
+    "code/": "bb253610a46d8f06d60b0b1c371102606cf70bdb",
+    "code/upstream/openRepoShape/": "4bf963f0ca416b142652bb608cafe5c76d893faa",
+    "spec/": "dedef8348f32802af87f1ff23dfc661c68f31e66"
+  },
+  "mergedPullRequests": {
+    "assembly": "https://github.com/opensoft/openRepoTools/pull/362",
+    "transport": "https://github.com/opensoft/openRepoTools-code/pull/63",
+    "canonicalLauncherRegression": "https://github.com/opensoft/openRepoTools-code/pull/64",
+    "publishedTriage": "https://github.com/opensoft/openRepoTools-spec/pull/43"
+  },
+  "mainAcceptance": {
+    "analysisId": "52558a56-c6f2-432b-a179-102a63bd4a57",
+    "taskId": "AaHXxyeZXdkJaFulXfOW",
+    "revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+    "indexed_sources": 497,
+    "configured_sources": 497,
+    "full_index_verified": true,
+    "coverage_import_verified": true,
+    "coverage_condition_evaluated": true,
+    "server_revision": "4377a702913f3a096eae42131d131bdf4480b0e3",
+    "qualityGate": {
+      "id": 9,
+      "name": "Sonar way",
+      "conditions": [
+        {
+          "id": 35,
+          "metric": "new_security_rating",
+          "op": "GT",
+          "error": "1"
+        },
+        {
+          "id": 36,
+          "metric": "new_reliability_rating",
+          "op": "GT",
+          "error": "1"
+        },
+        {
+          "id": 37,
+          "metric": "new_maintainability_rating",
+          "op": "GT",
+          "error": "1"
+        },
+        {
+          "id": 38,
+          "metric": "new_coverage",
+          "op": "LT",
+          "error": "80"
+        },
+        {
+          "id": 39,
+          "metric": "new_duplicated_lines_density",
+          "op": "GT",
+          "error": "3"
+        },
+        {
+          "id": 76287,
+          "metric": "new_security_hotspots_reviewed",
+          "op": "LT",
+          "error": "100"
+        }
+      ],
+      "isBuiltIn": true,
+      "actions": {
+        "rename": false,
+        "setAsDefault": false,
+        "copy": false,
+        "associateProjects": false,
+        "delete": false,
+        "manageConditions": false
+      },
+      "isCleanAsYouCode": true,
+      "isAiCodeAssuredCompliant": false
+    },
+    "projectStatus": {
+      "status": "OK",
+      "conditions": [
+        {
+          "status": "OK",
+          "metricKey": "new_reliability_rating",
+          "comparator": "GT",
+          "periodIndex": 1,
+          "errorThreshold": "1",
+          "actualValue": "1"
+        },
+        {
+          "status": "OK",
+          "metricKey": "new_security_rating",
+          "comparator": "GT",
+          "periodIndex": 1,
+          "errorThreshold": "1",
+          "actualValue": "1"
+        },
+        {
+          "status": "OK",
+          "metricKey": "new_maintainability_rating",
+          "comparator": "GT",
+          "periodIndex": 1,
+          "errorThreshold": "1",
+          "actualValue": "1"
+        },
+        {
+          "status": "OK",
+          "metricKey": "new_coverage",
+          "comparator": "LT",
+          "periodIndex": 1,
+          "errorThreshold": "80",
+          "actualValue": "86.1"
+        },
+        {
+          "status": "OK",
+          "metricKey": "new_duplicated_lines_density",
+          "comparator": "GT",
+          "periodIndex": 1,
+          "errorThreshold": "3",
+          "actualValue": "2.6"
+        },
+        {
+          "status": "OK",
+          "metricKey": "new_security_hotspots_reviewed",
+          "comparator": "LT",
+          "periodIndex": 1,
+          "errorThreshold": "100",
+          "actualValue": "100.0"
+        }
+      ],
+      "periods": [
+        {
+          "index": 1,
+          "mode": "manual_baseline",
+          "date": "2026-09-10T20:01:30+0000"
+        }
+      ],
+      "ignoredConditions": false
+    },
+    "measures": [
+      {
+        "metric": "coverage",
+        "value": "86.1",
+        "bestValue": false
+      },
+      {
+        "metric": "lines_to_cover",
+        "value": "56133"
+      },
+      {
+        "metric": "uncovered_lines",
+        "value": "7812",
+        "bestValue": false
+      },
+      {
+        "metric": "new_coverage",
+        "periods": [
+          {
+            "index": 1,
+            "value": "86.0820609667017",
+            "bestValue": false
+          }
+        ]
+      },
+      {
+        "metric": "new_lines_to_cover",
+        "periods": [
+          {
+            "index": 1,
+            "value": "56129"
+          }
+        ]
+      }
+    ]
+  },
+  "workflows": [
+    {
+      "id": 43520716726,
+      "url": "https://github.com/opensoft/openRepoTools/actions/runs/43520716726",
+      "conclusion": "success",
+      "composed": {
+        "passed": 5255,
+        "skipped": 6,
+        "failed": 0,
+        "seconds": 11751.79
+      },
+      "provider": {
+        "passed": 22480,
+        "skipped": 360,
+        "failed": 0,
+        "seconds": 10428.19
+      }
+    },
+    {
+      "id": 43520727124,
+      "url": "https://github.com/opensoft/openRepoTools/actions/runs/43520727124",
+      "conclusion": "success",
+      "purpose": "Unchanged manual main validation; real legs fetched, naming/manifest/lockstep passed."
+    }
+  ],
+  "commitChecks": [
+    {
+      "name": "exact-pins",
+      "head_sha": "4377a702913f3a096eae42131d131bdf4480b0e3",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/opensoft/openRepoTools/actions/runs/43520716726/job/132289903842"
+    },
+    {
+      "name": "SonarCloud Code Analysis",
+      "head_sha": "4377a702913f3a096eae42131d131bdf4480b0e3",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/opensoft/openRepoTools/runs/132289847605"
+    },
+    {
+      "name": "sonar",
+      "head_sha": "4377a702913f3a096eae42131d131bdf4480b0e3",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/opensoft/openRepoTools/actions/runs/43520716726/job/132288963044"
+    },
+    {
+      "name": "validate",
+      "head_sha": "4377a702913f3a096eae42131d131bdf4480b0e3",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/opensoft/openRepoTools/actions/runs/43520727124/job/132214009277"
+    },
+    {
+      "name": "composed-tests",
+      "head_sha": "4377a702913f3a096eae42131d131bdf4480b0e3",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/opensoft/openRepoTools/actions/runs/43520716726/job/132213970063"
+    },
+    {
+      "name": "provider-tests",
+      "head_sha": "4377a702913f3a096eae42131d131bdf4480b0e3",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/opensoft/openRepoTools/actions/runs/43520716726/job/132213969673"
+    }
+  ],
+  "inventoryAndImport": {
+    "indexed_expected": 497,
+    "indexed_total": 514,
+    "extensionless_commands": [
+      {
+        "path": "code/claude-current",
+        "language": "shell",
+        "test": false,
+        "sha256": "3b6d144cf7beb685d711a1f895b33d213d678659421914cfffa8d80e58d869c7",
+        "lines": 821
+      },
+      {
+        "path": "code/claude-restart-check",
+        "language": "shell",
+        "test": false,
+        "sha256": "43a5167d541349de58becedda79e455aadca456671001e0f4fceff1f17350343",
+        "lines": 368
+      },
+      {
+        "path": "code/lane",
+        "language": "shell",
+        "test": false,
+        "sha256": "feab6e2fb13f515d8239e2a0f1d3de717029dd8b30ee4cc0b3c4859c64d48374",
+        "lines": 1613
+      },
+      {
+        "path": "code/lane-end",
+        "language": "shell",
+        "test": false,
+        "sha256": "299f1c2ce43324e32a846b95246f6b00bcc856d67a069baacc9e6ac22c00d9e4",
+        "lines": 4606
+      },
+      {
+        "path": "code/lane-handoff",
+        "language": "shell",
+        "test": false,
+        "sha256": "a02f2d94807ab9d79486777ac54d1bb7366e0d9a6176c475bceaf8dbc58bd14f",
+        "lines": 3334
+      },
+      {
+        "path": "code/lane-rename",
+        "language": "shell",
+        "test": false,
+        "sha256": "81dc3297228a17e1dd1eabcb870ee583556e1ca7714f4de149e728d66524ca0f",
+        "lines": 337
+      },
+      {
+        "path": "code/lane-start",
+        "language": "shell",
+        "test": false,
+        "sha256": "6f08a63b99af3f4440af36fbdc0b76706240a010f7a6e36c314b0231b7f97906",
+        "lines": 4741
+      },
+      {
+        "path": "code/lane-worktrees",
+        "language": "py",
+        "test": false,
+        "sha256": "8ad2cd5f565caa47d87868b9301dd9cfffcf9ff9b70b6fe47945a0e882164992",
+        "lines": 6358
+      },
+      {
+        "path": "code/lanes",
+        "language": "shell",
+        "test": false,
+        "sha256": "bdc75876d584f2a3a5e7bc568ebd52c4e5ec0601e28fcbdc2f2358db2cab5916",
+        "lines": 863
+      },
+      {
+        "path": "code/lanes-index",
+        "language": "py",
+        "test": false,
+        "sha256": "7c7040491225dd22f2efdb7459d659eb01020d790463aad8b2747494303617ef",
+        "lines": 2719
+      },
+      {
+        "path": "code/link-estates",
+        "language": "shell",
+        "test": false,
+        "sha256": "660b087e2b9391fed637a16128ac1716ad512fc326095e623e630864cd5a0f40",
+        "lines": 448
+      },
+      {
+        "path": "code/openRepoTools",
+        "language": "shell",
+        "test": false,
+        "sha256": "794e19bf3c5acd91adbf24fc587fc7f62b0a29e016eba0261bc7d5b1bc4d74f3",
+        "lines": 5244
+      },
+      {
+        "path": "code/park",
+        "language": "shell",
+        "test": false,
+        "sha256": "f257bbe019981dfa304e062c370401e2ba1a9bc61929f6b0f8c05f6e297e9588",
+        "lines": 1294
+      },
+      {
+        "path": "code/resume",
+        "language": "shell",
+        "test": false,
+        "sha256": "0d03ecbb8eee6fdd24b9ac269c8d41162640b1952e75b67b83ba10e769135c16",
+        "lines": 1758
+      },
+      {
+        "path": "code/status",
+        "language": "shell",
+        "test": false,
+        "sha256": "cab61a3d52f651b4299d745fc3b09c084b7292a8f6c2805e92d33bd78a3ab234",
+        "lines": 6067
+      },
+      {
+        "path": "code/upstream/openRepoShape/bootstrap",
+        "language": "py",
+        "test": false,
+        "sha256": "236089f17e9d03f971b1abaf930f90f2347d67b5425720f367686d9c8cac306e",
+        "lines": 38
+      },
+      {
+        "path": "code/upstream/openRepoShape/openRepoShape",
+        "language": "shell",
+        "test": false,
+        "sha256": "ba5c57c3e30d801f01e7536033b94394d477e91a4a78b8c3201020a3e508ad70",
+        "lines": 1403
+      },
+      {
+        "path": "openRepoTools",
+        "language": "shell",
+        "test": false,
+        "sha256": "e219af462cbf9d10d3945474959d9fd653a695e59947f3d37e1921b387a77810",
+        "lines": 398
+      }
+    ],
+    "coverage_files": 64,
+    "files_with_executable_coverage": 62,
+    "empty_statement_markers": [
+      "code/src/openrepotools/__init__.py",
+      "code/upstream/openRepoShape/src/openreposhape/__init__.py"
+    ],
+    "per_file_coverage_differences": [],
+    "root_changed_line_hits": {
+      "279": 1,
+      "311": 1,
+      "344": 1
+    },
+    "open_bugs_vulnerabilities": 0
+  },
+  "independentReportUnion": {
+    "commits": {
+      ".": "4377a702913f3a096eae42131d131bdf4480b0e3",
+      "code/": "bb253610a46d8f06d60b0b1c371102606cf70bdb",
+      "code/upstream/openRepoShape/": "4bf963f0ca416b142652bb608cafe5c76d893faa",
+      "spec/": "dedef8348f32802af87f1ff23dfc661c68f31e66"
+    },
+    "indexed_inventory_files": 497,
+    "coverage_files": 64,
+    "fixed_per_file_denominators_match": true,
+    "union": {
+      "py": {
+        "covered": 31923,
+        "lines": 36045
+      },
+      "shell": {
+        "covered": 16398,
+        "lines": 20088
+      }
+    },
+    "source_input_report_hashes": [
+      "ac66c8f3ca1c61fa83a28160ce07cd19d5cc599bdb473eacde4bf942ff47b521",
+      "2fefbf7040a9ce56260a9ce665a44ca1c905243f79ea3305aaff9c777ca2b9f7"
+    ],
+    "probes": [
+      {
+        "exact": 190,
+        "modified": 0
+      },
+      {
+        "exact": 190,
+        "modified": 0
+      }
+    ],
+    "canonical_root_changed_lines": {
+      "279": true,
+      "311": true,
+      "344": true
+    }
+  },
+  "findingReadback": {
+    "original12": [
+      {
+        "key": "AaHNkAKzuDHHi52pWjoI",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/scripts/shape_materialize.py",
+        "line": 1384,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-12T18:08:21+0000"
+      },
+      {
+        "key": "AaHNkAShuDHHi52pWjoK",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+        "line": 5681,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-12T18:08:23+0000"
+      },
+      {
+        "key": "AaHNkAShuDHHi52pWjoJ",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+        "line": 6339,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-12T18:08:24+0000"
+      },
+      {
+        "key": "AaHHsu91IZXyb5gijwTS",
+        "rule": "pythonsecurity:S2083",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/scripts/shape_materialize.py",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      },
+      {
+        "key": "AaGD6tPOxLux756IlU7J",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:.github/workflows/composed.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      },
+      {
+        "key": "AaHAbodRidUOawbE2mJx",
+        "rule": "pythonsecurity:S8707",
+        "component": "opensoft_openRepoTools:scripts/repo_shape.py",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      },
+      {
+        "key": "AaFMxuNRjy8gvDmEH5jA",
+        "rule": "text:S8565",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/pyproject.toml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      },
+      {
+        "key": "AaFMxvaxjy8gvDmEH5kE",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/src/openreposhape/cli.py",
+        "line": 165,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-12T18:08:27+0000"
+      },
+      {
+        "key": "AaDPP3_OrPHmB1oAsIwL",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/.github/workflows/tests.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      },
+      {
+        "key": "AaDPP3_OrPHmB1oAsIwM",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/.github/workflows/tests.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      },
+      {
+        "key": "AaDPP35qrPHmB1oAsIwI",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:code/.github/workflows/tests.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      },
+      {
+        "key": "AaDPP35qrPHmB1oAsIwJ",
+        "rule": "githubactions:S8541",
+        "component": "opensoft_openRepoTools:code/.github/workflows/tests.yml",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-13T16:48:25+0000",
+        "closeDate": "2026-11-13T16:48:25+0000"
+      }
+    ],
+    "additional20": [
+      {
+        "key": "AaHV0W13UfOgUsHz1t3b",
+        "rule": "python:S5332",
+        "component": "opensoft_openRepoTools:code/lane-worktrees",
+        "line": 970,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:13+0000"
+      },
+      {
+        "key": "AaHV0W13UfOgUsHz1t4U",
+        "rule": "python:S5443",
+        "component": "opensoft_openRepoTools:code/lane-worktrees",
+        "line": 4839,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:16+0000"
+      },
+      {
+        "key": "AaHV0W13UfOgUsHz1t4V",
+        "rule": "python:S5443",
+        "component": "opensoft_openRepoTools:code/lane-worktrees",
+        "line": 4839,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:17+0000"
+      },
+      {
+        "key": "AaHV0W2kUfOgUsHz1t7j",
+        "rule": "python:S5332",
+        "component": "opensoft_openRepoTools:code/lanes-index",
+        "line": 372,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:14+0000"
+      },
+      {
+        "key": "AaHV0W2kUfOgUsHz1t7-",
+        "rule": "pythonsecurity:S8707",
+        "component": "opensoft_openRepoTools:code/lanes-index",
+        "line": 2564,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:19+0000"
+      },
+      {
+        "key": "AaHV0W2kUfOgUsHz1t7_",
+        "rule": "pythonsecurity:S8707",
+        "component": "opensoft_openRepoTools:code/lanes-index",
+        "line": 2576,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:20+0000"
+      },
+      {
+        "key": "AaHV0W5-UfOgUsHz1ueK",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      {
+        "key": "AaHV0W5-UfOgUsHz1ufW",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      {
+        "key": "AaHV0W5-UfOgUsHz1ufc",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      {
+        "key": "AaHV0W5-UfOgUsHz1ufi",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      {
+        "key": "AaHV0W5_UfOgUsHz1ujV",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:code/openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      {
+        "key": "AaHV0WtWUfOgUsHz1t2e",
+        "rule": "python:S5708",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+        "line": 9191,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:18:58+0000"
+      },
+      {
+        "key": "AaHV0WtWUfOgUsHz1t2f",
+        "rule": "python:S5708",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+        "line": 10763,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:08+0000"
+      },
+      {
+        "key": "AaHV0WtWUfOgUsHz1t2h",
+        "rule": "python:S5708",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+        "line": 12860,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:10+0000"
+      },
+      {
+        "key": "AaHV0WtWUfOgUsHz1t2i",
+        "rule": "python:S5708",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/adopt-project.py",
+        "line": 13199,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:11+0000"
+      },
+      {
+        "key": "AaHV0WuUUfOgUsHz1t2n",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+        "line": 2929,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:21+0000"
+      },
+      {
+        "key": "AaHV0WuUUfOgUsHz1t2o",
+        "rule": "pythonsecurity:S8705",
+        "component": "opensoft_openRepoTools:code/upstream/openRepoShape/update-shape.py",
+        "line": 3900,
+        "status": "RESOLVED",
+        "resolution": "FALSE-POSITIVE",
+        "issueStatus": "FALSE_POSITIVE",
+        "updateDate": "2026-11-13T17:19:22+0000"
+      },
+      {
+        "key": "AaHV0W-QUfOgUsHz1uvp",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      {
+        "key": "AaHV0W-QUfOgUsHz1uvx",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      },
+      {
+        "key": "AaHV0W-QUfOgUsHz1uv0",
+        "rule": "shell:S6506",
+        "component": "opensoft_openRepoTools:openRepoTools",
+        "status": "CLOSED",
+        "resolution": "FIXED",
+        "issueStatus": "FIXED",
+        "updateDate": "2026-11-14T01:56:14+0000",
+        "closeDate": "2026-11-14T01:56:14+0000"
+      }
+    ],
+    "original12Summary": {
+      "RESOLVED/FALSE-POSITIVE": 4,
+      "CLOSED/FIXED": 8
+    },
+    "additional20Summary": {
+      "RESOLVED/FALSE-POSITIVE": 12,
+      "CLOSED/FIXED": 8
+    },
+    "openBugsAndVulnerabilities": 0,
+    "note": "Historical false-positive reasoning is retained. Two originally triaged false positives disappeared and were automatically CLOSED/FIXED; that is not a claim of two additional source repairs."
+  },
+  "remainingMaintainability": {
+    "codeSmells": 7569,
+    "newCodeSmells": 7561,
+    "rating": "A",
+    "note": "The gate is green; this bounded repair does not claim elimination of all maintainability findings."
+  },
+  "preservation": {
+    "operatingRootAndThreeNestedHeadsUnchanged": true,
+    "operatingTrackedAndStagedDiffHashesUnchanged": true,
+    "allOriginalWorktreeRecordsPreserved": true,
+    "allSevenNamedSessionsPresent": true,
+    "concurrentMetadataObservedAndPreserved": [
+      "One added preservation worktree",
+      "One additional untracked PROGRESS.md",
+      "One session window/pane identity changed; exact pane inventory is not claimed unchanged"
+    ],
+    "taskSessionOrOperatingCheckoutChanges": false,
+    "attachedWindowsXFactoryCleanAt": "df83b53f03f1fb15c406aeec1dc23a1cff79bb3c"
+  },
+  "limitations": [
+    "The native Shell analyzer reports 13 parse warnings on valid Bash. All warned files pass native bash -n; indexed coverage is not proof of complete native-rule parsing.",
+    "Two strict-valid UTF-8 negative tests contain intentional U+FFFD and trigger encoding warnings; a separate surrogate warning is also retained in the scanner log.",
+    "Nested submodule files lack blame in Sonar despite full Git history. The original September 10 baseline remains; no SCM suppression or baseline-to-today workaround.",
+    "Hosted Codex review was explicitly requested but quota-blocked; a quota message is not an approval. Normal repository checks and merge rules remain in force."
+  ],
+  "recordSemantics": "Post-acceptance Spec evidence for the immutable assembly revision above. This record does not advance assembly pins or require another full suite run."
+}
