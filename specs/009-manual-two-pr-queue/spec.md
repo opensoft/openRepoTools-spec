@@ -232,3 +232,14 @@ canaries without per-PR approval stops. Earlier failed evidence stays failed.
   check. Preserve original current PR data and strict final body/branch/caller/
   artifact rereads. Invalid body types, uncertain proof and later races retain
   full. Candidate snapshot diagnostics use fixed field names/codes, never values.
+- FR-046: after complete initial candidate authentication/proof, a final raw PR
+  or caller change may yield only the existing bounded no-proof fresh retry when
+  current identity still qualifies. Revalidate everything on each observation;
+  accepted proof still requires exact final raw equality. Changed branch heads,
+  invalid/moved identities, malformed body/hints, failed/foreign/rerun callers,
+  invalid source/artifact proof and generic API failures retain hard full refusal.
+  No retry-budget, schema, permission or workflow change. Candidate gate may
+  re-observe within the same bound but must match original route mode/digest;
+  exhaustion or changed proof refuses. Source gate semantics remain unchanged.
+  Fixed final-read mismatch diagnostics never expose values. R6 stays failed;
+  reviewed/full-qualified repair and actual main precede genuinely fresh R7.

@@ -260,8 +260,8 @@ will be recorded in activation-evidence.md after publication and qualification.
 | CI-ACTIVATION-11-A | T042 | Clarify resolver stdout/stderr in help; no execution/install change, safe alone | None; qualified enablement main | bash -n claude-current; bash tests/run.sh -k 'claude_current and (help or malformed or repositorys_bash_rules)' |
 | CI-ACTIVATION-11-B | T043 | Cover both help aliases before malformed timeout validation, with zero fake npm/node/Claude calls; tests pass without A | None; same qualified enablement main | bash tests/run.sh -k 'claude_current and (help or malformed)' |
 
-- [ ] T042 [O] Implement CI-ACTIVATION-11-A in one source PR; retain executable mode, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `claude-current` — verify: set A commands above plus actual hosted fast/delivery checks
-- [ ] T043 [O] Implement CI-ACTIVATION-11-B in a separate source PR; use the existing hermetic Sandbox without depending on A, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `tests/test_claude_current.py` — verify: set B command above plus actual hosted fast/delivery checks
+- [x] T042 [O] Implement CI-ACTIVATION-11-A in one source PR; retain executable mode, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `claude-current` — verify: set A commands above plus actual hosted fast/delivery checks
+- [x] T043 [O] Implement CI-ACTIVATION-11-B in a separate source PR; use the existing hermetic Sandbox without depending on A, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `tests/test_claude_current.py` — verify: set B command above plus actual hosted fast/delivery checks
 
 ## CI-METADATA-12 — approved source-description repair (2026-11-13)
 
@@ -347,3 +347,37 @@ task set and its checked landings/fresh retry; no excluded authority follows.
 - [x] T059 [O] Record R5 source/admission success separately from candidate full-fallback failure and safe stop; define bounded initial candidate-description handling and privacy-safe diagnostics — files: fix-source-delivery-metadata OpenSpec artifacts, feature009 spec/tasks/evidence — verify: strict OpenSpec, exact run/edit/stop readbacks and no duplicate task list
 - [x] T060 [O] Reproduce pre-routing candidate prose differences red-first, repair only the initial comparison and add field-name diagnostics; preserve invalid-type/identity/admission/final-reread refusals — files: code delivery_route.py, focused regression tests, cutover runbook and dated activation-record pointer — verify: canonical CI contracts, no-submodule added cases, exact-head local expert review
 - [ ] T061 [O] Open paired code/spec PRs, qualify full ordinary/reuse inventories, normally merge checked heads and verify landed trees/actual main; resume genuinely fresh R6 sources and complete T051/T048 — files: paired PRs and evidence — verify: full source/main identity/skip parity, fresh reviews/receipts, actual two-member/one-heavy/prefix/final/no-duplicate proof; no archive or assembly adoption
+
+T061 source qualification and checked landings are complete: code74/spec49 at
+revieweda2b487b/2d88e4c passed ordinary15/reusable17 and all four5418-case inventories
+with53new passes and no baseline/skip drift, then normally landed asa15a6b5/71a5456
+with exact reviewed trees. Actual-main43542918725 passed15/15 and both5418-case
+inventories matched source exactly. Published R6 PR75/76 qualified fast-only and
+received real accepted reviews, then draft77 proved two-member admission but
+selected duplicate full work. The specimen was cancelled/dequeued before landing.
+R6 remains failed efficiency evidence; heavy/tree/no-duplicate and adoption gates
+remain pending. The detailed dated evidence is in activation-evidence.md.
+
+### R6 authenticated final-read movement — CI-METADATA-16 (2026-11-14)
+
+Draft77 explicitly logged candidate-reread after genuine two-member admission;
+duplicate full jobs started. The exact raw field is unknown. A Mergify body edit
+occurred in the same second. The owned specimen was stopped/dequeued before
+landing; preserve R6 as failed efficiency evidence. Standing scoped repair
+approval covers this follow-up, not any excluded resources or weaker proof.
+
+- [x] T062 [O] Record exact R6 source/admission evidence, final-reread refusal and terminal safe stop; define no-proof fresh re-observation with unchanged accepted-proof equality and hard refusals — files: governing OpenSpec artifacts, feature009 spec/tasks/evidence — verify: actual run/edit/artifact/stop readbacks and strict OpenSpec; sole checklist
+- [x] T063 [O] Reproduce authenticated final-read transitions red-first; implement only bounded fresh candidate route/gate observation and privacy-safe mismatch diagnostics, preserving invalid identity/ref/proof and exhaustion refusals — files: code delivery_route.py, focused regressions, cutover runbook and dated activation pointer — verify: canonical CI contracts, no-submodule added cases, unchanged proof/schema/budget and exact-head local expert review
+- [ ] T064 [O] Open paired code/spec repair PRs, fully qualify current-head ordinary/reuse inventories, normally merge checked heads and verify actual-main parity, then run genuinely fresh R7 source/receipt/batch acceptance and reconcile final evidence — files: PRs and canonical evidence — verify: exact source/main identities/skips, actual member/order/one-heavy/prefix/final/no-duplicate proofs; no archive, assembly adoption or R6 rerun
+
+T063 local qualification is complete at code8de8e499b5f9a8d35ae46c885370f2d716f881fa:
+four red-first cases failed on unchanged main, then passed after the repair.
+Expanded targeted QA passed85cases. The final canonical CI selection passed1051,
+4398deselected, no skips; all31new regressions also passed without upstream.
+Collection preserved all5418baseline IDs, adding exactly31unique cases for5449
+total, with zero removals/duplicates. Three existing test IDs retain their
+identities while distinguishing raced no-proof candidate decisions from stable
+accepted proof; source immediate refusals remain. Exact-head master, nine
+standard expert roles and CI review found no actionable findings. Both governing
+changes pass strict OpenSpec. These are local source checks, NOT full hosted,
+actual-main, fresh heavy/landing acceptance or assembly adoption.

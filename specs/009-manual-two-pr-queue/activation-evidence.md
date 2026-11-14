@@ -782,3 +782,242 @@ T059-T061 govern the next narrow metadata repair and a genuinely fresh retry,
 never a requeue of this failed specimen after changing policy. No complete
 heavy, landing, one-heavy efficiency, broader adoption or release is accepted.
 All excluded settings/app/paid/tool/assembly/lane boundaries remain in force.
+
+## CI-METADATA-15 checked source landings and local R6 preparation — 2026-11-14
+
+Exact reviewed code `a2b487b812fab6f35dce87701bc3fde20e30edeb` passed ordinary
+run43538976048 (15/15), reusable43538975985 (17/17) and fast43538976079 (1/1),
+all first attempts, with every full job successful. All four complete inventories
+contain5418unique cases, retain all5365prior identities and execute exactly53
+new passing regressions. No removed/duplicate cases, failures/errors or changed
+skip identities. Normal variants:5245passed/173existing skips; no-submodule
+variants:3896passed/1522existing skips. No coverage, baseline or selector reduction.
+
+Exact reviewed spec `2d88e4c8c299e01bf9da7e58a0081f6b5c775179` passes both
+governing strict OpenSpec validations. Master/nine standard expert roles/CI
+specialist review is clean; hosted Codex quota responses are not completed
+reviews. Both PRs had complete empty review-thread lists and clear coordination.
+Existing unrelated historical log-parser warnings were checked against the
+current remote and did not name this project; no append-only history was rewritten.
+
+Normal protected squash merges, with no bypass or branch deletion:
+
+- [code74](https://github.com/opensoft/openRepoTools-code/pull/74) landed at
+  `a15a6b54f4b8b6ebb9e7ced8aa9d2b8cdd4e078d`, sole parent908d815,
+  tree `23a723b9dbc8a7a0251fbe96c95b33b7556c090e` exactly equal to reviewed code.
+- [spec49](https://github.com/opensoft/openRepoTools-spec/pull/49) landed at
+  `71a5456f4a8b3205c9fa3ab8fd73572460d71fad`, sole parentd266136,
+  tree `602ed8940ae2d8d3559204207aa4be876175d999` exactly equal to reviewed spec.
+
+Actual-main push run43542918725 is in progress on exacta15a6b5, first attempt.
+Its complete15-job and both5418-case inventory qualifications are still required
+before any fresh source publication or queue request. Source qualification and
+landed-tree equality do not substitute for this actual-main gate.
+
+The new R6 members are LOCAL ONLY, not yet published PRs or source events:
+
+- A `624986b42682604b836a23888432e358fa018d74`, sole parenta15a6b5,
+  tree `0239db2b13d73d38e526904b1ac705db6249206d`: three literal help lines in
+  unchanged-mode100755 `claude-current`. The test-file blob still equals base.
+- B `4ec0fbad0275cf85331fddc9cd63f8c768885108`, sole parenta15a6b5,
+  tree `9fca133f676cd4430bfe18ecd1d0cffab20f92e1`: eight help-before-malformed-bound
+  tests in unchanged-mode100644 `tests/test_claude_current.py`. Resolver blob
+  still equals base; the tests exercise existing behavior independently of A.
+
+Exact bundled offline non-root canonical QA passed A19cases/5399deselected,
+B27cases/5399deselected, and all8new B cases without the submodule with5418
+deselected, all0skip; Bash parsing passes. A/B patch SHA-256 identities are
+8199D0AA0DD12A12BA8AD0CF08D1E782ABFED9BA3B5D7DB3E754FB9D316016B8 and
+3BAE906ADE8051D51003DFB8CAFF51362BDAC7F08DA317E63482F9F619568C26.
+Expected full collections are5418/5426; live inventories must independently prove
+the final member scope and coverage. No acceptance receipt or queue command was
+posted for these local commits. Failed R5 PR71/72 stay dequeued/open until actual
+fresh replacements exist; their branches and evidence remain preserved.
+
+T061 and every fresh live-acceptance/adoption gate stay open. Both running bench
+views still use assembly4b3c3f3; no shared checkout, lane/session, installed-tool,
+assembly pin, settings/app/paid access, active-plan or release change occurred.
+
+## Actual-main qualification and fresh R6 A source acceptance — 2026-11-14
+
+Actual-main43542918725 completedSUCCESS15/15 on exacta15a6b5, first attempt.
+Both complete5418-case inventories exactly match reviewed source: normal
+5245passed/173existing skips; no-submodule3896passed/1522existing skips.
+No added/removed/duplicate/failed cases or skip-identity drift. This separately
+completes the actual-main publication gate; it is not live batching acceptance.
+
+Fresh [A PR75](https://github.com/opensoft/openRepoTools-code/pull/75) was then
+created at reviewed624986b, basea15a6b5, tree0239db2b. Actual fast43546968786 /
+job132300443144 passed first attempt:455passed/18existing skips/4945deselected.
+Its tested merge `f5fb13348084afc126c453c96508c5e4e542af78` has ordered parents
+a15a6b5/624986b and tree0239db2b exactly equal to the reviewed source, independently
+read through GitHub Git API. Fast JSON full_ci_required:true is static tested-
+merge metadata, not the actual source routing result.
+
+Actual source43546968744 completedSUCCESS8/8 roles, first attempt: two controls
+successful and all six full roles skipped, with no full job started. Route
+job132300442501 logged at02:36:36.797Z source/omit_full:true with proof
+73da5027b3de5e07b78f959a8a390fa2007b5a43c79dabcdca97527b6e10491a.
+Hosted Codex request6870287514 received quota response6870290112, not a review.
+The exact-head local static expert report is comment6870288070.
+
+Fresh writer acceptance is [receipt6870354342](https://github.com/opensoft/openRepoTools-code/pull/75#issuecomment-6870354342),
+authenticated as Userbrettheap/id1513478 with current admin permission. Complete
+empty review threads, exact head/base and current main were read back. A real
+read-only production source_pr preflight independently passed Git scope/ancestry,
+actual fast/check/run provenance, current local receipt/comment/permission/GraphQL
+metadata and live intent; component digest
+b229aa1a74968cc1267e23af99a2cd2578c8955357b747b461edb3f7a9089771.
+No candidate event or environment was manufactured, and no status/queue write
+was performed by that preflight. T042 is complete as source implementation and
+review acceptance, not heavy, membership, landing or release acceptance.
+
+Fresh [B PR76](https://github.com/opensoft/openRepoTools-code/pull/76) exists at
+reviewed4ec0fba/basea15a6b5. Its source43547439889 and fast43547439630 are in
+progress; hosted request6870352264 and static report6870352796 are posted.
+No B writer receipt or R6 queue command has been posted. T043 and all live/
+heavy/tree/no-duplicate gates stay open. The failed R5 pair remains dequeued;
+retire only the unchanged superseded PRs now that actual replacements exist,
+preserving every branch and historical failure record.
+
+## Fresh R6 B source and pair readiness — 2026-11-14
+
+Actual B fast43547439630/job132301924627 passed first attempt:463passed/
+18existing skips/4945deselected. Tested `610d382e6f9d0bb59bb4d8507bcb67d337aca9f5`
+has ordered parentsa15a6b5/4ec0fba and exact reviewed tree9fca133f, independently
+checked through GitHub Git API. Source43547439889 passed first attempt with
+two controls successful and all six full roles skipped, no full role started.
+Route132301925148 logged at02:41:56.695Z source/omit_full:true with proof
+63680feba2a5b05c5a6a199f252e11af66e0e16cfce0f57046e10879b0cfe7df.
+
+Hosted request6870352264 received quota6870355062, not completed review. Fresh
+writer acceptance is [receipt6870427109](https://github.com/opensoft/openRepoTools-code/pull/76#issuecomment-6870427109),
+for exact4ec0fba/basea15a6b5. Complete empty review threads, unchanged identities
+and authenticated Userbrettheap/admin permission were checked before publication.
+
+The first pair operator preflight stopped before any receipt checks because its
+private clone lacked A and the public Git fetch timed out. This was a local
+read failure, not a CI failure, queue attempt or policy exception. The repeat
+supplied both already-reviewed immutable Git objects in a private local bundle,
+while leaving all live API/provenance/receipt validators unchanged. The real
+production source_pr checks passed for both actual current sources, including
+live fast evidence, local receipts, comment metadata, permissions, Git scope,
+ancestry and final current PR/main rereads. Component digests:
+
+- A:b229aa1a74968cc1267e23af99a2cd2578c8955357b747b461edb3f7a9089771.
+- B:56db5d73c2c275702500f31b367fb031cf3e438504dc246a2ca3feff5e352fb5.
+
+Mergify's actual structured check reports both PR75/76 ready/waiting, each
+matching openrepotools-claude-current with16conditions and none failed. This
+is service readiness, not a queue request, admission, heavy or landing receipt.
+T043 is complete as source implementation/review acceptance. Integration and
+live acceptance tasks remain open.
+
+Only after real replacements75/76 existed, unchanged old R5 PR71/72 were checked
+open/unmerged, authored by this operator and explicitly dequeued with neutral
+completed queue checks, then closed as superseded. Their remote branches still
+resolve to originalc5d0a4e/41e3f3a. No branch/history deletion or requeue occurred.
+
+## R6 stopped — final candidate consistency reread refused
+
+Main baselinea15a6b54f4b8b6ebb9e7ced8aa9d2b8cdd4e078d was fully qualified:
+actual-main43542918725SUCCESS15/15, both complete5418 inventories exactly equal
+reviewed source. Fresh PR75/76 passed fast-only source CI and accepted real
+writer-authenticated exact-head local reviews. Production source preflight
+passed both. This is source evidence, not heavy/landing acceptance.
+
+Queue requests6870488938/6870489292 were posted02:50:11Z/02:50:13Z, two seconds
+apart. Mergify confirmed both tested together. Actual draftPR77:
+head d1b8a63f4a6b1339b3570aa09e81a40de778daf0,
+branch mergify/merge-queue/900f58a5f7, basea15a6b5, created02:50:41Z.
+One actual first-attempt heavy caller43548498000 was observed for that head.
+
+Actual admission was independently validated before stopping, using unchanged
+trusted production validators and the real archive bytes:
+
+- Artifact14095012836, namecandidate-admission-d1b8a63f4a6b1339b3570aa09e81a40de778daf0-a1,
+ 574bytes, digestsha256:ae25793c4356ec93fa571ef9dde99af49c7e679987d6bc22712d2e88e908f767.
+- Record digestc5933cb1d9d13c3bf4456a7a034a13046881d2f124e8975c0527ed8e68cbaed0.
+- Ordered member75/624986b, prefixefd06269d1d4aaa78d608b7e99e8076a4e7ed3ad,
+ tree0239db2b13d73d38e526904b1ac705db6249206d.
+- Ordered member76/4ec0fba, finalprefixd1b8a63f, finaltree94ddb2eab4cee5fb6e6213b89775237b4fa97302.
+
+This proves genuine two-member admission only. The qualified artifact, complete
+heavy result and landing/no-duplicate gates did NOT complete.
+
+Candidate ordinary run43548502984, routejob132305281204, logged at
+2026-11-14T02:51:19.8039496Z:
+candidate / candidate-reread, then full / omit_full:false.
+Actual full guard/package/shards started alongside the held heavy run.
+Therefore this is FAILED efficiency acceptance, irrespective of later cancellation.
+
+The diagnostic identifies the final compound candidate PR/branch/caller reread,
+not which original raw field differed. Routing step ran02:50:51Z–02:51:19Z.
+Complete four-entry edit history shows initial description02:50:41Z,
+Sourcery edit02:50:50Z, Mergify edit02:51:19Z and stop-status edit02:54:07Z.
+All diffs are nonempty. The coincident edit is evidence of a live metadata race,
+not proof of the sole historical differing field. No body values were logged.
+
+After exact run/head/branch/path/event/attempt and source/candidate identity
+guards, only owned43548502984 and43548498000 were cancelled. Both are confirmed
+terminalcompleted/cancelled. Dequeue comments6870538110/6870538429 were posted
+02:53:48Z/02:53:49Z. Both sources remain open/unmerged, no queued label, with
+completedneutral "Dequeued — pull request manually dequeued" checks. Draft77 is
+closed/unmerged. Main remains exacta15a6b5. No branch or history was deleted.
+Cancellation-induced aggregate failures/skips are not demonstrated assertion failures.
+
+Next: reproduce the authenticated final-read transition; retain strict complete
+fresh proof and full fallback, and consider only the existing bounded no-proof
+retry for an authenticated race. Add field-name/category-only diagnostics and
+test the route and final gate. Qualify any repair through exact-head local review,
+full ordinary/reuse inventories, checked source merges and actual main before
+genuinely fresh R7 PRs/receipts. Never requeue or rerun R6 into clean acceptance.
+
+Reconciles https://github.com/opensoft/openRepoTools-spec/issues/26.
+All running benches, lanes1–5, tools, assembly pins, settings/app/paid access,
+active plan and releases remain unchanged. No bypass, tag or live success claim.
+
+The retained admission proof JSON canonical digest independently matches the
+record validated from the live archive before cancellation. Failure evidence is
+also preserved in spec issue26/comment6870634137 and source75/comment6870634669,
+source76/comment6870635246. CI-METADATA-16/T062-T064 govern the next repair and
+genuinely fresh retry; no exact first field or completed heavy proof is invented.
+
+## CI-METADATA-16 local repair qualification — 2026-11-14
+
+Code8de8e499b5f9a8d35ae46c885370f2d716f881fa againsta15a6b5 implements only
+authenticated final candidate consistency waiting under FR-046. A changed valid
+final PR/caller view returns full-with-retry without proof. Every observation
+revalidates the entire decision; accepted observations still require exact raw
+equality. Candidate gate uses the existing30ten-second per-invocation bound and
+must recover the original mode/proof digest. Hard invalid identity/ref/body/hint,
+caller, source and artifact evidence still refuses immediately. Source gate,
+workflow definitions, queues, flags, proof schemas and job timeouts are unchanged.
+
+Four red-first regressions failed on unchangeda15; all four then passed after
+the repair. Expanded targeted QA passed85cases with0skips. First broad QA found
+one existing assertion still expecting hard candidate refusal for a valid
+current-to-null generated hint transition:1050passed/1failed. Its existing ID
+now requires no-proof candidate waiting, a separately stable proof and unchanged
+source immediate refusal. No production relaxation was added for that assertion.
+The final exact-code canonical CI selection passed1051/0skips/4398deselected.
+
+Independent collection before/after the exact patch proved5418baseline IDs all
+preserved and31unique new IDs,5449total,0removed/duplicate. The31newcases passed
+without upstream,5418deselected/0skips. This establishes no hidden dependency
+skip for the repair. Full ordinary/reuse and actual-main inventories remain
+future qualification gates. Canonical tests/run.sh was used in disposable
+offline existing bench-image containers, with private temporary clones and no
+running bench/session/worktree changes.
+
+Exact-head master independent inspection and nine standard expert roles plus CI
+review are clean. Expert reviews were static/read-only; coordinator QA is
+separate evidence. Both governing changes pass strict OpenSpec. A local typo in
+one validation invocation named a nonexistent change; the corrected command for
+activate-claude-current-ci-cutover and fix-source-delivery-metadata passed.
+
+The spec branch also merged current spec main59183ec normally, preserving the
+unrelated feature010 assurance evidence unchanged. No assembly pin was adopted.
+T063 is complete locally; T064/full source/main qualification, genuinely fresh
+R7 source receipts, real member/heavy/tree/no-duplicate gates and final evidence
+remain open. R6 will not be requeued or rerun into clean acceptance.

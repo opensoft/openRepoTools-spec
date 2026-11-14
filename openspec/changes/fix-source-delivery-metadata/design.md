@@ -125,6 +125,48 @@ invalid description types, unchanged non-description identities, missing/corrupt
 admission and body mutation during final rereads. Qualify the repair normally
 before genuinely fresh R6 sources; never rerun R5 into successful acceptance.
 
+### R6 final candidate consistency race — CI-METADATA-16
+
+R6 independently proved fast-only sources75/76 and real ordered two-member
+admission for draft77, then logged candidate-reread at02:51:19.803Z. Duplicate
+full jobs started beside the one held heavy caller. Both owned runs were
+cancelled, sources dequeued and the draft closed before landing; main stayed
+a15a6b5. This is failed efficiency acceptance, not an assertion failure or a
+completed heavy result. Complete edit history records a Mergify description
+edit at02:51:19Z during the02:50:51Z–02:51:19Z route step. The precise initial
+raw field is unknown: the diagnostic identifies the final PR/branch/caller
+compound reread, not its individual comparison. Preserve that limitation.
+
+After all initial genuine candidate identity, tested Git, scope, real admission
+and independent live source/review checks pass, distinguish an authenticated
+still-valid moving view from proof. A final raw candidate PR or caller change
+may produce only the existing bounded no-proof wait when its current identity
+still qualifies. The next observation starts the entire verification again.
+Do not accept normalized or mixed snapshots, mutate current data, cache an old
+receipt, or manufacture an event. Accepted proof still requires exact final raw
+equality. A changed branch head, invalid/moved candidate identity, malformed
+body/hint, failed/foreign/rerun caller or invalid source/artifact proof retains
+immediate full refusal; generic API errors do not become retryable.
+
+Use the existing thirty ten-second waits, not another budget or unbounded loop.
+Candidate gate newly uses that same per-invocation limit: it may delay refusal
+while an authenticated view settles, but raises neither attempts/delay nor job
+timeout and adds no nested retry budget. Route exhaustion retains full. Omitted-work candidate gate verification may
+use the same bounded fresh re-observation, but must still match the original
+route mode and proof digest exactly; exhaustion or a different proof refuses
+the gate. Source gate semantics remain unchanged. No missing/unstable evidence
+grants omission, successful integration or merge authority.
+
+Emit only fixed final-read mismatch categories/field names so any next failure
+can be distinguished without leaking descriptions or arbitrary API data.
+Regressions must reproduce body/metadata and valid caller progress during reads,
+require a separately fresh stable observation, preserve hard identity/ref/proof
+refusals, and cover gate re-observation, changed proof and exhaustion. Qualify
+the repair normally with complete source/main coverage before genuinely fresh
+R7 sources; never requeue or rerun R6 into successful acceptance. The owner's
+standing directly-related canary-repair approval covers this follow-up, not
+settings, app/paid access, tools, releases, assembly pins or lane changes.
+
 ## Risks / Trade-offs
 
 Other runtime differences can still refuse: preserve and diagnose them rather
@@ -135,7 +177,7 @@ it is not a gate and is deliberately outside this narrow runtime repair.
 
 ## Migration Plan
 
-Feature 009 T044-T061 is the sole execution sequence. Qualify exact reviewed
+Feature 009 T044-T064 is the sole execution sequence. Qualify exact reviewed
 code/spec heads and normal protected merges, verify actual main, then use fresh
 main-based sources and new review receipts. Preserve old attempt records and
 retire only superseded coordinator-owned PRs without deleting branches. Source
