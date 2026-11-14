@@ -261,7 +261,7 @@ will be recorded in activation-evidence.md after publication and qualification.
 | CI-ACTIVATION-11-B | T043 | Cover both help aliases before malformed timeout validation, with zero fake npm/node/Claude calls; tests pass without A | None; same qualified enablement main | bash tests/run.sh -k 'claude_current and (help or malformed)' |
 
 - [x] T042 [O] Implement CI-ACTIVATION-11-A in one source PR; retain executable mode, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `claude-current` — verify: set A commands above plus actual hosted fast/delivery checks
-- [ ] T043 [O] Implement CI-ACTIVATION-11-B in a separate source PR; use the existing hermetic Sandbox without depending on A, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `tests/test_claude_current.py` — verify: set B command above plus actual hosted fast/delivery checks
+- [x] T043 [O] Implement CI-ACTIVATION-11-B in a separate source PR; use the existing hermetic Sandbox without depending on A, resolve exact-head review and publish a fresh writer-accepted local receipt — files: code `tests/test_claude_current.py` — verify: set B command above plus actual hosted fast/delivery checks
 
 ## CI-METADATA-12 — approved source-description repair (2026-11-13)
 

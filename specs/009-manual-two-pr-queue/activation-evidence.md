@@ -879,3 +879,41 @@ No B writer receipt or R6 queue command has been posted. T043 and all live/
 heavy/tree/no-duplicate gates stay open. The failed R5 pair remains dequeued;
 retire only the unchanged superseded PRs now that actual replacements exist,
 preserving every branch and historical failure record.
+
+## Fresh R6 B source and pair readiness — 2026-11-14
+
+Actual B fast43547439630/job132301924627 passed first attempt:463passed/
+18existing skips/4945deselected. Tested `610d382e6f9d0bb59bb4d8507bcb67d337aca9f5`
+has ordered parentsa15a6b5/4ec0fba and exact reviewed tree9fca133f, independently
+checked through GitHub Git API. Source43547439889 passed first attempt with
+two controls successful and all six full roles skipped, no full role started.
+Route132301925148 logged at02:41:56.695Z source/omit_full:true with proof
+63680feba2a5b05c5a6a199f252e11af66e0e16cfce0f57046e10879b0cfe7df.
+
+Hosted request6870352264 received quota6870355062, not completed review. Fresh
+writer acceptance is [receipt6870427109](https://github.com/opensoft/openRepoTools-code/pull/76#issuecomment-6870427109),
+for exact4ec0fba/basea15a6b5. Complete empty review threads, unchanged identities
+and authenticated Userbrettheap/admin permission were checked before publication.
+
+The first pair operator preflight stopped before any receipt checks because its
+private clone lacked A and the public Git fetch timed out. This was a local
+read failure, not a CI failure, queue attempt or policy exception. The repeat
+supplied both already-reviewed immutable Git objects in a private local bundle,
+while leaving all live API/provenance/receipt validators unchanged. The real
+production source_pr checks passed for both actual current sources, including
+live fast evidence, local receipts, comment metadata, permissions, Git scope,
+ancestry and final current PR/main rereads. Component digests:
+
+- A:b229aa1a74968cc1267e23af99a2cd2578c8955357b747b461edb3f7a9089771.
+- B:56db5d73c2c275702500f31b367fb031cf3e438504dc246a2ca3feff5e352fb5.
+
+Mergify's actual structured check reports both PR75/76 ready/waiting, each
+matching openrepotools-claude-current with16conditions and none failed. This
+is service readiness, not a queue request, admission, heavy or landing receipt.
+T043 is complete as source implementation/review acceptance. Integration and
+live acceptance tasks remain open.
+
+Only after real replacements75/76 existed, unchanged old R5 PR71/72 were checked
+open/unmerged, authored by this operator and explicitly dequeued with neutral
+completed queue checks, then closed as superseded. Their remote branches still
+resolve to originalc5d0a4e/41e3f3a. No branch/history deletion or requeue occurred.
