@@ -1,5 +1,12 @@
 # CI-ACTIVATION-11: scoped source activation and two-member canary
 
+Current acceptance (2026-11-14): fresh R7 PR79/80 passed the scoped live canary,
+including exactly one complete heavy run and ordered matching landed trees.
+The final R7 section records the authoritative result. Earlier pending and
+failed checkpoints below are retained as history, not current status. This is
+source-repository activation for the fixed `claude-current` scope, not assembly
+adoption, installed-session delivery or efficiency for every component.
+
 ## CI-METADATA-15 local repair qualification — 2026-11-14
 
 Code head `a2b487b812fab6f35dce87701bc3fde20e30edeb` is based on actual
@@ -1184,3 +1191,102 @@ and absence of duplicate full main/PR work remain unproved. The live acceptance
 tasks therefore remain open. Assembly/session adoption and archive remain
 excluded; all running benches, lanes, installed tools, pins, active plan,
 settings/app/paid access and releases are unchanged by this work.
+
+## R7 completed heavy qualification and native landing acceptance — 2026-11-14
+
+The fresh attempt is accepted for the fixed `claude-current` scope. This does
+not turn R1–R6 into successful runs: they remain failed or stopped evidence.
+No R7 workflow rerun, candidate rewrite, cancellation, dequeue, bypass, settings
+change or paid upgrade was needed.
+
+The genuine Mergify push caller
+[43560096407](https://github.com/opensoft/openRepoTools-code/actions/runs/43560096407)
+completed successfully on exact candidate `f0bc5701b765a4260dd2bfe7150e93393e21b069`,
+attempt 1. All 19 expected jobs succeeded; none was skipped. The authenticated
+actor and triggering actor are `mergify[bot]`. Both referenced reusable workflows
+(`task-set-candidate.yml` and `tests.yml`) name that same immutable candidate SHA.
+The actual packaging log independently identifies checkout `f0bc5701` itself.
+The last heavy job completed at **05:52:16Z**, before either actual merge.
+
+The unchanged production artifact/provenance and Git-chain validators at trusted
+`f3adc6d` independently accepted the real qualified archive:
+
+- Artifact ID `14101322070`, name
+  `candidate-qualified-f0bc5701b765a4260dd2bfe7150e93393e21b069-a1`, 575 bytes.
+- Archive SHA256
+  `5b495548d4598f00d6c336bb3796f6bc35d4b457e3ccc9a2fbe9b7ecb6c1cee8`.
+- Canonical qualified-record digest
+  `ee296da84e938f240226f48e810d536f00203fb3046ddd0c7561592f150e297e`.
+- Actual ordered members remain PR79 / `f3de622`, then PR80 / `87a38f0`,
+  with the exact admission prefixes and trees recorded above. Both delivery
+  flags are true; final tree is `498cda538b6feefd312915bf36c2b9c4fa23b6a5`.
+
+The retained actual qualified JSON independently reproduces the canonical digest.
+Admission, completed qualification and native landing proofs are separate records;
+neither a generated event nor Mergify's descriptive summary was used as evidence.
+
+Complete inventories from all five normal-shard and four no-submodule artifacts
+were compared by exact case identity against qualified actual main `f3adc6d`:
+
+| Heavy variant | Unique cases | Passed | Existing skips | Added passing cases |
+| --- | ---: | ---: | ---: | ---: |
+| Normal | 5,457 | 5,284 | 173 | 8 |
+| Deliberately without upstream submodule | 5,457 | 3,935 | 1,522 | 8 |
+
+Both preserve all 5,449 baseline IDs, with zero removed or duplicate cases,
+failures/errors or changed skip identities. Every reviewed new case passes in
+both variants. The unchanged packaging integration command also passed its
+285 cases; that separate count is not substituted for the complete inventories.
+
+Mergify then landed the actual reviewed sources, in the qualified order:
+
+| Source | Merged at (UTC) | Actual main merge | Ordered parents | Actual tree |
+| --- | --- | --- | --- | --- |
+| PR79 | 05:52:35Z | `49748d01b502e846093a2eb404a3ec2d671c3ecc` | `f3adc6d` / `f3de622` | `fc765b058639d32005856d88f99a2b550815b47a` |
+| PR80 | 05:52:39Z | `11964a6be2bcc2c591fba2ed3c399787bbe34d18` | `49748d0` / `87a38f0` | `498cda538b6feefd312915bf36c2b9c4fa23b6a5` |
+
+Actual API merge/head metadata and Git commit objects prove those relationships;
+each actual prefix tree matches its qualified counterpart, and the final tree
+matches the independently prepared union. No regenerated synthetic PR merge was
+substituted. Remote main read back as `11964a6` during this acceptance audit.
+
+Both native main push workflows completed successfully, attempt 1, with two
+successful controls and all six ordinary full roles skipped:
+
+- [A main43563613592](https://github.com/opensoft/openRepoTools-code/actions/runs/43563613592),
+  route job `132352508596`, at 05:52:53.576Z: `landing` / `omit_full:true`, proof
+  `550275b1062121137f7adc51ff4b7e44f26dbc17fa0140370a9969344b90dc82`.
+- [B main43563618506](https://github.com/opensoft/openRepoTools-code/actions/runs/43563618506),
+  route job `132352523967`, at 05:52:58.717Z: `landing` / `omit_full:true`, proof
+  `46605872d48339dee13819d2daeffdcef47b379a6d29b96002b89b029d53c22b`.
+
+Each native route hash was independently reproduced from the actual candidate,
+actual qualified-record digest and that event's actual landed SHA. Their final
+omitted-work verification gates succeeded. This audit reads the real completed
+native runs; it does not manufacture push payloads to claim runtime acceptance.
+
+Complete all-state run listings for both source heads, candidate head and both
+actual main heads contained respectively 13, 13, 16, 3 and 3 runs at acceptance.
+Each head has exactly its one intended ordinary `tests.yml` run, first attempt,
+successful with two controls and six full roles skipped. Only the candidate
+head has a heavy caller: exactly `43560096407`, first attempt. Additional edited
+and post-merge events ran only advisory `ci-pilot` / `ci-shadow` workflows;
+they did not start duplicate full tests. Source/candidate fast checks remain
+separate feedback evidence. Thus the canary proves fast-only PR CI, one complete
+heavy integration run, ordered matching landed trees and no post-merge full CI.
+
+### Remaining delivery boundary
+
+The scoped source activation and live-canary gates T040/T048/T051/T058/T061/T064
+are satisfied by this fresh successor, not by reclassifying failed attempts.
+T041 final checked evidence reconciliation remains open until the paired
+code-pointer/spec evidence PRs pass latest-head review and checks and land
+normally. Their eventual commit/readback receipts belong in issue26, not a
+self-referential commit assertion in this document.
+
+Assembly pin adoption, composed exact-pin qualification, fresh lane-owner SAFE
+checkpoints before shared checkout refresh, installed-session adoption, wider
+component efficiency and archive remain separate unfinished work. The standing
+approval expressly excludes assembly pins and running-lane changes. No project
+wide or workstation-wide deployment is claimed. Existing full CI continues for
+mixed, uncertain, dependent and out-of-scope changes; admission is still manual.

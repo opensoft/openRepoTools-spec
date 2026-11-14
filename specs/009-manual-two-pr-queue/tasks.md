@@ -232,7 +232,7 @@ acceptance evidence are additionally required before marking their task done.
 - [x] T037 [O] Migrate only ruleset 25966308's required contexts with live flag false, preserving all other fields and recording target/effective readbacks — files: `features/009-manual-two-pr-queue/openspec/activation.md` — verify: `gh api repos/opensoft/openRepoTools-code/rules/branches/main | python3 -c 'import json,sys; checks=[c for r in json.load(sys.stdin) if r["type"]=="required_status_checks" for c in r["parameters"]["required_status_checks"]]; assert {"context":"openrepotools-delivery","integration_id":15368} in checks; assert not ({"guard-launch-mode","tests","tests-no-submodule","package"} & {c["context"] for c in checks})'`
 - [x] T038 [O] Enable only the prepared flag, preserve explicit disabled/fallback tests, update shared instructions and open locally reviewed paired PRs — files: `.github/ci/delivery-policy.json`, `.github/ci/delivery-cutover.md`, `.github/ci/task-set-delivery.md`, `tests/test_ci_cutover.py`, `tests/test_ci_local_review.py`, `tests/test_ci_pilot_queue.py`, `features/009-manual-two-pr-queue/openspec/activation.md` — verify: `bash tests/run.sh -k 'ci_ or full_ci_coverage_parity or tests_workflow or ci_shards'`
 - [x] T039 [O] Qualify exact-head ordinary/reuse CI and review, normally merge the enablement/governance PRs and verify landed trees plus actual main CI before queue use — files: `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${ENABLEMENT_MAIN_RUN_ID:-}" && gh run watch "$ENABLEMENT_MAIN_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
-- [ ] T040 [O] Run refusal/recovery fixtures, then the authorized two-member independent-main canary with explicit local-review acceptance; verify actual fast-only source/candidate runs, one complete heavy call and matching prefix/final trees — files: `claude-current`, `tests/test_claude_current.py`, `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${CANARY_HEAVY_RUN_ID:-}" && gh run watch "$CANARY_HEAVY_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
+- [x] T040 [O] Run refusal/recovery fixtures, then the authorized two-member independent-main canary with explicit local-review acceptance; verify actual fast-only source/candidate runs, one complete heavy call and matching prefix/final trees — files: `claude-current`, `tests/test_claude_current.py`, `features/009-manual-two-pr-queue/openspec/activation.md`, spec `specs/009-manual-two-pr-queue/activation-evidence.md` — verify: `test -n "${CANARY_HEAVY_RUN_ID:-}" && gh run watch "$CANARY_HEAVY_RUN_ID" --repo opensoft/openRepoTools-code --exit-status`
 - [ ] T041 [O] Reconcile actual settings/run/artifact/tree evidence and remaining adoption boundaries without advancing assembly pins or archiving — files: `features/009-manual-two-pr-queue/openspec/activation.md`, `specs/009-manual-two-pr-queue/activation-evidence.md`, `specs/009-manual-two-pr-queue/tasks.md` — verify: `openspec validate activate-claude-current-ci-cutover --strict`
 
 T036–T038 preparation/publication receipt: code PR56 is open at
@@ -280,7 +280,7 @@ independent PRs retry the same separate T042/T043 outcomes after qualified main.
 - [x] T045 [O] Add red-first prose-edit, intent/dependency/identity and strict-live-race regressions; normalize only the first source-event body comparison — files: code `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `.github/ci/delivery-cutover.md` — verify: `bash tests/run.sh -k 'ci_cutover or ci_local_review or ci_delivery'`
 - [x] T046 [O] Complete exact-head local expert review and full source/reuse qualification; open paired code/spec PRs — files: code/spec PR records and `activation-evidence.md` — verify: exact head/base checks, complete ordinary/reuse JUnit inventories and strict OpenSpec
 - [x] T047 [O] Normally merge checked code/spec heads, compare actual landed trees and qualify actual code main before fresh canary — files: `activation-evidence.md`, PR receipts — verify: actual main full CI and test-inventory parity
-- [ ] T048 [O] Publish fresh independent T042/T043 PRs and accepted exact-head reviews; verify fast-only source/candidate CI, one heavy run, matching prefixes/final tree and no duplicate full main run; reconcile evidence — files: source PRs, `activation-evidence.md`, this checklist — verify: immutable run/artifact/member/tree readbacks and strict OpenSpec; no archive or assembly adoption
+- [x] T048 [O] Publish fresh independent T042/T043 PRs and accepted exact-head reviews; verify fast-only source/candidate CI, one heavy run, matching prefixes/final tree and no duplicate full main run; reconcile evidence — files: source PRs, `activation-evidence.md`, this checklist — verify: immutable run/artifact/member/tree readbacks and strict OpenSpec; no archive or assembly adoption
 
 ### R2 refusal observability follow-up
 
@@ -290,7 +290,7 @@ task set CI-METADATA-12-D. Do not relax provenance based on an unproven cause.
 
 - [x] T049 [O] Add secret-safe fixed-vocabulary stage/refusal diagnostics and snapshot mismatch field names, retaining exact route results and all gates — files: code `.github/ci/delivery_route.py`, `tests/test_ci_cutover.py`, `.github/ci/delivery-cutover.md` — verify: red-first diagnostic tests and full existing routing/review contracts
 - [x] T050 [O] Review exact code/spec refs, strictly validate, open paired PRs and fully qualify checked normal landings plus actual main — files: paired PRs, OpenSpec artifacts and `activation-evidence.md` — verify: full ordinary/reuse job and test inventory parity, reviewed/landed trees, actual-main results
-- [ ] T051 [O] Capture a genuinely new source event with diagnostic evidence; implement only a proven necessary repair under the same checked gates, then complete fresh T048 acceptance — files: source PRs, narrow directly related repair if needed and evidence — verify: fixed stage/reason plus actual fast-only/heavy/member/tree evidence; never reinterpret failed runs
+- [x] T051 [O] Capture a genuinely new source event with diagnostic evidence; implement only a proven necessary repair under the same checked gates, then complete fresh T048 acceptance — files: source PRs, narrow directly related repair if needed and evidence — verify: fixed stage/reason plus actual fast-only/heavy/member/tree evidence; never reinterpret failed runs
 
 ### R3 generated-merge-hint repair — CI-METADATA-13
 
@@ -313,7 +313,7 @@ completed-proof strictness and all existing exclusion boundaries.
 
 - [x] T056 [O] Record observed R4 failure and pending-observation contract without duplicating tasks — files: fix-source-delivery-metadata OpenSpec artifacts, feature009 spec/tasks/evidence — verify: strict OpenSpec, exact run/job/timing readbacks and failed-attempt preservation
 - [x] T057 [O] Reproduce within-read completion red-first, repair only pending wait ordering and preserve completed/admission refusals — files: code delivery_verify.py, delivery_evidence.py, focused repair regressions, cutover runbook and dated activation-record pointer — verify: canonical CI contracts, no-submodule new cases, exact-head local review and full ordinary/reuse inventories
-- [ ] T058 [O] Open and normally merge fully checked code/spec repair PRs, verify landed trees/actual main, then resume genuinely fresh source events and complete T051/T048 — files: paired PRs and evidence — verify: full source/main parity and actual member/heavy/tree/no-duplicate proof; no archive or assembly adoption
+- [x] T058 [O] Open and normally merge fully checked code/spec repair PRs, verify landed trees/actual main, then resume genuinely fresh source events and complete T051/T048 — files: paired PRs and evidence — verify: full source/main parity and actual member/heavy/tree/no-duplicate proof; no archive or assembly adoption
 
 T057 qualification is complete at code `c97a6e8` / spec `16d7ecf`: latest-head
 ordinary `43521046751` passed 15/15 jobs, reusable `43521046869` 17/17 and fast
@@ -346,7 +346,7 @@ task set and its checked landings/fresh retry; no excluded authority follows.
 
 - [x] T059 [O] Record R5 source/admission success separately from candidate full-fallback failure and safe stop; define bounded initial candidate-description handling and privacy-safe diagnostics — files: fix-source-delivery-metadata OpenSpec artifacts, feature009 spec/tasks/evidence — verify: strict OpenSpec, exact run/edit/stop readbacks and no duplicate task list
 - [x] T060 [O] Reproduce pre-routing candidate prose differences red-first, repair only the initial comparison and add field-name diagnostics; preserve invalid-type/identity/admission/final-reread refusals — files: code delivery_route.py, focused regression tests, cutover runbook and dated activation-record pointer — verify: canonical CI contracts, no-submodule added cases, exact-head local expert review
-- [ ] T061 [O] Open paired code/spec PRs, qualify full ordinary/reuse inventories, normally merge checked heads and verify landed trees/actual main; resume genuinely fresh R6 sources and complete T051/T048 — files: paired PRs and evidence — verify: full source/main identity/skip parity, fresh reviews/receipts, actual two-member/one-heavy/prefix/final/no-duplicate proof; no archive or assembly adoption
+- [x] T061 [O] Open paired code/spec PRs, qualify full ordinary/reuse inventories, normally merge checked heads and verify landed trees/actual main; resume genuinely fresh R6 sources and complete T051/T048 — files: paired PRs and evidence — verify: full source/main identity/skip parity, fresh reviews/receipts, actual two-member/one-heavy/prefix/final/no-duplicate proof; no archive or assembly adoption
 
 T061 source qualification and checked landings are complete: code74/spec49 at
 revieweda2b487b/2d88e4c passed ordinary15/reusable17 and all four5418-case inventories
@@ -368,7 +368,7 @@ approval covers this follow-up, not any excluded resources or weaker proof.
 
 - [x] T062 [O] Record exact R6 source/admission evidence, final-reread refusal and terminal safe stop; define no-proof fresh re-observation with unchanged accepted-proof equality and hard refusals — files: governing OpenSpec artifacts, feature009 spec/tasks/evidence — verify: actual run/edit/artifact/stop readbacks and strict OpenSpec; sole checklist
 - [x] T063 [O] Reproduce authenticated final-read transitions red-first; implement only bounded fresh candidate route/gate observation and privacy-safe mismatch diagnostics, preserving invalid identity/ref/proof and exhaustion refusals — files: code delivery_route.py, focused regressions, cutover runbook and dated activation pointer — verify: canonical CI contracts, no-submodule added cases, unchanged proof/schema/budget and exact-head local expert review
-- [ ] T064 [O] Open paired code/spec repair PRs, fully qualify current-head ordinary/reuse inventories, normally merge checked heads and verify actual-main parity, then run genuinely fresh R7 source/receipt/batch acceptance and reconcile final evidence — files: PRs and canonical evidence — verify: exact source/main identities/skips, actual member/order/one-heavy/prefix/final/no-duplicate proofs; no archive, assembly adoption or R6 rerun
+- [x] T064 [O] Open paired code/spec repair PRs, fully qualify current-head ordinary/reuse inventories, normally merge checked heads and verify actual-main parity, then run genuinely fresh R7 source/receipt/batch acceptance and reconcile final evidence — files: PRs and canonical evidence — verify: exact source/main identities/skips, actual member/order/one-heavy/prefix/final/no-duplicate proofs; no archive, assembly adoption or R6 rerun
 
 T063 local qualification is complete at code8de8e499b5f9a8d35ae46c885370f2d716f881fa:
 four red-first cases failed on unchanged main, then passed after the repair.
@@ -396,3 +396,20 @@ roles skipped. The one heavy caller43560096407 is still running at this
 checkpoint. T064 and every live acceptance task remain OPEN pending full heavy
 coverage, qualified artifact, actual prefix/final landing, no duplicate full
 main work and final reconciliation. R6 remains failed; it was not rerun.
+
+R7 successor acceptance is now complete: genuine first-attempt heavy43560096407
+passed all19 jobs. Both complete5,457-case inventories retain all5,449 baseline
+IDs plus8new passes, with zero removals/duplicates/failures/skip drift. The actual
+qualified artifact14101322070 and native landing hashes were independently
+validated. Mergify merged79/80 after heavy completion with the exact qualified
+ordered prefix/final trees. Both real main push runs passed their controls with
+all ordinary full roles skipped; complete source/candidate/main histories show
+exactly one heavy caller and no duplicate full work. The canonical final R7
+section of activation-evidence.md carries the detailed immutable receipts.
+
+This completes T040/T048/T051/T058/T061/T064 through the genuine fresh successor;
+failed R1–R6 are not reclassified as passing. T041 remains the one unchecked
+task until the paired final code-pointer/spec evidence PRs have latest-head
+review, checks, normal protected landings and actual readbacks recorded in
+issue26. No self-referential future merge is claimed here. Assembly/session
+adoption and archive remain separately excluded and unfinished.
