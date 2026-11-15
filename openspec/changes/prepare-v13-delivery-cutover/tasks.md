@@ -13,4 +13,4 @@
 
 - [x] 3.1 Add shared instructions/runbook and validate strict OpenSpec; verify only additive qualification-trigger paths, with no integration-job, baseline, queue, provider/assembly pin or lane/session change in the diff.
 - [x] 3.2 Run focused canonical-wrapper regression suites and local expert review; resolve findings and record actual evidence without claiming activation.
-- [ ] 3.3 Open paired code/spec PRs and request exact-head Codex review; verify latest-head full/reusable CI and review before normal checked source merges, then read back disabled main. Do not activate or enqueue.
+- [x] 3.3 Open paired code/spec PRs and request exact-head Codex review; verify latest-head full/reusable CI and review before normal checked source merges, then read back disabled main. Do not activate or enqueue.
