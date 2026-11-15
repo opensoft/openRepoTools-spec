@@ -5446,12 +5446,14 @@ back.
   rollback, an outage's declaration and each merge. He does act 3's
   infrastructure and the per-host flips. A word is a turn he typed, and the post
   that acts on it records it; an accepted prompt suggestion is not a word.
-- **The operator lane,** which Brett names, runs every `lanes-index` command of
-  acts 3 and 4 from its own register checkout, `<W>-lanes/<lane>/`, and never
-  from `W`. `import`, `cutover`, `rollback` and the disaster path's commands run
-  with `LANES_LANE=` the operator lane, through that checkout, so each push they
-  make is a lane's write; a shell or a `CLAUDE_NO_LANE=1` session that runs one
-  names the operator lane the same way.
+- **The operator lane,** which Brett names, runs the `lanes-index` commands the
+  steps below give it from its own register checkout, `<W>-lanes/<lane>/`, and
+  never from `W`; Brett's own, `bootstrap`, `login`, `set-mode` and `outage`,
+  run from his shell or the host, as each step says. `import`, `cutover` and
+  `rollback`, the disaster path's `import` and `cutover` among them, run with
+  `LANES_LANE=` the operator lane, through that checkout, so each push they make
+  is a lane's write; a shell or a `CLAUDE_NO_LANE=1` session that runs one names
+  the operator lane the same way.
 - **The coordinator,** opensoft/openRepoTools#165's lead lane unless Brett
   names another, posts the notices below and keeps the runbook's record: one
   #165 post per step that changes state, quoting the output it rests on.
@@ -5518,8 +5520,9 @@ runs it again at the window, and again after any recreate.
      that owner `login`, `createrole`, `createdb` and membership of
      `pg_use_reserved_connections`, the only role it manages (the logins are
      `lanes-index login`'s); `reserved_connections` 2; the server's TCP
-     keepalives (`tcp_keepalives_idle` 60), so that no connection is silent for
-     the load balancer's 4-minute idle reset; `log_connections` and
+     keepalives (`tcp_keepalives_idle` 60, `tcp_keepalives_interval` 10 and
+     `tcp_keepalives_count` 6), so that no connection is silent for the load
+     balancer's 4-minute idle reset; `log_connections` and
      `log_disconnections` on; TLS 1.3, CNPG's default; `pg_hba` rejecting every
      connection without TLS, then admitting the two groups' members, the
      indexer and the admin to `lanes_register` by SCRAM-SHA-256, ahead of
@@ -5617,10 +5620,11 @@ runs it again at the window, and again after any recreate.
    - **Way back:** the schema holds no register data before the import. Brett
      drops schema `lanes_register` and the roles the bootstrap made, through
      the same admin service.
-   - **Then the logins:** `lanes-index login add <engineer>` for each engineer,
-     human or AI host, and `lanes-index login add --dump-job` for the dump job.
-     A workstation that joins later gets its engineer's logins the same way,
-     before its step 3. The way back above drops these logins too.
+   - **Then the logins:** `lanes-index login add <engineer> --admin-service
+     '<service>'` for each engineer, human or AI host, and
+     `lanes-index login add --dump-job --admin-service '<service>'` for the
+     dump job. A workstation that joins later gets its engineer's logins the
+     same way, before its step 3. The way back above drops these logins too.
    - **Then the dump's check:** the dump job has run once, and `pg_restore -l`
      on its file lists both schemas.
 3. **The configuration, per host.** Brett, on every engineer's workstation,
@@ -5734,8 +5738,8 @@ runs it again at the window, and again after any recreate.
    ```
 
    where `C` is the tip of `origin/main` ("Import and rollback" says what it
-   does). It checks every key its lines give, which makes an import of today's
-   register take about 25 s instead of 3 s, inside its 300 s bound.
+   does). It checks every key its lines and holds give, which makes an import
+   of today's register take about 25 s instead of 3 s, inside its 300 s bound.
    - **Check:** the proof's three parts: each rendered path's blob id equals
      `C`'s, the counts match, and every lane's answers are the same from the
      files and from SQL.
@@ -5779,8 +5783,8 @@ runs it again at the window, and again after any recreate.
    lanes-index set-mode primary
    ```
 
-   It rewrites only the `mode=` line ("Import and rollback" gives its
-   refusals), and prints the path, the old mode and the new one.
+   It rewrites only the `mode=` line ("Import and rollback" gives its main
+   refusal), and prints the path, the old mode and the new one.
    - **Check:** `lanes-index ready --expect primary --release 1.3.0 --env
      <label>` in each environment on each configured workstation, with each
      environment's own label.
@@ -5849,13 +5853,16 @@ lost for good", below.
    - **The declaration:** `rollback` writes the outage's declaration itself
      where its configuration directory can be written; from a bench, whose
      mount is read-only, it prints `outage declare --rollback --mirror-seq <k>`
-     instead. Brett runs that line, as printed, on each other host, and on the
-     rollback's own host where it ran in a bench. Until a declaration is
-     written, guards refuse 2, the operator lane's own included, so a rerun
-     runs from a shell or a `CLAUDE_NO_LANE=1` session.
+     instead. Brett runs `outage declare --rollback --mirror-seq <k>`, with the
+     `<k>` the rollback found, on each other host, and on the rollback's own
+     host where it ran in a bench; on a host where he runs `outage declare` on
+     his word instead, it refuses with 2 and prints that line to run. Until a
+     declaration is written, guards refuse 2, the operator lane's own included,
+     so a rerun runs from a shell or a `CLAUDE_NO_LANE=1` session.
    - **Refusal:** with the database unreachable it exits 69 and changes neither
      the switch nor the marker: the lanes wait, or Brett takes the disaster
-     path.
+     path. Other writes that keep taking its turn to the 30 s deadline end it
+     75, with nothing written and the switch still `primary`; it is run again.
 3. **The render,** which proves the mirror a full render. Every guard whose ref
    is behind the rollback's head refuses 2 until the mirror carries it, so a
    rerun after a failed render runs from a shell, or a `CLAUDE_NO_LANE=1`
@@ -5945,8 +5952,9 @@ database, run with every workstation's lanes paused first.
        2. `lanes-index bootstrap --roles-only`, which also makes the three
           database-level statements a dump does not carry ("Roles and
           logins");
-       3. `lanes-index login add <engineer>` for each engineer, and
-          `lanes-index login add --dump-job`;
+       3. `lanes-index login add <engineer> --admin-service '<service>'` for
+          each engineer, and
+          `lanes-index login add --dump-job --admin-service '<service>'`;
        4. the restore of both schemas:
 
           ```sh
