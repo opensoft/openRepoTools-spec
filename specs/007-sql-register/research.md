@@ -8,8 +8,8 @@ the freeze decide for 007, and the errors found in the frozen text.
 **The edits to Y's files since Y,** by round. All but the first, round
 B13's `design.md` fold, the test-plan edits that add lines in rounds B14,
 B15 and B16 and in the follow-up, and the follow-up's fold of T1 are made in
-place, so every line of `operations.md`, `clarifications.md` and
-`proposal.md`, and of `design.md` to design:489, keeps Y's number:
+place, so every line of `clarifications.md` and `proposal.md`, of
+`operations.md` to ops:434, after which the bootstrap's Limit bullet, lane 1's C14 (commit `3b6fde18`), moved Y's lines one down, and of `design.md` to design:489, keeps Y's number:
 
 - **Round B4, the two spec files** (`dabd74bd`, `ce3fad83`, `ad82c2f4` and
   `04a9de6b`; lane 3's rulings B4, #165 6738474549, and (a), 6727022920): the
