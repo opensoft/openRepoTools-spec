@@ -254,8 +254,11 @@ own codes, and on primary `request-handoff`'s refusals that row 64 lists, before
 its claim, are 64);
 it ends 1, with nothing written, where its environment or its own working files
 cannot be had. 75 wrote nothing, and so did 69 but for `request-handoff`'s wait,
-whose request stands; 3 means the write **may not be written**, and prints a
-`LANES_WRITE_ID` rerun that writes it once or finds it;
+whose request stands, and for one internal error that cannot say whether the
+write reached the register; 3 means the write **may not be written**, and prints
+the `LANES_WRITE_ID` rerun that writes it once or finds it, or means that an
+identical write still holds it, this run sent nothing, and the message says
+what to do (the exit table's row 3);
 2 is a refusal, the register's own or the verb's, and wrote nothing, as the
 rows of the exit table below say. The files in the checkout are then the
 register's mirror. See "The SQL register".
@@ -277,15 +280,16 @@ overrides `LANES_REPO`, `LANES_PATH` and `LANES_BRANCH` exist for tests.
 
 ## Starting and ending a lane
 
-**On `mode=primary`,** `lane-start` and `lane-end` read the register through
-verbs (`register-text`, `register-grep`, `canon-lane` and the rest), and never by
-awk over the file or `git grep` of the ref. `lane-start` refuses the launch, with
-the verb's own code, where one of seven reads answers 75 or 3 (or 69, at two of
-them); its three
-register writes (the row or the session cell, the state and the `STARTED` or
-`RESUMED` line) are one write, `start-record`, in every mode; and `lane-end`'s
-sweeps hold what they could not read and delete nothing on it. See "The SQL
-register".
+**`lane-start` and `lane-end` read the register through verbs in every mode**
+(`register-text`, `register-grep`, `canon-lane` and the rest), and
+`register-text` and `register-grep` end 69 where a read fails (the exit table's
+row 69). **On `mode=primary`** they never read it by awk over the file or
+`git grep` of the ref, and `lane-start` refuses the launch, with the verb's own
+code, where one of seven reads answers 75 or 3 (or 69, at two of them); its
+three register writes (the row or the session cell, the state and the `STARTED`
+or `RESUMED` line) are one write, `start-record`, in every mode; and
+`lane-end`'s sweeps hold what they could not read and delete nothing on it. See
+"The SQL register".
 
 ### One word: `lane`
 
@@ -1262,7 +1266,7 @@ else.
 |---|---|
 | 0 | done — and for a write, **confirmed**: the commit was read back on origin before the writer said `pushed` (Amendment 23 S4) |
 | 1 | environment — no register, no writer; and, feature 007, on primary and with nothing sent, a write's own working files that cannot be made: a host with neither `sha256sum` nor `shasum` to make the write's digest, a `register-pending/` directory under the state directory (or a claim in it) that cannot be made or written whole, and an attempt's directory under `register-writes/`, or a file the parent writes there |
-| 2 | refusal — bad arguments, the object is held, an unknown alias, or `commit` refusing to publish local commits that are not register or handoff writes, from a checkout whose HEAD is off the branch, or that it cannot read (#194; it pushes none of them); and, Amendment 23 S3, every writer with nothing written, where its checkout cannot be brought to origin's tip: a fetch that failed (`LANES_NO_FETCH=1` is one, for a writer), an operation in progress or unmerged entries, HEAD off the branch, staged entries that are not the write's own, unpushed commits (the publish act excepted), a diverged branch, a pending change to a path the write commits, or a fast-forward git refused; a `LANES_REPO` naming a directory below its checkout's top level, from which git would read the write's pathspecs, before any edit; the withdrawn `--sweep`; the publish act over a stack origin has moved past (S4); and `claim` or `add-row` meeting origin moved under its own checks on each of six attempts, before any edit (S3, S4); and `publish-handoff`'s restart fence on its bound file or pre-image (`write-handoff` answers those 7, so its 2 is never a restart fence's); and, feature 007, on primary, each with nothing written ("The SQL register"): a `LANES_WRITE_ID` that is neither a write id nor `new`, a `LANES_WRITE_GENERATION` that is not a register generation, a `LANES_WRITE_ID` with no generation that no pending record here holds, a pending record of another register generation (at any age, until `LANES_WRITE_ID=new`) or one that cannot be read, and an id the journal holds for another write; a lane whose own register checkout is not there, an unset or out-of-class `LANES_LANE`, `LANES_NO_GIT=1`, a hand edit of a rendered file pending in that checkout or a listing of it that git cannot make, and no author identity there (each of these 64 for `request-handoff`), and a second register write in one run; `commit` over a hand edit of the register or of any file it renders, and the publish act over a queued commit that changes a path under `lanes/` other than `lanes/repos.tsv` and `lanes/log/README.md`; the register's own refusals, relayed with its `ERROR:` and `DETAIL:` lines, which are an object another lane's live claim holds and `main` another lane holds first (each with a `held-by=` line where the register can be read again at once: the later `claim`, `HOLD` or `LANDING`, never 7), a claim whose spellings meet another lane's live claim, an act's expectation that changed (`expectation: <scope> changed at seq <k> by <lane>/<verb>`) and a key that is not a scope; `append-line`'s refusal of a hand-typed `LANDING EXPIRED`, of a take that names no repository or has no readable UTC, and of `--landing-expired` where its `LANDING` is not open or is not past Rule 6's 30 minutes; and `act-begin --rebase` and the checks on `LANES_ACT` and `LANES_EXPECT` |
+| 2 | refusal — bad arguments, the object is held, an unknown alias, or `commit` refusing to publish local commits that are not register or handoff writes, from a checkout whose HEAD is off the branch, or that it cannot read (#194; it pushes none of them); and, Amendment 23 S3, every writer with nothing written, where its checkout cannot be brought to origin's tip: a fetch that failed (`LANES_NO_FETCH=1` is one, for a writer), an operation in progress or unmerged entries, HEAD off the branch, staged entries that are not the write's own, unpushed commits (the publish act excepted), a diverged branch, a pending change to a path the write commits, or a fast-forward git refused; a `LANES_REPO` naming a directory below its checkout's top level, from which git would read the write's pathspecs, before any edit; the withdrawn `--sweep`; the publish act over a stack origin has moved past (S4); and `claim` or `add-row` meeting origin moved under its own checks on each of six attempts, before any edit (S3, S4); and `publish-handoff`'s restart fence on its bound file or pre-image (`write-handoff` answers those 7, so its 2 is never a restart fence's); and, feature 007, on primary, each with nothing written ("The SQL register"): a `LANES_WRITE_ID` that is neither a write id nor `new`, a `LANES_WRITE_GENERATION` that is not a register generation, a `LANES_WRITE_ID` with no generation that no pending record here holds, a pending record of another register generation (at any age, until `LANES_WRITE_ID=new`) or one that cannot be read, and an id the journal holds for another write; a lane whose own register checkout is not there, an unset or out-of-class `LANES_LANE`, `LANES_NO_GIT=1`, a hand edit of a rendered file pending in that checkout or a listing of it that git cannot make, and no author identity there (each of these 64 for `request-handoff`), and a second register write in one run; `commit` over a hand edit of the register or of any file it renders, and the publish act over a queued commit that changes a path under `lanes/` other than `lanes/repos.tsv` and `lanes/log/README.md`; the register's own refusals, relayed with its `ERROR:` and `DETAIL:` lines, which are an object another lane's live claim holds and `main` another lane holds first (each with a `held-by=` line where the register can be read again at once and shows the holder: the later `claim`, `HOLD` or `LANDING`, never 7), a claim whose spellings meet another lane's live claim, an act's expectation that changed (`expectation: <scope> changed at seq <k> by <lane>/<verb>`) and a key that is not a scope; `append-line`'s refusal of a hand-typed `LANDING EXPIRED`, of a take that names no repository or has no readable UTC, and of `--landing-expired` where its `LANDING` is not open or is not past Rule 6's 30 minutes; and `act-begin --rebase` and the checks on `LANES_ACT` and `LANES_EXPECT` |
 | 3 | **pushed, not confirmed: `<sha>`** (Amendment 23 S4). The write committed and pushed — or its push timed out, and a hung push often lands — and the read-back could not confirm the commit on origin: the fetch failed or timed out, or origin does not hold it. Never success. The commit stays on HEAD — unless another writer in the checkout **rewrote** it while its push was in flight (an unlocked writer's rebase), which the words then say: it is not on HEAD at all, and what reached origin is read by content — and the next write's S3 finds it by content either way: published, there is nothing to do; not, every write refuses until the publish act sends it or an archive (S6.3) takes it. **On primary** (feature 007; "The SQL register"), a register write in doubt: may not be written; run the printed `LANES_WRITE_ID` rerun, which writes it once or finds it. "cannot confirm whether register write `<id>` committed; nothing else was written": a commit call of the write may have committed (its pending record holds a `call` line, this run's or one a record taken over carried in), and the lookup by write id, `lanes-index journal --write-id <id> …`, could not settle it: no try within its window took the head row's lock, the lookup was refused as too early (LR011), or its answer settles nothing (any other code, a crash). The message gives the lookup and the rerun, `LANES_WRITE_ID=<id> LANES_WRITE_GENERATION=<generation> LANES_LANE=<lane> LANES_SESSION=<the value the digest took> lanes-edit.sh <the same arguments>`, and the pending record is kept, so the rerun settles the write and never writes it twice. On primary, an identical write's owner still live at this write's deadline: this run sent nothing, that write's outcome is not known, and its record and claims are left as they are. With a pending record: "an identical write is still running in pid `<p>` (write `<id>`, started `<utc>`)", with its lookup where the record holds a `call` line, and its printed rerun. With none yet: "an identical write is being started in pid `<p>` on `<host>/<container>` (claimed `<utc>`)", with the effect check, `history <lane> --since <utc>` or `register-row <lane>`. And where that owner cannot be tested here (the claim names no pid or cannot be read, its pid lives with no start time, or it is from another host or container), "an identical write holds the claim `<state>/register-pending/<d>.take.<k>`, whose owner cannot be tested here", with the pid, host and container a claim from another host or container names, and the UTC after which a run may take it |
 | 4 | the mutex could not be taken within 60s |
 | 5 | an edit moved more than one line and was refused — or a register rewrite whose copy, write or result could not be proved (#120 item 1). The copy every proof is made against is compared with the register, and what lands with what was built; where a write cut the register short, its earlier bytes are put back and proved first, and the refusal says which of the two the register holds — never "unchanged" about a register the write truncated |
@@ -1272,7 +1276,7 @@ else.
 | 10 | `lane-state`: the lane's lifecycle snapshot is there and could not be read, or is of this schema and not a whole record, so nothing can be read out of it as a snapshot (openRepoTools#91 and #115, below), or — where no `LANES_LANE_STATE_ROOT` names the control root — the lane's object log could not be read, so where its snapshot is kept is not known (openRepoTools#290, below) — never the 8 that means it has none. It was 9 until #61 spent 9 on `claim`. `lane-trees`: the lane's `trees` directory is there and could not be listed (#157 item 4e) — never the 8 that means it recorded no tree. Both spend it, too, where the record could not even be looked for: its control root, or a directory above it, cannot be searched, or a link on the way cannot be followed (#291) |
 | 8 | no record — and no other meaning |
 | 64 | `swapped`'s own usage error — never the dispatcher's 2 — and the lifecycle arms' own: `set-lane-tree`'s partial observation, a count that is not one, or a field that is only blanks (below); and, feature 007, on primary, `request-handoff`'s refusals that row 2 lists as 64 for it (its missing lane or checkout, `LANES_LANE`, `LANES_NO_GIT=1`, a pending hand edit or a listing git cannot make, no author identity), which are 2 for every other writer ("The SQL register") |
-| 69 | **this could not be done with the register now; nothing was written but by `request-handoff`'s wait, whose request stands** (feature 007; `EX_UNAVAILABLE`; "The SQL register"). A **write** exits it when its mode question answered 78, a build whose `lanes-index` refuses `mode=primary` (the fixed text is repeated); when the marker check finds `lanes/STORE` on the tip a files-mode writer fetched, or a primary writer's transaction finds the switch not `primary` (``this estate's register is SQL; configure `mode=primary` ``); and, on primary, when a write's snapshot could not be taken, or its commit was refused for a reason other than the register's own rules (`psql`'s exit 3: LR002, LR003, LR004 after its one retry, any other SQLSTATE), each printing the write's rerun, by its id and generation where it has one, or the command as given with a note that nothing was sent. A **read that decides** exits it, with nothing on stdout, where its own read of the register failed: the read door's `register read --prefetch`, a read site's second read, `act-begin`, `canon-lane --walk`, and `register-text` and `register-grep`, the two verbs the lifecycle scripts' reads moved behind, in every mode (a file that could not be read, `git grep` on `origin/<branch>` ending other than 0 or 1, no workspace repository found, and on primary an image the read door could not give), never `register-grep`'s 1, "no match", and never 8. It is never the files read instead. `request-handoff`'s wait exits it, with nothing on stdout, where its last poll could not read the register: the one 69 after a write, since the request stands in the register and whether the lane is still bound is not known. `append-line` exits it, before the lock, where its classifier gives no answer. The guard may exit only 0 or 2, so it refuses with 2; `lane-start` passes it on at two of its seven read arms, `canon-lane` and `session-lane`, at every other read that already refused, and where its base cannot be read |
+| 69 | **this could not be done with the register now; nothing was written but by `request-handoff`'s wait, whose request stands, and but for one internal error** (feature 007; `EX_UNAVAILABLE`; "The SQL register"). A **write** exits it when its mode question answered 78, a build whose `lanes-index` refuses `mode=primary` (the fixed text is repeated); when the marker check finds `lanes/STORE` on the tip a files-mode writer fetched, or a primary writer's transaction finds the switch not `primary` (``this estate's register is SQL; configure `mode=primary` ``); and, on primary, when a write's snapshot could not be taken, or its commit was refused for a reason other than the register's own rules (`psql`'s exit 3: LR002, LR003, LR004 after its one retry, any other SQLSTATE), each printing the write's rerun, by its id and generation where it has one, or the command as given with a note that nothing was sent. One internal error ends a write 69 as well: `lanes-index mode` answered primary, and the write left the register's attempt loop without ending, so whether it reached the register is not known, and a write already made reads as found when the command is run again. A **read that decides** exits it, with nothing on stdout, where its own read of the register failed: the read door's `register read --prefetch`, a read site's second read, `act-begin`, `canon-lane --walk`, and `register-text` and `register-grep`, the two verbs the lifecycle scripts' reads moved behind, in every mode (a file that could not be read, `git grep` on `origin/<branch>` ending other than 0 or 1, no workspace repository found, and on primary an image the read door could not give), never `register-grep`'s 1, "no match", and never 8. It is never the files read instead. `request-handoff`'s wait exits it, with nothing on stdout, where its last poll could not read the register: the one 69 after a write, since the request stands in the register and whether the lane is still bound is not known. `append-line` exits it, before the lock, where its classifier gives no answer. The guard may exit only 0 or 2, so it refuses with 2; `lane-start` passes it on at two of its seven read arms, `canon-lane` and `session-lane`, at every other read that already refused, and where its base cannot be read |
 | 75 | **register busy** (feature 007; `EX_TEMPFAIL`; "The SQL register"): `register busy: <k> attempts in <D> s, each beaten by another write; nothing was written; a retry in seconds is safe`, where every attempt lost its turn by the deadline, 30 s from the first attempt's start, with the write's rerun printed. Also an attempt whose child did not reach the commit seam within its bound, which the run stops, with nothing sent by that attempt. A write that was in doubt ends 75 only after its lookup by write id found it absent. It is not an outage and it is not 69. `lane-start` passes it on at its seven read arms, and `lane-handoff` where every write that stopped its `PAUSED` record gave it |
 
 3 to 6 are the codes this helper already used; 7 and 8 were free.
@@ -1280,11 +1284,15 @@ else.
 **69 and 75 are feature 007's** (`sysexits.h`'s `EX_UNAVAILABLE` and
 `EX_TEMPFAIL`). Neither is a code of any older arm. 69 says this could not be
 done with the register now, and nothing was written but by `request-handoff`'s
-wait, whose request stands (row 69): run the rerun a write prints once the
-register answers, and tell Brett if it does not clear. 75 comes only from a
-register that is a database, means **nothing was written**, and is "run it
-again in seconds". Exit 3 on primary is the third: "may not be written; run the
-printed rerun", or an identical write's end, where this run sent nothing. The
+wait, whose request stands, and but for one internal error that cannot say
+whether the write reached the register (row 69): do what it prints, a write's
+rerun or the read again once the register answers; a build's refusal clears
+only with the toolset installed whole, and a mode that disagrees is Brett's;
+tell Brett if it keeps coming. 75 comes only from a register that is a
+database, means **nothing was written**, and is "run it again in seconds".
+Exit 3 on primary is the third: "may not be written; run the printed
+`LANES_WRITE_ID` rerun", or an identical write's end, where this run sent
+nothing and the message says what to do. The
 guard is no writer, and none of the three is its code: it may exit only 0 or 2,
 and it refuses with 2 where its own read of the register fails within its 5 s,
 or answers from the mirror under a declared outage. See "The SQL register",
@@ -3947,8 +3955,9 @@ reader_passfile=<path>    its password file, where it is not the same one
 schema=<name>             the Postgres schema (default lanes_index)
 ```
 
-Refused (exit 2, nothing read or written): a configuration that is group- or
-world-readable, inside a git work tree or under `~/.agents/`; a URL that
+Refused (exit 2, nothing read or written): a configuration that is not a regular
+file, or that group or others can reach, or that is inside a git work tree or
+under `~/.agents/`; a URL that
 carries a password in any spelling; a password file that is not a regular
 file, or that group or others can reach (0600 and 0400 both pass); a SQLite
 path inside a git work tree. A Postgres configuration with no `reader_url=` is
@@ -4200,16 +4209,15 @@ temporary directory, and its Postgres path is a stand-in `psql` that records
 what it was asked. A real engine is for the SQL register's own tests.
 In the v1.3.0 suite, `tests.yml` sets `OPENREPOTOOLS_REQUIRE_PG` to `1` for
 every job, and the fixture, `tests/pgcluster.py`, starts a disposable cluster
-from the PostgreSQL
-16 binaries it finds: `PG_BIN` first, which is final where it is named, then
-`pg_config --bindir`, then `/usr/lib/postgresql/16/bin`. Where it finds none, a
-run with the switch at `1` fails before any test, pytest's exit 4, and does not
-skip; with the switch at `0` or unset the real-engine tests skip, naming what
-was tried. The `verify` workflow, asked for PostgreSQL (`Verify-Postgres: 1`),
-installs PostgreSQL 16, proves that a cluster of its own starts and answers, and
-runs the selected tests with `PG_BIN` set to its binaries and the switch at `1`;
-unasked, it sets the switch to `0` and `PG_BIN` to an empty directory, so the
-real-engine tests skip.
+from the PostgreSQL 16 binaries it finds: `PG_BIN` first, which is final where
+it is named, then `pg_config --bindir`, then `/usr/lib/postgresql/16/bin`. Where
+it finds none, a run with the switch at `1` fails before any test, pytest's exit
+4, and does not skip; with the switch at `0` or unset the real-engine tests
+skip, naming what was tried. The `verify` workflow, asked for PostgreSQL
+(`Verify-Postgres: 1`), installs PostgreSQL 16, proves that a cluster of its own
+starts and answers, and runs the selected tests with `PG_BIN` set to its
+binaries and the switch at `1`; unasked, it sets the switch to `0` and `PG_BIN`
+to an empty directory, so the real-engine tests skip.
 
 ## The SQL register
 
@@ -4221,9 +4229,9 @@ cutover and its own flip have run. **On a workstation whose `lanes-index.conf` s
 transaction. The files under `lanes/` are its rendered mirror, written behind
 it. And nothing falls back to writing the files. Everything else in this manual
 describes the register as files, and stays true for every workstation that is
-not `mode=primary` (the three exceptions are under "The switch and
-`lanes/STORE`"). The sections that describe a write or a read say where
-`mode=primary` changes them, and point here.
+not `mode=primary` (a failed register read's 69 and the three exceptions are
+under "The switch and `lanes/STORE`"). The sections that describe a write or a
+read say where `mode=primary` changes them, and point here.
 
 Four things stay what they were on a `mode=primary` workstation:
 
@@ -4248,22 +4256,23 @@ switch and `lanes/STORE`".
 
 | you see | it means | you do |
 |---|---|---|
-| exit **69** | the register could not be read, or refused the write for a reason that is not its own rules; **nothing was written**, but for `request-handoff`'s request when its wait ends 69 | do what it prints: a write's rerun, or the read again, once the register answers; for a build's refusal, the whole toolset installed; a mode that disagrees is Brett's; after `request-handoff`'s wait, read the lane before you ask again. If it keeps coming, stop and tell Brett |
+| exit **69** | the register could not be read, or refused the write for a reason that is not its own rules, or this build refuses `mode=primary`, or this workstation's mode and the estate's disagree; **nothing was written**, but for `request-handoff`'s request when its wait ends 69, and for one internal error that cannot say whether the write reached the register | do what it prints: a write's rerun, or the read again, once the register answers; for a build's refusal, the whole toolset installed; a mode that disagrees is Brett's; after `request-handoff`'s wait, read the lane before you ask again. If it keeps coming, stop and tell Brett |
 | exit **75**, "register busy" | other writes took every turn for 30 s, or an attempt's child did not reach its commit within its bound; **nothing was written, and a retry in seconds is safe** | run it again; it is no outage |
-| exit **3** | the write **may not be written**: a commit call of it may have committed, and the writer could not find out; or an identical write is still running, or holds a claim whose owner cannot be tested here, and this run sent nothing | do what it prints, and never run a write again without the id it printed: the `LANES_WRITE_ID` rerun where it prints one, which writes it once or finds it; where an identical write is running, wait for its process to end first; where one is still being started, check for its effect first, and write nothing if it is there; where a claim's owner cannot be tested here, wait for the UTC it prints |
+| exit **3** | the write **may not be written**: a commit call of it may have committed, and the writer could not find out; or an identical write is still running, or holds a claim whose owner cannot be tested here, and this run sent nothing | do what it prints, and never run a write again without the id it printed, where it printed one: that is the `LANES_WRITE_ID` rerun, which writes it once or finds it; where an identical write is running, wait for its process to end first; where one is still being started, check for its effect first, write nothing if it is there, and run the command again if it is not; where a claim's owner cannot be tested here, wait for the UTC it prints |
 | the guard refuses a prompt, exit 2, "the register's SQL store did not answer" | the guard's read of the database failed | take one of the two ways out below: wait, or roll back |
 | `commit` or a write refuses over a hand edit | the files are a rendering now | restore the file and make the change through its verb |
 | exit **2** from `claim`, `HOLD` or `LANDING` | the register refused it and wrote nothing: most often an earlier write holds the object, or `main` | read the line it prints, which says which; it is not exit 7 |
 
 **69 — the register could not be read, or refused. Nothing was written, but
-by `request-handoff`'s wait.** On primary a write whose snapshot cannot be
-taken (the database cannot be reached, say), or whose commit the database
-refuses for a reason other than the register's own rules, exits 69
-(`EX_UNAVAILABLE`), naming the cause. It has written nothing: not in the
-register, not in the journal, not in git, and it leaves no lock. A failure
-after its commit call was sent is not 69: that write is in doubt, and exits 3
-(below). **It never writes the files instead**, and neither a hand edit of the files nor a hand-run
-SQL write is the way round it. Its last lines say how to run it again:
+by `request-handoff`'s wait, and but for one internal error (below).** On
+primary a write whose snapshot cannot be taken (the database cannot be reached,
+say), or whose commit the database refuses for a reason other than the
+register's own rules, exits 69 (`EX_UNAVAILABLE`), naming the cause. It has
+written nothing: not in the register, not in the journal, not in git, and it
+leaves no lock. A failure after its commit call was sent is not 69: that write
+is in doubt, and exits 3 (below). **It never writes the files instead**, and
+neither a hand edit of the files nor a hand-run SQL write is the way round it.
+Its last lines say how to run it again:
 
 ```text
 the register gave this write no snapshot at this write's first snapshot: <the cause>. No write id was minted and no pending record of this run was written: nothing was sent. Run it again as it was given: LANES_LANE=<lane> LANES_SESSION=<uuid> lanes-edit.sh <the same arguments>
@@ -4276,8 +4285,8 @@ write with or without its record and never writes it twice. **What to do:** run
 exactly the command it printed, once the register can be reached; that is safe
 each time. A 69 that does not clear is a stop: do not look for another way to
 write, run `lanes-index status` from a shell (it needs no lane session), and
-tell Brett. 69 is also the code of two refusals that are not an outage, and of
-a read, each with nothing written:
+tell Brett. 69 is also the code of two refusals that are not an outage, of a
+read, and of the classifier `append-line` asks, each with nothing written:
 
 - a build without the renderer's git half: `mode=primary is not available in
   this build: the renderer's git half is not installed, so a write could not be
@@ -4295,12 +4304,24 @@ a read, each with nothing written:
 - a **read that decides**, whose own read of the register failed, whether for an
   outage or for either refusal above: it prints
   nothing on stdout, and **a read that failed is never "no record"** (never 8)
-  and never answered from the files.
+  and never answered from the files;
+- `append-line`'s classifier: on primary `append-line` asks
+  `lanes-index register classify` whether its text is one of the four it
+  refuses, before it takes its lock; where the classifier gives no answer it can
+  read, the text is not written and the lock is not taken. Install the
+  `lanes-index` that ships with that `lanes-edit.sh`, or run the text through
+  `lanes-index register classify` by hand to see why.
 
 One 69 follows a write: `request-handoff`'s wait, where its last poll could not
 read the register. Its request stands in the register and is not written again,
 whether the lane is still bound is not known, and nothing here bound it; it
 prints how to read the lane, and nothing on stdout.
+
+One internal error ends a write 69 without that certainty: `lanes-index mode`
+answered primary, and the write left the register's attempt loop without
+ending, which is an internal error of `lanes-edit.sh`. Whether the write
+reached the register is not known, but a write already made reads as found
+when the command is run again, so run it again; it wrote no files instead.
 
 **75 — register busy. Nothing was written, and a retry in seconds is safe.**
 Exit 75 (`EX_TEMPFAIL`) is a write that could not get its turn: another write
@@ -4358,7 +4379,10 @@ and each sent nothing:
   - `is being started in pid <p> on <host>/<container>`: it has no record and
     no id yet. Once that process has ended, look for its effect, as printed
     (`lanes-edit.sh history <lane> --since <utc>`, or `register-row <lane>`);
-    if it is there, the write was made, so do not run the command again;
+    if it is there, the write was made, so do not run the command again; if
+    it is not, run the same command again, which takes over that write's
+    record if one was left, or writes anew, or run the rerun by its own
+    write id, where this run had one and the message prints it;
 - a claim of an identical write whose owner cannot be tested here (another
   host or container, or no pid on the claim): the message names the claim file
   and the UTC after which a run may take it; run it again then, as it prints.
@@ -4395,11 +4419,11 @@ lanes-edit: … the register's SQL store did not answer the guard's read, so the
 
 **A declared outage** is a third thing, and Brett's: when he knows that no
 workstation can still write, `lanes-index outage declare --until <UTC> --why
-<words>` makes the guard answer from the mirror until that time, and a rollback
-declares one itself at its start. It refuses, with 2 and nothing written, on a
-host from which the database answers. The guard then prints `read: mirror at
-<sha12>, unknown (declared outage <utc>: <why>)`, and runs today's parser on the
-mirror's text. It does that only where the mirror holds a `Register-Seq` at
+<words>` makes the guard answer from the mirror until that time. That form
+refuses, with 2 and nothing written, on a host from which the database answers.
+A rollback declares one itself at its start. The guard then prints `read: mirror
+at <sha12>, unknown (declared outage <utc>: <why>)`, and runs today's parser on
+the mirror's text. It does that only where the mirror holds a `Register-Seq` at
 least as high as the declaration recorded; a mirror behind it is refused with 2,
 naming both seqs, and a mirror with no `Register-Seq` among its 200 newest
 commits is refused too. **Every write, and every other deciding read, still
@@ -4474,7 +4498,7 @@ commit: the register decides, in one transaction, and the second **exits 2 and
 writes nothing**. `CLAIM-LOST` is no longer produced (it stays in the grammar
 for the history that has it), and nor is exit 9, whose recheck files mode makes.
 The refusal prints the register's own words and, where the register can be read
-again at once, the holder's line:
+again at once and shows the holder, the holder's line:
 
 ```text
 ERROR:  LR005: the object is held (one_live_claim): …
@@ -4492,10 +4516,10 @@ spelling of the object meets another lane's live claim through any alias
 **The later `HOLD` or `LANDING` writer exits 2 too.** Amendment 10's `HOLD` and
 Rule 6's `LANDING` on one repository's `main` are ordered by commit sequence:
 the earlier wins, and the later writer's verb **exits 2, writes nothing and
-prints, where the register can be read again at once, the earlier line**, so
-that a landing script that checks the exit does not merge second. One
-repository spelled two ways is one `main`. It is neither 0 nor 69, and it is not
-the claim's 7:
+prints, where the register can be read again at once and shows it, the earlier
+line**, so that a landing script that checks the exit does not merge second.
+One repository spelled two ways is one `main`. It is neither 0 nor 69, and it is
+not the claim's 7:
 
 ```text
 ERROR:  LR005: another lane holds main for this repository first (D18)
@@ -4646,9 +4670,9 @@ endpoint and never through a pooler.
 writer, before it routes, clones, fetches or locks, and **only where a
 configuration exists**: the file at the default path, or `LANES_INDEX_CONFIG`
 set and not empty. With none, no `lanes-index` process starts, and the writers
-and readers are the v1.1.0 tools' but for the marker check and the three
-exceptions every mode has ("The switch and `lanes/STORE`"). The answer is read
-with a 2 s timer:
+and readers are the v1.1.0 tools' but for the marker check, the three
+exceptions every mode has, and the 69 of a register read that fails ("The
+switch and `lanes/STORE`"). The answer is read with a 2 s timer:
 
 | the query ends | the writer does |
 |---|---|
@@ -4731,9 +4755,15 @@ Between the marker and a workstation's own flip, every write that workstation
 tries after its fetch exits 69.
 
 **Where the marker is absent nothing changes.** The output and the exit codes of
-every `mode=index` and every unconfigured workstation are unchanged; each writer
-gains the configuration read and the marker check. There are **three exceptions,
-in every mode**, and a lane meets them before any cutover:
+every `mode=index` and every unconfigured workstation are unchanged, but for a
+register read that fails and the three exceptions below; each writer gains the
+configuration read and the marker check. The lifecycle scripts read the register
+through `register-text` and `register-grep` in every mode, so a read through
+them that fails ends 69 in every mode (the exit table's row 69): `lane-start`
+and `lane-end` refuse with it, and the sweep deletes nothing on it, where
+`lane-end` once read the file with awk and took a register it could not read
+for no row. There are **three exceptions, in every mode**, and a lane meets them
+before any cutover:
 
 - **answer 2 of the name guard binds detached.** It returns at once with
   "BINDING", the bind runs in a detached child (`setsid`) as
