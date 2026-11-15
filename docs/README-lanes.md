@@ -4771,10 +4771,10 @@ register read that fails and the three exceptions below; each writer gains the
 configuration read and the marker check. The lifecycle scripts read the register
 through `register-text` and `register-grep` in every mode, so a read through
 them that fails ends 69 in every mode (the exit table's row 69): `lane-start`
-and `lane-end` refuse with it, and the sweep deletes nothing on it, where
-`lane-end` once read the file with awk and took a register it could not read
-for no row. There are **three exceptions, in every mode**, and a lane meets them
-before any cutover:
+and `lane-end` refuse with it, and `lane-worktrees sweep` deletes nothing on it,
+where `lane-end` once read the file with awk and took a register it could not
+read for no row. There are **three exceptions, in every mode**, and a lane meets
+them before any cutover:
 
 - **answer 2 of the name guard binds detached.** It returns at once with
   "BINDING", the bind runs in a detached child (`setsid`) as
