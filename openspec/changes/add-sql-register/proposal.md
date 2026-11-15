@@ -141,15 +141,15 @@ Everything below applies on a `mode=primary` workstation, except the estate
 marker. Every act-2 writer, in every mode, reads `lanes/STORE` and refuses with 69
 where the marker is present and the workstation is not `mode=primary` (Amendment
 22's S1: "Every act-2 writer reads it"). Where the marker is absent, `mode=index`
-and unconfigured workstations write and read as today, with three exceptions:
+and unconfigured workstations write and read as today, with four exceptions:
 the guard's answer 2, whose bind runs detached in every mode, the fix for two
 defects in today's guard (design, "Known defects in today's code";
 opensoft/openRepoTools#347); `lane-start`'s bind, whose three register writes
-become one write, `start-record`, in every mode; and `openRepoTools wip init`'s
+become one write, `start-record`, in every mode; `openRepoTools wip init`'s
 refusal wherever `lanes/STORE` exists, in every mode, and, where a tree carries another file under `lanes/`, wherever its
 seed would write under `lanes/`: where that tree lacks `lanes/LANES.md` or `lanes/log/README.md` (Q14(a), narrowed by Brett's
-"Narrow it (Recommended)", #165 6773442813). Lane 3 confirmed the first two (#165 6710770304), and the third is Brett's
-answer to Q14 (#165 6710653292). Each item names the test that checks it; the agreement tests are listed together at the end.
+"Narrow it (Recommended)", #165 6773442813); and `lane-start`'s and `lane-end`'s read of the register, which goes through `lanes-edit.sh register-text` in every mode, so a read that fails ends 69 and writes nothing. Lane 3 confirmed the first two (#165 6710770304), the third is Brett's
+answer to Q14 (#165 6710653292), and the fourth is lane 3's ruling (#165 6895515151). Each item names the test that checks it; the agreement tests are listed together at the end.
 
 ### The configuration and the estate switch (S1)
 
@@ -2269,9 +2269,9 @@ change `skip-no-lane-guard`, not yet archived) is kept unchanged, not modified.
     `--install` until that entry is removed (`:3317–3331`).
 - **Unchanged while `lanes/STORE` is absent:** the output and exit codes of every
   `mode=index` and unconfigured workstation; each writer gains the configuration
-  read and the marker check. There are three exceptions, in every mode: the
+  read and the marker check. There are four exceptions, in every mode: the
   guard's answer 2, whose bind runs detached; `lane-start`'s bind, whose three
-  register writes become one, `start-record`; and `openRepoTools wip init`'s
+  register writes become one, `start-record`; `openRepoTools wip init`'s
   refusal wherever `lanes/STORE` exists, in every mode, and, where a tree carries another file under `lanes/`, wherever its seed would
   write under `lanes/`: where that tree lacks `lanes/LANES.md` or `lanes/log/README.md` (Q14(a), narrowed by Brett's "Narrow it
-  (Recommended)", #165 6773442813). **Unchanged everywhere:** the ledger half; the handoffs; Rules 1–10 as rules; Amendment 7's grammar.
+  (Recommended)", #165 6773442813); and `lane-start`'s and `lane-end`'s read of the register, through `lanes-edit.sh register-text`, which ends 69 where the register cannot be read. **Unchanged everywhere:** the ledger half; the handoffs; Rules 1–10 as rules; Amendment 7's grammar.

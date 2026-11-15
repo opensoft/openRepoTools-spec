@@ -164,7 +164,7 @@ The terms used below:
 
 A person on a workstation with no configuration, or with `mode=index`,
 installs the release that carries this feature. Everything reads and writes
-as before, except the sql spec's three exceptions (spec:60), which scenario 8
+as before, except the sql spec's four exceptions (spec:60's three, and a fourth that follow-ups 4 adds to that line), which scenario 8
 names, and two refusals:
 
 - A build without the renderer's git half refuses `mode=primary`, and says
@@ -220,12 +220,12 @@ database:
    lacks `lanes/LANES.md` or `lanes/log/README.md`, **When**
    `openRepoTools wip init` runs, **Then** it refuses and commits nothing
    (Q14(a), narrowed: FR-005).
-8. **Given** the three exceptions, **When** they run in any mode, **Then**
+8. **Given** the four exceptions, **When** they run in any mode, **Then**
    each is exactly what this feature specifies:
    - answer 2's bind runs detached (User Story 5);
    - `lane-start`'s three register writes are one, `start-record` (User
      Story 5);
-   - `wip init` refuses in scenario 7's narrowed form (FR-005).
+   - `wip init` refuses in scenario 7's narrowed form (FR-005); and, the fourth, `lane-start` and `lane-end` read the register through `lanes-edit.sh register-text` in every mode, so a read that fails ends 69 and writes nothing.
 
 **OpenSpec requirements**:
 

@@ -200,7 +200,7 @@ one-line install.
 - Every database path is bounded (D9).
 - Each phase lands as a working, tested state, with `mode=primary` refused
   until group C's last pull request.
-- Nothing changes where the marker is absent, except the three exceptions.
+- Nothing changes where the marker is absent, except the delta's four exceptions.
 - The hook string and `GUARD_TIMEOUT` are byte-unchanged.
 - The suite reaches no network and creates no real repository. The cluster
   is local, and only the timeout stand-ins bind 127.0.0.1.
@@ -241,7 +241,7 @@ is filled once Phase 1's contracts have landed.
 | G4 | No credential in an inherited environment (Amendment 14(c)) | PASS: 0600 files; the URL-to-`PG*` mapping; the admin connection by `PGSERVICE` alone | to check |
 | G5 | The suite reaches no network and creates no real repository (root `AGENTS.md`) | PASS, with the root `AGENTS.md` text naming the cluster and the loopback listener, by lane 1's root act R2 | to check |
 | G6 | Tests skip loudly without their prerequisite, and CI refuses where it has the binaries | PASS: `OPENREPOTOOLS_REQUIRE_PG` (test plan §3.3) | to check |
-| G7 | Nothing changes where the marker is absent, except three exceptions | PASS | to check |
+| G7 | Nothing changes where the marker is absent, except four exceptions | PASS | to check |
 | G8 | Governed files are `[O]` work (protocol, Build Tiers; "Governed invariants" below) | PASS | to check |
 | G9 | Nothing under `upstream/openRepoShape` is edited, and the pin does not move in 007 (code#15 moved it to v1.1.1 before 007's branch was cut) | PASS | to check |
 | G10 | Brett decides every act: the tag, the uploads, acts 3 and 4, the ruleset and the install. Pull requests land on his standing word; the spec PR on his own word | PASS: no act is a build task | to check |

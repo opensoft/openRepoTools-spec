@@ -151,11 +151,11 @@ the fourth beside files mode (P5).
 - A database driver, or the register's rules as PL/pgSQL (Q7's (B)).
 - The register service as a write path or as the renderer's home.
 - Building Amendment 23's act 2, or changing files mode beyond the marker check
-  and the three exceptions: the guard's detached answer 2 ("Known defects in
-  today's code"; opensoft/openRepoTools#347), `start-record` (D5), and
+  and the four exceptions: the guard's detached answer 2 ("Known defects in
+  today's code"; opensoft/openRepoTools#347), `start-record` (D5),
   `wip init`'s refusal wherever `lanes/STORE` exists, in every mode, and, where a tree carries another file under `lanes/`, wherever its
   seed would write under `lanes/`: where that tree lacks `lanes/LANES.md` or `lanes/log/README.md` (Q14(a), narrowed by Brett's "Narrow it
-  (Recommended)", #165 6773442813). Lane 3 confirmed the first two (#165 6710770304); the third is Brett's answer to Q14 (#165 6710653292).
+  (Recommended)", #165 6773442813), and `lane-start`'s and `lane-end`'s read of the register, which goes through `lanes-edit.sh register-text` in every mode, so a read that fails ends 69 and writes nothing. Lane 3 confirmed the first two (#165 6710770304); the third is Brett's answer to Q14 (#165 6710653292); the fourth is lane 3's ruling (#165 6895515151).
 - Moving handoffs into SQL, or replacing `git log` as the audit trail.
 - A cache that answers a deciding read on its own.
 - `tasks.md` and the Speckit handoff, which follow this file.
