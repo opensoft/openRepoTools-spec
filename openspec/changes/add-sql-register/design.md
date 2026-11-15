@@ -3962,7 +3962,20 @@ first call and needs nothing else, on Linux and macOS alike:
    exits when its install changes: it records the size, mtime and inode of its
    own `lanes-index` file at start and checks them on each request (one
    `stat`), answering `unavailable restarting` and exiting when they differ,
-   so an upgrade never leaves an old service answering. It re-reads
+   so an upgrade that replaces the files at the same real path never leaves an
+   old service answering. A service of another install, running, is a v1.3
+   limit, in four cases: a checkout run by hand, a `link-estates` "RELINK", a
+   changed `OPENREPOTOOLS_BIN_DIR`, or a link repointed above the path a
+   service was started by. Its own files have not changed, so it never
+   answers `unavailable restarting`, and "A client of one install finds a
+   service of another install running. Its own `serve` exits at the held
+   `register.lock`, and the other service answers it with that install's code
+   until that service stops for another cause." The remedy: "stop the other
+   install's service, whose `pid=` is in the owner file, or do not run two
+   installs against one register at once" (ERR-58, 2026-11-15: the frame said
+   an upgrade never leaves an old service answering, with no limit;
+   `socket-api.md` §8.4's limit and OP-20, at `22eaa08b`; lane 3's rulings
+   on OP-20, #165 6894714082 and 6895062857). It re-reads
    `lanes-index.conf` and its password file when their mtime changes, and
    exits if the mode is no longer `primary` (SVC-5).
 6. **The guard never waits for a start.** A guard that finds no service starts

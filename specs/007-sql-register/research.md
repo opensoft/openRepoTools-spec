@@ -145,7 +145,7 @@ round B14's edits put the plan's lines from :820 to :2900 one line down, and
 those from :2903 two; round B15's texts move them further, as its entry
 above says, and round B16's AT-P3 fixture (lane 2's TX13-4) moves those from B15's :2996 two more; the follow-up's test-plan texts move them further, as its entry above says.
 
-- **Part 1, the errata** (ERR-01 to ERR-57; ERR-19 is now DEC-21; ERR-56 and ERR-57 are appended at the file's end, so that no line above moves): a line
+- **Part 1, the errata** (ERR-01 to ERR-58; ERR-19 is now DEC-21; ERR-56 to ERR-58 are appended at the file's end, so that no line above moves): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
 - **Part 2, the decisions** (DEC-01 to DEC-36): a choice the change leaves
@@ -1837,3 +1837,49 @@ lane 3's ruling.
   13, `fa613b9d`; `lanes-index:7899–7925` and `:8324–8358` at T512's
   `88b50886`; `spec-46-fa613b9d8781.md`, its S5; #165 6880500257 and
   6880934796.
+
+### ERR-58. A running service of another install keeps answering, a v1.3 limit (OP-20; 2026-11-15)
+
+- **The erratum:** Y:3915–3918 ("It also exits when its install
+  changes: … answering `unavailable restarting` and exiting when they
+  differ, so an upgrade never leaves an old service answering"), this
+  branch's `design.md:3962–3965`, holds only outside `socket-api.md`
+  §8.4's limit, OP-20: a service of another install, running. Its four
+  cases are one mechanism: "a checkout run by hand, a second live
+  install at another real path; a `link-estates` "RELINK"; a changed
+  `OPENREPOTOOLS_BIN_DIR`; and a link repointed above the path a
+  service was started by". In each, the running service's own files
+  have not changed, so it never answers `unavailable restarting`, and
+  it never goes idle while those requests come. The consequence, in
+  lane 3's words: "A client of one install finds a service of another
+  install running. Its own `serve` exits at the held `register.lock`,
+  and the other service answers it with that install's code until
+  that service stops for another cause." The remedy, in lane 3's
+  words: "stop the other install's service, whose `pid=` is in the
+  owner file, or do not run two installs against one register at
+  once".
+- **What holds:** an upgrade that replaces the files at the same real
+  path is seen, as Y says: the old service answers its next request
+  `unavailable restarting`, and exits. That is how the estate
+  upgrades: `openRepoTools --install` places each command by a
+  temporary file and `mv -f`, so at the same real path with a new
+  inode, and no v1.3.0 upgrade step repoints a link to `lanes-index`
+  (lane 1's install answer, #165 6895008151, as §8.4 gives it). A link
+  repointed above that path is not seen, since `lanes-edit.sh` starts
+  every service by `lanes-index` in its own `readlink -f` directory
+  (§8.4). Option 3, a client that finds another install reads
+  directly, is a named follow-up after v1.3.0, in its own PR, and
+  covers every case.
+- **In place:** Y:3915–3918 keeps its words, as the frozen text does,
+  and this branch's `design.md:3965–3978` states the limit in place,
+  with lane 3's consequence and remedy.
+- **Whose:** lane 3's rulings on OP-20, #165 6894714082, option 1, and
+  #165 6895062857, which takes a second live install as the same
+  limit. The rulings are lane 3's and no word of Brett's. Lane 3 asked
+  lane 5 for this dated erratum in its answers for follow-ups 4, answer
+  14 (#165 6899567732), and lane 5 drafted it on 2026-11-15.
+- **Source:** Y:3915–3918; `socket-api.md:400` (§8.4, "A service of
+  another install, running, is a v1.3 limit") and `:1681–1692` (OP-20)
+  at spec `main` `22eaa08b`, where spec#62 landed;
+  `register_serve_launch`'s docstring, `lanes-index:7776–7813` at
+  T512's `4444ddc4`; #165 6894714082, 6895008151 and 6895062857.
