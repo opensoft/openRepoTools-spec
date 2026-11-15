@@ -4372,10 +4372,11 @@ and each sent nothing:
   known and it is left as it is, and what to do depends on what the message
   says of it:
   - `an identical write is still running in pid <p>`, with its write id: wait
-    for that process to end, then look the write up or run the printed rerun,
-    which finds it or writes it once. Where its pending record cannot be read,
-    its id is not known, and the message sends you to `lanes-index status`,
-    which lists the pending records;
+    for that process to end, then run the printed rerun, which finds it or
+    writes it once; where the message prints a lookup (only where the record
+    holds a `call` line), the lookup settles it too. Where its pending record
+    cannot be read, its id is not known, and the message sends you to
+    `lanes-index status`, which lists the pending records;
   - `is being started in pid <p> on <host>/<container>`: it has no record and
     no id yet. Once that process has ended, look for its effect, as printed
     (`lanes-edit.sh history <lane> --since <utc>`, or `register-row <lane>`);
@@ -4383,9 +4384,10 @@ and each sent nothing:
     it is not, run the same command again, which takes over that write's
     record if one was left, or writes anew, or run the rerun by its own
     write id, where this run had one and the message prints it;
-- a claim of an identical write whose owner cannot be tested here (another
-  host or container, or no pid on the claim): the message names the claim file
-  and the UTC after which a run may take it; run it again then, as it prints.
+- a claim of an identical write whose owner cannot be tested here (the claim
+  names no pid or cannot be read, its pid lives with no start time, or it is
+  from another host or container): the message names the claim file and the
+  UTC after which a run may take it; run it again then, as it prints.
 
 A rerun is refused with 2 when the register has been replaced since: an id from
 another generation is never applied twice, and the refusal prints the effect
