@@ -14,7 +14,7 @@
 ## 3. Validation and source publication
 
 - [x] 3.1 Run strict spec validation, focused source regressions and exact-head expert review; verify results and resolve actionable findings without weakening tests.
-- [ ] 3.2 Publish paired code/spec PRs, request exact-head Codex review and inspect ordinary/reusable full CI; record source results separately from P01/PG or live rollout acceptance and leave scope disabled.
+- [x] 3.2 Publish paired code/spec PRs, request exact-head Codex review and inspect ordinary/reusable full CI; record source results separately from P01/PG or live rollout acceptance and leave scope disabled.
 
 This is one source-preparation step toward the full rollout, not completion of
 the overarching deployment goal. P01's owner-controlled landing, exact real-PG
@@ -33,3 +33,21 @@ assembly/session adoption remain outside this source change.
 - Four code paths only; tests.yml/baseline/P01 controls, delivery policy/router/
   verifier/evidence, Mergify and provider pin unchanged. No live grant/queue,
   settings, tools, release, assembly or shared-checkout/session changes.
+
+## Publication and prerequisite-source evidence
+
+- Code PR96: https://github.com/opensoft/openRepoTools-code/pull/96;
+  spec PR61: https://github.com/opensoft/openRepoTools-spec/pull/61.
+- Ordinary full CI43680300360 and reusable qualification43680300452 started
+  on code50e6df1; final results were still pending at publication. Both PRs
+  received explicit `@codex review` requests; hosted results are independent
+  of the local panel and must be rechecked at the latest published heads.
+- P01 remains open, independently owned, at7f1141be. Its existing source
+  ordinary/reuse artifacts were audited separately: nine shard reports per
+  run, all83 committed Python test modules in both variants,5564 case IDs per
+  variant, no missing/duplicate module coverage, and exact matching outcomes
+  and skip types/reasons between the calls. See evidence/p01-source-parity.json.
+- That P01 source audit is not post-merge/current-main integration qualification,
+  approval of every skip, assembly coverage or permission to activate. The
+ 10 fixture cases passed without skips in each variant; standalone wheel,
+  upstream, zsh, root/spec and composed skips still have their separate gates.
