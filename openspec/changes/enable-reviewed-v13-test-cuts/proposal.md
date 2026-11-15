@@ -23,6 +23,12 @@ either refuse all work or misrepresent what was qualified.
   heavy coverage and recording fast-only source/candidate CI, one accepted heavy
   run and matching actual landed prefix/final trees. Widening follows, not precedes,
   that live acceptance.
+- Repair the reproduced reopen-only generated merge hint mismatch: accept a
+  different non-null hint only when an authenticated immutable GitHub commit
+  read proves its exact ordered parents and tree equal the actual tested merge.
+  Keep unknown hints, real base/head changes, strict later rereads and incomplete
+  admission on full fallback. This is a bounded amendment to the earlier nullable
+  hint rule, not permission to ignore arbitrary metadata differences.
 
 ## Capabilities
 
