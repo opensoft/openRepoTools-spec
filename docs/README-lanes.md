@@ -5074,7 +5074,10 @@ indexer by a GRANT the bootstrap makes first, and runs `bootstrap` and
   and the listings, `status`, `reconcile` and `ready`. The `SessionStart` block
   makes no register call.
 - **The indexer** (`url=` and `passfile=`): `lanes-index sync` and `reconcile`
-  of the index half. Its one login is shared.
+  of the index half. Its one login is shared. On the register's database it is
+  `lanes_indexer`, which owns `lanes_index`, and the index half's reads go
+  through READER: the bootstrap makes neither of the two roles "The store and
+  its configuration" shows, which are #160's.
 - **The dump job:** the daily `pg_dump`, with a password that the job's own
   workload identity reads from a Key Vault secret into a 0600 password file of
   its run.
@@ -5124,9 +5127,10 @@ lanes-index bootstrap --admin-service '<service>' --label '<name>' --repository 
   `~/.pg_service.conf`, with its password in his own 0600 `~/.pgpass`, so
   nothing on the command line is a connection string. `psql` receives it only
   as `PGSERVICE=<service>` in its environment, never as `service=` or `-d` on a
-  command line, and an inherited `PGPASSWORD`, `PGPASSFILE`, `PGSERVICEFILE` or
-  `PGSYSCONFDIR` is dropped first, so only his own `~/.pg_service.conf`
-  defines the service, and no secret comes from the environment.
+  command line, and every inherited variable whose name begins `PG`,
+  `PGPASSWORD`, `PGPASSFILE`, `PGSERVICEFILE` and `PGSYSCONFDIR` among them, is
+  dropped first, so only his own `~/.pg_service.conf` defines the service, and
+  no secret comes from the environment.
 - **`--label`** is the database's first label, with no credential, which it
   writes into the switch it creates. **`--repository`** and **`--lane`** name
   the workspace repository the register serves and the lane or person running
@@ -5143,13 +5147,20 @@ lanes-index bootstrap --admin-service '<service>' --label '<name>' --repository 
   **It refuses when stdout is not a terminal,** so no lane transcript, log or
   pipe ever holds a password, and it sets each password as a SCRAM-SHA-256
   verifier computed on the client, never as clear text in SQL.
+- **A v1.3.0 limit:** the indexer's password-file line is printed only after
+  its step commits; where the response is lost after that commit, a rerun
+  prints `unchanged` and no line, and Brett resets the password by hand with
+  psql's `\password lanes_indexer` through his own admin service, then writes
+  the indexer's password file again.
 - **With the switch at `primary`,** as on a restored backup, it verifies,
   applies a pending migration and writes no label, and changes nothing else.
 - **Exits:** 0; 2 for an argument that carries a connection string or a
   password, an admin that may not create roles or schemas or does not own the
   database, a schema newer than this build's, a role that holds a privilege
-  outside its scope, `store=sqlite`, or stdout that is not a terminal; 69 where
-  the admin connection fails; 64 for usage.
+  outside its scope, an existing `lanes_indexer` that cannot log in, before any
+  write and under `--roles-only` too, `store=sqlite`, or stdout that is not a
+  terminal; 69 where the admin connection fails or the database refuses a step,
+  a migration's lock wait among them, which is run again; 64 for usage.
 - **`--roles-only`,** for the disaster path, makes only what a database dump
   does not carry: the roles, the admin's membership in the owner and the
   indexer, and three database-level statements, `REVOKE ALL ON DATABASE … FROM
@@ -5164,11 +5175,11 @@ bootstrap's rules for a secret: it refuses when stdout is not a terminal, and it
 sets each password as a SCRAM-SHA-256 verifier computed on the client.
 
 ```sh
-lanes-index login add <engineer>
-lanes-index login add --dump-job
-lanes-index login rotate <engineer>
-lanes-index login rotate --dump-job
-lanes-index login revoke <engineer>
+lanes-index login add <engineer> --admin-service '<service>'
+lanes-index login add --dump-job --admin-service '<service>'
+lanes-index login rotate <engineer> --admin-service '<service>'
+lanes-index login rotate --dump-job --admin-service '<service>'
+lanes-index login revoke <engineer> --admin-service '<service>'
 ```
 
 - **`add <engineer>`** makes `lanes_w_<engineer>` and `lanes_r_<engineer>`, each
@@ -5191,8 +5202,8 @@ lanes-index login revoke <engineer>
 - **Exits:** 0, each step's result printed; 2 for an engineer name that is not
   `^[a-z][a-z0-9_]{0,40}$`, an argument that carries a connection string or a
   password, or stdout that is not a terminal; 69 where the admin connection
-  fails; 64 for usage, `rotate` with neither an engineer nor `--dump-job`, or
-  with both, among it.
+  fails or the database refuses a step; 64 for usage, `rotate` with neither an
+  engineer nor `--dump-job`, or with both, among it.
 - **What a restore keeps.** A database dump holds no login, membership,
   verifier or floor, and a physical backup of the cluster holds them all. After
   a point-in-time restore each login is there with its old password, and `login
@@ -5369,13 +5380,14 @@ re-indexes, or reads the mirror or the outage declaration.
 
 - **Who starts it:** the `SessionStart` block on a primary workstation, through
   `lanes-index serve --start`; and any client that finds no socket, a dead one,
-  or an owner file from another install, unless a failure stamp younger than
-  60 s stands. Never the guard's second read, and never a writer. The call that
-  starts a service reads directly; the service answers from the next call.
+  or an owner file from another install on a socket whose server is of its own
+  uid, unless a failure stamp younger than 60 s stands. Never the guard's second
+  read, and never a writer. The call that starts a service reads directly; the
+  service answers from the next call.
 - **How:** detached, from Python and never bash (`setsid`, its input and output
   on `/dev/null`, its errors to `register.log`), with a reduced environment of
-  `PATH`, `HOME`, `LANG`, the `XDG_*` variables and `LANES_INDEX_CONFIG`, and no
-  password and no URL.
+  `PATH`, `HOME`, `LANG`, the `XDG_*` variables, `LANES_INDEX_CONFIG` and, where
+  they are set, the two test-only variables below, and no password and no URL.
 - **One instance an environment:** `serve` holds `register.lock` for its life,
   and a second starter that finds it held exits 0.
 - **It stops** after 900 s with no request, removing its socket. On a request
@@ -5387,7 +5399,9 @@ re-indexes, or reads the mirror or the outage declaration.
 - **A v1.3 limit:** where a client of one install finds a service of another
   install running (a checkout run by hand is one case), the `serve` it starts
   exits at the held `register.lock`, and the other service answers it with that
-  install's code until that service stops for another cause.
+  install's code until that service stops for another cause. The remedy: stop
+  the other install's service, whose `pid=` is in the owner file, or do not run
+  two installs against one register at once.
 
 **Only on primary.** `serve` refuses with 2 unless the configuration says
 `primary`, and while the build refuses `mode=primary` it exits 2 at load, so the
