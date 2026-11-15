@@ -7,7 +7,7 @@ and points at their text; it restates no requirement, and the runbook in
 
 **Citations** are spec.md's: `spec:<n>` and `svc:<n>` are lines of the
 change's two spec files on this branch, at `ad82c2f4`; `Y:<n>` is a line of
-`design.md` and `ops:<n>` of `operations.md`, which are unchanged from Y, except that from ops:435 on, Y's `operations.md` line N is the branch's line N+1 (the bootstrap's Limit bullet, lane 1's C14, commit `3b6fde18`).
+`design.md` and `ops:<n>` of `operations.md`, which are cited as Y has them; where a branch line has moved from Y's, research.md:138–142 gives the rule (in `operations.md`, from ops:435 on, Y's line N is the branch's N+1: the bootstrap's Limit bullet, lane 1's C14, commit `3b6fde18`).
 
 Every step here is an act, on a person's word, never a build task. Nothing
 here runs before the codeXfactory prod install exists ("Wait for the

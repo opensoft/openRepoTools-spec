@@ -34,7 +34,7 @@ The spec leg's branch `007-sql-register` merges Y whole, at merge commit
 `svc:<n>` of `specs/register-service/spec.md`, as this branch has them at
 `ad82c2f4`, where lane 3's rulings since Y change them (research.md's ERR-03
 and DEC-05). `Y:<n>` is a line of `design.md`, `ops:<n>` of `operations.md`
-and `clar:<n>` of `clarifications.md`, which are unchanged from Y, except that from ops:435 on, Y's `operations.md` line N is the branch's line N+1 (the bootstrap's Limit bullet, lane 1's C14, commit `3b6fde18`). Each was
+and `clar:<n>` of `clarifications.md`, which are cited as Y has them; where a branch line has moved from Y's, research.md:138–142 gives the rule (in `operations.md`, from ops:435 on, Y's line N is the branch's N+1: the bootstrap's Limit bullet, lane 1's C14, commit `3b6fde18`). Each was
 checked by script against the text it stands for.
 
 **Marks used in this file:**
