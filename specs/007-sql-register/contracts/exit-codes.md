@@ -303,3 +303,24 @@ In files mode the marker check then refuses on a SQL estate (D3; Y:5718).
 ### 7. Other sections
 
 Each lane adds its callers' arms below, in a section of its own, keyed to Y and to the rows above. D10's map is the frame for them: a refused direct write exits 2, 69 tells a lane to stop and tell Brett, and the guard maps 69, 75 and 3 to 2 (Y:508–514).
+
+## The answer-2 section (lane 5, T502 and T510)
+
+- **Owner:** lane 5 (`[L5]`), tasks T502 and T510. Section 5 above leaves the codes of the guard's answer 2 (Y:3520) to this section (lane 3's ruling, #165 6879754335, point 24).
+- **The source is [bind-record.md](bind-record.md) section 7,** `guard-bind`'s exits, which this section copies. Where the two differ, that table holds, and the row here is a fault in this file. Its cites of `lanes-edit.sh` at line R's `bc9ed80b` are given there and not here. T502's hygiene exit table takes the same table.
+- **The hook's own exit is 2.** Answer 2 exits 2 with "BINDING", and each of the bind's cases at the offer site exits 2 (Y:3520; bind-record.md section 5). The guard maps 69, 75 and 3 to 2, as section 7 above gives (Y:508–514). Since T502's part 25, an answer `2` or `1` that finds its offer has become an allowance does not consume the prompt: the guard judges the prompt afresh, as for a stale offer, and the hook's exit is that judgement's, 0 where the allowance still fits (bind-record.md section 5).
+- **The outer and the body are not hooks.** They run detached after the hook has exited, so no runner reads their codes. The outer reads the body's code as the bind record's `rc`, and a person reads that in the guard's next answer (bind-record.md sections 3 and 5).
+
+| Process | Exit | When, and the record after |
+|---|---|---|
+| `guard-bind <uuid>`, the outer | 2 | its usage, not one argument; an argument that is no safe name for `offers/<uuid>`; no record there, or one it cannot open; a record not in `mode=binding`; or one that already holds a `pid`, an outer before it. Nothing ran, and the record is as it was |
+| | 2 | since T502's part 21, at its start: the record was gone at its start rewrite's test that it exists or at its open, or no longer said `mode=binding`. Nothing was written to it, and nothing ran: no record is made, and an offer that took the record's place is left as it is (bind-record.md sections 1 and 7) |
+| | 1 | the record could not be rewritten at its start. Nothing ran, and the guard reads the `binding`, which holds no `pid`, as bind-record.md section 5 gives |
+| | 1 | the outcome could not be written: its rewrite's 1, an I/O failure. This rewrite did not change the record; it is as another writer may have left it. The outcome is in its `.out` only, and its facts file is removed (bind-record.md section 1) |
+| | 0 | the outcome is written: the bind's own code is the record's `rc`, a `TERM` its trap caught included, and its facts file is removed (bind-record.md section 1) |
+| | 0 | at its read before the outcome, the record was no longer its own `binding`. It is left as it was, the outcome is in its `.out` only, and its facts file is removed (bind-record.md section 1). After T502's round 2, the same where its rewrite's own test fails, the rewrite's 2, and where the record's `host` or `container` is not its own (bind-record.md section 1). Since T502's part 17, the same where the record is gone when the rewrite opens it, the rewrite's 2 (bind-record.md section 1) |
+| | 128 + N | a signal that ends it, `KILL` among them: its trap catches `TERM` alone, and the hook starts it under `nohup`, which ignores `HUP`. No outcome is written, and the guard's cases 2, 3 and 9 answer (bind-record.md section 5) |
+| `guard-bind --body <uuid>`, the body | 2 | its usage, not two arguments; an argument that is no safe name for `offers/<uuid>`; or a record it cannot read, or not in `mode=binding`, with a `why=` saying so in its facts file where a valid facts path was supplied or derived, and none where it has no facts path. Its other `why=` lines, below, are written on the same condition |
+| | 3 or 2, in phase 2 | T510's lookup before `lane-start` (bind-record.md section 3): 3 where it settles nothing, a copy cannot make it, or the pending record found cannot be rerun or settled; 2 on LR007 `another-write` or `generation`; or the found rerun's own code. Each comes with its `why=` |
+| | `lane-start`'s code | `lane-start --no-launch --bind` ended non-0, and its last line is the `why=` |
+| | 0 | `lane-start` ended 0. An act after it that fails, the lane left's `set-row-state` and the bound check among them, is a `note=`, never an exit (lane 3's ruling, #165 6841918192, point 4(b)) |
