@@ -432,6 +432,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
   - 2: a role holds a privilege outside its scope. The privilege is named and never revoked silently;
   - 2: `store=sqlite` (`proposal.md:162-163`).
 - **With the switch at `primary`,** it only verifies, applies a pending migration (`design.md` §1.5), and changes nothing else.
+- **Limit:** a stated limit for v1.3.0, not a v1.3.0 build. The bootstrap sets the indexer's verifier in its roles step, one transaction, and prints that login's password-file line only after the step has committed. If the bootstrap's response is lost after PostgreSQL commits the indexer's verifier, the credential cannot be recovered: the bootstrap ends 69, or is cut before it prints the line, and a rerun finds `lanes_indexer`, so it generates no password and prints `role lanes_indexer: unchanged` and no password-file line. The operator resets it by hand: Brett, through his own admin service, with psql's `\password lanes_indexer`, which computes the verifier on the client, then writes the indexer's password file again. `rotate --indexer`, a `lanes-index login` form for that login, is a named follow-up after v1.3.0, in its own PR (lane 3's ruling, opensoft/openRepoTools#165 6894116246).
 - **Test:** run twice, it leaves one schema and the same GRANTs (`proposal.md:623-624`).
 
 #### `lanes-index ready` (new)
