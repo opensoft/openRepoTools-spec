@@ -281,7 +281,7 @@ overrides `LANES_REPO`, `LANES_PATH` and `LANES_BRANCH` exist for tests.
 ## Starting and ending a lane
 
 **`lane-start` and `lane-end` read the register through verbs in every mode**
-(`register-text`, `register-grep`, `canon-lane` and the rest), and
+(feature 007, v1.3.0) (`register-text`, `canon-lane` and the rest), and
 `register-text` and `register-grep` end 69 where a read fails (the exit table's
 row 69). **On `mode=primary`** they never read it by awk over the file or
 `git grep` of the ref, and `lane-start` refuses the launch, with the verb's own
@@ -1292,11 +1292,10 @@ tell Brett if it keeps coming. 75 comes only from a register that is a
 database, means **nothing was written**, and is "run it again in seconds".
 Exit 3 on primary is the third: "may not be written; run the printed
 `LANES_WRITE_ID` rerun", or an identical write's end, where this run sent
-nothing and the message says what to do. The
-guard is no writer, and none of the three is its code: it may exit only 0 or 2,
-and it refuses with 2 where its own read of the register fails within its 5 s,
-or answers from the mirror under a declared outage. See "The SQL register",
-"What changes for a lane".
+nothing and the message says what to do. The guard is no writer, and none of the
+three is its code: it may exit only 0 or 2, and it refuses with 2 where its own
+read of the register fails within its 5 s, or answers from the mirror under a
+declared outage. See "The SQL register", "What changes for a lane".
 
 **8 means "there is no such record", and nothing else.** `who <object>` exits 8
 when no line anywhere names the object; `who --lane <lane>` exits 8 when the
@@ -4286,7 +4285,8 @@ exactly the command it printed, once the register can be reached; that is safe
 each time. A 69 that does not clear is a stop: do not look for another way to
 write, run `lanes-index status` from a shell (it needs no lane session), and
 tell Brett. 69 is also the code of two refusals that are not an outage, of a
-read, and of the classifier `append-line` asks, each with nothing written:
+read, and of `append-line` where the classifier it asks gives no answer, each
+with nothing written:
 
 - a build without the renderer's git half: `mode=primary is not available in
   this build: the renderer's git half is not installed, so a write could not be
@@ -4361,21 +4361,21 @@ cannot confirm whether register write <id> committed; nothing else was written. 
 **What to do:** run the printed rerun, character for character. It carries the
 write's id, so the register writes the edit once, or finds that it is already
 there and writes nothing a second time. **Never** run the command again without
-the id: a plain rerun can mint a new id and make a committed write twice. And
-never read a 3 as "written", as a script that takes 3 for success does: every
-script of this toolset relays the writer's printed rerun, and none prints a hint
-of its own. Where the NOTED line that `lane-end --sweep-checkouts` writes after
-its sweep ends 3, `lane-end` prints the writer's words, says to settle that line
-by what the writer printed, prints no publish act, and exits 1, or 130 or 143
-where a signal stopped it during that write (only where it could not keep those
-words to read them does it print files mode's note and the publish act after
-them). A v1.3 limit: a signal to `lane-end` alone, after a write that committed,
-still gets the note that hands out the publish act and a line by hand, and that
-line records the sweep a second time: a duplicate sweep line in the register,
-with nothing lost. So does a signal that comes after the writer's words were
-read back and before `lane-end` prints its note on them: the same consequence,
-a second sweep line, from another window. Two other ends are 3 too, and each
-sent nothing:
+the id it printed: a plain rerun can mint a new id and make a committed write
+twice. And never read a 3 as "written", as a script that takes 3 for success
+does: every script of this toolset relays the writer's printed rerun, and none
+prints a hint of its own. Where the NOTED line that `lane-end --sweep-checkouts`
+writes after its sweep ends 3, `lane-end` prints the writer's words, says to
+settle that line by what the writer printed, prints no publish act, and exits 1,
+or 130 or 143 where a signal stopped it during that write (only where it could
+not keep those words to read them does it print files mode's note and the
+publish act after them). A v1.3 limit: a signal to `lane-end` alone, after a
+write that committed, still gets the note that hands out the publish act and a
+line by hand, and that line records the sweep a second time: a duplicate sweep
+line in the register, with nothing lost. So does a signal that comes after the
+writer's words were read back and before `lane-end` prints its note on them: the
+same consequence, a second sweep line, from another window. Two other ends are 3
+too, and each sent nothing:
 
 - an identical write is still running in another process: its outcome is not
   known and it is left as it is, and what to do depends on what the message
