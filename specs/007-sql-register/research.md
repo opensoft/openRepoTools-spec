@@ -1843,7 +1843,7 @@ lane 3's ruling.
 - **The erratum:** Y:3915–3918 ("It also exits when its install
   changes: … answering `unavailable restarting` and exiting when they
   differ, so an upgrade never leaves an old service answering"), this
-  branch's `design.md:3962–3965`, holds only outside `socket-api.md`
+  branch's `design.md:3962–3966`, holds only outside `socket-api.md`
   §8.4's limit, OP-20: a service of another install, running. Its four
   cases are one mechanism: "a checkout run by hand, a second live
   install at another real path; a `link-estates` "RELINK"; a changed
