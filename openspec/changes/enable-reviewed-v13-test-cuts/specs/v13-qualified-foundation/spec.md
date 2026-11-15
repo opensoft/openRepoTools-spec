@@ -70,3 +70,35 @@ and final trees. Source or local success SHALL NOT claim live acceptance.
 #### Scenario: Successful first canary
 - **WHEN** the complete actual service, heavy, prefix and landing evidence passes for the consented pair
 - **THEN** record only initial test-only acceptance and prepare any wider task-set profile through a new reviewed stage; do not claim full all-work rollout or assembly/session adoption
+
+### Requirement: Regenerated merge hints require immutable content equivalence
+
+For the initial source and genuine candidate event/live comparison, a generated
+merge_commit_sha hint MAY differ from the tested GITHUB_SHA only when an
+authenticated read of that exact full-SHA Git commit in the configured repository
+proves the exact same two ordered parents and exact tree as the tested merge.
+Missing/null/current hints SHALL preserve their prior behavior without a new
+lookup. At most two distinct immutable commit lookups SHALL be made per initial
+comparison, without added permission, ref writes, retries or checkout changes.
+This explicitly amends the earlier rule rejecting every different non-null hint;
+it SHALL NOT discard arbitrary hint differences or change tested-commit authority.
+
+Unknown, unavailable, malformed, wrong-identity, wrong-parent-count/order/base/head
+or wrong-tree hints SHALL retain full CI. The actual GITHUB_SHA and ordered
+current-main/head parents SHALL remain independently checked. Every other
+event/live identity field, opt-in decision, authenticated fast/base-history and
+review proof, foundation and candidate admission/heavy/landing requirement SHALL
+remain enforced. Subsequent original live PR rereads SHALL remain byte-strict,
+including the generated hint. A hint lookup SHALL NOT confer omission by itself.
+
+#### Scenario: Reopen regenerates only the test-merge commit identity
+- **WHEN** the hint names another authenticated commit with the exact tested two ordered parents and tree, and all independent source or candidate proofs pass
+- **THEN** the initial generated-hint difference alone does not force full CI
+
+#### Scenario: A hint object is uncertain or differs semantically
+- **WHEN** immutable commit lookup fails or the returned identity, tree or ordered parents differ
+- **THEN** full CI remains required without executing the hint or inventing proof
+
+#### Scenario: A real base change or later live hint change occurs
+- **WHEN** the event base differs from live main or the original live PR changes after the first read, even to an equivalent hint
+- **THEN** omission proof refuses and full fallback remains

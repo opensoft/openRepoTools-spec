@@ -10,12 +10,13 @@
 
 - [x] 2.1 Verify normal owner run1 closure/landing and source#100/spec#66 checked merges, current main/integrated-tree qualification and a safe merge window; record actual SHA/tree/run handles, never generated hints as completed evidence.
 - [x] 2.2 Verify real fixture start/clone/stop/restart evidence at the exact revised helper blobs, reusing an existing matching receipt or one deduplicated isolated coordinator CI smoke branch; record actual output and never run its sweep on user benches.
-- [ ] 2.3 Read the actual P05/P06 corrected heads/parents, lane3 delta reviews, latest full checks, lane2 task confirmation and current foundation/map; verify no invented binding or owner PR edit.
+- [x] 2.3 Read the actual P05/P06 corrected heads/parents, lane3 delta reviews, latest full checks, lane2 task confirmation and current foundation/map; verify no invented binding or owner PR edit.
 
 ## 3. Checked enablement publication
 
-- [ ] 3.1 Fill only verified exact epoch/profile data, update the named queue/instructions for P05/P06 and enable delivery; rerun canonical full focused contracts, strict spec and preservation/diff checks and record actual counts.
-- [ ] 3.2 Perform exact-head expert and genuine Codex review plus ordinary full/reusable qualification; normally merge paired PRs only when all latest-head/current-main gates pass, then verify actual main/policy/trees without resetting an active owner candidate.
+- [x] 3.1 Fill only verified exact epoch/profile data, update the named queue/instructions for P05/P06 and enable delivery; rerun canonical full focused contracts, strict spec and preservation/diff checks and record actual counts.
+- [x] 3.2 Perform exact-head expert and genuine Codex review plus ordinary full/reusable qualification; normally merge paired PRs only when all latest-head/current-main gates pass, then verify actual main/policy/trees without resetting an active owner candidate.
+- [ ] 3.3 Reproduce and repair the reopen-generated equivalent merge hint refusal with bounded authenticated immutable-object checks; retain full refusal coverage and normally publish paired repair PRs after exact-head expert/Codex review and full/reusable qualification.
 
 ## 4. Separately consented live acceptance
 
@@ -23,11 +24,12 @@
 - [ ] 4.2 Admit only the exact two consented members through the named manual queue; verify fast-only candidate PR CI, one complete accepted heavy caller, all original coverage, no duplicate post-merge full CI and matching actual ordered prefix/final landed trees.
 - [ ] 4.3 Record honest initial test-only live acceptance and the next reviewed wider-profile step; verify no assembly/session/tool/settings/release action or all-work-complete claim is implied.
 
-Task2.3's exact-head owner review gate remains pending; qualification tasks2.1
-and2.2 are complete for the recorded immutable generation. Group3 publication
-and group4 admission remain separate. The working flag stays false until
-finalization. The approved broader rollout remains an active objective after
-this first initial-pair gate. Dated receipts below record state at each checkpoint.
+The initial checked publication gate is complete, but the reproduced generated
+merge hint amendment in3.3 is pending. Group4 admission and live acceptance
+remain separate and incomplete. The actual main delivery flag is now true for
+the exact registered pair, not a blanket admission grant. The approved broader
+rollout remains an objective after this initial-pair gate. Dated receipts below
+record historical state at each checkpoint rather than override current tasks.
 
 ## Preparation evidence (2026-11-15)
 
@@ -148,3 +150,105 @@ full CI is green, lapses on a head change, requests no enqueue and imposes no
 hold. Lane3/coordinator determine timing relative to P09's revised foundation.
 Owner PR bodies/bases/heads remain untouched. Task2.3 and all enabled-publication
 and live-acceptance tasks remain unchecked until their actual gates pass.
+
+### Exact-head owner gate completed
+
+Lane3 accepted independent Opus5.5 delta reviews READY at both exact heads:
+P05#92 `2a02cd9eba113329870ed7eba6efd470375b8739`, record6898716602,
+report sha256 `96c6533a6c2765003abb3775399e8637333b44db0d46d70e449badbcc94f51d7`;
+P06#94 `bcc8858bf587fbe86b00264b41caca1b39ccfc72`, record6898717748,
+report sha256 `8db83913c96c7c4cf32415c50fa4aaa13323fdf42dfc272014eb5aa0b24161ae`.
+Lane3's combined acceptance6898740891 explicitly confirms no BLOCKING or SHOULD
+open on either head; lane2's exact-head conditional consent6898422904 takes
+effect. The full15/15 source runs and unchanged heads/current main were re-read.
+This closes2.3, not publication or admission. The separate P05 coordination
+SHOULD requires the actual registry/queue update and lane1's matching intent
+headers before canary admission; it is not waived by these owner reviews.
+The coordinator now prepares that checked code change. No owner PR body,
+base/head or session was changed, and actual default-branch delivery is still
+false until the separately reviewed code PR normally lands.
+
+### Proposed code enablement prepared and locally qualified
+
+Code `2f2da2342a57f848365abe3e81bb82ba21d80fbd` binds the verified exact P05/P06
+heads, two-commit histories and complete task/file inventories, spec anchor
+`a3366afcc059b4686c990f4715c36dac9b1db05b`, and the qualified f0070e0 epoch's
+four regular helper blobs. It proposes the delivery flag true, keeps observer
+efficiency false, changes only the fifth queue's task filter to P05/P06 and
+updates the shared instructions. Actual default-branch delivery remains false
+until its separate checked normal merge. No owner PR metadata or head changed.
+
+Four final publication/queue tests first gave three expected failures and one
+pass against unchanged legacy data, then all four passed in5.95s. The original
+19 queue-refusal vectors also passed. The complete focused canonical selector
+recorded above passed874tests,5541deselected,zero skipped,in254.23s. This is the
+original846 plus24foundation scenarios plus4final publication/queue vectors;
+legacy fixtures and disabled/refusal paths remain. No original coverage was
+removed. A separate read-only real-Git check accepted both committed source
+histories and rejected the retired P03, old P05 and old P06 heads.
+
+The master and all nine expert roles reviewed that exact code head against
+actual main f0070e0 and were clean. Workflow definitions, coverage baseline,
+foundation helpers, provider pin, contracts and the first four queue definitions
+are unchanged. Task3.2 remains pending latest-head hosted CI/review and normal
+merge; task4's canonical owner intent/events, admission and complete live proof
+remain outstanding. These local/source receipts are not effective activation
+or acceptance of the canary. Subsequent checklist receipts do not change the
+merged normative specification anchor used by the code policy.
+
+### Checked publication and actual-main readback (2026-11-15 20:20Z)
+
+After the user's explicit resume, code#105 still had exact reviewed head
+2f2da2342a57f848365abe3e81bb82ba21d80fbd and unchanged base
+f0070e009bc6f183904549b69c710ef3982ca6e6. Ordinary full run43745149706
+completed SUCCESS15/15 and reusable qualification43745149687 SUCCESS17/17,
+both attempt1 and pull_request at that exact head. Sonar and Mergify config
+passed; genuine Codex summary6898949832 and receipt6899016746 completed clean
+at the exact head. No unresolved threads remained; root plus nine expert
+reviews retained the identical head/base applicability.
+
+Normal merge without bypass completed20:20:23Z as
+a528e4123477c348f7f0146ee165b4773839cb2e. Its parents are the recorded base
+and reviewed head; actual tree ddafe88cbf63df32990ff8f2f24e09e0cf5febd5
+matches the independently read premerge/source-qualified tree exactly. Main's
+policy was read directly as enabled:true. The original foundation helpers,
+workflow, baseline, contracts, provider pin and other four queues are unchanged.
+The separate new main-push run43757512944 is running, not reported passed.
+Spec#68 was already normally merged as the normative policy anchor a3366afc;
+these subsequent checklist receipts do not change that anchor.
+
+Coordination6900735014 records checked merge readiness;6900747232 gives lane1
+the post-merge preparation signal for unique matching headers and one fresh
+canonical source event per unchanged P05/P06 head. It requests fresh exact-head
+admission consent and the existing P05/P06-first slot, before P09/P07. Root has
+edited no owner body/base/head and emitted no queue command. Task4.1 remains
+incomplete until actual owner readbacks, source events and authenticated fast
+proof are verified. No active lane, installed tool, assembly pin, settings,
+app access, paid upgrade, release or shared checkout was changed.
+
+### Regenerated merge hint repair preparation
+
+Second canonical owner source events43758555625/43758579665 again retained
+full, this time with only merge_commit_sha differing. Lane1 record6900948064
+and directly read GitHub objects confirm old/new merge IDs with identical
+ordered a528e412/source-head parents and trees. No source was enqueued. Root
+coordination6900964653 stopped further speculative reopen attempts;6901094500
+preserves the agreed P05/P06-first order because P09 would change the frozen
+helper epoch. Fresh owner consents6900775363/6900808873 remain conditional on
+actual source proof and will be rechecked at the eventual repaired main.
+
+The bounded repair is code588cd86465d0963446fa2474aa7929100bdeec2a, four files
+only, proposed in code#107. New local Git/API fixture tests first produced
+8 expected failures and18 passes before runtime changes. The initial hint
+selector then passed107tests; two further same-hint deduplication cases were
+added. The final canonical selector passed902tests,5541deselected,zero skipped,
+in272.04s. This is the prior874 plus28 new cases, without removing coverage.
+An additional read-only real GitHub check accepted old ba64df9a/ab9a972e hints
+against actual regenerated0fe7b130/37bbb54a objects; no admission was attempted.
+
+Root plus all nine expert roles reviewed exact588cd864 vs actualmaina528e412
+and were clean. Git preservation checks confirm workflow definitions, baseline,
+profile registry, flag, queues, contracts and foundation helpers are unchanged.
+Source PR107 has fresh Codex request6901134076; hosted full/reusable and bot
+results remain pending. Task3.3 is not complete until its paired normal checked
+publication; group4's actual source/one-heavy/landed-tree evidence is still owed.

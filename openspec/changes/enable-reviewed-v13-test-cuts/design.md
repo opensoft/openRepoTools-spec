@@ -76,3 +76,41 @@ fresh exact-head admission consent, run the two-member canary and audit its
 complete artifacts/prefixes/landing. A normal reviewed false flag is rollback;
 retain full fallback and no automatic retry/failure split. Wider rollout and
 assembly/session adoption are separate, not implied by this initial enablement.
+
+## Canary-blocking regenerated merge hint amendment
+
+Code#105 landed normally as a528e412 with its qualified source tree. Lane1's
+first source events retained full because their base and generated merge hint
+were stale. After live base/merge refs settled and two independent reads agreed,
+the second source events still retained full solely on merge_commit_sha. Actual
+GitHub objects show that each reopen regenerated the commit ID with identical
+ordered parents and tree. Records6900819992/6900948064 and the route diagnostics
+prove the fallback; the owner interpretation of the unlogged raw payload is
+kept separate from those observed objects. No source has been enqueued.
+
+Amend only the initial source/candidate generated-hint comparison. Missing/null
+or the actual tested GITHUB_SHA still needs no extra lookup. A different hint
+must be a full SHA and resolve through the existing authenticated repository
+Git-commit API to that exact object with exactly the tested merge's two ordered
+parents and identical tree. Bound this to at most two distinct immutable commit
+reads for the two hints; cache duplicate hint identities within that comparison.
+Use no added permission, credential, ref mutation, checkout or polling/retry.
+API failure, unknown/malformed hint, wrong object, parent count/order/base/head
+or tree retains full. Diagnostics continue to print names/reasons, not values.
+
+The original GITHUB_SHA remains independently acquired and checked against
+actual main/head ordered Git parents. Do not substitute a hint for tested
+identity or align any base/head/state/author/task/admission fields. Preserve the
+original byte-strict subsequent live PR rereads, authenticated fast/base-history,
+review, foundation and candidate admission/full-heavy/landing requirements.
+The same helper covers real source and genuine candidate-PR comparison, so the
+fix does not defer the same generated-metadata defect until after admission.
+
+Reproduce both cases with real local Git merge objects having different IDs but
+equal parents/tree before changing runtime code. Cover malformed/unavailable
+objects, parent/tree/identity tampering, base drift and later live hint changes.
+Retain all existing nullable/current/foreign hint, candidate admission, historical
+landing and coverage-parity tests. Land the narrow paired repair normally after
+exact-head local expert/Codex review and ordinary full/reusable qualification.
+Only then ask owners for fresh source events and exact-main consent, followed
+by the original two-PR canary. Do not claim the prior full-source runs saved CI.
