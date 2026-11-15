@@ -265,7 +265,7 @@ specs/007-sql-register/
 ├── quickstart.md        # Phase 1: the operator's and an engineer's first steps
 ├── contracts/
 │   ├── README.md        # the copy's source and digest, and each contract's owner
-│   ├── register-cli.md  # [L1] T101; now draft 4.31, lane 1's draft 4.27 with lane 3's K9, K10 and K11 and lane 1's K12, from 007's follow-up spec PR.
+│   ├── register-cli.md  # [L1] T101; now draft 4.32, lane 1's draft 4.27 with lane 3's K9, K10 and K11 and lane 1's K12, from 007's follow-up spec PR, and lane 3's K13, from its follow-ups 4.
 │   │                    #   THE CONTRACT BETWEEN GROUPS A AND B (FR-013 to FR-017),
 │   │                    #   and the readers' four forms (§3.6, which lane 5 reviews)
 │   ├── exit-codes.md    # [L1] T102: the lanes-index rows; each lane adds its callers' arms
@@ -280,13 +280,13 @@ specs/007-sql-register/
 
 `contracts/register-cli.md` is fixed before group B codes against it. Lane 1
 writes it, lane 4 confirms group B's sections, lane 5 reviews §3.6, and lane
-3 rules (R01, R06). Draft 4.31, keyed to Y (`d6ba44ea…`, 1023 lines;
-lane 1's draft 4.27, #165 6834642319, with lane 3's K9, #165 6870473237, K10, #165 6877889644, K11, O16's `w_s_ms` qualifier, lane 3's fold of Codex's re-review r6 of spec#17 at `870ed1fb`, its finding 2, and K12, the same qualifier on O16's `c` = 2 clause, lane 1's words, #165 6881658031), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
+3 rules (R01, R06). Draft 4.32, keyed to Y (`70a3e4f2…`, 1023 lines;
+lane 1's draft 4.27, #165 6834642319, with lane 3's K9, #165 6870473237, K10, #165 6877889644, K11, O16's `w_s_ms` qualifier, lane 3's fold of Codex's re-review r6 of spec#17 at `870ed1fb`, its finding 2, K12, the same qualifier on O16's `c` = 2 clause, lane 1's words, #165 6881658031, and K13, the private-file rule as the code has it, lane 3's words, #165 6899567732 and 6900107119), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
 lane 4's (a) (6741093519), then lane 5's 6741787745, lane 4's log set, the
 endpoint's name, lane 1's T511 answers and U5 fixes, B6's, B9's, B10's, B11's, B12b's and B13's, and lane 3's batches 7 and 9 (#165 6780364102, 6781033556). Draft 4.1 is
 draft 4 (6738871108), with form 4, lane 5's review of §3.6, lane 3's B4 and
 B7 and lane 5's check (6739068493). Lane 3 copied draft 4.27 into the path
-as it is, then made K9 in it as draft 4.28, K10 as draft 4.29, K11 as draft 4.30 and K12, lane 1's words, as draft 4.31, and [contracts/README.md](contracts/README.md) names its
+as it is, then made K9 in it as draft 4.28, K10 as draft 4.29, K11 as draft 4.30, K12, lane 1's words, as draft 4.31 and K13 as draft 4.32, and [contracts/README.md](contracts/README.md) names its
 source and digest. Its §8 closes O14 to O21. T101 rides the spec PR (B4).
 
 ### Source Code (the code leg, `opensoft/openRepoTools-code` at `e39395895`)
