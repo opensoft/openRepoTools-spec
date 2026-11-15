@@ -4895,3 +4895,8 @@ Estate name lookup retains its existing projects-directory spelling precedence.
 For an ambiguous estate name, stand in the intended estate and run `park`,
 `resume` or `status` without a name. For an ambiguous new lane default,
 use `lane-start --dir <path> <repo> <position>`.
+
+Family compatibility aliases keep their logical folder name during estate
+recognition and dispatch, even when the physical storage folder has a different
+name. Physical identity deduplicates aliases after recognition; an invalid alias
+cannot hide a valid family. New lane defaults continue to use canonical paths.

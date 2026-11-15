@@ -31,3 +31,15 @@ Explicit and recorded lane directories SHALL retain precedence, including refusa
 #### Scenario: Explicit lane directory
 - **WHEN** a lane supplies an explicit directory
 - **THEN** grouped discovery does not replace that directory.
+
+
+### Requirement: Logical family paths remain usable
+Estate recognition and dispatch SHALL retain the logical family path when its basename differs from the physical container name. Physical paths SHALL serve as deduplication keys after recognition, so an invalid alias cannot hide a valid family alias. Origin lookup SHALL prefer a recognizable estate path when multiple logical paths reach the same checkout.
+
+#### Scenario: Family alias names the holder
+- **WHEN** `$PROJECTS_ROOT/Atlas` links to `$STORAGE/estate-data` and the holder is `Atlas/family.yaml` inside that container
+- **THEN** named lookup, enumeration, family-ID lookup and origin lookup recognize and dispatch the family through the logical Atlas path.
+
+#### Scenario: Invalid alias precedes a valid alias
+- **WHEN** an alias with an invalid family basename and a valid Atlas alias reach the same physical container
+- **THEN** the invalid alias does not suppress the valid family and enumeration runs that family once.

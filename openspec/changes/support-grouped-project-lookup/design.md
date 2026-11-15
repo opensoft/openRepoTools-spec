@@ -16,3 +16,7 @@ Use an identical Bash 3.2-compatible discovery block in each command, protected 
 
 ## Migration Plan
 Validate in isolated worktrees and fake lane/register environments. Publish source changes through normal leg review without advancing assembly pins. Installed activation must be distinguished from source verification. Rollback restores the prior command versions; no state schema changes occur.
+
+
+## Logical paths and physical identity
+Discovery carries three fields: the name, logical path and physical identity key. Family recognition and dispatch use the logical path because the holder is named for that path's basename. Validate candidates before physical deduplication. Family-ID lookup likewise filters before deduplication. Origin lookup retains a logical checkout path and prefers a path with a recognizable estate among aliases of the same checkout; distinct physical checkouts still refuse ambiguity. New lane defaults continue to use canonical physical paths.
