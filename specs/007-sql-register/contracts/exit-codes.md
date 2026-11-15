@@ -297,7 +297,7 @@ Each lane adds its callers' arms below, in a section of its own, keyed to Y and 
 
 - **Owner:** lane 5 (`[L5]`), tasks T502 and T510. Section 5 above leaves the codes of the guard's answer 2 (Y:3520) to this section (lane 3's ruling, #165 6879754335, point 24).
 - **The source is [bind-record.md](bind-record.md) section 7,** `guard-bind`'s exits, which this section copies. Where the two differ, that table holds, and the row here is a fault in this file. Its cites of `lanes-edit.sh` at line R's `bc9ed80b` are given there and not here. T502's hygiene exit table takes the same table.
-- **The hook's own exit is 2.** Answer 2 exits 2 with "BINDING", and each of the bind's cases at the offer site exits 2 (Y:3520; bind-record.md section 5). The guard maps 69, 75 and 3 to 2, as section 7 above gives (Y:508–514).
+- **The hook's own exit is 2.** Answer 2 exits 2 with "BINDING", and each of the bind's cases at the offer site exits 2 (Y:3520; bind-record.md section 5). The guard maps 69, 75 and 3 to 2, as section 7 above gives (Y:508–514). Since T502's part 25, an answer `2` or `1` that finds its offer has become an allowance does not consume the prompt: the guard judges the prompt afresh, as for a stale offer, and the hook's exit is that judgement's, 0 where the allowance still fits (bind-record.md section 5).
 - **The outer and the body are not hooks.** They run detached after the hook has exited, so no runner reads their codes. The outer reads the body's code as the bind record's `rc`, and a person reads that in the guard's next answer (bind-record.md sections 3 and 5).
 
 | Process | Exit | When, and the record after |
