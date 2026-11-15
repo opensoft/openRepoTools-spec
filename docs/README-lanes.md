@@ -4227,9 +4227,9 @@ cutover and its own flip have run. **On a workstation whose `lanes-index.conf` s
 transaction. The files under `lanes/` are its rendered mirror, written behind
 it. And nothing falls back to writing the files. Everything else in this manual
 describes the register as files, and stays true for every workstation that is
-not `mode=primary` (a failed register read's 69 and the three exceptions are
-under "The switch and `lanes/STORE`"). The sections that describe a write or a
-read say where `mode=primary` changes them, and point here.
+not `mode=primary` (the four exceptions, the fourth a failed register read's 69,
+are under "The switch and `lanes/STORE`"). The sections that describe a write or
+a read say where `mode=primary` changes them, and point here.
 
 Four things stay what they were on a `mode=primary` workstation:
 
@@ -4765,15 +4765,15 @@ Between the marker and a workstation's own flip, every write that workstation
 tries after its fetch exits 69.
 
 **Where the marker is absent nothing changes.** The output and the exit codes of
-every `mode=index` and every unconfigured workstation are unchanged, but for a
-register read that fails and the three exceptions below; each writer gains the
-configuration read and the marker check. The lifecycle scripts read the register
-through `register-text` and `register-grep` in every mode, so a read through
-them that fails ends 69 in every mode (the exit table's row 69): `lane-start`
-and `lane-end` refuse with it, and `lane-worktrees sweep` deletes nothing on it,
-where `lane-end` once read the file with awk and took a register it could not
-read for no row. There are **three exceptions, in every mode**, and a lane meets
-them before any cutover:
+every `mode=index` and every unconfigured workstation are unchanged, but for the
+four exceptions below; each writer gains the configuration read and the marker
+check. The fourth is a register read that fails: the lifecycle scripts read the
+register through `register-text` and `register-grep` in every mode, so a read
+through them that fails ends 69 in every mode (the exit table's row 69):
+`lane-start` and `lane-end` refuse with it, and `lane-worktrees sweep` deletes
+nothing on it, where `lane-end` once read the file with awk and took a register
+it could not read for no row. The first three hold **in every mode**, and a lane
+meets them before any cutover:
 
 - **answer 2 of the name guard binds detached.** It returns at once with
   "BINDING", the bind runs in a detached child (`setsid`) as

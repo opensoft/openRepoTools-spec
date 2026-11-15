@@ -1563,7 +1563,7 @@ are lane 3's rulings memo's).
   (spec:416).
 - **SC-008**: On an unconfigured or `mode=index` workstation, the output and
   exit codes of every writer and reader equal the v1.1.0 tools', apart from
-  the three named exceptions. Test 1's files-mode twin shows it (spec:59).
+  the four named exceptions. Test 1's files-mode twin shows it (spec:59).
 - **SC-009**: Test 8's leak test fails on today's leak, and passes on this
   build. A writer the rollback missed exits 69 and the journal's count is
   unchanged, in each of test 8's cases (spec:824).
