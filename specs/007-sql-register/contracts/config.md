@@ -125,12 +125,12 @@ Every `psql` that `lanes-index` runs takes its connection from these variables, 
 | R3 | the file inside a git work tree, or under `~/.agents/` | old | Y:2323 |
 | R4 | a line that is not `key=value`; a key `lanes-index` does not know | old | Y:5709; `load_config` (`code/lanes-index:248`) |
 | R5 | a URL carrying a password: `url=` and `reader_url=` as today, and now `register_url=` | old, extended | Y:2323; Y:4849 |
-| R6 | `store=` other than `sqlite` or `postgres`; `store=postgres` with no `url=`; a `schema=` that is not a plain lower-case SQL identifier; a `passfile=` or `reader_passfile=` that cannot be read, is not a regular file, or has any group or other permission bit (0600 and 0400 both pass); a SQLite file inside a git work tree | old | `load_config` (`code/lanes-index:248`) |
+| R6 | `store=` other than `sqlite` or `postgres`; `store=postgres` with no `url=`; a `schema=` that is not a plain lower-case SQL identifier; a `passfile=` or `reader_passfile=` whose `stat` fails (the code's message says "cannot be read"), is not a regular file, or has any group or other permission bit (0600 and 0400 both pass); a SQLite file inside a git work tree | old | `load_config` (`code/lanes-index:248`) |
 | R7 | `mode=` other than `index` or `primary` | new | Y:5709; Y:4849 |
 | R8 | `mode=primary` with SQLite | new | FR-001; T104 |
 | R9 | `mode=primary` with no `register_url=` | new | T104 [T] |
 | R10 | `register_url=` with no `reader_url=`: a read never uses the writer's credential | new | T104 [T] |
-| R11 | a `register_passfile=` or `render_key=` that cannot be read, is not a regular file, or has any group or other permission bit (0600 and 0400 both pass) | new | Y:4849; T104 |
+| R11 | a `register_passfile=` or `render_key=` whose `stat` fails (the code's message says "cannot be read"), is not a regular file, or has any group or other permission bit (0600 and 0400 both pass) | new | Y:4849; T104 |
 | R12 | a `register_schema=` that is not a plain lower-case SQL identifier | new | T104 [T] |
 | R13 | a query parameter outside section 3.3's six | new | Y:3812–3814; Y:4970 |
 | R14 | a `connect_timeout=` under 2, since libpq reads 1 as 2 and 0 as no limit | new | Y:3810–3811; contract §2.5 |
