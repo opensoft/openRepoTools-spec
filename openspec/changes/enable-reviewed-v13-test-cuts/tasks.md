@@ -112,3 +112,16 @@ so its required exact-head owner reviews have not started. Restart/resume is
 outside the existing authorization and has been requested from the user. Fresh
 owner consent and all enabled-publication/live gates remain outstanding. The
 working flag and actual profile bindings remain unchanged/false.
+
+### Post-merge main final receipt (2026-11-15 17:10Z)
+
+Actual main-push run43735780675 completed SUCCESS15/15, attempt1,
+`.github/workflows/tests.yml`, actorbrettheap, at exact main
+f0070e009bc6f183904549b69c710ef3982ca6e6 (updated17:09:44Z).
+Both suite aggregators and the delivery gate passed. Main still has the same
+qualified tree; its actual delivery flag was independently re-read as false.
+This closes the separate pending main-run observation above, not any owner or
+activation gate. Lane3's deliberate paused handoff remains unchanged on fresh
+readback, with no required owner reviews or fresh admission consent supplied.
+Session restart/resume authorization is still outstanding. No further enabled
+publication, canary, wider profile or adoption step has been performed.
