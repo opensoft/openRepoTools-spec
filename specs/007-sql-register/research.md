@@ -139,7 +139,7 @@ So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number, except in `design.md` after
 design:489, which the follow-up's fold of T1 moved one line down, and after
-design:1192, which round B13's fold moved up to 46 more, and after design:3965, which ERR-58 moved 13 more. A
+design:1192, which round B13's fold moved up to 46 more, and after design:3965, which ERR-58 moved 13 more, and in `operations.md` after ops:434, which the bootstrap's Limit bullet, lane 1's C14 (commit `3b6fde18`), moved one line down, so that Y's :435 on is the branch's :436 on. A
 `test-plan.md:<n>` or `TP:<n>` citation is likewise Y's line; in the branch,
 round B14's edits put the plan's lines from :820 to :2900 one line down, and
 those from :2903 two; round B15's texts move them further, as its entry

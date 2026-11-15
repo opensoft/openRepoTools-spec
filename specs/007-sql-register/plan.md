@@ -7,7 +7,7 @@ to commit Y (`a6497d00`) of the change `add-sql-register`, which the spec
 branch merges whole at `066ad8f1`. Citations are spec.md's: `spec:<n>`
 and `svc:<n>` are lines of the change's two spec files on this branch, at
 `ad82c2f4`; `Y:<n>`, `ops:<n>` and `clar:<n>` are lines of `design.md`,
-`operations.md` and `clarifications.md`, which are unchanged from Y.
+`operations.md` and `clarifications.md`, which are unchanged from Y, except that from ops:435 on, Y's `operations.md` line N is the branch's line N+1 (the bootstrap's Limit bullet, lane 1's C14, commit `3b6fde18`).
 
 > **Assembly phase A.** This plan, spec.md and research.md are keyed to Y,
 > with lane 3's rulings memo (R01 to R61), lane 3's assembly notes and the
