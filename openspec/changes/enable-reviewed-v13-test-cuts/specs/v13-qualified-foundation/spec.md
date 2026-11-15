@@ -115,6 +115,11 @@ identity and unique matching catalogue run/check suite. The selected run SHALL
 have exactly one matching current check plus all existing independent run/job,
 attempt, current source/base, retarget history, success and reread proof.
 Catalogue selection SHALL be rechecked before proof; newer events SHALL refuse.
+Initial catalogue attempt identity SHALL match the independently authenticated
+current run and catalogue state SHALL be evaluated. Final catalogue identity,
+attempt and state SHALL match that successful run. A same-ID rerun or observed
+contradictory pending/failed state SHALL NOT be ignored merely because the run
+ID and workflow sequence are unchanged.
 
 Historical authentic checks MAY coexist, but SHALL confer no omission authority.
 The newest failure or cancellation SHALL NOT borrow an older green. A missing

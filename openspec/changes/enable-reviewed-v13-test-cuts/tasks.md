@@ -285,3 +285,23 @@ fresh full/reusable CI;588's passing checks do not qualify this extension.
 Task3.3 and all group4 tasks remain incomplete pending checked paired source
 publication and the original live canary gates. Prior spec71 remains historical;
 this new bounded contract amendment is separately reviewed and published.
+
+### Exact-head review correction before publication
+
+Independent data-integrity and reliability reviews of private code16a289a2
+found one deduplicated P2: the final catalogue reread compared only run ID and
+could ignore an explicitly observed newer attempt/state on that same ID. The
+initial catalogue-to-run identity check also needed attempt agreement. Neither
+private head was pushed or merged with this finding open.
+
+Eight new initial/final catalogue-race cases all failed before the correction.
+Corrected code3b95350a5a09dcac0f70c9145ccba5a3aa3f8c3d binds initial and final
+selected identity including attempt, evaluates initial catalogue state and
+requires final state to match the independently authenticated successful run.
+The history/previous-pending subset passed98tests,6376deselected,in28.37s.
+Missing latest jobs still refuse immediately; no assertion or gate was removed.
+The full canonical selector is running at this checkpoint, not yet reported
+passed for this new head. The earlier925 result belongs to16a289a2 only.
+
+Fresh exact-head expert/Codex review and hosted full/reusable CI are required
+for the corrected head. Task3.3 and all live group4 tasks remain incomplete.

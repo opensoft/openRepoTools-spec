@@ -140,6 +140,13 @@ final rereads. Re-read catalogue selection before proof and refuse if a newer
 canonical event appeared. Preserve the existing receipt shape and raw check/run
 stability requirements; historical rows confer no permission themselves.
 
+Catalogue identity includes the run attempt: reruns keep the run ID and workflow
+sequence. The initial selected catalogue attempt must match the independent
+current run, and its state must be evaluated rather than ignored. The final
+catalogue reread must match the authenticated successful run's complete selected
+identity/attempt and successful state, not just its ID. Any observed same-ID
+rerun or contradictory pending/failed state prevents proof.
+
 Older authentic failed or pending events do not supply proof or replace the
 selected event. The newest failed/cancelled evidence refuses, and complete
 authenticated current-job pending evidence may use only the existing bounded
