@@ -444,7 +444,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 - **Checks,** each a read that writes nothing (`proposal.md:612-619`):
   1. the installed tools' digests equal the release's;
   2. `psql` 16 is present;
-  3. the configuration is readable, a regular file with no group or other permission bit (0600 or 0400), outside every git work tree and `~/.agents/` (`code/lanes-index:66-68`), and says the expected mode;
+  3. the configuration is readable, a regular file with no group or other permission bit, such as 0600 or 0400, outside every git work tree and `~/.agents/` (`code/lanes-index:66-68`), and says the expected mode;
   4. each role connects within the workstation's `connect_timeout=`, its own `c` (D9), at each address the endpoint resolves to, and is refused outside its scope. A write tried in a transaction that always rolls back, opened with `BEGIN READ WRITE`, must fail with SQLSTATE 42501, which is this part's concrete form of "refused outside its scope". The `READ WRITE` matters for the READER, whose role default is read-only (`design.md` §1.4): a plain write there fails with 25006 before any privilege is checked;
   5. the installed `lanes-index` no longer carries Q6(c)'s refusal of `mode=primary`: `lanes-index mode` on a `mode=primary` configuration does not exit 78 (`EX_CONFIG`), Q6(c)'s code (F8; agreement test 14, `proposal.md:913-921`);
   6. the workstation's name is set, so a write is never stamped with a container's hostname (`r3b/REPORT.md:192-194`);

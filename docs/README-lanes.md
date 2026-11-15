@@ -4647,7 +4647,7 @@ both pass), never under `~/.agents/`) gains keys beside the old ones:
 ```text
 mode=index or primary     default index: today's behaviour
 register_url=<libpq URL>  this engineer's own writer URL for the register
-register_passfile=<path>  its password file, with no group or other bit (0600 or 0400)
+register_passfile=<path>  its password file, with no group or other bit, such as 0600 or 0400
 register_label=<label>    the label of the database register_url= reaches
 register_schema=<name>    default lanes_register
 render_key=<path>         the renderer identity's key file, with no group or other bit, where one is used
