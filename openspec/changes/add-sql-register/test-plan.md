@@ -8265,7 +8265,7 @@ them. Those totals use A's measured network share, its median less its
   register read is M5's request or, with the service down, a direct read.
   M13 counts each verb's reads.
 - **M9:** the Rule 3 stamp is a git push, not the database. Every total is
-  inside `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5483`),
+  inside `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5496`),
   and the phase plan puts the healthy bind at about 18 s at 20 ms, 44 s at
   150 ms and 75 s at 300 ms ("Answer 2's detached bind").
   `start-record` may change the read count; M13 counts it.
@@ -9175,7 +9175,7 @@ marked against V:
 5. **Row 37.** Answered by the design's table of the bind child's variables,
    in lane 4's section ("Answer 2's detached bind"): `LANES_GIT_TIMEOUT` is
    45, beside the bind's bound, `bound_s`: 500 s at `c` = 2 and 530 s at `c`
-   = 3, with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5483`) (W). AT-F6's case 13 asserts it.
+   = 3, with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5496`) (W). AT-F6's case 13 asserts it.
 6. **Row 10's fork in phase W.** Answered yes: the phase plan says a stub
    test asserts the fork's argv. AT-14 has it,
    `test_a_primary_write_forks_render_checkout_on_the_lane_checkout_detached[<case>]`,
