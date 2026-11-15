@@ -5064,11 +5064,12 @@ indexer by a GRANT the bootstrap makes first, and runs `bootstrap` and
 
 - **REGISTER-WRITER,** through the writer login of the workstation's engineer
   (`register_url=` and `register_passfile=`): `lanes-edit.sh`'s writes, through
-  `lanes-index register snapshot` and `register commit`; the managed ledger's
-  projection into the register row; the renderer, for its records of a
-  divergence or a failed pass; `import`, `cutover` (its abort and its record of
-  the marker included), `rollback` and the two ways out of a divergence; and
-  `outage declare`'s probe of the database.
+  `lanes-index register snapshot` and `register commit`; the renderer, for its
+  records of a divergence or a failed pass; `import`, `cutover` (its abort and
+  its record of the marker included), `rollback` and the two ways out of a
+  divergence; and `outage declare`'s probe of the database. It is also
+  reserved for the managed ledger's projection into the register row, which
+  v1.3.0 does not yet write.
 - **READER,** through the reader login (`reader_url=` and `reader_passfile=`):
   the register service's one connection, the guard's direct read, the readers
   and the listings, `status`, `reconcile` and `ready`. The `SessionStart` block
@@ -5272,7 +5273,8 @@ the readers' prefetch and their second read, and the guard's prefetch,
   reads directly, since a request cannot name an `n`;
 - the `SessionStart` block, which only starts the service, after its own
   answer and without waiting, and asks it nothing;
-- every writer.
+- every writer but one: `request-handoff`'s wait on primary, whose every poll
+  reads through `lanes-index register read --since` and so asks it.
 
 On a workstation that is not `mode=primary` no client asks the socket.
 
@@ -5382,8 +5384,9 @@ re-indexes, or reads the mirror or the outage declaration.
   `lanes-index serve --start`; and any client that finds no socket, a dead one,
   or an owner file from another install on a socket whose server is of its own
   uid, unless a failure stamp younger than 60 s stands. Never the guard's second
-  read, and never a writer. The call that starts a service reads directly; the
-  service answers from the next call.
+  read, and never a writer but `request-handoff`'s wait on primary, whose polls
+  read through `lanes-index register read --since`. The call that starts a
+  service reads directly; the service answers from the next call.
 - **How:** detached, from Python and never bash (`setsid`, its input and output
   on `/dev/null`, its errors to `register.log`), with a reduced environment of
   `PATH`, `HOME`, `LANG`, the `XDG_*` variables, `LANES_INDEX_CONFIG` and, where
@@ -5658,7 +5661,10 @@ runs it again at the window, and again after any recreate.
    - **Every other host shell:** pipx, v1.3.0, with the root one-liner only as
      a stopgap. **Way back:** `pipx install --force openrepotools==1.2.0`, then
      `openRepoTools --install`.
-   - On `mode=index` nothing changes, on either route.
+   - On `mode=index` the register is read and written as today, but for what
+     every mode meets: `lane-start`'s one `start-record` write, the guard's
+     detached bind, `wip init`'s refusals, the mode question, the marker check,
+     and a failed register read ending 69.
 6. **Readiness, in every writing environment.** The operator lane runs, with
    each environment's own label:
 
@@ -5717,17 +5723,23 @@ runs it again at the window, and again after any recreate.
    **Refusal:** any failure stops the window.
 3. **The freeze.** Brett gives the word, the coordinator posts N3, and Brett
    prompts each pane. Every lane reaches a stopping point and writes its
-   `PAUSED` record; a lane that holds a `HOLD` writes `HOLD RELEASED` before
-   it. Those writes must land before the import. **Way back:** the thaw (step
-   10); nothing has changed yet.
+   `PAUSED` record with a plain `/handoff` (never `/ctx` or `--restart`, whose
+   respawn runs `lane-start` and writes `RESUMED`); a lane that holds a `HOLD`
+   writes `HOLD RELEASED` before it. Those writes must land before the import.
+   **Way back:** the thaw (step 10); nothing has changed yet.
 4. **The quiet check.** The operator lane confirms that the `lanes` tree id on
-   origin is unchanged for 2 minutes, and that no `lanes-edit.sh` or
-   `lane-start` process runs in any container. **Refusal:** if the tree id
-   moves, the 2 minutes start again.
+   origin is unchanged for 2 minutes, and that no `lanes-edit.sh`,
+   `lane-start`, `lane-end`, `lane-handoff`, `lane-rename`, `lane` or
+   `lane-worktrees` process runs in any container or host shell, or among the
+   Codex lane's tools, which Brett reads on each host. Only the process check
+   sees a tool between two of its writes, such as `lane-handoff`, `lane-end` or
+   `lane-worktrees sweep`, and `write-handoff`'s push under `handoffs/`, which
+   leaves the `lanes` tree id unchanged. **Refusal:** if the tree id moves, the
+   2 minutes start again.
 5. **The ruleset on,** where act 3's step 9 prepared one. Brett enforces it
    once the quiet check has passed, after the drain's last `PAUSED` write and
-   before the import: no files-mode writer is left to push, so none is
-   stranded, and from here a stale writer's push is rejected rather than
+   before the import: no writer the quiet check can see is left to push, so
+   none is stranded, and from here a stale writer's push is rejected rather than
    landing as a stray. **Way back:** a window given up before the cutover's
    push turns the ruleset off before the thaw.
 6. **The import.** The operator lane, in its own checkout, with `LANES_LANE=`
@@ -5771,8 +5783,9 @@ runs it again at the window, and again after any recreate.
    workstation, once per host and from the host, since one configuration on the
    host's read-only mount serves every environment there. **Each host needs,
    before its flip, the register checkout of every lane it may write for, or
-   write routing on first** (`LANES_ROUTE_WRITES=1`, which
-   opensoft/openRepoTools#356 would make the default): on primary a write for a
+   write routing on first** (`LANES_ROUTE_WRITES=1`, which needs a window that
+   exports neither `LANES_REPO` nor `LANES_WORKSPACE_ROOT` at its own checkout:
+   opensoft/openRepoTools#356, item 3): on primary a write for a
    lane whose own checkout the host lacks refuses with 2 (64 for
    `request-handoff`) and makes none, since a clone is a fetch, and the bind's
    `set-row-state` on the lane a window left and a `request-handoff` to a holder
@@ -5788,8 +5801,9 @@ runs it again at the window, and again after any recreate.
    - **Check:** `lanes-index ready --expect primary --release 1.3.0 --env
      <label>` in each environment on each configured workstation, with each
      environment's own label.
-   - **Meanwhile:** from the marker's push to the last flip, every register
-     write refuses, since a files-mode writer meets the marker.
+   - **Meanwhile:** from the marker's push until a host's own flip, every
+     register write on that host refuses, since a files-mode writer meets the
+     marker.
    - **Way back:** `lanes-index set-mode index` on each configured
      workstation, then the rollback.
 9. **The smoke test.** The operator lane writes one `log NOTED`, and checks its
@@ -5797,7 +5811,11 @@ runs it again at the window, and again after any recreate.
    `Register-Seq: 2` after a first cutover; the read-back; and a lag of 0 in
    `lanes-index status`, after a fetch of `W` (`lanes-edit.sh
    refresh-workspace`), since `status` never fetches. **Refusal:** any miss is
-   a rollback trigger, on Brett's word.
+   a rollback trigger, on Brett's word. A 69 that says "configure
+   `mode=primary`" on a host already on `mode=primary` follows the warning
+   ``WARNING: `lanes-index mode` did not answer within 2 s``: run the write
+   again before you read it as a miss. That 2 s bound holds where `timeout` is
+   installed; without it the question has no bound.
 10. **The thaw.** The coordinator posts N4, and Brett prompts each pane to
     resume.
 
@@ -5813,9 +5831,9 @@ Brett.
 
 | notice | when | what it says |
 |---|---|---|
-| N1 | before act 3's rebuild | the rebuild ends every lane in its container; act 3 changes nothing about how lanes write (`mode=index`); `ready` will run in each environment |
+| N1 | before act 3's rebuild | the rebuild ends every lane in its container; act 3 changes no register mode (`mode=index` stays), though the new tools change how a lane starts and binds in every mode; `ready` will run in each environment |
 | N2 | once Brett names the window, before it opens | "What changes for a lane" in full; the window; the freeze's form; the rollback's triggers |
-| N3 | at the freeze word | stop at a stopping point, write `PAUSED`, and write nothing more until N4, since the ruleset goes on after the drain |
+| N3 | at the freeze word | stop at a stopping point, write `PAUSED` with a plain `/handoff` (never `/ctx` or `--restart`, whose respawn runs `lane-start` and writes `RESUMED`), and write nothing more until N4, since the ruleset goes on after the drain |
 | N4 | after the smoke test | the marker's commit and seq 1; the smoke test's result; resume; the files now lag |
 | N5 | at a rollback's start, or a declared outage | what refuses; what the guard answers; until when |
 | N6 | after the rollback | the register is files again, and what returns |
@@ -5886,7 +5904,7 @@ lost for good", below.
    `mode=primary` meets the switch at `files` and refuses, and a cleared one
    meets the marker until it is gone, and refuses.
 6. **The check.** A files-mode write succeeds, and a workstation not yet
-   cleared refuses. Brett then runs `lanes-index outage clear` on each
+   flipped back refuses. Brett then runs `lanes-index outage clear` on each
    configured workstation.
 7. **The notice.** The coordinator posts N6, saying what the files lose: the
    journal, though each seq's commit and trailer stay in git; the mode that last
@@ -6015,8 +6033,9 @@ database, run with every workstation's lanes paused first.
    (act 4's step 9, at `m+2` after a re-import or `b+2` after a restore); the
    lanes stay paused until both pass. The coordinator posts N8, naming `m`, `h`
    and the loss. Each lane then checks its last records against the mirror, and
-   writes any owed record again, with the database's UTC and the original time
-   in its free text.
+   writes any owed record again, with the database's UTC (a late `PAUSED` is
+   dated by its `--at`, and a UTC inside an `append-line` text stays as
+   written) and the original time in its free text.
 
 **Back to files by hand.** Brett may instead return the estate to the files: a
 commit removing the marker, made and confirmed by the S4 read-back, with any
