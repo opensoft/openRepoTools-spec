@@ -5753,7 +5753,7 @@ No caller of a write verb has a `3)` arm (`lane-end:2266`'s is the close-out gat
 
 | Failure | Result |
 |---|---|
-| a named configuration file that is missing; a key, line or 0600 check refused; a mode value other than `index` or `primary` | `lanes-index` 2 → files mode, with a warning |
+| a named configuration file that is missing; a key, line or file-permission check refused (not a regular file, or any group or other permission bit); a mode value other than `index` or `primary` | `lanes-index` 2 → files mode, with a warning |
 | a `lanes-index` too old to have `mode` | 64 (`:2691`) → files mode, with a warning |
 | `lanes-index` or `python3` missing | 127 → files mode, with a warning |
 | a crash; a signal | 1; 128+n → files mode, with a warning |

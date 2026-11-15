@@ -897,14 +897,14 @@ This change SHALL build a readiness check, run in each environment that writes t
 - **THEN** the check fails
 
 ### Requirement: The `mode=primary` flip is a command run once per host
-This change SHALL build the `mode=primary` flip as a command, run once per host where one configuration serves the host. It SHALL write only the `mode=` line and SHALL keep the file's 0600 mode. A read-only mount SHALL be flipped from the host, not from a bench. Setting `primary` SHALL refuse unless the switch is `primary` with the marker `present` and the fetched `origin/main` carries a `lanes/STORE` naming this database. Under Q20 the flip is the cutover's last step; act 3 leaves `mode=index`.
+This change SHALL build the `mode=primary` flip as a command, run once per host where one configuration serves the host. It SHALL write only the `mode=` line and SHALL keep the file's own permission bits, so a 0600 file stays 0600. A read-only mount SHALL be flipped from the host, not from a bench. Setting `primary` SHALL refuse unless the switch is `primary` with the marker `present` and the fetched `origin/main` carries a `lanes/STORE` naming this database. Under Q20 the flip is the cutover's last step; act 3 leaves `mode=index`.
 
 > Brett's answer to Q20: option (B), round 1's 3A, #165 6710653292.
 > Brett's answer to Q23: option (a), #165 6710653292.
 
 #### Scenario: The flip
 - **WHEN** the flip runs against a configuration
-- **THEN** only the `mode=` line changes and the file stays mode 0600
+- **THEN** only the `mode=` line changes and the file keeps its own permission bits: a 0600 file stays 0600
 
 #### Scenario: A read-only mount
 - **WHEN** a bench's configuration mount is read-only

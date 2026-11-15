@@ -443,7 +443,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 - **Checks,** each a read that writes nothing (`proposal.md:612-619`):
   1. the installed tools' digests equal the release's;
   2. `psql` 16 is present;
-  3. the configuration is readable, 0600, outside every git work tree and `~/.agents/` (`code/lanes-index:66-68`), and says the expected mode;
+  3. the configuration is readable, a regular file with no group or other permission bit (0600 or 0400), outside every git work tree and `~/.agents/` (`code/lanes-index:66-68`), and says the expected mode;
   4. each role connects within the workstation's `connect_timeout=`, its own `c` (D9), at each address the endpoint resolves to, and is refused outside its scope. A write tried in a transaction that always rolls back, opened with `BEGIN READ WRITE`, must fail with SQLSTATE 42501, which is this part's concrete form of "refused outside its scope". The `READ WRITE` matters for the READER, whose role default is read-only (`design.md` §1.4): a plain write there fails with 25006 before any privilege is checked;
   5. the installed `lanes-index` no longer carries Q6(c)'s refusal of `mode=primary`: `lanes-index mode` on a `mode=primary` configuration does not exit 78 (`EX_CONFIG`), Q6(c)'s code (F8; agreement test 14, `proposal.md:913-921`);
   6. the workstation's name is set, so a write is never stamped with a container's hostname (`r3b/REPORT.md:192-194`);
@@ -462,7 +462,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 #### `lanes-index set-mode` (new)
 
 - **Inputs:** `primary` or `index`, and `--config '<path>'`, which defaults to the configured file (`code/lanes-index:62-64`).
-- **What it does:** it rewrites only the `mode=` line, adding one where none exists, by writing a temporary file in the same directory and renaming it. The file keeps its 0600 mode (`proposal.md:626-627`).
+- **What it does:** it rewrites only the `mode=` line, adding one where none exists, by writing a temporary file in the same directory and renaming it. The file keeps its own permission bits, so a 0600 file stays 0600 (`proposal.md:626-627`).
 - **Output:** the path, the old mode and the new one. Where the file already says the mode, the same line, ending 'the file says so already; nothing was written', and nothing is written (lane 3, #165 6778959652, T120 fu1 Q1).
 - **Refusals, setting `primary`:**
   - 2: the switch is not `primary` with the marker `present`, or the fetched `origin/main` has no `lanes/STORE` naming this database. A flip before the cutover makes every write refuse (Q20 (A), `proposal.md:1772-1773`);

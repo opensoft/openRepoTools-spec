@@ -22,7 +22,7 @@
   - a value that opens with `~/` is taken from the home.
 - **One parser** [Y]: `lanes-index` is the only parser of the file (FR-001; Y:2323). `lanes-edit.sh` reads no key: it only tests that the file exists, and takes `c`, `N_a` and `w_s` from `lanes-index`'s outputs (D3, Y:368–372; R05; contract §2.5).
 - **Where it lives** [Y]: on benches, on the host's read-only mount (Q23(a); Y:2323; ops:208), beside the two 0600 password files and the root file (Y:2324).
-- **Who writes it** [Y]: Brett, on each engineer's workstation, human or AI host, with the lines `bootstrap` and `login add` print (ops:208–209; ops:424; ops:482). `set-mode` rewrites only its `mode=` line, by temp file and rename, keeping 0600 (ops:465).
+- **Who writes it** [Y]: Brett, on each engineer's workstation, human or AI host, with the lines `bootstrap` and `login add` print (ops:208–209; ops:424; ops:482). `set-mode` rewrites only its `mode=` line, by temp file and rename, keeping the file's own permission bits (ops:465).
 - **One engineer's file** [Y]: each workstation's file names only its own engineer's two logins and their two password files. No workstation holds another engineer's line (Y:2326; ops:209).
 - **No URL or password enters an environment a session inherits** (Y:2323) [Y]. The `PG*` variables of section 3.3 are set only in each `psql` child's environment.
 
@@ -36,15 +36,15 @@
 | `sqlite=` | old | the SQLite file's path, outside every git work tree | under the state directory | the index half | `code/lanes-index:62–68` |
 | `schema=` | old | the index half's schema, a plain lower-case SQL identifier | `lanes_index` | the index half | `code/lanes-index:62–68` |
 | `url=` | old | the indexer's libpq URL, the login `lanes_indexer` | — | `sync` and `reconcile` of the index half | Y:2318; Y:2425; Y:3461 |
-| `passfile=` | old | the indexer's 0600 password file | — | the same | Y:2318; Y:2425 |
+| `passfile=` | old | the indexer's password file, a regular file with no group or other permission bit (0600 or 0400) | — | the same | Y:2318; Y:2425 |
 | `reader_url=` | old, now also the register's READER | where `register_url=` is set, this engineer's READER URL, the login `lanes_r_<engineer>` (section 3.1) | — | `register read` and `journal --last` (contract §2.5); `status`, `ready` and the service; #160's `status` and `export`. Never `register classify` | Y:3460; Y:2317; Y:2326; contract §2.5 |
-| `reader_passfile=` | old | a 0600 file holding only that login's line | — | the same | Y:2317; Y:2326 |
+| `reader_passfile=` | old | a regular file with no group or other permission bit (0600 or 0400), holding only that login's line | — | the same | Y:2317; Y:2326 |
 | `mode=` | new | `index` or `primary` | `index` | `lanes-index mode`, and every command, to refuse Q6(c) | Y:4849; Y:2421; contract §2.5 |
 | `register_url=` | new | this engineer's REGISTER-WRITER URL, the login `lanes_w_<engineer>` at `<endpoint>` (section 3.1) | — | `register snapshot`, `register commit`, `journal --write-id`, `journal --since` and `render` (contract §2.5); `import`, `cutover`, `rollback` and the two ways out; `outage declare`'s probe | Y:3459; Y:2317; Y:2326; D9 (Y:3535); contract §2.5 |
-| `register_passfile=` | new | a 0600 file holding only that login's line | — | the same | Y:3459; Y:2326 |
+| `register_passfile=` | new | a regular file with no group or other permission bit (0600 or 0400), holding only that login's line | — | the same | Y:3459; Y:2326 |
 | `register_label=` | new | the label of the database `register_url=` reaches, as that database's `bootstrap --label` gave it; set in the same edit as `register_url=` | — | `cutover`, its one source for the label it sends, in every form; `ready`'s check 10; [P] `outage declare`, for the declaration's `database=` (section 6.3) | Y:2422; Y:2323; ops:379; ops:453 |
 | `register_schema=` | new | the register's schema, a plain lower-case SQL identifier; a rehearsal names its scratch schema here | `lanes_register` | every register command | Y:2323; Y:2424; T104 |
-| `render_key=` | new, under Q21(b)(B) | the path of the renderer identity's 0600 deploy-key file. It holds no secret itself | — | the pushes of the renderer, `cutover` and `rollback`, in the push's own environment only | D23 (Y:647–652); Y:2423; ops:208 |
+| `render_key=` | new, under Q21(b)(B) | the path of the renderer identity's deploy-key file, a regular file with no group or other permission bit (0600 or 0400). It holds no secret itself | — | the pushes of the renderer, `cutover` and `rollback`, in the push's own environment only | D23 (Y:647–652); Y:2423; ops:208 |
 | `register_addresses=` | new | `N_a`: the number of addresses the endpoint resolves to, a whole number, measured when the workstation joins | 1 | every register command, for its timers; `ready`'s check 13 | Y:5877; Y:5912; ops:456 |
 | `register_rtt_ms=` | new | the p90 of act 3's `select 1` round trips in one session, in whole milliseconds, measured when the workstation joins | none, read as 0 | the service's per-request timer; `register read --prefetch`, for `w_s` | Y:4005–4008; contract §2.5 |
 
@@ -120,17 +120,17 @@ Every `psql` that `lanes-index` runs takes its connection from these variables, 
 
 | # | Refused | Old or new | Source |
 |---|---|---|---|
-| R1 | the file readable by group or others, or not a regular file: it must be 0600 | old | Y:2323; `code/lanes-index:62–68` |
+| R1 | the file not a regular file, or with any group or other permission bit: 0600 and 0400 both pass | old | Y:2323; `code/lanes-index:62–68` |
 | R2 | a file `$LANES_INDEX_CONFIG` names that does not exist | old | Y:5709; `code/lanes-index:161–170` |
 | R3 | the file inside a git work tree, or under `~/.agents/` | old | Y:2323 |
 | R4 | a line that is not `key=value`; a key `lanes-index` does not know | old | Y:5709; `load_config` (`code/lanes-index:248`) |
 | R5 | a URL carrying a password: `url=` and `reader_url=` as today, and now `register_url=` | old, extended | Y:2323; Y:4849 |
-| R6 | `store=` other than `sqlite` or `postgres`; `store=postgres` with no `url=`; a `schema=` that is not a plain lower-case SQL identifier; a `passfile=` or `reader_passfile=` that is not a readable 0600 regular file; a SQLite file inside a git work tree | old | `load_config` (`code/lanes-index:248`) |
+| R6 | `store=` other than `sqlite` or `postgres`; `store=postgres` with no `url=`; a `schema=` that is not a plain lower-case SQL identifier; a `passfile=` or `reader_passfile=` that cannot be read, is not a regular file, or has any group or other permission bit (0600 and 0400 both pass); a SQLite file inside a git work tree | old | `load_config` (`code/lanes-index:248`) |
 | R7 | `mode=` other than `index` or `primary` | new | Y:5709; Y:4849 |
 | R8 | `mode=primary` with SQLite | new | FR-001; T104 |
 | R9 | `mode=primary` with no `register_url=` | new | T104 [T] |
 | R10 | `register_url=` with no `reader_url=`: a read never uses the writer's credential | new | T104 [T] |
-| R11 | a `register_passfile=` or `render_key=` that is not a readable 0600 regular file | new | Y:4849; T104 |
+| R11 | a `register_passfile=` or `render_key=` that cannot be read, is not a regular file, or has any group or other permission bit (0600 and 0400 both pass) | new | Y:4849; T104 |
 | R12 | a `register_schema=` that is not a plain lower-case SQL identifier | new | T104 [T] |
 | R13 | a query parameter outside section 3.3's six | new | Y:3812–3814; Y:4970 |
 | R14 | a `connect_timeout=` under 2, since libpq reads 1 as 2 and 0 as no limit | new | Y:3810–3811; contract §2.5 |
