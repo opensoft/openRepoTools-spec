@@ -280,7 +280,7 @@ specs/007-sql-register/
 
 `contracts/register-cli.md` is fixed before group B codes against it. Lane 1
 writes it, lane 4 confirms group B's sections, lane 5 reviews §3.6, and lane
-3 rules (R01, R06). Draft 4.32, keyed to Y (`70a3e4f2…`, 1023 lines;
+3 rules (R01, R06). Draft 4.32, keyed to Y (`50a1abb6…`, 1023 lines;
 lane 1's draft 4.27, #165 6834642319, with lane 3's K9, #165 6870473237, K10, #165 6877889644, K11, O16's `w_s_ms` qualifier, lane 3's fold of Codex's re-review r6 of spec#17 at `870ed1fb`, its finding 2, K12, the same qualifier on O16's `c` = 2 clause, lane 1's words, #165 6881658031, and K13, the private-file rule as the code has it, lane 3's words, #165 6899567732 and 6900107119), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
 lane 4's (a) (6741093519), then lane 5's 6741787745, lane 4's log set, the
 endpoint's name, lane 1's T511 answers and U5 fixes, B6's, B9's, B10's, B11's, B12b's and B13's, and lane 3's batches 7 and 9 (#165 6780364102, 6781033556). Draft 4.1 is
