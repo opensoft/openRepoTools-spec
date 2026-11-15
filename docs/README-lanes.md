@@ -3956,18 +3956,17 @@ schema=<name>             the Postgres schema (default lanes_index)
 
 Refused (exit 2, nothing read or written): a configuration that is not a regular
 file, or that group or others can reach, or that is inside a git work tree or
-under `~/.agents/`; a URL that
-carries a password in any spelling; a password file that is not a regular
-file, or that group or others can reach (0600 and 0400 both pass); a SQLite
-path inside a git work tree. A Postgres configuration with no `reader_url=` is
-refused for `status` and the read flags (`read: sources (index refused …)`):
-**a read never connects with the writer's credential**, and there is no
-fallback to it. Postgres is reached through `psql` and only where
-`url=` is set — nothing imports a driver — with `PGPASSFILE` naming the
-password file and an inherited `PGPASSWORD` or `PGPASSFILE` removed; with
-no `passfile=` (a passwordless role), `PGPASSFILE` names an empty 0600 file of
-the indexer's own, so libpq never falls back to `~/.pgpass`. No configuration at all
-is SQLite at its default path, created 0600.
+under `~/.agents/`; a URL that carries a password in any spelling; a password
+file that is not a regular file, or that group or others can reach (0600 and
+0400 both pass); a SQLite path inside a git work tree. A Postgres configuration
+with no `reader_url=` is refused for `status` and the read flags
+(`read: sources (index refused …)`): **a read never connects with the writer's
+credential**, and there is no fallback to it. Postgres is reached through `psql`
+and only where `url=` is set — nothing imports a driver — with `PGPASSFILE`
+naming the password file and an inherited `PGPASSWORD` or `PGPASSFILE` removed;
+with no `passfile=` (a passwordless role), `PGPASSFILE` names an empty 0600 file
+of the indexer's own, so libpq never falls back to `~/.pgpass`. No configuration
+at all is SQLite at its default path, created 0600.
 
 **The two roles are Postgres's to hold** (act 3, Brett Heap's on Eagle and
 Raven — or nothing, and SQLite):
