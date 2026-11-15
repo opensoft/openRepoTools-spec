@@ -116,7 +116,7 @@ Every `psql` that `lanes-index` runs takes its connection from these variables, 
 
 ## 4. The refusals
 
-**What a refusal is.** Each is a refused configuration, raised by `load_config` before any connection is opened. Its code is 2, but 3 on `journal --write-id` and 1 under `register read --for guard` (exit-codes.md section 2; contract §2.5, §2.7). Each names the file, the line or the key, and what is wrong, and prints no URL and no password (T104; Y:3797–3799).
+**What a refusal is.** Each is a refused configuration, raised by `load_config` before any connection is opened. Its code is 2, but 3 on `journal --write-id`, 1 under `register read --for guard`, and 0 from `set-mode index`, which writes the `mode=` line, or finds it already `index`, and notes on stderr that the file is still refused (exit-codes.md sections 2 and 3.3; contract §2.5, §2.7; lane 3's ruling 1, #165 6769217709). Each names the file, the line or the key, and what is wrong, and prints no URL and no password (T104; Y:3797–3799).
 
 | # | Refused | Old or new | Source |
 |---|---|---|---|
