@@ -43,7 +43,7 @@ Each code is a named constant in `lanes-index`, and the tests read the constant,
 
 ### 2. Rules for every subcommand
 
-- **A refused configuration is 2** (`code/lanes-index:72–76`; Y:4872). The contract fixes two exceptions: 3 on `journal --write-id` (CO-3, §3.4) and 1 under `register read --for guard` (O14, §2.7). `lanes-index mode` refuses one with 2 (Y:4830). [config.md](config.md) §4 lists the refusals.
+- **A refused configuration is 2** (`code/lanes-index:72–76`; Y:4872). The contract fixes three exceptions: 3 on `journal --write-id` (CO-3, §3.4); 1 under `register read --for guard` (O14, §2.7); and 0 from `set-mode index`, which writes the `mode=` line, or finds it already `index`, and notes on stderr that the file is still refused (§3.3; lane 3's ruling 1, #165 6769217709). `lanes-index mode` refuses one with 2 (Y:4830). [config.md](config.md) §4 lists the refusals.
 - **Q6(c), while `RENDER_GIT_HALF` is False** [Y]:
   - `mode=primary` makes `mode`, and `register read` in every form, exit 78 (Y:2449–2451; Y:4872);
   - every other subcommand refuses it with 2, "as the configuration parser does" (Y:2451–2453), `serve` among them (FR-003);
