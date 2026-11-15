@@ -4416,8 +4416,8 @@ lanes-edit: … the register's SQL store did not answer the guard's read, so the
   files (see "Import and rollback"), run with `LANES_LANE` naming the operator
   lane and through that lane's own checkout. **It needs the database.** With
   the database lost for good the second way out is the disaster procedure (a
-  restore, or a re-import, with every workstation's lanes paused), which part 2
-  of this section, the runbook, is to give, and not a rollback.
+  restore, or a re-import, with every workstation's lanes paused), which the
+  runbook below gives ("The database lost for good"), and not a rollback.
 
 **A declared outage** is a third thing, and Brett's: when he knows that no
 workstation can still write, `lanes-index outage declare --until <UTC> --why
@@ -5027,12 +5027,981 @@ shell or a `CLAUDE_NO_LANE=1` session, with no lane session and no guard:
 **A rollback needs the database.** Its first step sets the switch there, so with
 the database unreachable it **waits**: it refuses, and changes neither the
 switch nor the marker, and a partition that cuts only the rolling-back host off
-refuses it too. A database lost for good is the disaster procedure (part 2's
-runbook, still to come), not a rollback. When a rollback has run to its end, the files are byte-identical to a
+refuses it too. A database lost for good is the disaster procedure (the
+runbook's "The database lost for good", below), not a rollback. When a rollback has run to its end, the files are byte-identical to a
 full render, the marker is gone, SQL writes are refused and **a files-mode write
 succeeds**, while **a writer the rollback missed cannot write**: a primary
 writer that was not cleared exits 69 (2 for `commit`) and the journal's count is
 unchanged, after a fetch, with none since, and with `LANES_NO_FETCH=1` alike.
+
+### Roles and logins
+
+Every connection to the register logs in as one of the roles below, and each
+role is refused outside its scope. `lanes-index bootstrap` makes the schema and
+the four roles; `lanes-index login` makes each engineer's two logins and the
+dump job's. Brett Heap runs both, from a shell on his own workstation and never
+from a lane session, through his admin service.
+
+| role | SQL role | logs in | made by |
+|---|---|---|---|
+| owner | `lanes_register_owner` | no | `bootstrap` |
+| REGISTER-WRITER | `lanes_register_writer`, a group | no | `bootstrap` |
+| READER | `lanes_register_reader`, a group | no | `bootstrap` |
+| indexer | `lanes_indexer` | yes | `bootstrap` |
+| an engineer's writer login | `lanes_w_<engineer>`, a member of REGISTER-WRITER | yes | `lanes-index login add <engineer>` |
+| an engineer's reader login | `lanes_r_<engineer>`, a member of READER | yes | `lanes-index login add <engineer>` |
+| the dump job | `lanes_register_dump`, a member of READER alone | yes | `lanes-index login add --dump-job` |
+| admin | the database's owner, `lanes_register_admin`, which CNPG's `initdb` makes | yes | the install |
+
+Each engineer, human or AI host, has two logins of their own. **The owner**
+owns schema `lanes_register` and every table and function in it, and nothing
+logs in as it: the admin takes it by `SET ROLE`. **The admin** is Brett's, with
+`LOGIN CREATEROLE CREATEDB` and no `SUPERUSER`; it holds the owner and the
+indexer by a GRANT the bootstrap makes first, and runs `bootstrap` and
+`lanes-index login`.
+
+**Who holds which:**
+
+- **REGISTER-WRITER,** through the writer login of the workstation's engineer
+  (`register_url=` and `register_passfile=`): `lanes-edit.sh`'s writes, through
+  `lanes-index register snapshot` and `register commit`; the managed ledger's
+  projection into the register row; the renderer, for its records of a
+  divergence or a failed pass; `import`, `cutover` (its abort and its record of
+  the marker included), `rollback` and the two ways out of a divergence; and
+  `outage declare`'s probe of the database.
+- **READER,** through the reader login (`reader_url=` and `reader_passfile=`):
+  the register service's one connection, the guard's direct read, the readers
+  and the listings, `status`, `reconcile` and `ready`. The `SessionStart` block
+  makes no register call.
+- **The indexer** (`url=` and `passfile=`): `lanes-index sync` and `reconcile`
+  of the index half. Its one login is shared.
+- **The dump job:** the daily `pg_dump`, with a password that the job's own
+  workload identity reads from a Key Vault secret into a 0600 password file of
+  its run.
+
+**The GRANTs:**
+
+| on | granted |
+|---|---|
+| the database | nothing to PUBLIC; CONNECT to the two groups and the indexer |
+| schema `lanes_register` | USAGE to the two groups, and SELECT on every table, now and, by default privilege, on a later one; READER may also read the schema's sequences, which `pg_dump` needs |
+| its functions | nothing to PUBLIC, now and by the owner's default privilege; REGISTER-WRITER may execute `commit_write`, `switch_to_files`, `record_marker`, `find_write` and `record_mirror_state`, and both groups `render_file` |
+| schema `lanes_index` | owned by the indexer; USAGE and SELECT to READER; nothing to REGISTER-WRITER |
+
+REGISTER-WRITER has no INSERT, UPDATE, DELETE or DDL anywhere: a write is a
+call of one of its five functions. The indexer has nothing in `lanes_register`.
+`ready`'s check 4 tries a write outside each role's scope, and fails unless the
+database refuses it with SQLSTATE 42501.
+
+**Each login carries its group's floors itself,** since PostgreSQL applies a
+role's settings only to a session that logs in as that role, so a group's
+settings reach no member. `lanes-index login` sets them on each login it makes,
+and `ready`'s check 12 reads each login's own and fails one that lacks them:
+
+```text
+lanes_w_<engineer>   lock_timeout=2000ms  statement_timeout=5s  idle_in_transaction_session_timeout=5s
+lanes_r_<engineer>   default_transaction_read_only=on  lock_timeout=1000ms  statement_timeout=1500ms
+```
+
+**One engineer's file.** Each workstation's `lanes-index.conf` names only its
+own engineer's two logins, each as the user of its URL, and their two password
+files, each holding only its own login's line. No workstation holds another
+engineer's line. `<endpoint>` is the register's DNS name (the runbook, below):
+
+```text
+register_url=postgresql://lanes_w_<engineer>@<endpoint>:5432/<database>?sslmode=verify-full&sslrootcert=<root file>
+reader_url=postgresql://lanes_r_<engineer>@<endpoint>:5432/<database>?sslmode=verify-full&sslrootcert=<root file>
+```
+
+**`lanes-index bootstrap`** makes the register's schema and roles from the admin
+connection, used once and held by nothing:
+
+```sh
+lanes-index bootstrap --admin-service '<service>' --label '<name>' --repository '<owner/name>' --lane '<name>'
+```
+
+- **`--admin-service`** names a libpq service in Brett's own
+  `~/.pg_service.conf`, with its password in his own 0600 `~/.pgpass`, so
+  nothing on the command line is a connection string. `psql` receives it only
+  as `PGSERVICE=<service>` in its environment, never as `service=` or `-d` on a
+  command line, and an inherited `PGPASSWORD`, `PGPASSFILE`, `PGSERVICEFILE` or
+  `PGSYSCONFDIR` is dropped first, so only his own `~/.pg_service.conf`
+  defines the service, and no secret comes from the environment.
+- **`--label`** is the database's first label, with no credential, which it
+  writes into the switch it creates. **`--repository`** and **`--lane`** name
+  the workspace repository the register serves and the lane or person running
+  it.
+- **What it does:** it creates schema `lanes_register` with its tables, or
+  migrates it forward, never down; makes the owner, the two groups and the
+  indexer's login with the GRANTs above; confirms that the indexer cannot write
+  the register's tables; and writes the switch at `files`, with the marker
+  `absent`, its label and a new generation, and no journal entry. Each step is
+  one transaction, and a second run prints `unchanged` for every object.
+- **What it prints:** one line per object, `created` or `unchanged`; the
+  `lanes-index.conf` lines, with no secret, `register_label=` among them; and,
+  where it creates the indexer's login, that login's password-file line, once.
+  **It refuses when stdout is not a terminal,** so no lane transcript, log or
+  pipe ever holds a password, and it sets each password as a SCRAM-SHA-256
+  verifier computed on the client, never as clear text in SQL.
+- **With the switch at `primary`,** as on a restored backup, it verifies,
+  applies a pending migration and writes no label, and changes nothing else.
+- **Exits:** 0; 2 for an argument that carries a connection string or a
+  password, an admin that may not create roles or schemas or does not own the
+  database, a schema newer than this build's, a role that holds a privilege
+  outside its scope, `store=sqlite`, or stdout that is not a terminal; 69 where
+  the admin connection fails; 64 for usage.
+- **`--roles-only`,** for the disaster path, makes only what a database dump
+  does not carry: the roles, the admin's membership in the owner and the
+  indexer, and three database-level statements, `REVOKE ALL ON DATABASE … FROM
+  PUBLIC`, `GRANT CONNECT` to the two groups and the indexer's login, and the
+  owner's global default privilege that revokes EXECUTE on functions from
+  PUBLIC. It is safe to repeat, and prints `unchanged` where the roles are
+  already in place.
+
+**`lanes-index login`** makes, rotates and revokes the logins, from Brett's
+shell after the bootstrap, through the same admin service and under the
+bootstrap's rules for a secret: it refuses when stdout is not a terminal, and it
+sets each password as a SCRAM-SHA-256 verifier computed on the client.
+
+```sh
+lanes-index login add <engineer>
+lanes-index login add --dump-job
+lanes-index login rotate <engineer>
+lanes-index login rotate --dump-job
+lanes-index login revoke <engineer>
+```
+
+- **`add <engineer>`** makes `lanes_w_<engineer>` and `lanes_r_<engineer>`, each
+  with a password it generates and its group's floors, and prints, once, their
+  two password-file lines and the `register_url=` and `reader_url=` lines for
+  that engineer's file. Run again, it changes nothing but a lost membership,
+  which it puts back. **`add --dump-job`** makes `lanes_register_dump` alone,
+  whose password Brett stores as the Key Vault secret the dump job reads.
+- **`rotate <engineer>`** sets new passwords for both logins and prints the new
+  lines; a session already open goes on until it ends. Until that engineer's
+  two password files carry the new lines, that workstation's new connections
+  fail at login, 69, so Brett writes them before its lanes resume.
+  **`rotate --dump-job`** rotates the dump job's password alone.
+- **`revoke <engineer>`,** for each of the two logins in turn: `NOLOGIN`, then
+  its membership revoked, then its sessions ended, each step's result printed.
+  A revoked login's new connection is refused (FATAL 28000), an open session's
+  next statement is refused (42501), and an ended session gets FATAL 57P01. A
+  write of that engineer's that the revoke cuts mid-commit is in doubt; its own
+  lookup cannot reconnect, and the journal answers it by its write id.
+- **Exits:** 0, each step's result printed; 2 for an engineer name that is not
+  `^[a-z][a-z0-9_]{0,40}$`, an argument that carries a connection string or a
+  password, or stdout that is not a terminal; 69 where the admin connection
+  fails; 64 for usage, `rotate` with neither an engineer nor `--dump-job`, or
+  with both, among it.
+- **What a restore keeps.** A database dump holds no login, membership,
+  verifier or floor, and a physical backup of the cluster holds them all. After
+  a point-in-time restore each login is there with its old password, and `login
+  rotate` gives each a new one; on a new Cluster restored from a dump, or
+  re-imported, `bootstrap --roles-only` makes the groups and `login add` makes
+  each engineer's logins again ("The database lost for good", below).
+
+### What the REGISTER-WRITER secret can reach
+
+Plainly, and with no protection claimed that the design does not have: **the
+REGISTER-WRITER secret on a workstation, the password of its engineer's writer
+login `lanes_w_<engineer>` in the 0600 file that `register_passfile=` names, is
+readable by every lane process on its host. Rule 9(e) alone forbids a hand-run
+SQL write with it, and nothing technical prevents one.** The exposure is the
+same as today's git push rights.
+
+- **A hand-run write is still a register write, and still forbidden.**
+  REGISTER-WRITER holds no INSERT, UPDATE, DELETE or DDL, only its five
+  functions, so a write made by hand is still journalled, rendered, held to the
+  register's rules and proved. That does not prevent one.
+- **A holder can stop every write.** A call of `commit_write` with a `rollback`
+  entry stops every write with 69 until an operator acts. `switch_to_files`
+  only undoes a cutover that is not yet confirmed.
+- **The reader login's password is in the same position,** in the 0600 file
+  that `reader_passfile=` names, on the same host.
+- **Two logins per engineer bound the reach.** The secret on a workstation is
+  its own engineer's, and revoking that engineer's logins ends their reach
+  alone. The indexer's one login stays shared.
+- **No secret is in an environment a session inherits.** `lanes-index` hands
+  the password file to its own `psql` child through `PGPASSFILE`, and drops an
+  inherited one; no `lanes-index` path puts a connection string in an argument
+  list, where `/proc` shows it for the process's life.
+- **The render key reaches as far, and matters more.** Where a push ruleset is
+  in place ("The server-side gate"), the renderer identity's deploy key, in the
+  0600 file that `render_key=` names, is the ruleset's only bypass, and every
+  lane process on its host can read it too, so any of them could push to the
+  rendered paths past the gate. The gate stops a stale or careless writer,
+  which pushes with the lane's own rights; it does not stop a process that
+  reads the key on purpose.
+- **The admin's credential** is a libpq service and a 0600 `~/.pgpass` of
+  Brett's own, named by `--admin-service`: never a password or a connection
+  string in an argument or the environment, and never stored by the tools. The
+  dump job's password is a Key Vault secret that the job's own workload
+  identity reads.
+
+### The socket API
+
+**The register service answers the register's text at `n`, and the reader
+decides.** It is `lanes-register`, the `lanes-index serve` subcommand: one
+service per environment (a bench container or a host shell), only on a
+`mode=primary` workstation, holding one connection to the database as the
+environment's reader login. For each request it reads the files asked for at
+the journal's head `n`, fresh, and the reader runs today's parser on that text
+in its own process. It answers no question by key: `who`, `binding`,
+`live-holder`, `next-free` and `managed-projection` reach it as the files their
+parser reads. **No write depends on it:** a write's snapshot and commit open
+their own connections with the writer login, and never wait for or start the
+service.
+
+**Who asks it.** `lanes-index register read`, every reader's path, asks the
+socket first and reads the database directly when the service is unavailable:
+the readers' prefetch and their second read, and the guard's prefetch,
+`register read --for guard --prefetch`. These never ask it:
+
+- the guard's second read, of one log at the head it prefetched, which always
+  reads directly, since a request cannot name an `n`;
+- the `SessionStart` block, which only starts the service, after its own
+  answer and without waiting, and asks it nothing;
+- every writer.
+
+On a workstation that is not `mode=primary` no client asks the socket.
+
+**Where it lives.** One path, with no choice:
+`${XDG_STATE_HOME:-~/.local/state}/openRepoTools/run/register.sock`. Its
+directory holds five files, `register.sock`, `register.lock`, `register.owner`,
+`register.failed` and `register.log`, and nothing secret: `register.log` and
+every `refuse db` answer carry fixed phrases and the SQLSTATE only, never
+`psql`'s message text and never a URL.
+
+- **The directory is checked on every use,** by the service before it binds
+  and by the client before it connects: a directory and not a symlink, owned by
+  this uid, mode 0700. `lanes-index` creates it that way. One that fails is
+  never used and never repaired: the client reads directly, `serve` exits 2
+  naming it, and `lanes-index status` reports it.
+- **A path over 103 bytes,** encoded, is never shortened: the client reads
+  directly and starts nothing, and `serve` refuses it with 2 and the stamp
+  `path-too-long`.
+- **Who may connect: this uid only.** The service reads `SO_PEERCRED` on each
+  connection and closes one of another uid; the client reads it on its socket
+  and treats a server of another uid as unavailable. On macOS
+  `LOCAL_PEERCRED` takes its place, untested; where neither is available, the
+  directory's owner and mode are the whole protection. No second uid has been
+  available to show the service's refusal with a real other user.
+- **The owner file,** `register.owner`, holds the service's pid, its start, its
+  install's identity and, on Linux, its pid namespace and boot id. A client
+  whose own namespace or boot differs, or that cannot use the file, treats the
+  service as unavailable and starts none. A client that finds another install's
+  file starts a service, and an old service whose own files changed answers
+  `unavailable restarting` and exits.
+- **Trust rests on the checked directory, the owner file and the uid check at
+  both ends,** not on the digests in an answer, which prove only that the bytes
+  arrived as sent.
+
+**The request names files, and nothing else:** the render set's files it wants,
+singly or by the sets they belong to, or the render set's listing at `n`. It
+never carries a session id, a working directory, an agent id, a prompt, a
+window, a live record or a liveness fact, and never an `n` or a generation.
+Host-local facts stay with the client, and the guard decides.
+
+**The three answers:**
+
+- **`text <n> <generation>`,** then, for each file, its path, its byte count,
+  its digest at `n` and its bytes. Each request is one transaction at
+  REPEATABLE READ READ ONLY, which reads the head, the digests and the switch,
+  and checks the schema version, so the files of one answer are never from two
+  seqs, and the service never answers from images it read before.
+- **`refuse db <cause>`,** only for a value the request's own transaction read:
+  `switch-files`, the switch not `primary`, or `schema`, the tools' schema
+  version outside the database's window. The format also names `auth` and
+  `unreachable`, but this service never sends them, since it connects only in
+  the background, never on a request's time. The client then refuses exactly as
+  a direct read would, and makes no direct read after it.
+- **`unavailable`,** with `slow` or `restarting` where they apply, never leaves
+  the client: it discards the answer and reads directly, within what its budget
+  has left, and writes the flag `.direct`, so every later read of that
+  invocation goes straight to the direct read. The client also counts as
+  `unavailable`: no socket, or a dead one; a failed directory or path check; an
+  owner file it cannot use, or one of another namespace or boot; a server of
+  another uid; a service that accepts and never answers; and an answer that is
+  malformed, over 16 MB, or not complete within its wait.
+
+| what happened | a reader's `register read` | `register read --for guard` | the guard |
+|---|---|---|---|
+| the text at `n`, through the service | 0 | 0, the files cached | parses, and decides 0 or 2 |
+| `unavailable`, then a direct read that succeeded | 0 | 0, the files cached, and `guard: direct (service unavailable)` on stderr | parses, and decides 0 or 2 |
+| `refuse db <cause>` | 69 | 69; first on stderr `lanes-index: refuse db <cause> <SQLSTATE>`, and for `schema` a line naming the numbers next; no fallback line | the declared outage's check; otherwise 2 |
+| `unavailable`, then a direct read that failed | 69 | 69; first the direct read's cause line, and for `schema` the numbers' line next, then `guard: direct (service unavailable)` | the declared outage's check; otherwise 2 |
+
+The guard's prefetch prints the fallback line once, wherever the service was
+unavailable, whether the direct read that follows succeeds or fails, and never
+after a `refuse db`. Through the service and through the direct read the
+guard's stdout, its stderr less that one line, and its exit are the same. For
+`schema`, the numbers' line names the tools' version, the database's two, and
+the remedy: "upgrade the tools" where the tools are below the window, and "the
+database is behind: run the bootstrap" where they are above it.
+
+**The limits:**
+
+- **The client's wait,** connect and answer together, is 300 ms, or
+  `register_rtt_ms=` plus 200 ms where that key is over 100. It is one share of
+  the guard's 5 s, spent once; the first fallback's `.direct` means a silent
+  service costs one wait a prompt, never one a read.
+- **The service's timer** is 200 ms a request from its arrival, or
+  `register_rtt_ms=` plus 100 ms above 100, with the server's own bounds just
+  inside it, `lock_timeout` 150 ms and `statement_timeout` 180 ms. At its expiry
+  the service cancels the query and answers `unavailable slow`.
+- **16 MB** an answer: the client reads at most that, and the service builds no
+  answer past it, answering `unavailable` instead.
+- **At most 16 connections at once,** with a backlog of 64. A connect that is
+  not taken is unavailable, and the client reads directly and starts none.
+
+**Its connection.** One long-lived `psql` child on pipes, logged in with
+`reader_url=` and `reader_passfile=` from the configuration, its connection in
+its own environment and never in its arguments, every inherited `PG` variable
+dropped first. It connects at `c` for each of the endpoint's addresses, straight
+to the primary's port 5432 and never through a pooler, and **only in the
+background**: by its first request at the latest, and again at the next request
+after a failure met while serving, so a request that comes before it connects
+is answered `unavailable`. While no request comes it sends `SELECT 1` every 60
+s, and a failed check starts a new child at once. It never writes, renders,
+re-indexes, or reads the mirror or the outage declaration.
+
+**Started on demand, with no supervisor of its own.** No systemd and no launchd:
+
+- **Who starts it:** the `SessionStart` block on a primary workstation, through
+  `lanes-index serve --start`; and any client that finds no socket, a dead one,
+  or an owner file from another install, unless a failure stamp younger than
+  60 s stands. Never the guard's second read, and never a writer. The call that
+  starts a service reads directly; the service answers from the next call.
+- **How:** detached, from Python and never bash (`setsid`, its input and output
+  on `/dev/null`, its errors to `register.log`), with a reduced environment of
+  `PATH`, `HOME`, `LANG`, the `XDG_*` variables and `LANES_INDEX_CONFIG`, and no
+  password and no URL.
+- **One instance an environment:** `serve` holds `register.lock` for its life,
+  and a second starter that finds it held exits 0.
+- **It stops** after 900 s with no request, removing its socket. On a request
+  that finds its own install's files changed, or its configuration now refused
+  or no longer `primary`, it answers `unavailable restarting` and exits. Any
+  other change to the configuration, or to the reader password file or a TLS
+  file the reader URL names, ends the held child, and the service answers
+  `unavailable` until a new one connects with the new settings.
+- **A v1.3 limit:** where a client of one install finds a service of another
+  install running (a checkout run by hand is one case), the `serve` it starts
+  exits at the held `register.lock`, and the other service answers it with that
+  install's code until that service stops for another cause.
+
+**Only on primary.** `serve` refuses with 2 unless the configuration says
+`primary`, and while the build refuses `mode=primary` it exits 2 at load, so the
+service is dormant on every host until that refusal is lifted.
+
+**The failure stamp,** `register.failed`, records only the causes that make
+`serve` exit before it listens, each with 2: `path-too-long`, `config-refused`
+(a refused configuration, a mode other than `primary`, or a URL parameter it
+does not map) and `no-psql` (no `psql`, or one older than 15). It holds the UTC
+and the cause, nothing else. A client that meets a stamp younger than 60 s
+starts nothing and reads directly. A database that refuses or does not answer
+is never stamped: the service listens, answers, and reconnects in the
+background. The service removes the stamp once it listens, and again at its
+first good connect. `lanes-index status` reports a stamp and its cause, and a
+directory that fails its check.
+
+**`lanes-index serve --start`** runs the start a client runs on finding no
+socket and returns at once; it asks the service nothing and waits for nothing.
+It exits 0 where it launched `serve` or a stamp younger than 60 s stands; 2 for
+a refused configuration, a mode other than `primary`, a failed path or directory
+check, a `serve` it could not launch, or a platform with no Unix socket; and 64
+for usage. The `SessionStart` block exits 0 always, and never reads that exit.
+
+**Two test-only variables,** `LANES_REGISTER_SERVE_IDLE_CHECK_S` (the `SELECT 1`
+interval, 60 by default, ignored at 240 or more) and
+`LANES_REGISTER_SERVE_IDLE_STOP_S` (the idle stop, 900 by default), are honoured
+only where set, as whole seconds of at least 1; any other value is ignored, and
+the default kept.
+
+### The runbook: acts 3 and 4, and the rollback
+
+This is the operators' procedure, Brett Heap's acts and the operator lane's:
+the acts that give the estate its database (act 3), move the register into it
+(act 4), and take it back to the files (the rollback), or replace a database
+lost for good. A lane meets it as the notices and the prompts it names. Each
+step gives who acts and where, the command, its check, its refusal and its way
+back.
+
+**Who acts, and the words.**
+
+- **Brett** gives every word: the window, the freeze, the cutover, the
+  rollback, an outage's declaration and each merge. He does act 3's
+  infrastructure and the per-host flips. A word is a turn he typed, and the post
+  that acts on it records it; an accepted prompt suggestion is not a word.
+- **The operator lane,** which Brett names, runs every `lanes-index` command of
+  acts 3 and 4 from its own register checkout, `<W>-lanes/<lane>/`, and never
+  from `W`. `import`, `cutover`, `rollback` and the disaster path's commands run
+  with `LANES_LANE=` the operator lane, through that checkout, so each push they
+  make is a lane's write; a shell or a `CLAUDE_NO_LANE=1` session that runs one
+  names the operator lane the same way.
+- **The coordinator,** opensoft/openRepoTools#165's lead lane unless Brett
+  names another, posts the notices below and keeps the runbook's record: one
+  #165 post per step that changes state, quoting the output it rests on.
+- **Each lane** drains, resumes, and checks its own records when it is told to.
+
+**Every `ready` runs with the installed `PATH`,** in act 3 and after, never with
+a checkout's `lanes-index` first on it: its check 1 reads the release's list,
+`openRepoTools-<release>.sha256`, beside the `lanes-index` that `PATH` names,
+where the install places it, and a checkout's directory holds no release list.
+`lanes-index ready` makes fourteen checks, each a read that writes nothing:
+
+1. the installed tools' digests equal the release's list, which names
+   `lanes-index` and `lanes-edit.sh` at least;
+2. `psql` 16 is present;
+3. the configuration is readable, has no group or other permission bit, lies
+   outside every git work tree and `~/.agents/`, and says the expected mode;
+4. each role connects within the workstation's `c`, at each address the endpoint
+   resolves to, and a write outside its scope, under `BEGIN READ WRITE` in a
+   transaction that always rolls back, fails with SQLSTATE 42501;
+5. the installed `lanes-index` no longer refuses `mode=primary`;
+6. the workstation's name is set, so no write is stamped with a container's
+   hostname;
+7. no outage declaration is recorded;
+8. with `--expect primary`, the switch is `primary` with the marker `present`,
+   and the fetched `origin/main` carries a `lanes/STORE` naming this database;
+9. the tools' schema version lies inside the database's window;
+10. with the switch at `primary`, whatever `--expect` says, `register_label=`
+    equals the switch's label, or it fails with `register_label=<x>, but the
+    switch names <y>`;
+11. each role's connection carries `sslmode=verify-full` and an `sslrootcert=`
+    (never `system`), its own session shows `ssl`, and it reaches the primary;
+12. each login carries its group's floors;
+13. the endpoint resolves to no more addresses than `register_addresses=`;
+14. git is 2.32 or later.
+
+Each check prints `check <n>: ok` or `check <n>: FAIL: <reason>`, in order, and
+a last line names the environment, the host, the workstation and the tools'
+version; with all fourteen passing the summary reads `14 of 14 checks ok`. It
+prints no secret, and changes nothing. **Exits:** 0 where every check passed, 2
+where any failed, each failure named, and 64 for usage; a database it cannot
+reach fails check 4, so it exits 2, never 69. It checks one moment, so act 4
+runs it again at the window, and again after any recreate.
+
+#### Before act 3
+
+- Feature 007's last code group and v1.3.0 have landed, and the hosts are
+  reached, so the installed `lanes-index` no longer refuses `mode=primary`.
+  Act 3's first two steps need only `bootstrap`, so Brett may run them earlier,
+  from a host shell.
+- PostgreSQL 16 for the bench images rides act 3's one rebuild (step 4).
+- **The codeXfactory prod install** provides the database: CNPG in that
+  install, on the prod AKS cluster, reached without a VPN through a public load
+  balancer limited to the engineers' addresses, with TLS by cert-manager, on
+  one node with no HA. It is built in its own repository, under its own gates,
+  and act 3 waits for the install, not for the merge or the archive of the
+  change that makes it: it starts when each item below exists and Brett has
+  recorded item 9 on #165.
+  1. **The operator:** CNPG 1.30 or later, whose watch list names the
+     register's namespace, and the Barman Cloud plugin, 0.15.1 or later.
+  2. **The Cluster:** one CNPG `Cluster` in a namespace of its own, PostgreSQL
+     16, `instances: 1`, `enableSuperuserAccess: false`; `bootstrap.initdb`
+     makes the database `lanes_register` and its owner `lanes_register_admin`,
+     whose password is a Key Vault secret, and one `managed.roles` entry gives
+     that owner `login`, `createrole`, `createdb` and membership of
+     `pg_use_reserved_connections`, the only role it manages (the logins are
+     `lanes-index login`'s); `reserved_connections` 2; the server's TCP
+     keepalives (`tcp_keepalives_idle` 60), so that no connection is silent for
+     the load balancer's 4-minute idle reset; `log_connections` and
+     `log_disconnections` on; TLS 1.3, CNPG's default; `pg_hba` rejecting every
+     connection without TLS, then admitting the two groups' members, the
+     indexer and the admin to `lanes_register` by SCRAM-SHA-256, ahead of
+     CNPG's default line; and no pod disruption budget, so a drain, a node's
+     restart or a parameter that needs a restart is an outage until the
+     instance runs again.
+  3. **The endpoint:** a `LoadBalancer` service on port 5432 in front of the
+     primary, its source ranges each engineer's egress address or range (a
+     workstation that joins is added before its act 3 steps),
+     `externalTrafficPolicy: Local`, a static public IP, and one DNS name,
+     `register.codexfactory.opensoft.one`, with one A record that Brett makes
+     by hand, and no AAAA, so the endpoint has one address. Never a pooler.
+  4. **The certificate:** cert-manager's, for that name and the `-rw`
+     service's in-cluster names, from the install's private CA, the interim one
+     until the prod OpenXPKI exists, served by CNPG with the leaf and every
+     intermediate, and renewed before it expires. Its issuer's root is the file
+     every workstation names in `sslrootcert=`.
+  5. **The physical backups:** a Barman Cloud object store in the prod
+     subscription, the Cluster's WAL archived at least every 5 minutes, and a
+     daily `ScheduledBackup`.
+  6. **The daily dump:** a `CronJob`, once a day, under a workload identity of
+     its own that may only read the dump login's Key Vault secret and write to
+     the dump's container, which has soft delete and deletes each dump after
+     30 days. It connects in-cluster with `verify-full`.
+  7. **The network policy:** ingress on 5432 from the load balancer's source
+     ranges, the dump job and the operator, and on 8000 from the operator, and
+     from nothing else.
+  8. **The server's size,** set once with room, since changing
+     `max_connections` restarts the one instance:
+     `max_connections` ≥ ⌈1.25 × (Σ_w (S_w + 2·L_w) + I + 2) + C_op + 3 + 2⌉,
+     rounded up to a multiple of 10, where `S_w` is the environments on
+     workstation `w` that run the service, `L_w` the lanes that can run at once
+     there, `I` the workstations whose indexer syncs, 2 the dump job and one
+     operator command, `C_op` the connections the operator and the backup
+     plugin hold, read at act 3, and 3 and 2 the superuser's and the admin's
+     reserved slots. Four engineers with three environments and eight lanes
+     each, with `C_op` at 5, give 120.
+  9. **What it hands back,** for Brett to record on #165: the endpoint and its
+     address; the root file; the owner's name and the Key Vault secret its
+     password is in; the namespace and the Cluster's name; the source ranges;
+     and when the operator, the plugin and the backups were first seen
+     working.
+
+#### Act 3: the database, the logins and the tools
+
+1. **The database.** Brett: the install creates it, to the items above, and he
+   records on #165 item 9, the backups and the daily dump, and his downtime
+   limit, **4 hours**.
+   - **Check, on the cluster:** from a workstation inside the source ranges,
+     `psql` with `verify-full` reaches the endpoint, and from outside them the
+     connect times out; `pg_stat_ssl` shows `TLSv1.3`, and the server sees the
+     workstation's own address; the owner can create roles and databases, is
+     no superuser, and is a member of `pg_use_reserved_connections`; the
+     server's parameters read as set, and a session idle for five minutes
+     still answers; `sslmode=disable` is refused; the Cluster shows a completed
+     backup and a current WAL archive; `pg_stat_activity` at rest gives
+     `C_op`; and the instance's restart is timed. **A restore drill,** on
+     Brett's word, which he gave ("Yes, drill at act 3 (Recommended)"): a
+     point-in-time restore from the backups into a scratch Cluster, whose
+     roles, verifiers, memberships and floors equal the source's, checked
+     against the live register and timed against his 4 hours.
+   - **Each workstation's timers,** measured as it joins: `c`, the URLs'
+     `connect_timeout=`, as `max(2, ⌈t_c + 1 s⌉)` from its cold connects;
+     `register_addresses=`, the distinct addresses that `getent ahosts <host>`
+     prints on its `STREAM` lines; and `register_rtt_ms=`, the p90 of `select 1`
+     round trips in one session, taken while the workstation is at work.
+   - **The daily dump,** as the install's job runs it, logged in as
+     `lanes_register_dump`, a READER login, so no unattended job holds the
+     owner's credential or an engineer's. It dumps both schemas,
+     `lanes_register` and the index half's `lanes_index`, with its connection
+     in `PG*` variables and its password in a 0600 file of its own run:
+
+     ```sh
+     umask 077 && pg_dump --no-password --schema=lanes_register --schema=lanes_index --format=custom --file=lanes-register-$(date -u +%Y%m%dT%H%MZ).dump
+     ```
+
+     A dump's head, `b`, reads from the file alone:
+
+     ```sh
+     pg_restore --data-only --schema=lanes_register --table=register_head --file=- <file>
+     ```
+
+     The dump holds no role, verifier, membership or floor, since those belong
+     to the cluster.
+   - **Way back:** nothing depends on the database yet.
+2. **The schema and the roles.** Brett, from a host shell and not from a lane
+   session, runs the bootstrap ("Roles and logins"):
+
+   ```sh
+   lanes-index bootstrap --admin-service '<service>' --label '<name>' --repository '<owner/name>' --lane '<name>'
+   ```
+
+   - **Check:** a second run prints `unchanged` for every object.
+   - **Refusal:** as listed there; nothing is left half-made.
+   - **Way back:** the schema holds no register data before the import. Brett
+     drops schema `lanes_register` and the roles the bootstrap made, through
+     the same admin service.
+   - **Then the logins:** `lanes-index login add <engineer>` for each engineer,
+     human or AI host, and `lanes-index login add --dump-job` for the dump job.
+     A workstation that joins later gets its engineer's logins the same way,
+     before its step 3. The way back above drops these logins too.
+   - **Then the dump's check:** the dump job has run once, and `pg_restore -l`
+     on its file lists both schemas.
+3. **The configuration, per host.** Brett, on every engineer's workstation,
+   human or AI host: Eagle and Raven first, together, then each later
+   workstation as it joins. Below, "each configured workstation" is every
+   workstation configured so far.
+   - **Command:** place the 0600 password files and `lanes-index.conf` in the
+     host's dedicated read-only mount. The file says `mode=index`, and carries
+     `register_url=`, `register_passfile=`, `reader_url=`, `reader_passfile=`,
+     `register_label=` (the label step 2 gave), `register_addresses=` and
+     `register_rtt_ms=`, and, where the renderer identity is used, `render_key=`
+     (step 9), with the lines the bootstrap and `login add` printed, its own
+     engineer's alone.
+   - **Check:** `lanes-index status` reads; `ready` (step 6).
+   - **Refusal:** `lanes-index` refuses a file that is not a regular file or
+     has any group or other permission bit, one inside a git work tree or under
+     `~/.agents/`, and a URL that carries a password ("`mode=primary`").
+   - **Way back:** remove the new keys. `mode=index` behaves as today.
+4. **The bench images, once.** Brett: one rebuild, then a recreate, carrying the
+   tools' re-vendor, the configuration mount and `postgresql-16`.
+   - **Before it:** the rebuild ends every lane in its container, so notice N1
+     goes out first.
+   - **Check:** `ready` (step 6).
+   - **Way back:** the previous image. The register is unchanged.
+5. **The install in each host shell.** Brett, by the host's route:
+   - **Eagle and Raven:** `./setup.sh`, at the planned workBenches re-vendor,
+     which vendors v1.3.0 as a package, installed with
+     `payload/openRepoTools --install`, so that `ready`'s check 1 keeps its
+     meaning. **Way back:** the prior re-vendor, installed by `./setup.sh` the
+     same way.
+   - **Every other host shell:** pipx, v1.3.0, with the root one-liner only as
+     a stopgap. **Way back:** `pipx install --force openrepotools==1.2.0`, then
+     `openRepoTools --install`.
+   - On `mode=index` nothing changes, on either route.
+6. **Readiness, in every writing environment.** The operator lane runs, with
+   each environment's own label:
+
+   ```sh
+   lanes-index ready --expect index --release 1.3.0 --env <label>
+   ```
+
+   in each environment that writes the register: each bench container on each
+   host, each host shell, Raven's install and each later workstation's, and the
+   Codex lane's tools, through Brett. This step confirms that list, which is
+   Brett's act.
+   - **Check:** exit 0 everywhere. The coordinator posts each environment's
+     summary line, which carries no secret.
+   - **Refusal:** any failing check holds act 4 until it passes.
+7. **Stranded records and `W`.** Each lane publishes or archives its own
+   stranded records, and Brett repairs `W` once. **Check:** each lane posts that
+   it is done.
+8. **The rehearsal and the drill.** The operator lane, against a scratch schema
+   (`register_schema=`), from a scratch clone whose origin is a local bare copy
+   of the workspace repository, so nothing reaches the real one; its scratch
+   configuration leaves `render_key=` out.
+   - **Command:** `lanes-index import --at <C> --dry-run`, then a cutover,
+     writes, an outage of the scratch database with its refusals, a rollback,
+     and a files-mode write.
+   - **Check:** each step's expected end, and the import's three-part proof
+     (act 4's step 6) on the real register, which also times the import.
+   - **Way back:** drop the scratch schema and the scratch clone.
+9. **The renderer identity,** where the organisation's plan supports a push
+   ruleset. Brett creates the identity and prepares a ruleset with it as the
+   only bypass, over the rendered paths and `lanes/STORE` (never all of
+   `lanes/`, since a person still commits `lanes/repos.tsv`), **not enforced
+   yet**: enforced now, it would refuse every files-mode writer's push and
+   strand its commit. Its deploy key sits in the 0600 file `render_key=` names,
+   used only in the push's own environment. Act 4's step 5 enforces it.
+
+#### Act 4: the cutover
+
+**The gate.** The coordinator checks each item and posts the list:
+
+- feature 007's code PRs, the root bump and v1.3.0 have landed;
+- Amendment 23's slices 1a, 1b, 2a, 2b and 3 have landed and are installed: the
+  last code group need not wait for 2a and 2b, but act 4 waits for 2a, 2b and 3;
+- the register service is on the gate, and v1.3.0 with it, since from Eagle
+  the guard without it takes about 1.2 to 2.1 s, over Brett's budget of 1 s;
+- act 3's steps 6 and 8 have passed.
+
+1. **The window.** Brett names it, and the coordinator posts notice N2 on each
+   coordination issue before it opens. N2 asks each lane that holds a `HOLD` to
+   write its own `HOLD RELEASED` before the freeze: a `cutover` run that would
+   make its first step refuses, listing them, while any `HOLD` more than 30
+   minutes old, or with no readable time ("time unreadable"), stays open.
+2. **Readiness again.** The operator lane runs
+   `lanes-index ready --expect index --release 1.3.0 --env <label>` in every
+   environment, with each one's own label, since the check covers one moment,
+   and a container started after act 3's run escapes it.
+   **Refusal:** any failure stops the window.
+3. **The freeze.** Brett gives the word, the coordinator posts N3, and Brett
+   prompts each pane. Every lane reaches a stopping point and writes its
+   `PAUSED` record; a lane that holds a `HOLD` writes `HOLD RELEASED` before
+   it. Those writes must land before the import. **Way back:** the thaw (step
+   10); nothing has changed yet.
+4. **The quiet check.** The operator lane confirms that the `lanes` tree id on
+   origin is unchanged for 2 minutes, and that no `lanes-edit.sh` or
+   `lane-start` process runs in any container. **Refusal:** if the tree id
+   moves, the 2 minutes start again.
+5. **The ruleset on,** where act 3's step 9 prepared one. Brett enforces it
+   once the quiet check has passed, after the drain's last `PAUSED` write and
+   before the import: no files-mode writer is left to push, so none is
+   stranded, and from here a stale writer's push is rejected rather than
+   landing as a stray. **Way back:** a window given up before the cutover's
+   push turns the ruleset off before the thaw.
+6. **The import.** The operator lane, in its own checkout, with `LANES_LANE=`
+   its name, after a fetch:
+
+   ```sh
+   lanes-index import --at <C>
+   ```
+
+   where `C` is the tip of `origin/main` ("Import and rollback" says what it
+   does). It checks every key its lines give, which makes an import of today's
+   register take about 25 s instead of 3 s, inside its 300 s bound.
+   - **Check:** the proof's three parts: each rendered path's blob id equals
+     `C`'s, the counts match, and every lane's answers are the same from the
+     files and from SQL.
+   - **Refusal:** any difference, a bad key, or a `C` that is not an ancestor
+     of `origin/main`: 2, and nothing is set in the switch. A database it
+     cannot reach is 69.
+   - **Way back:** a re-import, which replaces the whole store in one
+     transaction while the switch is not `primary`.
+7. **The cutover.** The operator lane, on Brett's cutover word, with
+   `LANES_LANE=` its name:
+
+   ```sh
+   lanes-index cutover --import <C>
+   ```
+
+   It sets the switch to `primary` and writes seq 1, the entry that adds
+   `lanes/STORE`, in one transaction that commits before any git step; builds
+   the marker commit on the tip, only where the tip descends from `C` with `C`'s
+   `lanes` tree; rebuilds when handoff commits land meanwhile, six push attempts
+   in all; and pushes it fast-forward only, with the renderer identity, confirms
+   it by Amendment 23's S4 read-back, and records the marker `present`.
+   - **Check:** the read-back, and `lanes-index status` showing seq 1.
+   - **Refusal:** any change under `lanes/` since `C` aborts it, exit 2: once a
+     read-back proves the marker absent from origin, the switch goes back to
+     `files` and seq 1 is deleted, and step 6 runs again at the new tip. A push
+     it cannot confirm is 3, and its rerun reads origin back first.
+   - **Way back:** after the push, the rollback.
+8. **The flip.** Brett, on Eagle, then on Raven, then on each other configured
+   workstation, once per host and from the host, since one configuration on the
+   host's read-only mount serves every environment there. **Each host needs,
+   before its flip, the register checkout of every lane it may write for, or
+   write routing on first** (`LANES_ROUTE_WRITES=1`, which
+   opensoft/openRepoTools#356 would make the default): on primary a write for a
+   lane whose own checkout the host lacks refuses with 2 (64 for
+   `request-handoff`) and makes none, since a clone is a fetch, and the bind's
+   `set-row-state` on the lane a window left and a `request-handoff` to a holder
+   are such writes. `lanes-edit.sh lane-checkout <lane> --create` makes one, and
+   none of `ready`'s checks reads one.
+
+   ```sh
+   lanes-index set-mode primary
+   ```
+
+   It rewrites only the `mode=` line ("Import and rollback" gives its
+   refusals), and prints the path, the old mode and the new one.
+   - **Check:** `lanes-index ready --expect primary --release 1.3.0 --env
+     <label>` in each environment on each configured workstation, with each
+     environment's own label.
+   - **Meanwhile:** from the marker's push to the last flip, every register
+     write refuses, since a files-mode writer meets the marker.
+   - **Way back:** `lanes-index set-mode index` on each configured
+     workstation, then the rollback.
+9. **The smoke test.** The operator lane writes one `log NOTED`, and checks its
+   row in SQL; its mirror commit at the seq after the cutover's entry,
+   `Register-Seq: 2` after a first cutover; the read-back; and a lag of 0 in
+   `lanes-index status`, after a fetch of `W` (`lanes-edit.sh
+   refresh-workspace`), since `status` never fetches. **Refusal:** any miss is
+   a rollback trigger, on Brett's word.
+10. **The thaw.** The coordinator posts N4, and Brett prompts each pane to
+    resume.
+
+**Time.** The mechanical steps take 1 to 2 minutes, and the window 20 to 45,
+almost all of it the drain and the thaw. By an estimate, not a measurement,
+Brett's own time is 45 to 75 minutes.
+
+**The notices.** The coordinator posts each on the coordination issue of every
+project with a row in the register, dormant ones included, which it lists
+before it posts N1, and posts a declaration's on #165 too; under act 4 they
+also go as Brett's prompt to each pane, and the Codex lane hears them through
+Brett.
+
+| notice | when | what it says |
+|---|---|---|
+| N1 | before act 3's rebuild | the rebuild ends every lane in its container; act 3 changes nothing about how lanes write (`mode=index`); `ready` will run in each environment |
+| N2 | once Brett names the window, before it opens | "What changes for a lane" in full; the window; the freeze's form; the rollback's triggers |
+| N3 | at the freeze word | stop at a stopping point, write `PAUSED`, and write nothing more until N4, since the ruleset goes on after the drain |
+| N4 | after the smoke test | the marker's commit and seq 1; the smoke test's result; resume; the files now lag |
+| N5 | at a rollback's start, or a declared outage | what refuses; what the guard answers; until when |
+| N6 | after the rollback | the register is files again, and what returns |
+| N7 | at the disaster's declaration | the outage; the pause; that the unrendered tail is at risk |
+| N8 | at the disaster's resumption | `m`, `h` and the loss; what each lane checks |
+
+A dormant project meets N2 on its issue when it resumes. Its tools must be
+upgraded before it writes, or the renderer stops at its first files write; act
+4's second `ready` cannot see an environment that is not running.
+
+#### The rollback
+
+A rollback needs the database ("Import and rollback" says what
+`lanes-index rollback` does, step by step).
+
+**Its triggers:**
+
+- the renderer has diverged, and SQL is not trusted;
+- `reconcile` finds that the mirror is not a full render, and cannot repair it;
+- a workstation that must write cannot be configured;
+- the credential is compromised;
+- the measured costs miss their targets;
+- Brett's word, for any reason.
+
+**The database down past Brett's limit, 4 hours,** is no trigger of a rollback,
+which cannot run without the database: it leads to waiting, or to "The database
+lost for good", below.
+
+1. **The word.** Brett gives it, and the coordinator posts N5.
+2. **The switch.** The operator lane runs `lanes-index rollback` in its own
+   checkout, with `LANES_LANE=` its name. It refuses with 2 while
+   `lanes-index status` shows `diverged at <sha>`: the divergence is resolved
+   first, on a person's word, by `lanes-index import --single <sha>` or
+   `lanes-index render --revert <sha>`, while the switch is still `primary`.
+   - **The declaration:** `rollback` writes the outage's declaration itself
+     where its configuration directory can be written; from a bench, whose
+     mount is read-only, it prints `outage declare --rollback --mirror-seq <k>`
+     instead. Brett runs that line, as printed, on each other host, and on the
+     rollback's own host where it ran in a bench. Until a declaration is
+     written, guards refuse 2, the operator lane's own included, so a rerun
+     runs from a shell or a `CLAUDE_NO_LANE=1` session.
+   - **Refusal:** with the database unreachable it exits 69 and changes neither
+     the switch nor the marker: the lanes wait, or Brett takes the disaster
+     path.
+3. **The render,** which proves the mirror a full render. Every guard whose ref
+   is behind the rollback's head refuses 2 until the mirror carries it, so a
+   rerun after a failed render runs from a shell, or a `CLAUDE_NO_LANE=1`
+   session with `LANES_LANE=` the operator lane.
+   - **The ruleset off,** where act 4 enforced one: the operator lane runs the
+     rollback in two calls, the first stopping once the render is proved, with
+     the marker still on origin and exit 0; Brett then turns the ruleset off,
+     and the second call resumes at the push. Without a ruleset, one call runs
+     every step.
+
+     ```sh
+     lanes-index rollback --hold-marker
+     lanes-index rollback
+     ```
+
+4. **The marker.** `rollback` pushes the commit that removes `lanes/STORE`, with
+   the renderer identity, and confirms it by the S4 read-back; a push it cannot
+   confirm exits 3, and the rerun reads origin back first.
+5. **The flips back.** Brett runs `lanes-index set-mode index` on each
+   configured workstation. The order does not matter: a workstation still on
+   `mode=primary` meets the switch at `files` and refuses, and a cleared one
+   meets the marker until it is gone, and refuses.
+6. **The check.** A files-mode write succeeds, and a workstation not yet
+   cleared refuses. Brett then runs `lanes-index outage clear` on each
+   configured workstation.
+7. **The notice.** The coordinator posts N6, saying what the files lose: the
+   journal, though each seq's commit and trailer stay in git; the mode that last
+   wrote each row; the database clock's order; and serializable claims, so
+   `CLAIM-LOST`, exit 7 and push-order races return. **No write is lost:** the
+   database is up, and the rollback renders every seq before the marker goes.
+
+#### The database lost for good
+
+This is not a rollback. It is a restore or a re-import onto a replacement
+database, run with every workstation's lanes paused first.
+
+1. **The trigger.** The database has been unreachable past Brett's limit, 4
+   hours, and he says it will not return in time. Until that word the lanes
+   wait: every write and deciding read refuses with 69, and the guard refuses
+   with 2.
+2. **The declaration.** Brett declares the outage on each configured
+   workstation, from each host, so that he can reach his lanes:
+
+   ```sh
+   lanes-index outage declare --until '<utc>' --why "<Brett's words>"
+   ```
+
+   It records the newest `Register-Seq` on `origin/main`, after a fetch; where
+   the host cannot fetch, Brett names it with `--mirror-seq <m>`, from
+   `lanes-index status` on a host that can, and with neither it refuses with 2.
+   Every write and every other deciding read still refuses. The coordinator
+   posts N7.
+3. **The pause.** Brett prompts each pane to stop. A swap writes its handoff
+   file from a mirror read; its `PAUSED` record refuses with 69, and the lane
+   stays `SWAPPING` until the late path completes it.
+4. **The loss, recorded.** The operator lane runs `lanes-index status`. It
+   cannot reach the database, so it prints `m`, the mirror tip's
+   `Register-Seq`, and `h`, the last head it recorded, or "unknown". **Every
+   write that SQL committed after `m` exists only in SQL,** since none was
+   rendered: a re-import loses all of them, and a restore keeps only those up
+   to the backup's head. Where no head was recorded the bound is unknown, and
+   only the lanes can say what they wrote.
+5. **The old database, retired.** Brett revokes the old roles wherever the old
+   host can still be reached, so that a database that comes back with the
+   switch still at `primary` cannot take a write. Step 6 re-points every host
+   before any write resumes.
+6. **The replacement.** The install creates a new CNPG Cluster, to the items
+   above. Roles belong to the cluster: a physical backup carries them, and a
+   database dump does not. Then, on Brett's word, one of two routes:
+   - **Restore,** only where a backup's head `b` is newer than `m`. Lost: every
+     seq after `b`.
+     - **From the physical backups:** the install creates the new Cluster by
+       CNPG's recovery from the Barman Cloud object store, never in place, to
+       the latest WAL or to a time Brett names, with its own backups under a
+       name of their own, so it never archives over the backups it restores
+       from; with WAL archived at least every 5 minutes and the archiver keeping
+       up, its `b` is within about 5 minutes of the loss. It carries the roles,
+       their verifiers, memberships and floors, so `lanes-index bootstrap
+       --roles-only` is not needed (it would print `unchanged`). Brett runs
+       `bootstrap`, which migrates it forward or prints `unchanged`, and
+       `lanes-index login rotate` for each engineer and the dump job, so that a
+       workstation not yet re-pointed cannot log in there.
+     - **From the daily dump,** in this order, each `lanes-index` step and the
+       restore through one admin service, which names the register's database:
+       1. the register's database exists, owned by the admin: the new
+          Cluster's `initdb` made it;
+       2. `lanes-index bootstrap --roles-only`, which also makes the three
+          database-level statements a dump does not carry ("Roles and
+          logins");
+       3. `lanes-index login add <engineer>` for each engineer, and
+          `lanes-index login add --dump-job`;
+       4. the restore of both schemas:
+
+          ```sh
+          pg_restore --exit-on-error --no-password --dbname=<database> <file>
+          ```
+
+       5. `lanes-index bootstrap`, which prints `unchanged`.
+   - **Re-import,** the default, where no backup is newer than `m`. Brett runs
+     `lanes-index bootstrap --roles-only`, then `bootstrap`, then
+     `lanes-index login add` for each engineer and the dump job, since a
+     re-imported replacement holds no engineer's login until `login add` makes
+     each again; after the re-pointing the operator lane runs:
+
+     ```sh
+     lanes-index import --at <M> --after-loss
+     ```
+
+     where `M` is the tip of `origin/main`, which still carries the marker. Its
+     baseline takes `M`'s newest `Register-Seq`, `m`, instead of 0, so seqs on
+     `main` stay unique. Lost: every seq after `m`. Its key check takes about
+     25 s, and a bad key stops it before anything is written.
+   - **The re-pointing,** on either route, before any `lanes-index` command
+     reaches the replacement: on each configured workstation, from each host,
+     Brett sets `register_url=`, `reader_url=`, their password files and
+     `register_label=` to the replacement's, **in one edit**, with the lines
+     the bootstrap printed and that workstation's own engineer's lines from
+     `login add` or `login rotate`. `register_label=` names the replacement:
+     after a re-import, the label its bootstrap wrote; after a restore, the
+     `--label` Brett gave its bootstrap, which must differ from the lost
+     database's label that the restored switch still holds. The lanes stay
+     paused.
+   - **The marker, as the cutover's own entry.** After a re-import the operator
+     lane runs `lanes-index cutover --import <M> --after-loss`, at seq `m+1`, so
+     the next write is `m+2`; after a restore, `lanes-index cutover
+     --after-loss`, with no import, at `b+1`, which first renders every seq the
+     mirror lacks, up to `b`. Its transaction sets the switch to `primary` with
+     the replacement's label and a new generation, and rewrites `lanes/STORE`
+     for the replacement, which it pushes and confirms as the cutover does.
+     `cutover` takes its label from `register_label=` alone, never from a flag:
+     a file with no `register_label=` is refused with 2 before it connects; at a
+     switch at `files`, a label that is not the switch's is refused with 2
+     before anything is sent; and at a switch at `primary`, a label that does
+     not differ from the switch's is refused with 2, writing nothing. `ready`'s
+     check 10 fails by design before a restore's after-loss cutover, since the
+     restored switch still names the lost label. A re-import's cutover that
+     aborts keeps the label and generation it set; a restore's, once a read-back
+     proves the rewrite absent from origin, puts the head back to `b` and the
+     switch's fields as they were, and the estate stays stopped, with the lanes
+     paused, until the cutover is run again.
+   - **The generation.** Every pending record and every printed rerun made
+     against the lost database carries the old generation, and now refuses
+     with 2 rather than apply a write the mirror may already hold. Each lane
+     checks the mirror instead.
+7. **The resumption.** `lanes-index outage clear` on each configured
+   workstation first, since `ready`'s check 7 fails while a declaration is
+   recorded. Then `lanes-index ready --expect primary --release 1.3.0 --env
+   <label>` in each environment, with each one's own label, and the smoke test
+   (act 4's step 9, at `m+2` after a re-import or `b+2` after a restore); the
+   lanes stay paused until both pass. The coordinator posts N8, naming `m`, `h`
+   and the loss. Each lane then checks its last records against the mirror, and
+   writes any owed record again, with the database's UTC and the original time
+   in its free text.
+
+**Back to files by hand.** Brett may instead return the estate to the files: a
+commit removing the marker, made and confirmed by the S4 read-back, with any
+ruleset turned off first, then `lanes-index set-mode index` on each configured
+workstation. It loses the same tail, and it is safe only after step 5, since its
+leak, a database that comes back with the switch still at `primary`, needs the
+old database to come back.
 
 ## Retiring a lane's worktrees — `lane-worktrees sweep` (#162)
 
