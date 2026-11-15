@@ -31,11 +31,11 @@ On a workstation configured `mode=primary` the lane register is a database: each
 - **THEN** it connects with the REGISTER-WRITER pair and never with the indexer's `url=` credential
 
 ### Requirement: The estate switch is a database row and the marker `lanes/STORE`
-The estate's mode SHALL be recorded in two places: a row in the database, and the marker `lanes/STORE` in the workspace repository. The marker SHALL hold `primary`, the database's name without credentials, the import commit and the UTC, and SHALL hold no credential. The estate's rule SHALL be that every writing workstation is `mode=primary` or none is.
+The estate's mode SHALL be recorded in two places: a row in the database, and the marker `lanes/STORE` in the workspace repository. The marker SHALL hold `primary`, the database's name without credentials, the import commit, the tree id of that commit's `lanes` tree as `lanes-tree=`, and the UTC, and SHALL hold no credential. The estate's rule SHALL be that every writing workstation is `mode=primary` or none is.
 
 #### Scenario: The marker carries no secret
 - **WHEN** the cutover pushes `lanes/STORE`
-- **THEN** the file holds `primary`, the database's name, the import commit and the UTC
+- **THEN** the file holds `primary`, the database's name, the import commit, `lanes-tree=` and the UTC
 - **AND** it holds no URL with a password, no password and no passfile path
 
 ### Requirement: A writer that is not `mode=primary` refuses under the marker
