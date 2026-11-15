@@ -1152,4 +1152,4 @@ The manual SHALL carry a runbook for acts 3 and 4 and the rollback: every act, w
 
 #### Scenario: A fresh install passes check 1
 - **WHEN** `openRepoTools --install` has just installed the release
-- **THEN** check 1's checked-hash compilation of the installed module equals the installed bytecode byte for byte, and check 1 passes; on Python 3.9 and 3.10, where the install wrote no bytecode, check 1 reports the module's source path and passes
+- **THEN** check 1's checked-hash compilation of the installed module equals the installed bytecode byte for byte, and check 1 passes; on Python 3.9 and 3.10, where the install wrote no bytecode, check 1 reports the module's source path and passes; and where `sys.implementation.cache_tag` is None, on any version, the module has no bytecode path, so check 1 compares no bytes, and reports the module's source path and passes
