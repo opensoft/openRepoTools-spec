@@ -1118,13 +1118,13 @@ The manual SHALL carry a runbook for acts 3 and 4 and the rollback: every act, w
 - **THEN** it names the triggers, the words and the owner of each step
 
 ### Requirement: `lanes-index` starts from its cached module
-`lanes-index` SHALL be a short launcher that runs its body from PC-2's cached module, a file beside it (`lanes_index_main.py`, whose name lane 1 fixes), by that module's checked-hash cached bytecode (PEP 552), so that a start does not compile the whole script. Every subcommand's argv, stdout, stderr and exit code SHALL stay as they are without the module. Bytecode whose module source has changed SHALL never run, since the launcher checks it against the module's bytes; where the module has no valid bytecode, as where the install could not write it, the launcher SHALL run the module's source. `openRepoTools --install` SHALL place the module beside `lanes-index` and write its checked-hash bytecode for the interpreter that `lanes-index` runs on, and on a `./setup.sh` host the module SHALL arrive with the package re-vendor. The release's digest list SHALL name the module, which `ready`'s check 1 digests beside `lanes-index` and `lanes-edit.sh`, and SHALL NOT name its bytecode. `ready`'s check 1 SHALL also compile the digest-checked module with the interpreter that `lanes-index` runs on, in checked-hash mode (PEP 552, flags 0b11), and SHALL fail, naming the cached module as not matching the release's source, unless the result equals the installed bytecode byte for byte. The launcher SHALL still run the cache with no compile at a start, so the guarantee holds at check time, as check 1's does for every other installed file; where the compiler's output is not byte-stable for the same source and interpreter, check 1 fails closed, and `openRepoTools --install`, which writes the cache again, repairs a stale or corrupt cache on a byte-stable interpreter, while an interpreter that is genuinely not byte-stable stays failed closed.
+`lanes-index` SHALL be a short launcher that runs its body from PC-2's cached module, a file beside it (`lanes_index_main.py`, whose name lane 1 fixes), by that module's checked-hash cached bytecode (PEP 552), so that a start does not compile the whole script. Every subcommand's argv, stdout, stderr and exit code SHALL stay as they are without the module. Bytecode whose module source has changed SHALL never run, since the launcher checks it against the module's bytes; where the module has no valid bytecode, as where the install could not write it, the launcher SHALL run the module's source. `openRepoTools --install` SHALL place the module beside `lanes-index` and write its checked-hash bytecode for the interpreter that `lanes-index` runs on, and on a `./setup.sh` host the module SHALL arrive with the package re-vendor. The release's digest list SHALL name the module, which `ready`'s check 1 digests beside `lanes-index` and `lanes-edit.sh`, and SHALL NOT name its bytecode. `ready`'s check 1 SHALL also compile the digest-checked module with the interpreter that `lanes-index` runs on, in checked-hash mode (PEP 552, flags 0b11), and SHALL fail, naming the cached module as not matching the release's source, unless the result equals the installed bytecode byte for byte. The launcher SHALL still run the cache with no compile at a start, so the guarantee holds at check time, as check 1's does for every other installed file; where the compiler's output is not byte-stable for the same source and interpreter, check 1 fails closed, and `openRepoTools --install`, which writes the cache again, repairs a stale or corrupt cache on a byte-stable interpreter, while an interpreter that is genuinely not byte-stable stays failed closed. The one exception is Python 3.9 and 3.10, whose compiler output is not byte-stable: there `openRepoTools --install` SHALL write no bytecode, the launcher SHALL read no bytecode and run the module's source, as it does where `sys.implementation.cache_tag` is None or `sys.flags.optimize` is not 0, and `ready`'s check 1 SHALL report the module's source path and pass, comparing bytes on Python 3.11 and later only.
 
 > Brett's answer of 2026-11-13 on D7's 30 s deadline against the ten-writer burst: "(d) Both (a) and (c) (Recommended)", whose option read "Precompile lanes-index AND run AT-4 (c) under a per-workstation D7."; the question's (a): "Precompile `lanes-index` in 007, taking PC-2's cached module now." (lane 3's record of the dialog, `RULINGS-brett-20261113e-q1-q6.md`).
 
 #### Scenario: A start runs the cached module
 - **WHEN** `lanes-index` starts and the module's checked-hash bytecode carries the hash of the module's bytes
-- **THEN** the launcher runs that bytecode and does not compile the module's source
+- **THEN** on Python 3.11 and later the launcher runs that bytecode and does not compile the module's source; on Python 3.9 and 3.10 it reads no bytecode and runs the module's source
 
 #### Scenario: Stale bytecode never runs
 - **WHEN** the module's bytes have changed since its bytecode was written
@@ -1140,7 +1140,7 @@ The manual SHALL carry a runbook for acts 3 and 4 and the rollback: every act, w
 
 #### Scenario: The install places the module and its bytecode
 - **WHEN** `openRepoTools --install` installs the release
-- **THEN** `lanes_index_main.py` is beside `lanes-index`, with its checked-hash bytecode written for the interpreter that `lanes-index` runs on
+- **THEN** `lanes_index_main.py` is beside `lanes-index`, with its checked-hash bytecode written for the interpreter that `lanes-index` runs on where that is Python 3.11 or later, and with no bytecode on 3.9 and 3.10
 
 #### Scenario: The release's digest list names the module
 - **WHEN** the release builds its digest list
@@ -1148,8 +1148,8 @@ The manual SHALL carry a runbook for acts 3 and 4 and the rollback: every act, w
 
 #### Scenario: Check 1 refuses a cache that is not the release's
 - **WHEN** the installed bytecode's code payload differs from a checked-hash compilation of the digest-checked module, though its header keeps flags 0b11 and the module's source hash
-- **THEN** `ready`'s check 1 fails, naming the cached module as not matching the release's source, and `ready` exits 2
+- **THEN** on Python 3.11 and later `ready`'s check 1 fails, naming the cached module as not matching the release's source, and `ready` exits 2; on Python 3.9 and 3.10, where the launcher reads no bytecode, check 1 compares no bytes, reports the module's source path and passes
 
 #### Scenario: A fresh install passes check 1
 - **WHEN** `openRepoTools --install` has just installed the release
-- **THEN** check 1's checked-hash compilation of the installed module equals the installed bytecode byte for byte, and check 1 passes
+- **THEN** check 1's checked-hash compilation of the installed module equals the installed bytecode byte for byte, and check 1 passes; on Python 3.9 and 3.10, where the install wrote no bytecode, check 1 reports the module's source path and passes

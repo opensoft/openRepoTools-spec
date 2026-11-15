@@ -1481,7 +1481,7 @@ are lane 3's rulings memo's).
   launcher MUST run the module's source. `openRepoTools --install` MUST place the
   module beside `lanes-index` and write its checked-hash bytecode for the
   interpreter `lanes-index` runs on, and the release's digest list MUST name the
-  module, which `ready`'s check 1 digests, and not its bytecode; check 1 MUST also compile the digest-checked module with that interpreter in checked-hash mode and fail, naming the cached module as not matching the release's source, unless the result equals the installed bytecode byte for byte, so that the code the launcher runs, with no compile at a start, is the release's at check time, as every other installed file is. Sources:
+  module, which `ready`'s check 1 digests, and not its bytecode; check 1 MUST also compile the digest-checked module with that interpreter in checked-hash mode and fail, naming the cached module as not matching the release's source, unless the result equals the installed bytecode byte for byte, so that the code the launcher runs, with no compile at a start, is the release's at check time, as every other installed file is. The one exception is Python 3.9 and 3.10, whose compiler output is not byte-stable: there the install MUST write no bytecode, the launcher MUST read no bytecode and run the module's source, as it does where `sys.implementation.cache_tag` is None or `sys.flags.optimize` is not 0, and check 1 MUST report the module's source path and pass, comparing bytes on 3.11 and later only (lane 3's ruling 2, #165 6885378657, on lane 1's question 4, #165 6882454897). Sources:
   "`lanes-index` starts from its cached module" (the sql-register delta, since
   the follow-up's commit 18); PC-2; T124, T347.
 
