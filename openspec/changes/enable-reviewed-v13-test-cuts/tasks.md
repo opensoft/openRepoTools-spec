@@ -23,10 +23,11 @@
 - [ ] 4.2 Admit only the exact two consented members through the named manual queue; verify fast-only candidate PR CI, one complete accepted heavy caller, all original coverage, no duplicate post-merge full CI and matching actual ordered prefix/final landed trees.
 - [ ] 4.3 Record honest initial test-only live acceptance and the next reviewed wider-profile step; verify no assembly/session/tool/settings/release action or all-work-complete claim is implied.
 
-External facts in group2 and consent in group4 remain pending, not guessed data.
-Group1 preparation is independent of those facts; the working flag stays false
-until finalization. The approved broader rollout remains an active objective
-after this first initial-pair gate.
+Task2.3's exact-head owner review gate remains pending; qualification tasks2.1
+and2.2 are complete for the recorded immutable generation. Group3 publication
+and group4 admission remain separate. The working flag stays false until
+finalization. The approved broader rollout remains an active objective after
+this first initial-pair gate. Dated receipts below record state at each checkpoint.
 
 ## Preparation evidence (2026-11-15)
 
@@ -125,3 +126,25 @@ activation gate. Lane3's deliberate paused handoff remains unchanged on fresh
 readback, with no required owner reviews or fresh admission consent supplied.
 Session restart/resume authorization is still outstanding. No further enabled
 publication, canary, wider profile or adoption step has been performed.
+
+### Resumed owner review and specification-only publication
+
+The user resumed lane3 and directed continuation with all exclusions preserved.
+Read-only terminal evidence confirms it is actively reading its handoff; the
+coordinator changed no session or queued input. This supersedes the earlier
+paused-owner observations, not the pending review requirement. This spec-only
+publication cannot change the code repository's actual false delivery flag.
+
+Full CI provenance was re-read: P05#92 run43726550505 SUCCESS15/15 at
+2a02cd9eba113329870ed7eba6efd470375b8739; P06#94 run43729068826 SUCCESS15/15 at
+bcc8858bf587fbe86b00264b41caca1b39ccfc72. Each is attempt1, same-repository,
+pull_request/tests.yml on its actual registered branch. Their clean exact-head
+Codex summaries remain additional review evidence, not an owner-review waiver.
+
+Lane2's fresh record6898422904 confirms both task inventories and gives
+condition-bound consent for these exact heads. It takes effect only after
+lane3's exact-head review is READY with no BLOCKING or SHOULD left open and
+full CI is green, lapses on a head change, requests no enqueue and imposes no
+hold. Lane3/coordinator determine timing relative to P09's revised foundation.
+Owner PR bodies/bases/heads remain untouched. Task2.3 and all enabled-publication
+and live-acceptance tasks remain unchecked until their actual gates pass.
