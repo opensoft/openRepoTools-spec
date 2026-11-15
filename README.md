@@ -49,3 +49,9 @@ The feature 010 complete-main [additional finding inventory](specs/010-sonar-ass
 Feature 010 also retains [runtime and regression proof for the complete-main findings](specs/010-sonar-assurance/main-findings-proof.json).
 
 Feature 010 is complete: [final main acceptance and per-issue readback](specs/010-sonar-assurance/final-acceptance.json).
+
+## Grouped project lookup
+
+[Proposal](openspec/changes/support-grouped-project-lookup/proposal.md), [requirements](openspec/changes/support-grouped-project-lookup/specs/grouped-project-lookup/spec.md), [design](openspec/changes/support-grouped-project-lookup/design.md), and [feature checklist](specs/011-grouped-project-lookup/tasks.md) describe the grouped-folder discovery change. The [lane manual](docs/README-lanes.md#grouped-project-lookup) documents normal command behavior.
+
+Feature 011 retains its [local validation and adoption boundaries](specs/011-grouped-project-lookup/validation.md).
