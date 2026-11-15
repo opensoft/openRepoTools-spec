@@ -4362,11 +4362,18 @@ there and writes nothing a second time. **Never** run the command again without
 the id: a plain rerun can mint a new id and make a committed write twice. And
 never read a 3 as "written", as a script that takes 3 for success does: every
 script of this toolset relays the writer's printed rerun, and none prints a hint
-of its own but one: where the NOTED line that `lane-end --sweep-checkouts`
-writes after its sweep ends 3, `lane-end` prints the writer's words, then files
-mode's words and the publish act, which sends nothing for a register write, and
-exits 1; settle that line by what the writer printed. Two other ends are 3 too,
-and each sent nothing:
+of its own. Where the NOTED line that `lane-end --sweep-checkouts` writes after
+its sweep ends 3, `lane-end` prints the writer's words, says to settle that line
+by what the writer printed, prints no publish act, and exits 1, or 130 or 143
+where a signal stopped it during that write (only where it could not keep those
+words to read them does it print files mode's note and the publish act after
+them). A v1.3 limit: a signal to `lane-end` alone, after a write that committed,
+still gets the note that hands out the publish act and a line by hand, and that
+line records the sweep a second time: a duplicate sweep line in the register,
+with nothing lost. So does a signal that comes after the writer's words were
+read back and before `lane-end` prints its note on them: the same consequence,
+a second sweep line, from another window. Two other ends are 3 too, and each
+sent nothing:
 
 - an identical write is still running in another process: its outcome is not
   known and it is left as it is, and what to do depends on what the message
