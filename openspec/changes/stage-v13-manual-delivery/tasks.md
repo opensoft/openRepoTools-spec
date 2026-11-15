@@ -8,7 +8,7 @@
 
 ## 2. Checked publication
 
-- [ ] 2.1 Run the canonical focused delivery/queue/shadow/parity suites in isolated QA, strict OpenSpec validation and diff checks; record actual counts and any skips in validation.md.
+- [x] 2.1 Run the canonical focused delivery/queue/shadow/parity suites in isolated QA, strict OpenSpec validation and diff checks; record actual counts and any skips in validation.md.
 - [ ] 2.2 Run exact-head local expert review, open paired code/spec PRs, explicitly request hosted Codex review, and record actual latest-head review and full/reuse CI results.
 - [ ] 2.3 Normally merge only after latest-head gates pass, verify actual main/tree and disabled flag, and hand off current owner-pair/foundation readiness without admission or checkout changes.
 

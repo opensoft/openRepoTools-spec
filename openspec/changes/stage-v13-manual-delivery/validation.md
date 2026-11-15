@@ -28,12 +28,22 @@ are unchanged; lanes and owner PRs remain untouched.
   ci_v13_shadow or manual_mergify_queue or ci_cutover_manual_queue. The
   ci_v13_shadow term does not select test_v13_shadow; the broader run below
   explicitly selects v13_shadow.
-- Strict OpenSpec validation and code/spec diff checks passed. Broader canonical
-  delivery/shadow/coverage regressions and final exact-head review are pending.
+- The broader run first passed845tests and failed one old blanket prohibition
+  against the v1.3 scope name anywhere in Mergify configuration. That assertion
+  was updated to permit staged queue intent while explicitly forbidding observer
+  module/output consumption. Other control checks and the actual false-flag and
+  heavy-gate tests remain intact; no job, baseline or coverage was removed.
+- Final code436e2dd12c6070c882aac2730f4b9a207cfbda11 passed846tests,
+  4951deselected, zero skips,204.90seconds through canonical tests/run.sh:
+  `-k 'ci_v13_delivery or ci_delivery or ci_cutover or full_ci_coverage_parity or v13_shadow or ci_shadow or manual_mergify_queue'`.
+- Strict OpenSpec validation and code/spec diff checks passed. Local exact-head
+  root plus nine-specialist review is clean: architecture, performance, security,
+  QA, static/Sonar, contracts, data integrity, reliability and simplicity. This
+  is local review, not a hosted-bot, service or live-canary receipt.
 
 ## Publication and live follow-through
 
-Paired PRs, exact-head expert/hosted review, ordinary full CI, reusable full
+Paired PRs, exact-head hosted review, ordinary full CI, reusable full
 qualification, normal merges and actual main verification are not yet complete.
 Record actual handles/results before claiming them. No live queue command was
 issued. Owner full-CI run1 P02/P03 is separate; P02's helper change is excluded
