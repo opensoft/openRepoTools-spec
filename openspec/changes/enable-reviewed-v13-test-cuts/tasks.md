@@ -8,8 +8,8 @@
 
 ## 2. Verify actual external facts before final policy data
 
-- [ ] 2.1 Verify normal owner run1 closure/landing and source#100/spec#66 checked merges, current main/integrated-tree qualification and a safe merge window; record actual SHA/tree/run handles, never generated hints as completed evidence.
-- [ ] 2.2 Verify real fixture start/clone/stop/restart evidence at the exact revised helper blobs, reusing an existing matching receipt or one deduplicated isolated coordinator CI smoke branch; record actual output and never run its sweep on user benches.
+- [x] 2.1 Verify normal owner run1 closure/landing and source#100/spec#66 checked merges, current main/integrated-tree qualification and a safe merge window; record actual SHA/tree/run handles, never generated hints as completed evidence.
+- [x] 2.2 Verify real fixture start/clone/stop/restart evidence at the exact revised helper blobs, reusing an existing matching receipt or one deduplicated isolated coordinator CI smoke branch; record actual output and never run its sweep on user benches.
 - [ ] 2.3 Read the actual P05/P06 corrected heads/parents, lane3 delta reviews, latest full checks, lane2 task confirmation and current foundation/map; verify no invented binding or owner PR edit.
 
 ## 3. Checked enablement publication
@@ -75,3 +75,40 @@ P05#92 and P06#94 have genuine completed clean Codex summaries at their exact
 corrected heads (comments6897744040/6897708923), with no unresolved review
 threads. These do not substitute for lane3's required owner delta reviews or
 fresh admission consent. No owner body, base or head was changed.
+
+### Integration and current-epoch qualification (2026-11-15 17:00Z)
+
+Normal parameterless full run43734991157 completed successfully, all15jobs
+passed, attempt1, actorbrettheap, workflow_dispatch of
+`.github/workflows/tests.yml` on `qualify/coord/v14-on-run2-197833ed` at
+84e24815a83b12a68096d34feab23818b6023c55. Its tree exactly equals actual
+landed main f0070e009bc6f183904549b69c710ef3982ca6e6:
+abfca197b24d01cddea7df34ae23015d993cc065. This is complete integrated-tree
+qualification, not a merge of the staging commit or an efficiency canary.
+The separate actual main-push run43735780675 is still running at this checkpoint;
+its result is not represented as passing.
+
+The normal full report accounts for all6387collected items across5shards:
+5625passed,762skipped,0failed,0errors. The no-submodule report accounts for
+all6387items across4shards:4251passed,2136skipped,0failed,0errors. These are
+the existing standalone/dependency/landing-gated paths, not zero-skip claims.
+Actual logs show required PostgreSQL16 in package and suite jobs, with
+`OPENREPOTOOLS_REQUIRE_PG=1`. All original jobs remain; no coverage baseline
+or job definition was changed.
+
+For the currently qualified immutable epoch f0070e0, Git comparisons independently
+prove all4foundation helper files and both frozen controls exactly match the
+successful real smoke source7825c3f, including regular-file modes. That smoke's
+actual session clone/query and SIGINT stop/restart/query output is recorded
+above. The read-only actual-Git inspection also confirmed P01-to-epoch ancestry,
+frozen controls/markers, both real two-commit P05/P06 histories, exact4/6-file
+cuts and unchanged source paths through this main. It wrote no policy or flag.
+This completes2.1/2.2 for that exact generation; later helper drift, including
+a P09 landing, requires reopening the affected qualification and matching new
+evidence. Nothing authorizes silently advancing the epoch or weakening fallback.
+
+Task2.3 remains incomplete: lane3 is intentionally paused with a saved handoff,
+so its required exact-head owner reviews have not started. Restart/resume is
+outside the existing authorization and has been requested from the user. Fresh
+owner consent and all enabled-publication/live gates remain outstanding. The
+working flag and actual profile bindings remain unchanged/false.
