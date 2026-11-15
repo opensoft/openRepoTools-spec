@@ -3130,7 +3130,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   - **The readiness check.**
     - Each fault case is the ready environment with that one fault added. It
       exits 2 and names that fault on its own `FAIL` line, and in the RE
-      cases no other line is `FAIL`. `[old-git]`'s line is check 14's, naming the shim's git 2.31.1 as older than 2.32. `[cache-payload]`'s line is check 1's, naming the cached module as not matching the release's source, on Python 3.11 and later; on 3.9 and 3.10, where check 1 compares no bytes, `[cache-payload]` asserts instead that `ready` exits 0, as the ready environment does, check 1's line passing and naming the module's source path (lane 3's ruling 2, #165 6885378657).
+      cases no other line is `FAIL`. `[old-git]`'s line is check 14's, naming the shim's git 2.31.1 as older than 2.32. `[cache-payload]`'s line is check 1's, naming the cached module as not matching the release's source, on Python 3.11 and later; on 3.9 and 3.10, where check 1 compares no bytes, `[cache-payload]` asserts instead that `ready` answers as its control does: the same exit, and every check line in its control's state, check 1's line passing and naming the module's source path (lane 3's ruling 2, #165 6885378657).
     - The ready environment itself exits 0, with one `ok` line per check.
     - **Check 10,** whatever `--expect` says (§2.4, check 10; V2's S-2). The
       fixture's configuration holds a `register_label=` equal to the label the
