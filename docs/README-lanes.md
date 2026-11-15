@@ -3940,7 +3940,7 @@ that repository):
 store=sqlite|postgres     default: postgres where url= is set, else sqlite
 sqlite=<path>             default ${XDG_STATE_HOME:-~/.local/state}/openRepoTools/lanes-index.sqlite
 url=<libpq URL>           the WRITER role — sync and reconcile
-passfile=<path>           the 0600 libpq password file for it
+passfile=<path>           the libpq password file for it, with no group or other bit
 reader_url=<libpq URL>    the SELECT-only READER role — status and the --index reads;
                           REQUIRED beside url=, or those reads are refused
 reader_passfile=<path>    its password file, where it is not the same one
@@ -3949,7 +3949,8 @@ schema=<name>             the Postgres schema (default lanes_index)
 
 Refused (exit 2, nothing read or written): a configuration that is group- or
 world-readable, inside a git work tree or under `~/.agents/`; a URL that
-carries a password in any spelling; a password file that is not 0600; a SQLite
+carries a password in any spelling; a password file that is not a regular
+file, or that group or others can reach (0600 and 0400 both pass); a SQLite
 path inside a git work tree. A Postgres configuration with no `reader_url=` is
 refused for `status` and the read flags (`read: sources (index refused …)`):
 **a read never connects with the writer's credential**, and there is no
@@ -4606,13 +4607,13 @@ and 9. It is there and not here so that one table says every code.
 ### `mode=primary`
 
 `lanes-index.conf` (the file "The store and its configuration" describes, never
-committed, with no group or other permission bit (0600), never under
-`~/.agents/`) gains keys beside the old ones:
+committed, a regular file with no group or other permission bit (0600 and 0400
+both pass), never under `~/.agents/`) gains keys beside the old ones:
 
 ```text
 mode=index or primary     default index: today's behaviour
 register_url=<libpq URL>  this engineer's own writer URL for the register
-register_passfile=<path>  its password file, with no group or other bit (0600)
+register_passfile=<path>  its password file, with no group or other bit (0600 or 0400)
 register_label=<label>    the label of the database register_url= reaches
 register_schema=<name>    default lanes_register
 render_key=<path>         the renderer identity's key file, with no group or other bit, where one is used
