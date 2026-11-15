@@ -13,7 +13,11 @@ The system SHALL provide a separate manual v1.3 queue, limited to at most two
 independent main-targeted same-repository ready members in the existing test-only
 scope. Entry SHALL require repository-writer permission, matching v1.3 intent,
 supported task-set identity and GitHub Actions fast/delivery success. Merging
-SHALL require the authenticated complete batch-heavy check. No automatic entry,
+THROUGH THIS MANUAL QUEUE SHALL require the authenticated complete batch-heavy
+check. Fast-only sources MUST use this queue and MUST NOT be direct-merged;
+that queue-only usage is an operator requirement, not a claim that the existing
+delivery-only service protection prevents every outside-queue merge. This stage
+SHALL NOT introduce or claim a repository-wide heavy-check requirement. No automatic entry,
 retry, failure split, existing-queue edit or protection-injection weakening SHALL
 be added. Eligibility SHALL NOT grant admission, review or merge authority.
 
@@ -35,6 +39,11 @@ exact empty-marker inventory. Missing lineage SHALL mean the existing single
 P01 child only. Unpinned, reordered, duplicate, overlong, merge or out-of-scope
 histories SHALL refuse observation/proof; exact-head review and all rereads SHALL
 remain mandatory. A policy edit alone SHALL NOT establish owner acceptance.
+For an explicit pinned lineage, this requirement supersedes the single
+"original parent" condition in `prepare-v13-delivery-cutover`'s
+`v13-trusted-delivery` requirement: that original-P01-parent condition SHALL
+apply to the FIRST pinned commit, not the final registered head. Every later
+pinned commit SHALL have only the immediately preceding pinned commit as parent.
 
 #### Scenario: Reviewed correction to a test gate row
 - **WHEN** the trusted policy pins an original valid child and its exact linear test-only correction and the current head matches the last commit
