@@ -48,3 +48,30 @@ template clone and SELECT1, then postmaster SIGINT stop, restart and SELECT1.
 The driver is the only added path; foundation helpers, workflow and baseline
 match that parent. A later helper revision requires matching qualification;
 this receipt does not select the final epoch or complete group2's other gates.
+
+### Current-main preparation refresh
+
+Code#100 merged normally as f0070e009bc6f183904549b69c710ef3982ca6e6;
+spec#66 merged as 4007d4addd49bcff9625f4d0f320b055720c629e. The code
+merge tree is abfca197b24d01cddea7df34ae23015d993cc065, identical to the
+independently reconstructed/staged integration tree. Actual main full run
+43735780675 and staged full run43734991157 are still pending, not passing
+evidence at this checkpoint. Group2.1 therefore remains incomplete.
+
+Preparation code7fe61c7f1c356556c9c5ebe8a1b175c94441292a normally includes
+that actual main without changing any owner file. It adds direct classifier
+checks for valid and invalid epochs: observation always remains full,
+non-authoritative and unable to admit work. Those positive checks initially
+failed because the simulated P01 PR omitted the author required by the
+unchanged snapshot reader. Completing that API fixture, rather than relaxing
+the reader, passed all24foundation cases in23.45s. The broader canonical
+selector above then passed870tests,5541deselected,zero skipped,in239.12s.
+The larger collection includes the preserved P04 tests; this focused selector
+does not substitute for their hosted full qualification. Incremental QA review
+at that exact preparation head was clean. Real policy data and flag remain
+unchanged/false; final enabled-head review and hosted checks are still required.
+
+P05#92 and P06#94 have genuine completed clean Codex summaries at their exact
+corrected heads (comments6897744040/6897708923), with no unresolved review
+threads. These do not substitute for lane3's required owner delta reviews or
+fresh admission consent. No owner body, base or head was changed.
