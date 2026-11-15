@@ -1,0 +1,35 @@
+{
+  "scope": "P01 exact source artifacts only; not post-merge main, activation, live, release or assembly acceptance",
+  "source_head": "7f1141be15ac9c0d20c25c802ba9533c2fec811c",
+  "ordinary_run": 43668227022,
+  "reusable_run": 43668227055,
+  "source_inventory": "GitHub recursive source tree at source_head, truncated=false",
+  "source_modules_per_variant": 83,
+  "shards_per_run": 9,
+  "comparison": "Same planned files/sections, collected IDs, JUnit identities/outcomes, skip types and reasons; runtime/timestamps ignored",
+  "exact_parity": true,
+  "missing_duplicate_or_extra_source_modules": 0,
+  "duplicate_collected_or_junit_ids": 0,
+  "tests": {
+    "cases": 5564,
+    "passed": 5391,
+    "skipped": 173,
+    "skip_type": "pytest.skip",
+    "fixture_cases": 10,
+    "fixture_skips": 0,
+    "case_outcome_sha256": "78d78acc54b9b13a7982291a769c8fd53e41f8f7f3efe897caa5a3e48d412cb7"
+  },
+  "tests-no-submodule": {
+    "cases": 5564,
+    "passed": 4040,
+    "skipped": 1524,
+    "skip_type": "pytest.skip",
+    "fixture_cases": 10,
+    "fixture_skips": 0,
+    "case_outcome_sha256": "b9021da3f1d218d7e7651ea7e2a4fa7df2349c0a1986b2e3b577d7a7cd09b52e"
+  },
+  "observed_skip_categories": ["built-wheel contract", "missing pinned upstream in no-submodule mode", "zsh unavailable", "standalone missing assembly/spec roots", "composed acceptance deferred", "byte-count branch not applicable"],
+  "skip_approval_inferred": false,
+  "ordinary_artifact_ids": [14144535964, 14144226492, 14144092970, 14143896020, 14143845707, 14143808768, 14143752671, 14143562333, 14143254049],
+  "reusable_artifact_ids": [14144461351, 14144335389, 14143865752, 14143816692, 14143745683, 14143703115, 14143569732, 14143478731, 14142789245]
+}
