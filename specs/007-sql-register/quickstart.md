@@ -55,9 +55,9 @@ install", #165 6723925474).
 ## An engineer's workstation
 
 1. **Its file reads:** Brett checks it with `lanes-index status` (ops:210).
-   `lanes-index` refuses a file that is group- or world-readable, inside a
-   git work tree or under `~/.agents/`, or a URL that carries a password
-   (ops:211).
+   `lanes-index` refuses a file that is not a regular file or has any group
+   or other permission bit (0600 and 0400 both pass), inside a git work
+   tree or under `~/.agents/`, or a URL that carries a password (ops:211).
 2. **Readiness.** The operator lane runs it in every writing environment
    the workstation has, each bench container and each host shell
    (ops:221–222), with each environment's own label (lane 1, #165 6882063682):

@@ -648,7 +648,7 @@ are the design's (the council's product seat, P8):
   readiness check fails on a stale digest, a missing `psql`, an early
   `mode=primary`, a role with a GRANT outside its scope and an installed
   `lanes-index` that still refuses `mode=primary` (Q6(c)); the flip writes only
-  `mode=` and keeps the file's 0600 mode.
+  `mode=` and keeps the file's own permission bits, so a 0600 file stays 0600.
 
 ### Claim order is commit order (S6)
 

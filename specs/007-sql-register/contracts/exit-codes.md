@@ -290,7 +290,7 @@ F8's table (Y:5707–5716) [Y] is the callers' map, and each caller's arm belong
 
 | `lanes-index mode`'s end | What the caller does (Y) |
 |---|---|
-| 2: a named file that is missing; a key, line or 0600 check refused; a mode value other than `index` or `primary` | files mode, with a warning |
+| 2: a named file that is missing; a key, line or file-permission check refused (not a regular file, or any group or other permission bit); a mode value other than `index` or `primary` | files mode, with a warning |
 | 64, from a `lanes-index` too old to have `mode` | files mode, with a warning |
 | 127, `lanes-index` or `python3` missing | files mode, with a warning |
 | 1, or 128+n: a crash, a signal | files mode, with a warning |

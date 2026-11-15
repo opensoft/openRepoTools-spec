@@ -2500,7 +2500,7 @@ rename.
   2. `import --at C` proves its render (test 7).
   3. The cutover sets the switch and pushes the marker. The flip command then
      sets `mode=primary` in each workstation: only that line changes, and the
-     file stays 0600.
+     file keeps its own permission bits, so a 0600 file stays 0600.
   4. R3b's smoke test: `log NOTED` gives its row, the `Register-Seq` one above
      the cutover's (2 at this first cutover) and a lag
      of 0 (P1289–1291).
@@ -3054,7 +3054,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     that is not the switch's label (check 10, §2.4, folded at commit Q from
     V2's S-2 and lane 1's v2.8), and a host its URLs name that resolves to
     more addresses than `register_addresses=` (check 13, §2.4), and, since T119's follow-up 2, a `git` older than 2.32, no `git` on `PATH`, or a `git --version` that names no version it can read (check 14, git 2.32 or later, which `ready` runs last; lane 1, #165 6877889644), and, since T124, an installed cached module whose code payload differs from a checked-hash compilation of the digest-checked module, though its header keeps flags 0b11 and the module's source hash (check 1; lane 3's ruling, commit 20's post), a fault on Python 3.11 and later only, since on 3.9 and 3.10 check 1 compares no bytes, reports the module's source path and passes (lane 3's ruling 2, #165 6885378657);
-  - the flip writes only `mode=` and keeps the file's 0600, and setting
+  - the flip writes only `mode=` and keeps the file's own permission bits, so a 0600 file stays 0600, and setting
     `primary` refuses with 2 unless the switch is `primary`, the marker
     `present`, and the fetched `lanes/STORE` names this database.
 
@@ -3165,7 +3165,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
       address, the failing case is recorded as not run, with the count.
   - **The flip.**
     - A diff of the configuration file shows only the `mode=` line.
-    - The file stays 0600.
+    - The file keeps its own permission bits: a 0600 file stays 0600.
     - The password file is unchanged.
     - A configuration the flip cannot write is refused, with nothing
       written. A read-only mount is flipped from the host (P620–622).
@@ -7373,7 +7373,7 @@ design. No other host path appears in a test.
       asserts for the index.
     - Never the indexer's `url=` for a register write (P154–157).
   - **Credentials.**
-    - The 0600 password file, with a looser one refused, as today.
+    - The password file, a regular file with no group or other permission bit (0600 and 0400 both pass), with one that has any such bit refused, as today.
     - `PGPASSWORD` never set.
     - No credential in argv, and no connection string, `service=` or `-d`
       for the admin service, which reaches `psql` only as `PGSERVICE` in its

@@ -208,7 +208,7 @@ Brett's ruling (#165 6723925474): the register's database is "CNPG in the instal
    - **Command:** place the 0600 password files and `lanes-index.conf` in the host's dedicated read-only mount (Q23 (a), `proposal.md:1836-1839`). The file carries `mode=index`, `reader_url=`, and the REGISTER-WRITER's pair, `register_url=` and `register_passfile=` (`proposal.md:152-153`, which names them "for example"; R3a's spelling, `r3a/REPORT.md:323`), `register_label=` **(new)**, the label step 2's `--label` gave the database those URLs reach, which `cutover` sends as its label (2.3, S-2), and, under Q21(b) (B), `render_key=`, which names the renderer identity's 0600 key file (D23; step 9).
    - **Per engineer:** each workstation's file names its own engineer's two logins and its own two 0600 password files (`design.md` §1.4, "One engineer's file"); no workstation holds another engineer's line.
    - **Check:** `lanes-index status` reads; `ready` (step 6).
-   - **Refusal:** `lanes-index` refuses the file when it is group- or world-readable, inside a git work tree or under `~/.agents/`, or when a URL carries a password (`code/lanes-index:60-70`).
+   - **Refusal:** `lanes-index` refuses the file when it is not a regular file or has any group or other permission bit (0600 and 0400 both pass), inside a git work tree or under `~/.agents/`, or when a URL carries a password (`code/lanes-index:60-70`).
    - **Way back:** remove the new keys. `mode=index` behaves as today (`proposal.md:88-90`).
 4. **The bench images, once.** Brett acts.
    - **Command:** one rebuild, then a recreate. The rebuild carries the re-vendor (Q24), the configuration mount (Q23) and 1A's `postgresql-16` (`proposal.md:947-950`, `:1853`).
