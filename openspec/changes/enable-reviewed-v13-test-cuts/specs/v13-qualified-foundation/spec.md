@@ -102,3 +102,42 @@ including the generated hint. A hint lookup SHALL NOT confer omission by itself.
 #### Scenario: A real base change or later live hint change occurs
 - **WHEN** the event base differs from live main or the original live PR changes after the first read, even to an equivalent hint
 - **THEN** omission proof refuses and full fallback remains
+
+### Requirement: Same-head fast history cannot substitute older success
+
+Fast provenance SHALL select only the unique newest canonical fast workflow for
+the exact source head. The configured workflow catalogue SHALL be complete and
+bounded to100 rows, with exact PR-event/path/repository/head/branch identities,
+positive unique IDs and per-workflow run numbers, and one workflow identity.
+Selection SHALL use the greatest run_number, not check order, IDs or success.
+Every named check SHALL authenticate its Actions app, exact head/name, URL/job
+identity and unique matching catalogue run/check suite. The selected run SHALL
+have exactly one matching current check plus all existing independent run/job,
+attempt, current source/base, retarget history, success and reread proof.
+Catalogue selection SHALL be rechecked before proof; newer events SHALL refuse.
+Initial catalogue attempt identity SHALL match the independently authenticated
+current run and catalogue state SHALL be evaluated. Final catalogue identity,
+attempt and state SHALL match that successful run. A same-ID rerun or observed
+contradictory pending/failed state SHALL NOT be ignored merely because the run
+ID and workflow sequence are unchanged.
+
+Historical authentic checks MAY coexist, but SHALL confer no omission authority.
+The newest failure or cancellation SHALL NOT borrow an older green. A missing
+newest check/job, even with a pending run, SHALL retain immediate full refusal.
+Only complete authenticated current pending evidence MAY use the existing
+bounded observation behavior. Foreign, malformed, duplicate, unrecognized,
+truncated, incomplete or raced evidence SHALL retain full. This amendment SHALL
+add no retry mechanism, permission, credential, queue/profile scope, workflow,
+baseline, installed-tool, lane/session or release change.
+
+#### Scenario: An unchanged head has several authentic canonical events
+- **WHEN** the complete catalogue and named checks agree, the unique newest run is successful, and every independent current provenance check passes
+- **THEN** historical authentic checks do not make that selected current proof ambiguous
+
+#### Scenario: An older green exists but the newest event is not proven
+- **WHEN** the newest run failed, was cancelled, is pending or lacks its current job
+- **THEN** no older result supplies proof; existing authenticated-pending rules or immediate full refusal apply without omission authority
+
+#### Scenario: Catalogue identity or latest selection changes
+- **WHEN** catalogue/check coverage is incomplete or forged, workflow/sequence identity is ambiguous, or a newer event appears during reads
+- **THEN** full CI remains required rather than selecting a convenient green

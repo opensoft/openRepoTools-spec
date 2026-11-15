@@ -114,3 +114,44 @@ landing and coverage-parity tests. Land the narrow paired repair normally after
 exact-head local expert/Codex review and ordinary full/reusable qualification.
 Only then ask owners for fresh source events and exact-main consent, followed
 by the original two-PR canary. Do not claim the prior full-source runs saved CI.
+
+## Same-head canonical fast-workflow history amendment
+
+Before admission, read-only API preflight found three genuine named fast checks
+per unchanged P05/P06 head, even with filter=latest. The old global len==1 check
+therefore refuses normal repeated canonical events. Rewriting an owner head to
+erase that history is not an acceptable workaround. Code#107 stays draft until
+this companion repair is reviewed and qualified on its updated head.
+
+Read the configured task-set-fast.yml catalogue filtered to the exact head and
+pull_request event. Require complete bounded count/list agreement (at most100),
+exact repository/head/branch/path/PR-event identities, positive unique run IDs
+and run_number values, and one workflow_id. Select the unique highest workflow
+run_number, not API array order, check ID, run ID, completion time or any passing
+result. GitHub documents run_number as increasing per workflow and unchanged
+on rerun: https://docs.github.com/en/actions/reference/workflows-and-actions/variables.
+
+Every returned named check must have the expected Actions app/head/name, exact
+details URL/job identity and a unique corresponding catalogue run/check suite.
+Unknown or duplicate checks retain full. Require exactly one matching check for
+the selected newest run, then preserve the existing independent live run/job,
+attempt, current source/base association, complete retarget history, success and
+final rereads. Re-read catalogue selection before proof and refuse if a newer
+canonical event appeared. Preserve the existing receipt shape and raw check/run
+stability requirements; historical rows confer no permission themselves.
+
+Catalogue identity includes the run attempt: reruns keep the run ID and workflow
+sequence. The initial selected catalogue attempt must match the independent
+current run, and its state must be evaluated rather than ignored. The final
+catalogue reread must match the authenticated successful run's complete selected
+identity/attempt and successful state, not just its ID. Any observed same-ID
+rerun or contradictory pending/failed state prevents proof.
+
+Older authentic failed or pending events do not supply proof or replace the
+selected event. The newest failed/cancelled evidence refuses, and complete
+authenticated current-job pending evidence may use only the existing bounded
+observation path. A missing newest check/job remains immediate full refusal,
+even when its catalogue run is pending; never add a wait grant for incomplete
+evidence or fall back to an older green. Foreign, malformed, incomplete,
+truncated, duplicate, mismatched or raced catalogues retain full. Use only
+existing read permissions, with no workflow/job/baseline/queue/profile changes.
