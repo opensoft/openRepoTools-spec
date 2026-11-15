@@ -10,11 +10,11 @@
 
 - [x] 2.1 Verify normal owner run1 closure/landing and source#100/spec#66 checked merges, current main/integrated-tree qualification and a safe merge window; record actual SHA/tree/run handles, never generated hints as completed evidence.
 - [x] 2.2 Verify real fixture start/clone/stop/restart evidence at the exact revised helper blobs, reusing an existing matching receipt or one deduplicated isolated coordinator CI smoke branch; record actual output and never run its sweep on user benches.
-- [ ] 2.3 Read the actual P05/P06 corrected heads/parents, lane3 delta reviews, latest full checks, lane2 task confirmation and current foundation/map; verify no invented binding or owner PR edit.
+- [x] 2.3 Read the actual P05/P06 corrected heads/parents, lane3 delta reviews, latest full checks, lane2 task confirmation and current foundation/map; verify no invented binding or owner PR edit.
 
 ## 3. Checked enablement publication
 
-- [ ] 3.1 Fill only verified exact epoch/profile data, update the named queue/instructions for P05/P06 and enable delivery; rerun canonical full focused contracts, strict spec and preservation/diff checks and record actual counts.
+- [x] 3.1 Fill only verified exact epoch/profile data, update the named queue/instructions for P05/P06 and enable delivery; rerun canonical full focused contracts, strict spec and preservation/diff checks and record actual counts.
 - [ ] 3.2 Perform exact-head expert and genuine Codex review plus ordinary full/reusable qualification; normally merge paired PRs only when all latest-head/current-main gates pass, then verify actual main/policy/trees without resetting an active owner candidate.
 
 ## 4. Separately consented live acceptance
@@ -148,3 +148,48 @@ full CI is green, lapses on a head change, requests no enqueue and imposes no
 hold. Lane3/coordinator determine timing relative to P09's revised foundation.
 Owner PR bodies/bases/heads remain untouched. Task2.3 and all enabled-publication
 and live-acceptance tasks remain unchecked until their actual gates pass.
+
+### Exact-head owner gate completed
+
+Lane3 accepted independent Opus5.5 delta reviews READY at both exact heads:
+P05#92 `2a02cd9eba113329870ed7eba6efd470375b8739`, record6898716602,
+report sha256 `96c6533a6c2765003abb3775399e8637333b44db0d46d70e449badbcc94f51d7`;
+P06#94 `bcc8858bf587fbe86b00264b41caca1b39ccfc72`, record6898717748,
+report sha256 `8db83913c96c7c4cf32415c50fa4aaa13323fdf42dfc272014eb5aa0b24161ae`.
+Lane3's combined acceptance6898740891 explicitly confirms no BLOCKING or SHOULD
+open on either head; lane2's exact-head conditional consent6898422904 takes
+effect. The full15/15 source runs and unchanged heads/current main were re-read.
+This closes2.3, not publication or admission. The separate P05 coordination
+SHOULD requires the actual registry/queue update and lane1's matching intent
+headers before canary admission; it is not waived by these owner reviews.
+The coordinator now prepares that checked code change. No owner PR body,
+base/head or session was changed, and actual default-branch delivery is still
+false until the separately reviewed code PR normally lands.
+
+### Proposed code enablement prepared and locally qualified
+
+Code `2f2da2342a57f848365abe3e81bb82ba21d80fbd` binds the verified exact P05/P06
+heads, two-commit histories and complete task/file inventories, spec anchor
+`a3366afcc059b4686c990f4715c36dac9b1db05b`, and the qualified f0070e0 epoch's
+four regular helper blobs. It proposes the delivery flag true, keeps observer
+efficiency false, changes only the fifth queue's task filter to P05/P06 and
+updates the shared instructions. Actual default-branch delivery remains false
+until its separate checked normal merge. No owner PR metadata or head changed.
+
+Four final publication/queue tests first gave three expected failures and one
+pass against unchanged legacy data, then all four passed in5.95s. The original
+19 queue-refusal vectors also passed. The complete focused canonical selector
+recorded above passed874tests,5541deselected,zero skipped,in254.23s. This is the
+original846 plus24foundation scenarios plus4final publication/queue vectors;
+legacy fixtures and disabled/refusal paths remain. No original coverage was
+removed. A separate read-only real-Git check accepted both committed source
+histories and rejected the retired P03, old P05 and old P06 heads.
+
+The master and all nine expert roles reviewed that exact code head against
+actual main f0070e0 and were clean. Workflow definitions, coverage baseline,
+foundation helpers, provider pin, contracts and the first four queue definitions
+are unchanged. Task3.2 remains pending latest-head hosted CI/review and normal
+merge; task4's canonical owner intent/events, admission and complete live proof
+remain outstanding. These local/source receipts are not effective activation
+or acceptance of the canary. Subsequent checklist receipts do not change the
+merged normative specification anchor used by the code policy.
