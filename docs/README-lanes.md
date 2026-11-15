@@ -4867,3 +4867,27 @@ Reconciliation with PR #97 keeps completed restart history under its original
 lane name when a lane is renamed. Only the diagnostic lifecycle snapshot and
 worktree inventory move to the new control root. The new canonical lane has no
 inherited restart operation; unfinished or unreadable intents still refuse rename.
+
+## Grouped project lookup
+
+`lane-start` discovers new default checkouts directly under `$PROJECTS_ROOT`
+and below up to two grouping folders, for example
+`$PROJECTS_ROOT/developerTools/Example` or
+`$PROJECTS_ROOT/business/Company/Example`. `park`, `resume` and `status` use
+the same bounded discovery under their configured `$PROJECTS_DIR` (or the
+existing home projects-directory defaults). Git repositories and estate
+manifests stop traversal. `workTrees`, `worktrees`, `laneWorkspaces` and
+`brett-wip-lanes` are supporting collections and are excluded.
+
+Aliases reaching the same physical checkout count once. Distinct matching
+checkouts require an explicit directory; discovery never chooses one by
+group ordering. Explicit and recorded lane paths keep their existing
+precedence, and a missing recorded path still refuses rather than silently
+relocating a lane. Discovery does not move repositories, change pins, or
+convert independent register clones into worktrees.
+
+Estate commands also discover grouped clones for `--repo owner/name`. Multiple
+distinct development checkouts with the requested origin refuse selection.
+Linked worktrees, pinned submodules and bare repositories are not new default
+lane checkouts. Explicit paths continue to support intentional lane worktrees.
+Estate name lookup retains its existing projects-directory spelling precedence.
