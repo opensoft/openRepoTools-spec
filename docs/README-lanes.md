@@ -4891,3 +4891,7 @@ distinct development checkouts with the requested origin refuse selection.
 Linked worktrees, pinned submodules and bare repositories are not new default
 lane checkouts. Explicit paths continue to support intentional lane worktrees.
 Estate name lookup retains its existing projects-directory spelling precedence.
+
+For an ambiguous estate name, stand in the intended estate and run `park`,
+`resume` or `status` without a name. For an ambiguous new lane default,
+use `lane-start --dir <path> <repo> <position>`.
