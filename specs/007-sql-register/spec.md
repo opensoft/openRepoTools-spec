@@ -64,7 +64,7 @@ and the only scope it takes, are:
 - [clarifications.md](../../openspec/changes/add-sql-register/clarifications.md).
 - The two delta specs:
   - [sql-register](../../openspec/changes/add-sql-register/specs/sql-register/spec.md),
-    with 69 requirements at Y;
+    with 69 requirements at Y, and a seventieth, FR-064's, since the follow-up's commit 18;
   - [register-service](../../openspec/changes/add-sql-register/specs/register-service/spec.md),
     with 19.
 - [test-plan.md](../../openspec/changes/add-sql-register/test-plan.md), lane
@@ -674,7 +674,7 @@ fixture: tests 7, 8 and 13, P8, D22, and AT-F18.
    - check 13: an endpoint whose address count is above
      `register_addresses=`, which the install's one A record makes 1; a
      count at or below it passes and prints both (ops:456; ops:151;
-     lane 3, #165 6812031872).
+     lane 3, #165 6812031872); and check 14, git 2.32 or later: a `git` older than 2.32, none on `PATH`, or one whose `--version` names no version `ready` can read (lane 1's T119 follow-up 2, #165 6877889644).
 6. **Given** a dump of both schemas restored into a new database, **When**
    `bootstrap --roles-only` has run before the restore, **Then** PUBLIC holds
    no CONNECT on it, the writer and reader groups and the indexer's login
@@ -721,7 +721,7 @@ still works without it.
 
 - byte-identical answers;
 - the fallback line;
-- the service's answer under 50 ms on the fixture register.
+- on the fixture register, T237's figure against 50 ms, the served median of the whole hook, recorded with a warning only: it gates nothing and is not SC-005's connect-to-last-byte p95, which T343's run on its scratch database gates at the release.
 
 **Acceptance Scenarios**:
 
@@ -732,7 +732,7 @@ still works without it.
 3. **Given** the service down, or accepting and never answering, **When** a
    client calls, **Then** the client reads directly, and writes go on.
 4. **Given** a first call where the service can start, **When** it is made,
-   **Then** the service starts with no supervisor, and answers.
+   **Then** the service starts with no supervisor; that call reads directly, and the service answers from the next call (lane 3's erratum, on lane 5's SHOULD 3, row 1: design SVC-4's "The guard never waits for a start" and spec#46's contract; #165 6879679278 and 6879724890).
 5. **Given** the package metadata, **When** it is read, **Then** it lists no
    runtime dependency and no database driver.
 6. **Given** the `SessionStart` block, **When** it runs, **Then** it reads
@@ -1128,10 +1128,10 @@ are lane 3's rulings memo's).
 
   Each writer process MUST ask the mode once, before slice 1a's routing. On
   primary it MUST NOT enter the lane checkout by 1a's routing: it takes `<c>`
-  from `lane_checkout_path`, with no S3 work, and refuses with 2, naming
-  `lanes-edit.sh lane-checkout <lane> --create`, which makes it, as
-  `lane-start` does at a launch, where that checkout does not exist (R17;
-  lane 3, #165 6769061039). Sources: "How an attempt runs the verb"
+  from `lane_checkout_path`, with no S3 work, and refuses with 2 (but `request-handoff`, which refuses 64 there, as for each of its refusals before the claim: its missing lane, `LANES_NO_GIT=1`, `pw_lane_given`, a missing `<c>`, a pending hand edit and no author identity (T415, tasks:1155; `pw_checkout` exits `pw_pre_rc`'s code, `lanes-edit.sh:8764` at line R's merge104 `142afd90`, and `pw_pre_rc` prints 64 for `request-handoff` and 2 for every other writer, `:8737–8738`; lane 4, #165 6877053562; lane 3's ruling, commit 17's post)), naming
+  `lanes-edit.sh lane-checkout <lane> --create`, which makes it,
+  where that checkout does not exist, an explicit `LANES_REPO` included (R17;
+  lane 3, #165 6769061039 and 6841265575). Sources: "How an attempt runs the verb"
   (Y:4981); the primary branch (Y:4983); D7 (Y:455); D12 (Y:522).
 - **FR-019**: The commit seam's primary branch MUST keep every content check,
   and MUST refuse with 2 any staged path outside the write's pathspecs or
@@ -1407,10 +1407,10 @@ are lane 3's rulings memo's).
   - A secret is printed only to a terminal.
   - Passwords are SCRAM verifiers computed on the client.
   - Sources: ops:398; ops:407; ops:437; ops:462; ops:477.
-- **FR-055**: `ready` MUST make §2.4's checks 1 to 13 (ops:444–456). Check 11
+- **FR-055**: `ready` MUST make §2.4's checks 1 to 13 (ops:444–456), and a fourteenth, git 2.32 or later, run last. Check 11
   reads `verify-full` and the issuer's root file, and fails on `system`
   (ops:454); check 13 expects the install's one address, `N_a` 1 (ops:456;
-  ops:151).
+  ops:151); check 14 runs `git --version` with `LC_ALL=C`, passes where its first line names git 2.32 or later, and fails, with exit 2 like every failed check, where `git` is older, is not on `PATH`, or names no version it can read, since git before 2.32 ignores `GIT_CONFIG_GLOBAL`, which isolates the renderer's push (lane 1's T119 follow-up 2, #165 6877889644; lane 3, #165 6877365776; the contract's §10).
 - **FR-056**: `outage declare` and `outage clear` MUST write and remove the
   declaration beside `lanes-index.conf` (D20). The `--rollback` form needs
   `--mirror-seq <k>`, and refuses where its probe cannot read the switch.
@@ -1455,7 +1455,7 @@ are lane 3's rulings memo's).
   - each new name of "New and unproven".
 
   Each is written in the phase that builds what it checks, and lands with
-  that phase. Source: the test plan (Y:6084).
+  that phase, or before it under T280's landing gate, which skips it, naming its tasks, until they land; T281 removes the gate in the last set (Brett's "Temporary landing gate (Recommended)", 2026-11-13). Source: the test plan (Y:6084).
 - **FR-060**: `tests.yml` MUST set `OPENREPOTOOLS_REQUIRE_PG: '1'` where the
   binaries exist. It MUST keep the four required check names:
   `guard-launch-mode`, `tests`, `tests-no-submodule` and `package`. Source:
@@ -1471,6 +1471,19 @@ are lane 3's rulings memo's).
 - **FR-063**: New bash MUST hold to bash 3.2, and new Python to the standard
   library on Python 3.9 or later. `dependencies = []` MUST stay. Source:
   "New code keeps to the toolchain floor" (svc:51).
+- **FR-064**: `lanes-index` MUST start from PC-2's cached module, which
+  Brett's "(d) Both (a) and (c) (Recommended)" (2026-11-13) takes into 007: a
+  short launcher runs its body from a module beside it, `lanes_index_main.py`,
+  whose name lane 1 fixes, by that module's checked-hash cached bytecode (PEP
+  552), and every subcommand's argv, stdout, stderr and exit code MUST stay as
+  they are. Bytecode whose module source has changed MUST never run; where the
+  module has no valid bytecode, as where the install could not write it, the
+  launcher MUST run the module's source. `openRepoTools --install` MUST place the
+  module beside `lanes-index` and write its checked-hash bytecode for the
+  interpreter `lanes-index` runs on, and the release's digest list MUST name the
+  module, which `ready`'s check 1 digests, and not its bytecode; check 1 MUST also compile the digest-checked module with that interpreter in checked-hash mode and fail, naming the cached module as not matching the release's source, unless the result equals the installed bytecode byte for byte, so that the code the launcher runs, with no compile at a start, is the release's at check time, as every other installed file is. Sources:
+  "`lanes-index` starts from its cached module" (the sql-register delta, since
+  the follow-up's commit 18); PC-2; T124, T347.
 
 ### Key Entities
 
@@ -1495,7 +1508,7 @@ are lane 3's rulings memo's).
   `<act-id>@<seq>:<generation>` or `<act-id>@files`. `LANES_EXPECT` holds
   `row:`, `bind:`, `objects:`, `alias:`, `archive:` and `sid:` scopes.
 - **The bind record**: the session's offer file, in modes `binding`,
-  `bound`, `bind-failed` and `name-drift`, with `bound_s`, the pid and its
+  `bound`, `bind-failed` and `name-drift`, with `bound_s`, the pid and, where it can be read, its
   start time, and the five copies.
 - **The image cache**: `register-images/`, with content-addressed objects,
   per-seq manifests and a forward-only head `[PLAN CHOICE: the image cache's
@@ -1537,8 +1550,8 @@ are lane 3's rulings memo's).
 - **SC-004**: Answer 2 exits 2 with "BINDING" within 0.1 s after the guard's
   read returns, while a stub bind sleeps 15 s (AT-F6 (1); Y:5563).
 - **SC-005**: The service answers the guard's read in under 50 ms on the
-  fixture register, from the client's connect to the last byte of a
-  digest-checked answer (svc:278; SVC-10, Y:4387).
+  scratch database of T343's quickstart run, from the client's connect to the last byte of a
+  digest-checked answer (svc:278; SVC-10, Y:4387). It gates at the release, not in CI: T343's run, on a workstation with PostgreSQL 16, records, over at least 20 warm requests, n, the samples and their median and p95 of that time by nearest rank, rounded up to whole milliseconds, and fails unless n is at least 20, the recorded median and p95 are the samples' nearest-rank ones, and the p95 is under 50 ms. On the test fixture's register, CI's T237 records the served median of the whole hook instead: it only warns, gates nothing, and is not this connect-to-last-byte p95 (lane 3, commit 17's post; spec#17's re-review r4; the review of commit 18's delta).
 - **SC-006**: No write is lost or doubled in the tests (spec:236).
   - Test 12: exactly one journal entry per `write_id`, and exit 0 after a
     clean retry.
@@ -1572,7 +1585,7 @@ are lane 3's rulings memo's).
   function by name.
 - **v1.2.0 carried T017's five fixes, W2 and code#15, but not #165,** which
   Brett's "v1.2.0 now, 007 later (Recommended)" moved to v1.3.0
-  (2026-11-10T13:22:23Z; #165 6768477034). The three landed on Brett's
+  (answered by 2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`). The three landed on Brett's
   "Land them now, in v1.2.0 (Recommended)", whose option read "v1.2.0 then
   carries #165, T017's five fixes and these" (lane 3's #165 6723967774):
   - W2 is lane 2's seven fixes, code#8 to code#14;

@@ -451,16 +451,16 @@ written out below. This plan always says which set it means.
     - #282 (1a) and #307 (1b) as draft PRs by 2026-11-10, ready by
       2026-11-12;
     - #312, #316, #311 and #308 open by 2026-11-12, ready by 2026-11-17.
-  - **Q24, the release:** v1.2.0 carries #165 and T017's five fixes, #290,
-    #291, #295, #301 and #302, and the other issues milestoned v1.2.0 move
+  - **Q24, the release:** v1.3.0 carries #165. Brett's answer of 2026-11-08 gave v1.2.0 #165 and T017's five fixes, #290,
+    #291, #295, #301 and #302, and moved the other issues milestoned v1.2.0
     to v1.2.1 ("set 1.2.0 for 165 alone, 1.2.1 for the rest", then "let
     T017 ride in 1.2.0, retitle #343": comments 6721648587 and
-    6721870837). Whether Eagle and Raven install by pipx or by `./setup.sh`
-    stays open.
+    6721870837); his "v1.2.0 now, 007 later (Recommended)" (answered by 2026-11-10T13:22:23Z; comment 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`) then shipped v1.2.0 without #165, which v1.3.0 carries. Eagle and Raven install by `./setup.sh` (Brett's "1a 2b",
+    2026-11-12; lane 3, comment 6814260122), and check 1 there rests on the re-vendor's package (Brett's "Vendor release as package (Recommended)", 2026-11-13). Every other host shell installs by pipx v1.3.0, with the root one-liner only as a stopgap (operations.md, act 3, step 5).
 - **Still open** (the design's "Open questions" at W):
   - The expiry of any outage Brett declares, which he names later. No test
     reads it: AT-D20 expires a declaration with a UTC already past.
-  - Whether Eagle and Raven install by pipx or by `./setup.sh` (Q24).
+  - Answered since, and kept here so that no line moves: Eagle and Raven install by `./setup.sh` (Q24; Brett's "1a 2b", 2026-11-12), and check 1 there rests on the re-vendor's package (Brett's "Vendor release as package (Recommended)", 2026-11-13).
   - Whether the organisation's GitHub plan supports the ruleset, and whether
     it can name the render set exactly (Q21(b), D23). Nobody has checked.
   - Whether every environment has git 2.32 or later, which the deploy key's
@@ -543,7 +543,7 @@ rename.
   P501–506). With it, the test checks four more things:
   - every row the write touched reads back `primary` as the mode that wrote it
     last (P183–188);
-  - the journal entry carries the write's commit message exactly as today
+  - the journal entry carries the write's commit message exactly as today, `rename-lane`'s on primary excepted (Y:3451)
     (P299–303);
   - the line's UTC is the database's, in whole seconds (P665–674);
   - the renderer touches nothing outside its four paths (P307–309).
@@ -577,7 +577,7 @@ rename.
     - every path outside those four is unchanged.
   - **The journal.**
     - It gains exactly one entry, at the old head plus one.
-    - Its message equals the twin's commit message, byte for byte.
+    - Its message equals the twin's commit message less that message's one final LF, byte for byte, but `rename-lane`'s on primary, which is the message the design names under Q13(a) (Y:3451), since the handoff is not in its entry (lane 3, #165 6859179515; lane 4, #165 6870452610).
     - It carries a `write_id`, unique in the journal.
   - **The rows.** Every row the entry touched reads `primary` as its last
     writer's mode.
@@ -615,7 +615,7 @@ rename.
     once, and a rerun adds no entry and makes the move; a handoff that
     cannot be stamped refuses before anything is sent. A rerun that finds
     its write id committed runs the tail (lane 4's row 24, as lane 3 ruled
-    it in comment 6710770304), which AT-D8 asserts;
+    it in comment 6710770304), which AT-D8 asserts; and, beside it, `test_rename_lane_commits_the_transaction_only_where_its_handoffs_path_has_no_cache_part_on_primary` (W), new in B15 (REV422c N1; lane 3's batch c, Q56, #165 6807881675): a row whose handoff is at a path with a `venv/` part, and one whose handoff is at a path with a `__pycache__/` part, each refuse 2 before the seam, with no commit call, no register line and no move;
   - `test_a_caller_composed_utc_and_log_paused_utc_stay_as_written` (W): a
     UTC the caller wrote into the line, and `log PAUSED`'s, is stored and
     rendered byte for byte, not replaced by the database's clock;
@@ -688,6 +688,10 @@ rename.
     so that its last structured row breaks a CHECK, as §1.3 proposes. For
     each multi-file write, the line edits and the earlier rows of the entry
     have changed inside the transaction when the CHECK fails with 23514.
+    First, as its control, the same write runs with no arm, on an estate
+    and a database of its own, and must exit 0: a write that fails on
+    primary by itself would pass this case with its own 23514, so the case
+    fails at the control instead, and says so.
 - **Oracle.**
   - **The exit and stderr.** The writer exits 69. Stderr names the store,
     without credentials, and the error (P213–214). A read verb prints nothing
@@ -894,8 +898,8 @@ rename.
     ends in a `COMMIT` too.
   - **The deadline (A″).** D7 sets it at 30 s, and
     `LANES_REGISTER_DEADLINE_S` sets it for tests, in whole seconds
-    (`design.md` S1). The burst, case (c), runs with the variable unset, at
-    D7's default; the busy case (d) sets it to 1; and case (h) leaves it
+    (`design.md` S1). The burst, case (c), sets it to the runner's own D7, as
+    case (c) says; the busy case (d) sets it to 1; and case (h) leaves it
     unset, to assert the 30 s default once.
 - **Oracle.**
   - **(a) Two claimants, W = 200 ms.**
@@ -918,7 +922,7 @@ rename.
   - **(c) The burst.** Section 4.1's oracle, with the seqs counted from the
     cutover's entry: the ten writes take seqs 2 to 11, with no gap and no
     repeat (the delta's "A burst loses no writer"). It runs with
-    `LANES_REGISTER_DEADLINE_S` unset, at D7's 30 s default.
+    `LANES_REGISTER_DEADLINE_S` set to the runner's own D7, the per-workstation formula of the phase plan's "D7 stays 30 s", `max(30 s, 10 × the runner's attempt p95)`, in whole seconds rounded up (the writer honours whole seconds only, `lanes-edit.sh`'s `pw_deadline_s`, so the test rounds the formula up itself; lane 2 confirmed, #165 6869910867), which the test sets from its own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13). Its attempts come from a measuring burst of the same shape, run just before it in an estate of its own: ten writers released together, W = 200 ms, a cold image cache, and a deadline of 120 s that none is meant to reach. Each attempt runs from its snapshot request's start to the next one's, or to its commit call's end for the deciding attempt, and the p95 is by nearest rank over all of them (lane 2, #165 6869910867). D7's default stays 30 s, and case (h) asserts it.
   - **(d) Busy.** Two writers on distinct objects, W = 2 s, deadline 1 s.
     - One exits 0. The other exits 75. The frame wins here: D7 names the
       code the proposal left to the design.
@@ -994,7 +998,7 @@ rename.
   - The barrier, not a sleep, makes the writers simultaneous.
   - The window, 200 ms or more, is far above scheduling jitter.
   - Every assertion is about counts, codes and order, except the two below.
-  - The burst runs at D7's 30 s default. Its outcome, every writer committed
+  - The burst runs at the runner's own D7, case (c)'s, never under D7's 30 s default. Its outcome, every writer committed
     and none exiting 75 (the delta's "A burst loses no writer"), depends on
     time through that deadline alone. The probes' 2.26 s drain was
     `psql` alone. A real attempt costs about 0.55–0.61 s (lane 4's section,
@@ -1004,12 +1008,12 @@ rename.
     The burst's 55 verb runs and 110 Python starts are about 28 CPU-seconds
     on the measuring host, so a runner with c cores needs at least 28/c s of
     wall time, and its margin is less. The burst's drain, from the release
-    to the last exit, is asserted under twice the deadline, 60 s (timing
-    rule 2), and recorded against the 30 s with its margin, beside each
+    to the last exit, is asserted under twice the deadline it ran under (timing
+    rule 2), 60 s at the default, and recorded against that deadline with its margin, beside each
     writer's attempts, counted as snapshot calls in the shim's log and not
     asserted. A runner that cannot drain the burst inside the deadline is a
     finding on D7's value, which the delta requires to exceed the largest
-    burst's drain, and not flake (open point 32).
+    burst's drain, and not flake (open point 32). Since case (c) sets its deadline from the runner's own attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13), a slower runner lengthens the deadline with its attempts.
   - Case (h) asserts the default by a lower bound, 29 s from the launch
     (timing rule 3), which load only lengthens, and by an upper bound at
     twice the design's (timing rule 2).
@@ -1518,6 +1522,13 @@ rename.
   - `test_the_first_write_after_cutover_is_the_cutovers_seq_plus_1_with_lag_0`;
   - `test_the_cutover_aborts_when_main_moved_under_lanes`;
   - `test_a_handoff_commit_on_the_tip_does_not_abort_the_cutover`;
+  - `test_a_first_cutover_over_a_hold_with_no_readable_time_is_refused_2_and_sets_nothing`
+    (new since v3f, T211n): over the fixture's `HOLD` with no readable time,
+    left open, the first-form cutover exits 2 before its step 1, lists the
+    take with "time unreadable", and sets nothing (`contracts/exit-codes.md`'s
+    `cutover` 2; lane 3, #165 6813195977). Every other cutover case on the
+    fixture register first has the take's holder, the operator lane, write
+    its `HOLD RELEASED`, as act 4's holders do (§2.2);
   - `test_main_slots_pairing_equals_files_mode_rule_6_on_imported_history`:
     on the imported fixture register, whose `HOLD`, `LANDING` and `LANDED`
     lines name one repository under two spellings and close takes out of
@@ -1874,12 +1885,12 @@ rename.
   - a write by another process between two requests is in the next answer;
   - no environment a session inherits carries a database URL or password
     (Amendment 14(c));
-  - the service's answer time is recorded against SVC-10's 50 ms on the
-    fixture register, with today's direct guard beside it (P5). Every
+  - T237's figure, the served median of the whole hook, which is not SC-005's connect-to-last-byte p95, is recorded beside SVC-10's 50 ms on the
+    fixture register, with a warning past it and never a failure, and gates nothing, since SC-005 gates the 50 ms at the release, in 007's T343 run on its scratch database (section 5.4), and with today's direct guard beside it (P5). Every
     answer crosses to the database (SVC-7), so act 3 records it against
     Brett's managed PostgreSQL with its RTT and Query count (section 5.6);
   - the `CLAUDE_NO_LANE=1` exception still exits 0 before any input
-    (P758–760).
+    (P758–760); and lane 5's T512 cases (A5, A7): `lanes-index status` prints the service's lines and its failure stamp (R44); the socket's directory is a 0700 directory of this uid and never a symlink, a client of another uid is closed by `SO_PEERCRED`, and an owner file from another pid namespace or boot is no service (SVC-2; ERR-27); `serve` refuses with 2 unless the mode answer is `primary` (SVC-5; R36); one instance holds `register.lock`, a second starter exits 0, and a stale socket is unlinked under the lock and rebound (SVC-4); and the service stops after its idle time and unlinks its socket (SVC-4; R37).
 - **Phase and kind.** N: the service and its read API. RE for the service
   against the cluster. FP for the credential and environment checks. A
   loopback listener for ADV-C4.
@@ -1893,7 +1904,7 @@ rename.
   - **Window and liveness facts:** a fake `tmux` on `PATH` answers `#W`. The
     live records sit under a temporary `$HOME`.
   - **The service** is started by the test on a socket in a short directory
-    (where the socket lives is Q2(c)'s).
+    (where the socket lives is Q2(c)'s). For T512's cases: the socket's directory, `${XDG_STATE_HOME:-~/.local/state}/openRepoTools/run/` (SVC-2); since CI has no second uid, `lanes-index` loaded in process with its peer-credential read replaced by one that answers another uid; a service killed and another started, for the stale socket; and `LANES_REGISTER_SERVE_IDLE_STOP_S` set, for the idle stop (R37).
   - **The stand-ins for a service that will not answer:**
     - "service down": no socket file, then a socket file with no listener;
     - "never answers": a Python stand-in that accepts and then blocks on a
@@ -1935,11 +1946,11 @@ rename.
     declaration's floor.
   - **A fresh write.** Request, a write by another process, request: the
     second answer equals the direct read made after the write.
-  - **The environment.** No variable carries the register password, the
+  - **The environment.** In the environments a session inherits, no variable carries the register password, the
     password file's path, `register_url=`'s value or any `postgresql://`
-    string. That covers the hook's own environment, the service's children,
-    and the fake `claude`'s recorded environment. The fake `psql`'s log shows
-    `PGPASSWORD` never set.
+    string. That covers the hook's own environment, the session's, and the fake `claude`'s recorded environment, and not the `psql` children.
+    For the service's own `psql` child and each direct read's, `PGPASSFILE` is the configured 0600 passfile of the call's role (`reader_passfile=` for READER; `contracts/config.md`'s password-file row; contract §2.2), while the literal password, the connection URL and `PGPASSWORD` stay absent (design: "`PGPASSFILE` and `PGOPTIONS` are the service's own"). The fake `psql`'s log shows
+    `PGPASSWORD` never set, and each call's `PGPASSFILE` the role's file (spec#17's re-review r4, its second BLOCKING finding; lane 3's ruling, commit 20's post; for lane 2, T213's owner, to confirm; lane 5's T512 runs the test).
   - **The answer time.** It is recorded as section 5 sets out, never asserted.
     On CI's fixture it is the local share; act 3's row is the production
     figure.
@@ -1993,7 +2004,7 @@ rename.
     declaration the guard can read, the guard answers from the mirror with
     its `read: mirror` line. Without a declaration it answers 2. D20 puts
     the declaration in a file beside `lanes-index.conf`, and its cases are
-    AT-D20's.
+    AT-D20's. **T512's cases (A5, A7).** `lanes-index status` prints the service's lines and its failure stamp, as T512 writes them in `cmd_status` (R44); the socket's directory is a 0700 directory of this uid, never a symlink (SVC-2); a client of another uid is closed by `SO_PEERCRED`; an owner file from another pid namespace or boot is no service, and the client starts none (ERR-27); `serve` exits 2 in files mode, in `mode=index` and on the shipped build, whose constant still refuses `primary` (R36; A10); a second starter exits 0 while one instance holds `register.lock`; a dead service's stale socket is unlinked under the lock and the new service binds it; and with `LANES_REGISTER_SERVE_IDLE_STOP_S` set the service stops after it and unlinks its socket, while a value under the 1 s floor is ignored, so the service runs on with no failure stamp (R37).
 - **Options.**
   - **Under Q2(g),** the client is a block at the top of
     `lanes-edit.sh guard`, or a separate program with a new hook string. The
@@ -2039,7 +2050,7 @@ rename.
     finds it running (lane 5's question 17, as lane 3 ruled);
   - `test_the_first_call_starts_the_service_with_no_supervisor` (SVC-4): with
     no service running, the client starts `lanes-index serve` detached, its
-    request is answered, and no supervisor process exists;
+    request is answered, by the direct read, since the guard never waits for a start (lane 3's erratum, on lane 5's SHOULD 3, row 1), and no supervisor process exists;
   - `test_a_service_that_cannot_start_falls_back_to_the_direct_read`: with
     `lanes-index serve` made to fail, the request is answered by the direct
     read, and no second start is tried within SVC-4's 60 s cooldown;
@@ -2053,7 +2064,7 @@ rename.
   - `test_the_guard_answer_time_is_recorded_beside_todays_direct_guard`;
   - `test_todays_direct_guard_is_timed_in_its_four_parts` (M5b);
   - `test_the_guards_register_parse_is_timed_on_a_real_sized_register_beside_todays_six_reads_through_git`
-    (M10's parse).
+    (M10's parse); and lane 5's eight, new since v3f (A5, A7; T512's verify): `test_status_prints_the_services_lines_and_its_failure_stamp`; `test_the_socket_directory_is_a_0700_directory_of_this_uid_and_never_a_symlink`; `test_a_client_of_another_uid_is_closed_by_so_peercred`; `test_an_owner_file_from_another_namespace_or_boot_is_no_service[namespace|boot]`; `test_serve_refuses_unless_the_mode_answer_is_primary[files|index|refusing-build]`; `test_one_instance_holds_register_lock_and_a_second_starter_exits_0`; `test_a_stale_socket_is_unlinked_under_the_lock_and_rebound`; and `test_the_service_stops_after_its_idle_time_and_unlinks_its_socket[stops|floor]`.
 - **Run time.**
   - The byte-identical and fallback cases take about 10–20 s. Today's guard
     took about 2 s wall in its register read on 2026-09-14 (C158–159); the
@@ -2484,7 +2495,7 @@ rename.
     point, the org's plan. Brett has named the paths: the render set and
     `lanes/STORE` (comment 6721583757; AT-6).
 - **The sequence, and its oracle at each step.**
-  1. The readiness check, `ready --expect index`, passes in ws1 and ws2,
+  1. The readiness check, `lanes-index ready --expect index --release 1.3.0 --env <label>` with each environment's own label, passes in ws1 and ws2,
      every check `ok` (P612–619).
   2. `import --at C` proves its render (test 7).
   3. The cutover sets the switch and pushes the marker. The flip command then
@@ -2552,7 +2563,7 @@ rename.
       "Readers under the refusal"; the phase plan's "D3's refusal").
   - **With the constant flipped,** the same write goes to SQL.
 
-  The readiness check's item fails the first state (P612–617, P626).
+  The readiness check's item fails the first state (P612–617, P626). And T124's cached module (PC-2; FR-064; the sql-register delta's "`lanes-index` starts from its cached module", added since W): a start runs the module's checked-hash cached bytecode, never bytecode whose source has changed, and the module's source where it has no bytecode, with every subcommand's output and exit as before; every subcommand answers alike, the argv observed at the module's entry or dispatch, and its stdout, stderr and exit code, from the cached module and from its source, and, for every invocation and in each form, the argv is observed exactly once at the module's entry and once at its dispatch, and each observation is the exact vector passed to the launcher, `argv[0]` included, byte for byte: the launcher's path as the test spells it, then the arguments, never the interpreter or its options (the review of commit 18's delta, its first BLOCKING finding; Codex review 7e of commits 19 and 20, its BLOCKING finding; Codex's re-review r6 of spec#17 at `870ed1fb`, its BLOCKING finding 1; lane 3's ruling, commit 24's post; its precision fixes: lane 2's, #165 6881947623, RX-26); and `ready`'s check 1 compares the installed bytecode with a checked-hash compilation of the digest-checked module, so that the cache that runs is the release's at check time (the same review, its second BLOCKING finding; P8's `[cache-payload]`). T347's two cases, the fold writer's choice in commit 18, beyond lane 3's minimum (#165 6878873635): the install places the module and its bytecode beside `lanes-index`, after which check 1 passes, and the release's digest list names the module and not its bytecode (spec#17's re-review; lane 3's ruling, commit 20's post).
 - **Phase and kind.** N and W. It stays in the suite after G, which builds the
   refusing state from the flipped one. The refusing state is FP, so it always
   runs. The flipped state is RE: its write is a `register snapshot` reply
@@ -2560,7 +2571,7 @@ rename.
   `design.md` S1) and a commit, which a fake cannot fabricate faithfully.
 - **Fixture.**
   - Two test copies of `lanes-index` under the test's temporary directory:
-    one with the constant refusing, one with it flipped (open point 3).
+    one with the constant refusing, one with it flipped (open point 3). For T124's cases, the refusing copy, with `lanes_index_main.py` beside it as `flipped_copy` places it (T124), on the refusing state's configuration, and a checked-hash `.pyc` (PEP 552) that the test writes where T124's launcher reads the module's bytecode, built from a marker module that prints `cached-marker` and exits 0, and carrying the hash of the real module's bytes (`importlib.util.source_hash`); for the parity case, the same copy and module, with the module's own checked-hash bytecode written and then removed, and the argv recorded at the module's entry or dispatch in each form, beside the exact vector the test passes to the launcher for each invocation, `argv[0]` included; for T347's (the fold writer's choice, beyond lane 3's minimum), an install by `openRepoTools --install` into a temporary directory, and the digest list `release.yml` builds.
   - The checkout's `lanes-edit.sh`, pointed at each copy by the means it
     already uses to find the `lanes-index` executable
     (`code/lanes-edit.sh:2554–2568`).
@@ -2646,7 +2657,7 @@ rename.
   - `test_a_primary_write_forks_render_checkout_on_the_lane_checkout_detached[plain|no-fetch-set|index-off-set]`
     (the phase-W stub test of the render fork's argv);
   - `test_readers_under_the_refusal_answer_the_78_as_a_failed_read[<read>|listing|session-start|guard|projection]`.
-  - The readiness item is in P8's test (below).
+  - The readiness item is in P8's test (below). **T124's cases** (lane 2's T282, in this module; FR-064), each starting the refusing copy's `lanes-index mode`, whose source exits 78 with the text above: `test_a_start_runs_the_cached_module_whose_checked_hash_matches_its_source`: with the marker `.pyc` in place, the start prints `cached-marker` and exits 0, which only the cached bytecode can do; `test_a_start_never_runs_cached_bytecode_whose_source_has_changed`: with the same `.pyc` and one byte then added to the module that leaves the source's behaviour unchanged, such as a trailing newline (lane 2, #165 6879048130), the start never prints `cached-marker`, and exits 78 with the text, as the source does; `test_a_start_runs_the_module_source_where_it_has_no_bytecode`: with no bytecode where the launcher reads it, as after an install that could not write it, the start exits 78 with the text, its stdout, stderr and exit equal to those of a start with the module's own valid bytecode. `test_each_subcommand_answers_alike_from_the_cached_module_and_from_its_source` (the review of commit 18's delta, its first BLOCKING finding; confirmed by lane 2, #165 6879048130; its argv oracle since commit 22: Codex review 7e of commits 19 and 20, its BLOCKING finding; lane 3's ruling, commit 22's post; its comparison with the launcher's own vector since commit 24: Codex's re-review r6 of spec#17 at `870ed1fb`, its BLOCKING finding 1; lane 3's ruling, commit 24's post; its precision fixes since commit 26: lane 2's, #165 6881947623, RX-26; for lane 2 to confirm): for each subcommand in `lanes-index`'s usage list, run with `--help`, with an argument it refuses as usage, and in its plain form on the refusing state's configuration, once with the module's own checked-hash bytecode in place and once with none, so that the source runs, the test records the exact vector it passes to the launcher, `argv[0]` included: the launcher's path as the test spells it, then the arguments, never the interpreter or its options; and it captures the argv observed at the module's entry and at its dispatch, for every supported subcommand and for each of the `--help`, refused-argument and plain-form runs, in each form, exactly once at each, a run with no observation failing; every observed vector equals the vector passed to the launcher, byte for byte, and each pair's argv, stdout, stderr and exit code are equal, byte for byte, so that a launcher that rewrites, drops or inserts an argument, or replaces `argv[0]` (as `runpy.run_path` does, with the module's path), before dispatch fails the first assertion, even where it does so the same way in both forms and the output and exit still match; the list is read from the usage, so a subcommand added later is covered. **T347's cases,** the fold writer's choice in commit 18, beyond lane 3's minimum (#165 6878873635), in its own modules: `test_install_places_the_cached_module_and_its_checked_hash_bytecode_beside_the_launcher` (`tests/test_install_payload_source.py`): after the install, `lanes_index_main.py` is beside `lanes-index`, byte for byte the payload's, and its bytecode, where T124's launcher reads it, has a header that marks it checked-hash (flags 0b11) and carries `importlib.util.source_hash` of the module's bytes and the magic number of the interpreter `lanes-index` runs on, and `ready`'s check 1 then passes, its checked-hash compilation of the installed module equal to the installed bytecode byte for byte (the positive case of the review of commit 18's delta, its second BLOCKING finding); `test_the_release_digest_list_names_the_cached_module_and_not_its_bytecode` (`tests/test_release_workflow.py`): the digest list names `lanes_index_main.py` beside `lanes-index` and `lanes-edit.sh`, and names no `.pyc`.
 - **Run time.** About 1–3 s for 14 verbs in the refusing state and one flipped
   write, about 1–2 s more for the readers' cases, and about 1 s for each
   of the render fork's three.
@@ -2829,7 +2840,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
       that re-reads from the mirror and prints the `read: mirror` line;
       `lane-rename:241` has new text for 3, 75 and 69; the restart skill's
       `lread` (`code/skills/restart/SKILL.md:48`, run with
-      `LANES_NO_FETCH=1`) refuses on 69, 75 and 3 through its `*)` arm
+      `LANES_NO_FETCH=1`) refuses on 69 through the `69)` arm T407 adds (lane 2, #165 6851002528; lane 3, #165 6851059362), and on 75 and 3 through its `*)` arm
       (`:70`), so the skill binds no window, writes no stamp and prints no
       resume command (`design.md` S3's table of readers; the delta's
       "Callers' own reads of the register go through verbs");
@@ -2844,8 +2855,10 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     `lane-handoff` (`:2878–2881`, `:2890–2891` and `:2913–2914`),
     `lane-end:2490`, and the skill (`:738–742`). An `expectation:` 2 at
     `lane-start:4181` dies;
-  - `lane-worktrees`' three direct reads of the register go through a verb,
-    and exit 69 with nothing deleted (`design.md` S3's table).
+  - `lane-worktrees`' three direct reads of the register go through a verb;
+    on the verb's 69 nothing is deleted and the register is named as
+    unreadable, and `lane-worktrees` ends with that site's own code, 0 under
+    `--report` (`design.md` S3's table; T404; lane 3, #165 6812295982).
 - **Phase and kind.** N: the readers' SQL path and the callers' arms. FP,
   except `managed-projection`'s equality with files mode, which is RE (R3's
   N7: a fake cannot fabricate a register's replies faithfully, as AT-14
@@ -3040,7 +3053,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     the switch at `primary`, whatever `--expect` says, a `register_label=`
     that is not the switch's label (check 10, §2.4, folded at commit Q from
     V2's S-2 and lane 1's v2.8), and a host its URLs name that resolves to
-    more addresses than `register_addresses=` (check 13, §2.4);
+    more addresses than `register_addresses=` (check 13, §2.4), and, since T119's follow-up 2, a `git` older than 2.32, no `git` on `PATH`, or a `git --version` that names no version it can read (check 14, git 2.32 or later, which `ready` runs last; lane 1, #165 6877889644), and, since T124, an installed cached module whose code payload differs from a checked-hash compilation of the digest-checked module, though its header keeps flags 0b11 and the module's source hash (check 1; lane 3's ruling, commit 20's post);
   - the flip writes only `mode=` and keeps the file's 0600, and setting
     `primary` refuses with 2 unless the switch is `primary`, the marker
     `present`, and the fetched `lanes/STORE` names this database.
@@ -3053,7 +3066,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   `lanes-index login add` only as a fixture.
 - **Phase and kind.** N. RE for the bootstrap, the ready environment, the
   GRANT check and check 10, which reads the switch, FP for the digest,
-  `psql` and refusing-build
+  `psql`, cached-module (check 1), refusing-build and git (check 14)
   checks, and FM for the flip.
 - **Fixture.**
   - A `stoppable_cluster` of the test's own (section 3.1), since the
@@ -3076,7 +3089,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
     is not a terminal.
   - An installed-tools directory with the release's digest list (its form is
     the design's).
-  - A `PATH` with `psql` and one without.
+  - A `PATH` with `psql` and one without, and, for check 14's fault, a `git` shim first on the call's `PATH` that answers `--version` with `git version 2.31.1`; and, for check 1's `[cache-payload]`, a `lanes_index_main.py` beside the bench's `lanes-index` whose checked-hash `.pyc` carries another module's code under a header that keeps flags 0b11 and the real module's source hash.
   - Configurations at `mode=index` and `mode=primary`.
   - An extra GRANT the test adds.
   - Test 14's refusing copy of `lanes-index`.
@@ -3117,7 +3130,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   - **The readiness check.**
     - Each fault case is the ready environment with that one fault added. It
       exits 2 and names that fault on its own `FAIL` line, and in the RE
-      cases no other line is `FAIL`.
+      cases no other line is `FAIL`. `[old-git]`'s line is check 14's, naming the shim's git 2.31.1 as older than 2.32. `[cache-payload]`'s line is check 1's, naming the cached module as not matching the release's source.
     - The ready environment itself exits 0, with one `ok` line per check.
     - **Check 10,** whatever `--expect` says (§2.4, check 10; V2's S-2). The
       fixture's configuration holds a `register_label=` equal to the label the
@@ -3165,7 +3178,7 @@ P11 and ADV-C1 to C4, C6 and C7 are inside tests 2, 4, 5, 6, 8, 10, 11, 12 and
   - `test_the_bootstrap_refuses_a_connection_string_argument_with_2`;
   - `test_the_bootstrap_passes_the_admin_service_only_as_pgservice` (FP);
   - `test_set_mode_primary_refuses_before_the_marker_is_present_or_names_another_database`;
-  - `test_the_readiness_check_fails_on_each_fault[<fault>]`;
+  - `test_the_readiness_check_fails_on_each_fault[<fault>]`, check 14's `[old-git]` and check 1's `[cache-payload]` among the faults since T218's follow-up;
   - `test_the_readiness_check_passes_a_ready_environment`;
   - `test_the_readiness_check_10_compares_register_label_with_the_switch_label[equal|label-only|url-only|files]`;
   - `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[equal|above|ip-literal]`;
@@ -3347,7 +3360,10 @@ lane 3's ruling 6 (#165 comment 6578020193).
     - removes the record.
   - **A second plain rerun** is a new write, under a new id.
   - **A rerun with other arguments** does not take the id.
-  - **`LANES_WRITE_ID`,** set explicitly, wins over a record.
+  - **`LANES_WRITE_ID=<id>`,** set with its generation, takes over the record
+    of the same command line that holds `<id>`, at any age; over one that
+    holds another id it is refused with 2, naming that record's write and its
+    lookup, and nothing is sent (G6).
   - **The killed write's rerun** reuses the id, exits 0, and leaves one row.
   - **`lanes-index status`** lists a pending record, and reports whether its id
     is in the journal.
@@ -3423,15 +3439,15 @@ lane 3's ruling 6 (#165 comment 6578020193).
     either way. The rerun removes the record after writing the done mark
     with `owed <utc>`, prints one WARNING, and exits 0, with no tail run.
     For `rename-lane`:
-    - `[rename-lane-stops]`, the handoff file is removed from the lane's
-      checkout, so the replay's stamp checks refuse before the seam
+    - `[rename-lane-stops]`, the handoff file is committed empty on the lanes
+      origin, so the rerun's lane checkout holds it, the checks before the stamp pass it, and the replay's stamp proof (Y:5092) refuses it with 5 before the seam
       (`code/lanes-edit.sh:16190–16195`): the text says that, replayed at
       seq `<s−1>`, the write now stops before its write, with its exit and
       last line, and names the steps that did NOT run;
-    - `[rename-lane-differs]`, the handoff file is moved to the new path by
-      hand, so the row's handoff cell no longer changes (`:16227–16229`) and
-      the replay's change set differs from the entry's: the text names the
-      first path whose digest differs.
+    - `[rename-lane-differs]`, the handoff file is removed by a commit on the
+      lanes origin, so the rerun's lane checkout lacks it, the replay notes it missing (`:16162–16163`), and the row's handoff cell no longer changes (`:16227–16229`):
+      the replay's change set differs from the entry's, and the text names the
+      first path whose digest differs, `lanes/LANES.md`. A handoff moved by hand to the new path stops instead: its replay meets `rename-lane`'s refusal of an occupied target, 2, before the seam (`:16032–16033`).
 
     `[request-handoff-differs]`: the fake `tmux` now reports the holder's
     window as gone, so the replay's request line differs. The run exits 2
@@ -3496,7 +3512,8 @@ lane 3's ruling 6 (#165 comment 6578020193).
   - `test_a_plain_rerun_reuses_the_pending_write_id_once_and_says_so`;
   - `test_a_write_killed_by_an_outer_timer_is_retried_under_its_own_id`;
   - `test_a_rerun_with_other_arguments_does_not_take_the_pending_id`;
-  - `test_lanes_write_id_wins_over_a_pending_record`;
+  - `test_lanes_write_id_of_another_write_is_refused_2_and_the_pending_record_kept`;
+  - `test_lanes_write_id_of_the_records_own_write_takes_it_over_past_its_age`;
   - `test_status_lists_and_resolves_pending_records`;
   - `test_a_rerun_that_finds_its_write_committed_runs_the_verbs_after_commit_tail`:
     `rename-lane`'s tail;
@@ -3761,7 +3778,7 @@ lane 3's ruling 6 (#165 comment 6578020193).
       time is recorded against its timer, `S` = `C` = 9 s, `T_L` = 10 s and
       a reader's 7 s, with its margin;
     - the burst, one request per call, under D7's 30 s, with
-      `LANES_REGISTER_DEADLINE_S` unset as in AT-4 (c): every writer commits
+      `LANES_REGISTER_DEADLINE_S` unset, as AT-4 (h) leaves it, not as AT-4 (c) now sets it: every writer commits
       once, or exits
       75 with nothing written, its write id absent from the journal, and no
       writer ends any other way. The new seqs have no gap and no repeat.
@@ -4180,18 +4197,32 @@ and `ready`'s checks 11 and 12.
   writes, through the real `lanes-index`; `record_marker` as each read-back
   would call it; then a rollback's first transaction (Q4(b)(iii)),
   `commit_write` with a `rollback` entry, as REGISTER-WRITER. A second
-  database for the abort, and a third for the after-loss form.
+  database for the abort, and a third for the after-loss form. The
+  cutover's own cases run `lanes-index cutover`'s whole row, T116's
+  transaction and T327's push, against a scratch schema, from the operator
+  lane's own checkout: `LANES_REPO` names a clone whose origin is a local
+  bare repository, and `LANES_WORKSPACE_ROOT` a `W` of its own. Origin's
+  `main` is a real commit C, which the import names, and origin's
+  `pre-receive` hook refuses a push where a case asks (lane 3's ruling
+  (c), comment 6828023371).
 - **Oracle.**
   - After the bootstrap: `mode = 'files'`, the marker `absent`,
     `set_seq = -1`, and the head -1.
-  - After the import (seq 0) and the cutover: the head is 1,
-    `set_seq = 1`, `mode = 'primary'`, the marker `adding` at
-    `marker_seq = 1`, and `journal.operator` is true for seq 1 only. A write
-    then fails with LR002, so 69. After `record_marker` at seq 1, the marker
-    reads `present`, `marker_commit` holds the confirmed commit, and a write
-    commits.
-  - After `import --after-loss` at `m` and `cutover --after-loss`:
-    `set_seq = m+1`, and the generation differs from the bootstrap's.
+  - After the import (seq 0) and the cutover's entry, `commit_write` with a
+    `cutover` entry: the head is 1, `set_seq = 1`, `mode = 'primary'`, the
+    marker `adding` at `marker_seq = 1`, and `journal.operator` is true for
+    seq 1 only. A write then exits 69 on the switch its snapshot reads, or
+    on LR002. After `record_marker` at seq 1, the marker reads `present`,
+    `marker_commit` holds the confirmed commit, and a write commits.
+  - After the import at C (seq 0) and `lanes-index cutover --import <C>`,
+    whose 0 is T327's whole row: the head is 1, `set_seq = 1`,
+    `mode = 'primary'`, the marker `present` at `marker_seq = 1`,
+    `marker_commit` origin's new tip, its one push, a child of C carrying
+    `Register-Seq: 1`, and `journal.operator` is true for seq 1 only.
+  - After an after-loss import at `m`, its entry naming C, and
+    `lanes-index cutover --import <C> --after-loss`, whose 0 is T327's
+    whole row: `set_seq = m+1`, the marker `present` at `m+1`, and the
+    generation differs from the bootstrap's.
   - After the rollback's first transaction, read in one snapshot:
     `mode = 'files'`, the marker `removing`, the head `k+1`,
     `set_seq = k+1`, and the entry at `k+1` is the operator entry that
@@ -4202,19 +4233,27 @@ and `ready`'s checks 11 and 12.
     the head to 0 and the switch to `files` with the marker `absent`, and
     `set_seq` to 0, the abort's base. With the marker `present`, it fails
     with LR002 and changes nothing.
-  - **The re-import form's abort** (the third database): `switch_to_files`
-    at `m+1` sets `files` with the marker `absent`, `set_seq` `m` and
-    `lanes/STORE` gone, and leaves the `database_label` and `generation`
-    its cutover set, as lane 3 ruled lane 1's point 2 (comment
-    6710770304). So a commit call carrying another generation, as a
-    pending record made against the lost database would, still fails with
-    LR007.
+  - **The re-import form's abort** (the third database), through the
+    cutover's own step 3: origin refuses the marker's push, the read-back
+    proves it absent, and `cutover` exits 2 with its `ABORTED` line. While
+    the push is held, the switch reads `primary` with the marker `adding`,
+    `set_seq` `m+1` and a generation other than the lost database's. After
+    it, `switch_to_files` at `m+1` has set `files` with the marker
+    `absent`, `set_seq` `m` and `lanes/STORE` gone, and left the
+    `database_label` and `generation` its cutover set, as lane 3 ruled lane
+    1's point 2 (comment 6710770304); origin's `main` is still C. So a
+    commit call carrying another generation, as a pending record made
+    against the lost database would, still fails with LR007.
   - **The restore form** (a fourth database, restored at `b` as AT-D22
-    makes it): after its cutover, `restore_prior` holds the switch row and
-    `lanes/STORE`'s `files` row and lines as they were; `record_marker`
-    clears it. Its abort puts them back with their old `line_id`s, the
-    switch row whole, and `set_seq` the value before the cutover (AT-D22's
-    dump). As the admin under `SET ROLE lanes_register_owner`, setting
+    makes it), each cutover its whole row: `cutover --after-loss`'s 0
+    leaves `primary` with the marker `present`, `set_seq` `b+1` and its
+    label, and its own `record_marker` has cleared `restore_prior`. A
+    second restore form, whose marker's push origin refuses, aborts at its
+    step 3, exit 2, and its `switch_to_files` puts back what
+    `restore_prior` held: `lanes/STORE`'s `files` row and lines with their
+    old `line_id`s, the switch row whole, and `set_seq` the value before
+    the cutover (AT-D22's dump); origin's `main` stays where that cutover
+    found it. As the admin under `SET ROLE lanes_register_owner`, setting
     `restore_prior` while the marker is not `adding` fails with 23514
     (`register_switch_check4`).
   - **An operator entry with a row outside `lanes/STORE`**, as lane 3 ruled
@@ -4303,7 +4342,7 @@ and `ready`'s checks 11 and 12.
 - **Proves.** A live claim records its spelling as typed, its canonical key,
   and the aliases its writer's `repos.tsv` maps to that key, and a released
   claim's spellings block nothing.
-- **Fixture.** The imported register, with aliases X and Y mapping to O in
+- **Fixture.** AT-LR006's register, with aliases X and Y mapping to O in
   `lanes/repos.tsv`. Claims through the real writer.
 - **Oracle.** `spellings` is a `text[]` whose order §1.2 does not fix, so it
   is compared as a set.
@@ -4530,10 +4569,10 @@ and `ready`'s checks 11 and 12.
   `encode(sha256(render_file(path)), 'hex')` against the entry's digest. The
   operator flag's rules raise LR004 too: an operator entry that edits
   anything but `lanes/STORE`, or nothing, and any other entry that edits
-  `lanes/STORE` (F2, D24).
+  `lanes/STORE` (F2, D24). So does a `files` row whose path is outside the render set and `lanes/STORE`, and, for a `write`, an `import` or a `stray-import`, a `files` row for a path its edits never touch (spec#17's re-review r4, its third BLOCKING finding), but for one exception: a row that is present, whose path is a render-set path other than `lanes/STORE` already in `files`, and whose `final_newline`, not null, differs from that path's stored one, commits, since a change of only a final newline is an edit (lane 3's ruling 3 on lane 1's #165 6882354358, commit 26; spec#17's re-review r9, its second BLOCKING finding); a `lanes/STORE` row with no edit is LR004 even so (spec#17's re-review r9 and its delta review 7i, each its first BLOCKING finding); an `import` empties `files` first (design:1725), so the exception can never apply to it, and a stray revert is outside check 3, its rows being proof rows for bytes already restored (lane 3's ruling, commit 27), and, since commit 28, a stray-revert row that would change the register is LR004: a present row must equal its path's stored `final_newline` and `sha256`, a row with `present` null is refused, and a row with `present` false must name a path not in `files`, as when a revert removes a file the stray added (spec#17's re-review r10; lane 3's ruling, commit 28), and, for a `stray-revert`, a `files` row for `lanes/STORE`, which is not rendered (spec#17's re-review r5, its finding 10; lane 3's ruling, commit 22's post).
 - **Phase and kind.** W. RE, with the shim's `edit-entry` mode, which
   rewrites one field of the commit call's entry.
-- **Fixture.** The imported register, and `log NOTED` as the write. Per case,
+- **Fixture.** AT-LR006's register, and `log NOTED` as the write. Per case,
   the shim rewrites: one `journal_files` digest to another 64-hex value; an
   edit's `old_sha256`, so the edit does not apply; an edited path left out of
   the entry's `files`; a `write` entry that edits `lanes/STORE`; an operator
@@ -4600,7 +4639,7 @@ and `ready`'s checks 11 and 12.
   - `test_an_import_carries_not_after_of_its_330_s_timer_plus_2_s`, on lane
     1's v2.6;
   - `test_the_operator_flag_rules_refuse_lr004[write-edits-store|operator-edits-other|operator-edits-nothing]`;
-  - `test_a_file_without_a_final_newline_renders_back_byte_identical`.
+  - `test_a_file_without_a_final_newline_renders_back_byte_identical`; and, since spec#17's re-review r4, T231f's `test_a_write_with_a_files_row_for_a_path_it_does_not_edit_is_refused_lr004_at_commit[outside-the-render-set|untouched-file]` (its third BLOCKING finding; lane 3's ruling, commit 20's post; lane 2, #165 6879455400): `lr4_body`'s write on this fixture, sent by a direct call to `commit_write`, as the operator entry's case is, with one more `files` row, `lanes/notes.md`, absent, outside the render set, or `lanes/aliases.tsv`, present with its own digest and its stored `final_newline`, a render-set file the write does not edit; each ends with LR004, the head unmoved and the tables the oracle names unchanged. And, since spec#17's re-review r5, `test_a_stray_revert_with_a_files_row_for_lanes_store_is_refused_lr004_at_commit` (its finding 10; lane 3's ruling, commit 22's post; for lane 2 to confirm): the same fixture, with a `stray-revert` entry in place of the write, no `journal_edits` row, sent by a direct call to `commit_write`, and one `files` row, `lanes/STORE`, present with its own digest; it ends with LR004, the head unmoved and the tables the oracle names unchanged. And, since spec#17's re-review r9, ruling 3's two functions, lane 3's names for lane 2 to confirm, which lane 2 builds in T231 (r9, its first and second BLOCKING findings; its delta review 7i, its first; lane 3's ruling 3 on lane 1's #165 6882354358, commit 26; commit 27): `test_a_final_newline_only_change_on_a_render_set_path_commits[write|stray-import]`, the same fixture, by a direct call to `commit_write`: `[write]` is `lr4_body`'s write with one more `files` row, `lanes/aliases.tsv`, a render-set file the write does not edit, present, its `final_newline` the opposite of the stored one and its digest that of the file so rendered; `[stray-import]` is a `stray-import` entry whose only change is that file's final newline, so it carries that one `files` row and no `journal_edits` row; each commits: the head moves on by one seq, `journal_files` holds the `lanes/aliases.tsv` row exactly as sent, `files` holds its `final_newline` as sent, its `sha256` as the row's digest and its `last_seq` as the new seq, and `render_file('lanes/aliases.tsv')` is the file's bytes before, with only the final newline added or removed, and hashes to that digest. And `test_a_final_newline_only_change_to_lanes_store_is_refused_lr004_at_commit[write|stray-import]`: the same two entries with the row for `lanes/STORE` in place of `lanes/aliases.tsv`, its `final_newline` flipped and its digest that of `lanes/STORE` so rendered; each ends with LR004 at step 8's third check, with `register_head.seq`, `journal`, `journal_edits`, `journal_files`, `files` and `doc_lines` unchanged, since only cutover and rollback may name `lanes/STORE`. No `import` form: an import's step 3a empties `files` (design:1725) and its every line is a `create` or `append` edit (design:1542, :1827), so every path an import names is one its own edits touch. No `stray-revert` form: step 8's third check does not apply to it, and its rows name the paths the renderer restores, as the register holds them. And, since spec#17's re-review r10, lane 3's names for lane 2 to confirm, which lane 2 builds in T231 (its one BLOCKING finding; lane 3's ruling, commit 28): `test_a_stray_revert_files_row_that_would_change_the_register_is_refused_lr004_at_commit[changed-final-newline|null-final-newline|absent-path|null-present|present-false-existing-path]`, the same fixture, a `stray-revert` entry with no `journal_edits` row, sent by a direct call to `commit_write`, with one `files` row: `[changed-final-newline]`, `lanes/aliases.tsv`, present, its `final_newline` the opposite of the stored one and its digest that of the file so rendered; `[null-final-newline]`, the same path, present, its `final_newline` null and its stored digest; `[absent-path]`, `lanes/archive/absent.md`, a render-set path not in `files`, present, with a digest; `[null-present]`, `lanes/aliases.tsv` with `present` null; and `[present-false-existing-path]`, `lanes/aliases.tsv`, a path in `files`, with `present` false and a null digest and `final_newline` (spec#17's re-review r11, its one BLOCKING finding; lane 3's name, commit 29); each ends with LR004 at step 8's fourth check, before any `journal_files` insert, with the fourth check's own message, asserted exactly, `a stray-revert files row would change the register: a present row must equal the stored final_newline and sha256 of its path, a row with present false must name a path not in files, and present may not be null`, and with `register_head.seq`, `journal`, `journal_edits`, `journal_files`, `files` and `doc_lines` unchanged. A row with `present` false for a path not in `files` is no refusal case: that is how a revert removes a file the stray added, and the valid equal proof below sends one. A row with `present` false for a path in `files` is refused at step 8's fourth check, before the loop and so before any `journal_files` insert; the loop's own refusal ("proof: % is present", design:2077–2078), which would come after that insert, stays as a second line of defence (spec#17's re-review r11 and Codex's delta review 7k of commit 28, each its one BLOCKING finding; lane 3's ruling, commit 29). The message is the discriminator: LR004 with the tables unchanged is what the loop's own refusals give too, since the transaction rolls back its insert, but their messages are their own, so a build without commit 29's disjunct fails `[present-false-existing-path]`, whose loop refusal would be "proof: % is present" (design:2078), and a build without the fourth check fails `[absent-path]`, whose loop refusal would be the digest proof's, "proof: % renders %, the entry says %" (design:2074) (spec#17's re-review r12, its first BLOCKING finding; lane 3's ruling, commit 30). And, on Codex's delta review 7j of commit 27, its item 4, the valid equal proof, lane 3's name for lane 2 to confirm: `test_a_stray_revert_files_row_that_proves_the_register_commits`, the same fixture, a `stray-revert` entry with no `journal_edits` row, sent by a direct call to `commit_write`, with two `files` rows: `lanes/aliases.tsv`, present, with its stored `final_newline` and its stored digest, and `lanes/archive/stray.md`, present false, a render-set path not in `files`, as a file the stray added and the revert removes; it commits: the head moves on by one seq and `journal` gains the entry; `journal_files` holds both rows exactly as sent; `files` holds `lanes/aliases.tsv` with its `final_newline` and `sha256` unchanged and its `last_seq` the new seq, and no row for `lanes/archive/stray.md`; `doc_lines` is unchanged; and `render_file('lanes/aliases.tsv')` is byte for byte as before and hashes to the stored digest.
 - **Run time.** AT-VER and AT-LR4 take 10–20 s together.
 - **Flakiness.** None: each case is one write with a fixed rewrite, or a
   fixed client copy.
@@ -5476,10 +5515,10 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - After the import: the rollback runs. While it is held at its push, one
     snapshot through the admin connection shows the switch at `files` with
     the marker `removing`, and the removal entry, an operator entry, as the
-    journal's last seq `k+1`: both or neither. A write tried meanwhile fails
-    with LR002 and journals nothing. On release, the read-back confirms the
-    push, `record_marker` sets the marker `absent`, and the rollback ends
-    with test 8 (a)'s oracle.
+    journal's last seq `k+1`: both or neither. A direct `commit_write` tried
+    meanwhile fails with LR002 and journals nothing. On release, the
+    read-back confirms the push, `record_marker` sets the marker `absent`,
+    and the rollback ends with test 8 (a)'s oracle.
   - A rerun after a kill at the push finds the marker `removing` and its own
     entry as the last seq, declares first (§2.3, step 2, "A rerun"; AT-D20
     holds that case), and goes on from the render.
@@ -5560,12 +5599,19 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - Pushed, reported failed: the read-back finds the marker, so the cutover
     completes: `record_marker` sets it `present`, and seq 1 stays.
   - Unconfirmed: `cutover` exits 3 and changes nothing more; the switch
-    stays `primary` with the marker `adding`, and every write fails with
-    LR002. Its rerun reads origin back first, and completes or aborts as the
-    two cases above. The same for the rollback's removal push: `rollback`
-    exits 3, the marker stays `removing`, and its rerun reads origin back,
-    then records the marker `absent` or pushes the removal again (§2.3,
-    step 4).
+    stays `primary` with the marker `adding`, and every write exits 69 on
+    the switch its snapshot reads, or on LR002. Its rerun reads origin back
+    first: a marker found there completes the cutover, as in "Pushed, reported
+    failed"; a marker proven absent has the rerun push again, as a rerun that
+    finds its own entry goes on to the cutover's step 2, and step 2's own ends
+    follow, its abort among them (`operations.md` §2.2, act 4's step 7; lane
+    3, #165 6770600106, T116's point 1). The same for the rollback's removal
+    push: `rollback` exits 3, the marker stays `removing`, and its rerun reads
+    origin back, then records the marker `absent` or pushes the removal again
+    (§2.3, step 4). A files-mode write that lands on origin after the 3, once
+    the removal is there (§2.3, step 3), changes neither: the rerun finds its
+    removal, pushes nothing, ends 0 with the marker `absent`, and records
+    no divergence (lane 3, #165 6814260122, T326's review MUST-1).
   - Held across git: with the push held on the wrapper's FIFO for 6 s, past
     the writer role's 5 s idle bound, the cutover still completes, since its
     transaction committed before any git step (F23, §2.1).
@@ -5575,7 +5621,9 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - `test_a_cutover_abort_deletes_seq_1_only_when_the_marker_is_proved_absent[not-pushed|pushed]`;
   - `test_an_unconfirmed_operator_push_exits_3_and_its_rerun_reads_origin_first[cutover|rollback]`;
   - `test_no_operator_command_holds_a_transaction_across_git`;
-  - `test_a_render_stops_before_an_operator_seq_not_yet_on_origin[cutover|rollback]`.
+  - `test_a_render_stops_before_an_operator_seq_not_yet_on_origin[cutover|rollback]`;
+  - and, in `code/tests/test_sql_register_rollback.py` (T273),
+    `test_a_rerun_after_an_unconfirmed_removal_and_a_files_mode_write_ends_0_with_the_marker_absent`.
 
 #### AT-F3. A write in doubt at the deadline
 
@@ -5877,7 +5925,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - The act exits with the code lane 4's arms give: `start-record`'s 2 makes
     `lane-start` die 2 (a second binding); W7's refusal stops the launch;
     the guard's child, refused 2 on its `set-row-state` of the lane left,
-    records a note in the bind's record; never 0.
+    records a note in the bind's record. That write's own code is never 0; the guard's body still exits 0, and the record ends `bound`, `rc=0` (Y:5486, Y:5552).
   - Without the rival, or with a rival that touches no listed scope, or with
     an earlier write of the same act (the same `act_id`), the write commits.
   - A `HANDOFF-REQUESTED` line is not a lane-kind line, so a requester's
@@ -5986,11 +6034,11 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     verb `guard-bind` as a `setsid` child with the hook's descriptors 3 to 9
     closed, stdin on `/dev/null` and its output in a 0600 file per attempt,
     prints "BINDING" and exits 2;
-  - the offer file is the record, with the child's pid and start time
+  - the offer file is the record, with the child's pid, and its start time where it can be read
     (`pid_start_of`) as its liveness test, its host and container, the
     attempt (1 to 3), its start, its bound, `bound_s`, which `guard-bind`
-    computes at the start from `c` and `N_a`: 500 s at `c` = 2 and 530 s at
-    `c` = 3 with one address (`LANES_BIND_BOUND_S` for tests), `bounded`
+    computes at the start from `c`, `N_a` and `w_s_ms`: 500 s at `c` = 2 and 530 s at
+    `c` = 3 with one address, where `w_s_ms` is low enough, 473 giving 530 s and 474 giving 540 s there (case 22; `bound_s = (437000 + 28000·n_a·c + 19·w_s_ms + 9999) / 10000 · 10`; `LANES_BIND_BOUND_S` for tests), `bounded`
     (`yes` where `timeout`
     exists) and `deadline_epoch` (the start plus `bound_s` plus 5 s),
     and, on primary, `act`. The outer, when it writes an outcome other
@@ -6041,7 +6089,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   second prompt arrives while it is in progress. The hook runs under a
   runner that, like Claude Code 2.1.319, sends SIGTERM to the hook's whole
   process group at its timeout and does not wait on pipes a child inherits.
-  A fake `tmux` logs its calls.
+  A fake `tmux` logs its calls. Where one of the tests of the bind record's contract (the last items of the list of names below) needs the outer to do what the shipped script will not do on its own, it runs from a test-only copy of `lanes-edit.sh`, and no seam goes into the shipped script (spec#47's draft 13 of `bind-record.md` (`2e8cd460`, on the branch head `cd578400`), section 8; lane 3's ruling, #165 6879754335, point 23).
 - **Oracle,** lane 4's twenty-two cases ("Phases, and AT-F6"):
   1. answer `2` exits 2 with "BINDING" within 0.1 s after the guard's
      register read returns, and so before `T0 + 1 s` against the local
@@ -6101,14 +6149,14 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
      the bound, the record still ends `rc=124`: the bound covers that call
      too;
   8. two sessions answer `2` for one lane on the primary fixture: one
-     `start-record` commits, and the other is refused 2 by `bind:<L>`;
+     `start-record` commits, and the other is refused 2 by `bind:<L>`, which the writer's `expectation:` line names in lower case (Y:5584, Y:5589) in that attempt's `out` file; its record's `why` is `lane-start`'s last refusal line (Y:5487);
   9. the bind is one register commit plus one handoff commit in files mode,
      and one journal entry on primary; a row change injected after
      `act-begin` refuses it with 2 and writes nothing. With the
      `set-row-state` on the lane left, answer 2 journals two entries;
   10. an injected `psql` exit 2 gives `rc=3` with the id: [absent], exit 2
       on every call of the bind's write from its commit call on, its
-      deadline's lookup included; [found], the shim's `after` mode on that
+      deadline's lookup included, so it ends 3 (Y:5245), not the 75 of a lookup that answers absent (Y:5244); [found], the shim's `after` mode on that
       commit call, which commits, then exit 2 on every later call. At the
       next `2` the child's `find_write` lookup runs first. Its tries, here
       and in cases 18 to 20, follow AT-F3's rule, and are asserted as
@@ -6117,12 +6165,12 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       `T_L`, 9 s at `c` = 2,
       is made again, and LR011 and LR007 are not; where no try takes the
       lock, the record ends `bind-failed`, `rc=3`, again, with the copies
-      kept. Absent binds anew under a new id. Found is the bind's "found"
+      kept. Absent binds anew under a new id, the test having disarmed its arm before the next `2`, so that the lookup answers absent (Y:5244; the bind's row, Y:5516; lane 5, #165 6858973903). Found is the bind's "found"
       row, and writes no second `RESUMED`: the child runs `start-record`'s
       pending record's `cmdline` under its `write_id`, generation, lane and
       session, which finds the entry and replays (lane 4's section,
       "The tail, once").
-      The shim's log shows `register snapshot --tree <dir> --at <s−1>`;
+      The shim's log shows `register snapshot --tree <dir> --checkout <c> --at <s−1>`;
       the replay reads the `call` line's directory, `snapshot`, `files`
       and `preimages`; its child's `seam.out` says `tail`;
       `lane_state_follow` moves the lane's `lane-state.yaml` `generation`
@@ -6200,11 +6248,11 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   21. on the primary fixture behind the delayed loopback lane 3 picks for
       lane 2's question 3 (#165 6722518182; section 7's point 23), with
       75 ms added each way and TLS on (AT-D9c (d)'s link), and
-      `connect_timeout=3` with one address in the configuration:
+      `connect_timeout=3` with one address in the configuration, with the image cache filled (the offer made over the cluster's own port, whose whole-file fetch fills it) and no service (a state home whose socket path is over 103 bytes, so the client reads directly and starts none):
       `guard-bind` records `bound_s=530`, the bind ends `bound`, which its
       `timeout` allows only inside it, with its `ended_utc` less
       `started_utc` recorded beside the 530 s, and the shim's log shows no
-      step at its timer. The guard's register read is the hook's last
+      step at its timer. The guard's register read is the `2`'s own prefetch, `register read --for guard` in form 2 (the register-read contract's section 3.6), a call through the relay at `c` = 3 under the guard's 1500 ms statement bound, and the hook's last
       database call in the shim's log, so answer 2 adds none, and the
       exit's lag after the read is asserted and recorded as case 1's is;
   22. `bound_s` as `guard-bind` computes it from the configuration, with a
@@ -6214,7 +6262,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       still 500 at `c` = 2 with `register_rtt_ms=120`, and 530 at `c` = 3
       with `register_rtt_ms=270`, where SVC-6 raises the service's timer.
       Each record's `deadline_epoch` is its start plus `bound_s` plus 5 s,
-      and its body runs under `timeout -k 10` at `bound_s` − 10.
+      and its body runs under `timeout -k 10` at `bound_s` − 10. At `c` = 3 with one address the 540 s band's two adjacent values of `w_s_ms` are cases of their own, `[c3-w473]` and `[c3-w474]`: `w_s_ms` = 473 gives 530 and 474 gives 540, by `bound_s = (437000 + 28000·n_a·c + 19·w_s_ms + 9999) / 10000 · 10`, (437000 + 84000 + 8987 + 9999) / 10000 · 10 = 530 and (437000 + 84000 + 9006 + 9999) / 10000 · 10 = 540, so that a bound clamped to 530 fails the second (spec#47's draft 13 of `bind-record.md` (`2e8cd460`, on the branch head `cd578400`), section 4, "The 540 s band, in those integers", and section 8; Codex's re-review of spec#47 at `746e931c` (`spec-47-746e931c0f43.md`, sha256 `75956a84…`), its SHOULD 8; Codex's re-review r6 of spec#17 at `870ed1fb` (`spec17-33eb0829-r6.md`, sha256 `bc841020…`), its finding 2; the two ids are the fold writer's, as section 8 names none; for lane 2 to confirm). At `c` = 2 with one address the two adjacent values of `w_s_ms` are cases of their own too, `[c2-w368]` and `[c2-w369]`: `w_s_ms` = 368 gives 500 and 369 gives 510, by the same formula, (437000 + 56000 + 6992 + 9999) / 10000 · 10 = 500 and (437000 + 56000 + 7011 + 9999) / 10000 · 10 = 510, with the body under `timeout -k 10` at 490 and 500, so that a bound clamped to 500 fails the second (draft 4.31 of the register CLI contract, K12; Codex's re-review r8 of spec#17 at `d1a66b2e` (`spec17-33eb0829-r8.md`, sha256 `7a8b8dcb…`), its BLOCKING finding; the two ids are lane 3's, on the `[c3-w473]` pattern, and lane 2 confirms them, #165 6882513333).
       `LANES_BIND_BOUND_S` overrides the sum.
 - **Four rows of lane 4's guard table that none of the twenty-two cases
   reaches.** Each is a case of its own, with the oracle the table gives for
@@ -6250,12 +6298,17 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     meets the ordinary table;
   - **(d) Another session wanting the same lane, in files mode.** Two
     sessions answer `2` for one lane on the files-mode fixture, the bare
-    origin (case 8 is the primary half). The bind that reaches `lane-start`'s
-    re-read of `binding` at `:2614` second is refused there, the other record
-    ends `bound`, and there is one `RESUMED` line and one stamp for the lane.
-    Lane 4's table names the re-read but gives no exit code for it, so the
-    test asserts a refusal and the absence of a second line and records the
-    code it sees.
+    origin (case 8 is the primary half). Two binds that both read the lane
+    free both land, as files mode does: each reads `binding` once, and the
+    two, answered back to back, read it before either writes. `lane-start`
+    reads `binding` again only after a handoff wait or a Claude resolution
+    (`:2611` at `2a057a6d`, set at `:2509–2510` and `:2606`), and neither
+    runs in the bind: with `LANE_START_HANDOFF_ANSWER` unset, a binding
+    elsewhere is a refusal, not a wait, and the resolution never runs under
+    `--no-launch` (`:689`). So the race is one read wide, and the lane's
+    reservation is #84's (`:2582–2588`). Both records end `bound`, and the
+    lane's log holds two `RESUMED` lines, one for each bind; the test
+    asserts both and records each record's code and notes.
 - **The record's code,** under lane 4's corrected table (comment
   6709560550). The child runs the real `lane-start --no-launch --bind`
   through AT-11's stamp shim, for a resume and for a new lane that the offer
@@ -6336,7 +6389,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - `test_a_binding_from_another_host_or_container_is_not_judged_by_its_pid_until_the_deadline_plus_60_s[host|container]`;
   - `test_an_unreadable_bind_record_is_dropped_with_exit_2`;
   - `test_two_sessions_binding_one_lane_one_start_record_commits`;
-  - `test_two_sessions_binding_one_lane_in_files_mode_the_second_is_refused_at_the_reread`;
+  - `test_two_sessions_binding_one_lane_in_files_mode_both_binds_land`;
   - `test_the_bind_is_one_register_write_and_refuses_a_changed_row`;
   - `test_a_bind_in_doubt_looks_its_write_up_before_a_rerun[found|absent]`;
   - `test_the_bind_child_records_bind_failed_with_the_code_and_binds_nothing[<kind>-<code>]`,
@@ -6353,11 +6406,11 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - `test_the_bind_childs_lookup_sends_the_five_copied_values[found|another-write|generation]`;
   - `test_the_stale_row_copies_a_dead_outers_pending_call_and_the_next_2_looks_it_up`;
   - `test_guard_bind_computes_bound_s_from_c_n_a_and_the_service[<configuration>]`
-    (case 22);
+    (case 22, with `[c2-w368]`, `[c2-w369]`, `[c3-w473]` and `[c3-w474]` among its `<configuration>` ids);
   - `test_a_bind_over_a_delayed_tls_link_at_c_3_ends_bound_inside_530_s`
     (case 21, once lane 3 picks the loopback);
   - `test_answer_2_survives_a_group_sigterm_at_the_hooks_timeout` (row 34);
-  - `test_a_failed_bind_can_be_answered_again` (row 35);
+  - `test_a_failed_bind_can_be_answered_again` (row 35); and lane 5's five tests of the bind record's contract, from spec#47's draft 13 of `bind-record.md` (`2e8cd460`, on the branch head `cd578400`), section 8 (Codex's re-review of spec#47 at `746e931c` (`spec-47-746e931c0f43.md`, sha256 `75956a84…`), its SHOULD 9; lane 3's post, #165 6880414089, S9; lane 5, #165 6880616998; for lane 2 to confirm), which bind through no `start-record` and take no mode id: `test_the_outcome_rewrite_has_three_results[written|io-failure|not-its-own]` (S1, the rewrite's three results: `[written]` leaves the record written, the outer's facts file removed and its exit 0; `[io-failure]`: this rewrite did not change the record; it is as another writer may have left it, the outcome in the outer's `.out` alone, its facts file removed and no temporary file in `offers/`, and its exit 1 (lane 3's ruling, #165 6880978929, S1; lane 5, #165 6881591729; lane 2's K4, #165 6882026139); `[not-its-own]` leaves the record as it was, the outcome in the outer's `.out` alone, its facts file removed and its exit 0); `test_the_outer_matches_host_and_container_without_regard_to_case[case-only-host|case-only-container|other-host|other-container]` (S2: `[case-only-host]` and `[case-only-container]` give the record a `host` or `container` that differs from the outer's own in case alone, and the outer writes the outcome; `[other-host]` and `[other-container]` give a real mismatch, with the outer's own `pid` and no `pidstart`, and the outer leaves the record); `test_a_noncanonical_out_names_no_facts_file_and_no_words[bind-0|bind-01]` (S3: for `.bind.0.out` and `.bind.01.out`, an `out` not of section 3's form names no facts file, so nothing is written or removed beside it, and the body reads no words back from it); `test_the_files_index_passes_six_digits[999999|1000000]` (S4: with an earlier offer's `<uuid>.bind.999999.out` left, and then `<uuid>.bind.1000000.out`, the next attempt's `out` is one above it); `test_the_outer_gathers_its_copies_before_its_last_ownership_read` (S6, the order: from a test-only copy that pauses the outer after its read, the test asserts that `guard_bind_copies` ran before the outer's last ownership read); and lane 5's nine more tests of the bind record's contract, from spec#47's draft 14 of `bind-record.md` (`96d14916`), section 8 (spec#47's draft 14 of `bind-record.md` (`96d14916`), section 8; Codex's re-review r7 of spec#17 at `f9d6069e` (`spec17-33eb0829-r7.md`, sha256 `845f8997…`), its SHOULD, and Codex's delta review 7g of commit 24 (`followups-delta-f9d6069e5425.md`, sha256 `2b782d4a…`), its SHOULD; lane 5, #165 6881714002; lane 2, #165 6882026139, Part B, and lane 2's RS-26 report (`REPORT-RS-26-2.md`, sha256 `2be3edd3…`); lane 3's ruling, commit 26's post; for lane 2 to confirm), which bind through no `start-record` and take no mode id: `test_an_outer_that_wrote_pid_alone_still_writes_its_outcome[lane-start-0|lane-start-1]` (section 8's `:359`: from a test-only copy that makes the outer's own `pid_start_of $$` exit 2, so that the record holds `pid` and no `pidstart`: with a stub `lane-start` that exits 0 (`[lane-start-0]`), the record ends `bound` and the next prompt says "MOVED"; with one that exits 1 (`[lane-start-1]`), it ends `bind-failed` and case 6 answers); `test_the_outer_leaves_a_record_no_longer_its_own[other-pid|binding-no-pid|new-offer]` (section 8's `:360`: while the stub `lane-start` holds, the test rewrites the record to another `pid` (`[other-pid]`), to a `binding` with no `pid` (`[binding-no-pid]`) or to a fresh `name-drift` offer (`[new-offer]`), and the outer leaves it as it is, exits 0, and writes the outcome in its `.out`; a record that names another `host` or `container` is S2's `[other-host]` and `[other-container]`); `test_the_next_offers_files_index_runs_above_a_case_11_leftover` (section 8's `:368`: with an earlier offer's `<uuid>.bind.4.out` left by a case 11, the next attempt's `out` is `<uuid>.bind.5.out` and its `bind` is 1); `test_the_facts_file_is_made_empty_first_and_its_absence_is_reported[made-empty-first|none-after-0|none-after-nonzero]` (section 8's `:369`: the facts file's path is `out`'s stem with `.facts`, and the body makes it empty before its first step: the test starts with a facts file of that name already there and not empty, and checks that the body truncates it to empty before its first step (`[made-empty-first]`; spec#47's `bind-record.md` at `5e095c52`, :135, "The body creates it, empty, before its first step. A missing file then means the body never ran"; Codex's delta review 7i of commit 26, its second BLOCKING finding); with no facts file, a 0 ends `bound` with point 16(d)'s `note=` (`[none-after-0]`) and a non-0 ends `bind-failed` with point 16(c)'s `why` (`[none-after-nonzero]`); the fold-and-remove is S1's and the `out` that names no facts file is S3's); `test_case_11_with_a_live_outer_drops_the_record_and_keeps_its_files` (section 8's `:370`: the record is dropped, `<uuid>.bind.*` stays, the live outer's `.out` is not unlinked, and the next removal sweeps the files); `test_a_malformed_bind_pid_waits_for_the_deadline_then_is_stale[pid-0|pid-1|pid-leading-0|pid-eleven-digits|pid-non-digit|pidstart-empty|pidstart-non-digit]` (section 8's `:371`: each of `pid=0` (`[pid-0]`), `pid=1` (`[pid-1]`), a leading 0 (`[pid-leading-0]`), 11 digits (`[pid-eleven-digits]`), a non-digit (`[pid-non-digit]`) and an empty or non-digit `pidstart` on Linux (`[pidstart-empty]` and `[pidstart-non-digit]`) answers "BINDING IN PROGRESS" with no pid until `deadline_epoch`, then case 9 with no session test, and no `kill`, `pgrep -s` or `pid_start_of` call is made with the value; lane 2's K5, which lane 2 offers as optional, renames three of lane 5's ids to match `pidstart-non-digit`); `test_every_bind_rewrite_is_0600_and_a_failed_one_leaves_the_record[was-0644|new-offers-dir|failed-write]` (section 8's `:372`: each rewrite leaves the record 0600, even one that was 0644 before it (`[was-0644]`), and a new `offers/` 0700 (`[new-offers-dir]`); `[failed-write]`, the hook's answer-2 rewrite failing: the offer kept as it was, no temporary file in `offers/`, exit 2 and the window renamed back (lane 2's K4; the outer's two other failing rewrites are S1's `[io-failure]` and `:375`'s `[outer-start-rewrite-fails]`)); `test_the_bind_records_grammar_as_every_reader_takes_it[key-twice|unknown-key|bounded-other|bound-rc-nonzero]` (section 8's `:373`: a key given twice is read by its first line (`[key-twice]`); a key no reader knows survives every rewrite (`[unknown-key]`); `bounded=` with any value but `no` reads as `yes` (`[bounded-other]`); and a `bound` record whose `rc` is not 0 is case 11 (`[bound-rc-nonzero]`)); `test_guard_bind_exits_as_section_7_gives[outer-usage|outer-unsafe-name|outer-no-record|outer-not-binding|outer-has-pid|outer-start-rewrite-fails|body-usage|body-unsafe-name|body-not-binding-with-facts|body-not-binding-without-facts|body-lane-start-0]` (section 8's `:375`: each row of section 7's table, for the outer (`[outer-usage]`, `[outer-unsafe-name]`, `[outer-no-record]`, `[outer-not-binding]`, `[outer-has-pid]`, `[outer-start-rewrite-fails]`, which needs the test-only copy and leaves no temporary file in `offers/`) and the body (`[body-usage]`, `[body-unsafe-name]`, `[body-not-binding-with-facts]`, `[body-not-binding-without-facts]`, and `[body-lane-start-0]`, which asserts that an act after `lane-start`'s 0 that fails is a `note=` and the body exits 0); section 7's other rows are taken by S1, `:360`, S2, case 6, case 5 and T254's cases 10 and 19; lane 2 declined `[outer-kill-9]`, which repeats case 6, and `[body-lane-start-nonzero]`, which repeats case 5 and the bind-failed test, so neither is an id (lane 2's K3)); and section 8's last, which is T254's, in phase W, with the cases 8 to 11 and 18 to 21 above: `test_a_bind_whose_write_id_no_pending_record_holds_makes_no_lookup[no-write-id|no-pending-record|write-id-not-uuid]` (section 8's `:376`, T254's and not T214's (lane 2's K1; AT-F6's writes, phase W): in phase 2 on primary, a record whose copied `write_id` no pending record still holds makes no `journal` call in the shim's log and no `w₀` wait, and binds anew; its Order waits for T427, T428, T502 and T510; the post gives the three ids, and does not say which input each one is); and, lane 2's words (K2, #165 6882026139): :361's window is S1's `[not-its-own]` (the test installs a new record after the outer's read, and the rewrite's own test leaves it); its order is S6's `test_the_outer_gathers_its_copies_before_its_last_ownership_read`;
 
   and, in `code/tests/test_sql_register_measure.py`, M9's measurement:
   - `test_the_bind_and_the_guards_set_row_state_are_timed_in_both_modes[files|primary]`.
@@ -6411,9 +6464,10 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     of at most 1.65 s, and the mirror answers as above: a value the client
     sets from the stand-in's age, which can only have grown, so it is
     asserted as stated and is not a time the runner measures. The control is a
-    fourth run, at 3.3 s with no declaration: the cap is then `T0 + 3.75 s`
-    and no floor applies, so the read starts and the guard answers. AT-D20
-    holds no case of the floor.
+    fourth run, at an age of about 3.3 s at the client's check with no
+    declaration (the stand-in's launch age plus the client's own start): the
+    cap is then `T0 + 3.75 s` and no floor applies, so the read starts and
+    the guard answers. AT-D20 holds no case of the floor.
 - **Tests.** In `code/tests/test_sql_register_outage.py`:
   - `test_a_declared_outage_lets_the_guard_read_the_mirror_with_service_and_database_down`;
   - `test_with_no_declaration_the_guard_exits_2_with_service_and_database_down`;
@@ -6771,11 +6825,13 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     meets F13's condition by its own UTC and its `LANDING`'s (the holder,
     the PR and `repo_key` equal, more than 30 minutes apart, no close
     between) and carries the word clause. Each of these is a finding, and
-    fails the test: a typed one written 10 minutes after its `LANDING`; one
-    with no word clause; one naming another PR; one whose holder is in
-    another case, which `main_slots` closes and the awk does not. One with
-    no `for lane` imports as a line of no kind (§1.2, "A `LANDING EXPIRED`
-    line's fields").
+    the case shows it: a typed one written 10 minutes after its `LANDING`,
+    one with no word clause, and one naming another PR, each by the test's
+    own check of F13's condition, which names the line, since both readers
+    agree on a typed line (Y:5141); and one whose holder is in another
+    case, by the readers' difference, since `main_slots` closes it and the
+    awk does not. One with no `for lane` imports as a line of no kind
+    (§1.2, "A `LANDING EXPIRED` line's fields").
   - **(k) `who --landing` on primary.** The fake is a `register read`
     prefetch whose text at `n` holds the lines. After a `LANDING EXPIRED`,
     the holder's `LANDING` is not listed, and `none open — …` is printed
@@ -6866,14 +6922,15 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   fakes and test 5's `git` wrapper log their environment.
   `LANES_REGISTER_SEAM_CAP_S=3` for the cap's case.
 - **Oracle.**
-  - Each committed writer's stdout carries its success text exactly once,
-    however many attempts it made, and its stderr only the deciding
-    attempt's lines.
+  - Each committed writer prints its success text (claim's `register seq <s>`
+    line, on stderr) exactly once, however many attempts it made, and its
+    stderr only the deciding attempt's lines.
   - A writer refused at its commit (D18, D19) prints its buffered output,
     then the refusal, and no success text.
   - The fake `tmux` is called once per committed `request-handoff`, after
-    its COMMIT, and never for a refused one; the fake `gh` once per
-    committed `claim`.
+    its COMMIT, and never for a refused one; the fake `gh` comments
+    (`issue comment` or `pr comment`) once per committed `claim`; Rule 1's
+    reads, made before the seam (Y:5043), are not counted.
   - The arm that reaches the seam twice exits 2 naming the first seq, and
     the journal holds that one entry.
   - **The child at the seam** (lane 4's section, "How an attempt runs the
@@ -6891,7 +6948,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     - with its parent killed while it waits, the child writes `seam.out`
       as `none`, writes one line to fd 4, "attempt `<k>` of write `<id>`
       stopped waiting at the seam (`<why>`); nothing after the seam ran",
-      and exits 75 without its tail: the fake `gh` is not called;
+      and exits 75 without its tail: the fake `gh` makes no comment call;
     - with its parent stopped by `SIGSTOP`, the same at the cap;
     - `seam.out` is written once, with noclobber: `tail` before the child
       acts on `committed`, `none` before it acts on `abandon`.
@@ -7008,7 +7065,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - **The kept child gone** (the second): the same three, with the cap
     ending the kept child first, its line on fd 4 naming the attempt. The
     run replays: the shim's log shows one
-    `register snapshot --tree <dir> --at <s−1>` and no commit call after
+    `register snapshot --tree <dir> --checkout <c> --at <s−1>` and no commit call after
     it; the replay's change set has the sha256 of the entry's
     `journal_files`; the fake `gh` is called once; and the sidecar's
     pre-image is the one the committing call recorded. For
@@ -7036,17 +7093,17 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       ws1, it says the steps may already have run here, and names them;
     - [other-host]: with the write made from ws2, it names ws2 and the
       steps, and says to rerun there if that run ended 3.
-  - Lane 4's third test, a rerun after a 3 that replays, is AT-D8's, and
-    its seventh, the bind's found row, is AT-F6's.
+  - **Two matching call lines** (NIT-4 (b); lane 3, #165 6851422597): a killed `claim`'s record holds its one `call=` line and no `tail`. The test adds a second line with the same `<base> <clock> <not_after> <files>`, naming its own attempt directory, `<run>/2`, which holds a copy of the first's `snapshot`, `files` and `preimages`, as a resend of one change set in the same database second would. A plain rerun finds its id at the snapshot, with no kept child, and does not replay (Y:5317; tasks:1236): it exits 0 with one WARNING saying that two call lines sent the entry's change set and that it cannot be replayed, and naming the steps that did not run. The fake `gh` gets no Rule 1 read and no comment after the kill, the done mark keeps `owed <utc>`, and the record is removed. A run whose own commit answered `committed` keeps that call's line (Y:5306); this case does not build it.
+  - Lane 4's third test, a rerun after a 3 that replays, is AT-D8's, and its seventh, the bind's found row, is AT-F6's.
 - **Tests.** In `code/tests/test_sql_register_in_doubt.py`:
   - `test_a_call_in_doubt_that_committed_runs_its_tail_once_from_the_kept_child[snapshot|lr006|lookup]`;
   - `test_with_the_kept_child_gone_a_replay_runs_the_tail_once[snapshot|lr006|lookup]`;
   - `test_a_replay_of_request_handoff_types_into_no_pane`;
   - `test_a_rerun_that_finds_tail_sent_runs_no_tail_and_writes_the_done_mark`;
   - `test_a_replay_that_stops_or_differs_runs_no_tail_and_warns[stops|differs]`;
-  - `test_a_run_with_no_record_runs_no_tail_and_names_it[done-mark|this-host|other-host]`.
-- **Run time.** About 1–1.5 min: the [lookup] cases wait about 10 s each for
-  `<n>`, and the others take 2–5 s each.
+  - `test_a_run_with_no_record_runs_no_tail_and_names_it[done-mark|this-host|other-host]`;
+  - `test_two_matching_calls_of_one_change_set_leave_the_replays_tail_owed`.
+- **Run time.** About 1.5–2 min: the [lookup] cases wait about 10 s each for `<n>`, and the others take 2–5 s each.
 - **Flakiness.** Every order is a FIFO hold, or the cap's end, which the
   test waits for through `seam.out`; no sleep decides an order.
 
@@ -7305,9 +7362,9 @@ design. No other host path appears in a test.
     10 s for the renderer's reads and `reconcile`, 1000 and 5000 ms for
     `status`, 5000 ms and 10 s for each `rollback` call, and 2000 ms and
     300 s for `import`;
-  - the environment of each call: `PGSERVICE` where the admin service is
-    used, and never `PGSERVICEFILE`, `PGSYSCONFDIR`, `PGPASSFILE` or
-    `PGPASSWORD` (SVC-2).
+  - the environment of each call, as the child rebuilds it, and not the one it inherits (`contracts/config.md:94–112`, its password-file row at :108; `contracts/register-cli.md:210–216`; design:3852–3859; AT-10's environment oracle, :1949–1953): the inherited `PGPASSFILE`, `PGPASSWORD`, `PGSERVICEFILE`, `PGSYSCONFDIR` and `PGSERVICE` are dropped first, on every path (`contracts/config.md:112`), and on register paths every inherited `PG*` variable (`contracts/register-cli.md:214`);
+    then each ordinary role call, the writer's, the reader's, the indexer's, a direct read's and the service child's, receives its configured role's `PGPASSFILE` (`contracts/config.md:108`; design:3858, "`PGPASSFILE` and `PGOPTIONS` are the service's own"), and the admin path receives, of the five, only `PGSERVICE=<service>` (`contracts/register-cli.md:214`; T109);
+    and no call carries `PGPASSWORD`, a literal password or a connection URL (SVC-2; spec#17's re-review r12, its second BLOCKING finding; lane 3's ruling, commit 30).
 - **What it covers, and always runs:**
   - **argv.**
   - **Connection strings.**
@@ -7519,8 +7576,8 @@ test that asserts a time says which of the three it is.
     the barrier.
   - A window of W = 200 ms, injected by the shim's `window` mode between each
     writer's snapshot and its COMMIT.
-  - A deadline of 30 s (Q7 (A″); D7), D7's default: the burst runs with
-    `LANES_REGISTER_DEADLINE_S` unset, as AT-4 (c) does. The companion
+  - A deadline of D7's 30 s default (Q7 (A″); D7), or the runner's own D7 where that is longer: the burst runs with
+    `LANES_REGISTER_DEADLINE_S` set as AT-4 (c) sets it, `max(30 s, 10 × the runner's attempt p95)`, from the test's own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13). The companion
     case below keeps its variable.
 - **Oracle.**
   - All ten exit 0, and none exits 75 or 69.
@@ -7538,8 +7595,8 @@ test that asserts a time says which of the three it is.
     from 40 ms up, which is why (A) fails this test (P1540–1547).
 
   The asserted bound is the deadline itself: no writer exits busy (the
-  delta's "A burst loses no writer"). The drain is asserted under 60 s,
-  twice D7's 30 s (section 4's rule 2), and recorded against the 30 s with
+  delta's "A burst loses no writer"). The drain is asserted under twice the deadline it ran under,
+  60 s at D7's 30 s (section 4's rule 2), and recorded against that deadline with
   its margin.
 - **Two companion cases.**
   - **The window is effective.** The same burst with a 1 s deadline: at least
@@ -7570,10 +7627,10 @@ test that asserts a time says which of the three it is.
     database"). D7 stays 30 s, and act 3's test 4 decides it; AT-D9c (d)
     runs this burst on a delayed link, where each writer commits once or
     exits 75 with nothing written.
-  - **The drain is recorded beside D7's 30 s, and asserted only under
-    twice it, 60 s (section 4's rule 2):** the time from the barrier's
+  - **The drain is recorded beside the deadline the burst ran under, D7's 30 s or the runner's own, and asserted only under
+    twice it, 60 s at the default (section 4's rule 2):** the time from the barrier's
     release to the last writer's exit, and each writer's attempts, counted
-    as snapshot calls in the shim's log, are printed beside the result.
+    as snapshot calls in the shim's log, are printed beside the result, with the measured attempt p95 and the deadline set from it.
 - **Tests.** AT-4 owns `test_ten_writers_released_together_all_commit_in_order`,
   whose oracle section 4.1 gives. Section 4.1 adds
   `test_the_burst_window_is_effective_a_short_deadline_sends_writers_busy`.
@@ -7764,10 +7821,10 @@ test that asserts a time says which of the three it is.
     section 5.6), and a lost SYN adds 1 s. SVC-8 says how the shares hold
     it ("Over a remote database"): the direct read takes `c`, and its
     timer, not the connect bound, keeps the hook's budget; a whole-file
-    fetch meets the start line past about 165 ms of RTT, and case 6's
+    fetch meets the start line past about 165 ms of RTT, a figure its own `lanes-index` start and second connect bring lower, since the fetch is a call of its own (SVC-8; lane 1's R07, #165 6809169664; lane 3, #165 6809568632), and case 6's
     detached fetch keeps it for the next prompt. Under section 5.6's option
-    A or B, the same cases also run on a healthy delayed link, so that no
-    share expires on a link that answers.
+    A or B, a healthy delayed link is crossed by AT-F6's case 21, whose warm direct read and whole bind meet their shares, and by AT-D9c (d), where no healthy call meets its timer; the fault cases stay on loopback, where each share's expiry is exact.
+    With the image cache filled, as a joined workstation's is, a direct read is about eight round trips, inside the start line to about 375 ms of RTT, or 310 ms where a configured service is silent (SVC-8, "A whole file is never lost to the line"). A prompt that must fetch a whole file may still answer 2 on a healthy delayed link, "too late to verify", and the next prompt reads the file its fetch left in the cache, as case 6 shows (lane 5, #165 6852197902; lane 3, #165 6858923154; lane 2, #165 6859896678).
 - **Tests.** `test_a_database_that_does_not_answer_is_2_inside_4_5_s[<case>-<service>]`
   for cases 1 to 4, and AT-10's
   `test_a_connect_timeout_above_the_direct_reads_share_is_cut_at_the_parse_start_line[service-up|service-down]`
@@ -7856,13 +7913,13 @@ The decision rules, and what the measurements of 2026-11-02 decided:
   6710770304), so M9 is recorded, never asserted, and is taken again in
   both modes once the bind is `start-record`, which exists in both. It is
   recorded beside the child's bound, `bound_s`, which `guard-bind` computes
-  from the configuration: 500 s at `c` = 2 and 530 s at `c` = 3 with one
-  address, with `timeout -k 10 "$(( bound_s - 10 ))"` around the body and
+  from the configuration, `c`, `N_a` and `w_s_ms`: 500 s at `c` = 2 and 530 s at `c` = 3 with one
+  address, where `w_s_ms` is low enough, 473 giving 530 s and 474 giving 540 s at `c` = 3 with one address (case 22), with `timeout -k 10 "$(( bound_s - 10 ))"` around the body and
   `LANES_BIND_BOUND_S` for tests (lane 4's section, "The record, and its
   liveness test"), which lane 3 accepted as arithmetic, with
   `LANES_GIT_TIMEOUT=45` in the child (lane 4's row 37), and which phase
   1's tests measure the child's bind against. Its terms are D9's timers in
-  `c` and `N_a` (the phase plan's "Over a remote database"; AT-F6's case
+  `c`, `N_a` and `w_s_ms` (the phase plan's "Over a remote database"; AT-F6's case
   22).
 - **The count of writes.** Today's bind is four writer calls, each its own
   commit and push: `append-session-id`, `set-row-state` to LIVE,
@@ -7990,13 +8047,13 @@ follows.
   - Act 3's rows come after the PR merges, so they are not in its body.
     They are recorded where lane 3 places them, and Q29's decision cites
     them (section 5.6).
-- **The 50 ms.** SVC-10 states it on the suite's fixture register. There it
-  is recorded, and the test prints a warning when the median exceeds it,
-  without failing, and it stands there, since the spec names that
+- **The 50 ms.** SVC-10 states it against the scratch database of 007's T343, which gates it (below). On the suite's fixture register it
+  is CI's figure, T237's, the served median of the whole hook, which is not SC-005's connect-to-last-byte p95: recorded, with a warning when it exceeds 50 ms,
+  without failing, a warning only and never a gate there, since the spec puts its gate on another
   register. Against the Azure server every answer is at least one round
   trip to the database (SVC-7), and lane 5's netem run puts it over 50 ms
   above an RTT of about 40 ms (#165 6722703424). Act 3 records it beside
-  Q29's figure, with its RTT and Query count.
+  Q29's figure, with its RTT and Query count. SC-005 gates it at the release, not in CI, whose runners vary too much for a 50 ms gate: 007's T343, on a workstation with PostgreSQL 16, records n, the samples and their median and p95 by nearest rank (section 5.3's statistics) over at least 20 warm requests on quickstart's scratch database, each from the client's connect to the last byte of a digest-checked answer, rounded up to whole milliseconds, and fails unless n is at least 20, the median and p95 are the samples' nearest-rank ones, and the p95 is under 50 ms (lane 3, commit 17's post; spec#17's re-review r4, its first BLOCKING finding; lane 3's ruling, commit 20's post).
 - **Q29's limit, 1 s** (lane 3, #165 6722025863). Whether act 4 waits for
   the service (Q29 (a), Brett's answer) is decided by reading the warm p95
   of act 3's whole guard through the direct read against it, with the cold
@@ -8208,7 +8265,7 @@ them. Those totals use A's measured network share, its median less its
   register read is M5's request or, with the service down, a direct read.
   M13 counts each verb's reads.
 - **M9:** the Rule 3 stamp is a git push, not the database. Every total is
-  inside `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address,
+  inside `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5483`),
   and the phase plan puts the healthy bind at about 18 s at 20 ms, 44 s at
   150 ms and 75 s at 300 ms ("Answer 2's detached bind").
   `start-record` may change the read count; M13 counts it.
@@ -8297,7 +8354,7 @@ without it is over 1 s (lane 3, #165 6722025863), judged on its warm p95.
   Eagle and from Raven, with the RTT, the TLS version, M12 and n beside
   them. CI's figure is the gate's: the local share, and a floor.
 - **Test 10** asserts no time in CI. The 50 ms is recorded on the fixture
-  with a warning (section 5.4), and its fault cases assert the frame's
+  with a warning; it gates at the release instead, on the scratch database of 007's T343 (section 5.4), and its fault cases assert the frame's
   4.5 s on loopback (section 4.4). At act 3 it records the service's answer
   time, and the whole hook through the service and through the direct
   read, each with its RTT and n.
@@ -8306,8 +8363,8 @@ without it is over 1 s (lane 3, #165 6722025863), judged on its warm p95.
   connection, reading the head `n` and the digests at `n`, and the service
   sends the images it holds only where their digests match the database's
   at `n`. So each answer is at least one round trip; lane 5's B2 measured
-  1.0. The register-service spec's 50 ms names the suite's fixture
-  register, so it stands there. Against the Azure server the answer is
+  1.0. The register-service spec's 50 ms gates at the release, on the scratch database of 007's T343, and CI records it on the suite's fixture
+  register with a warning. Against the Azure server the answer is
   over 50 ms above an RTT of about 40 ms; act 3 records it beside Q29's
   figure, and SVC-9 says that test 10's figure on the fixture is a floor
   that decides nothing for Q29.
@@ -8326,10 +8383,10 @@ reworded, and add M1 in the design's form.
   which open point 11 could not.
 - **B, a delaying relay in the suite.** A standard-library relay on
   127.0.0.1, as AT-D9's F2 relay is, holds each chunk RTT/2 in each
-  direction and delays its upstream connect by one RTT. It needs no root
+  direction. As T229 built it (`code/tests/pgcluster.py`'s `DelayedLoopback`), it connects upstream at once and delays no connect, so TCP's handshake crosses it with no RTT, and a connect through it is n_c less that one round trip: 6 under the default key shares, 5 with P-256 offered first (lane 5, #165 6852197902; lane 3, #165 6858923154). It needs no root
   and runs in pytest on any host, as
   `test_each_shape_on_a_delayed_relay_is_recorded[<shape>-<rtt>]` (AT-9).
-  It models no slow start, loss or kernel timer, so it checks n for small
+  It models no slow start, loss, kernel timer or TCP handshake, so it checks n, less one round trip a connect, for small
   messages, not C.
 - **C, neither.** M13's counts, lane 5's run and act 3's rows carry the
   model.
@@ -8386,7 +8443,7 @@ subsections at V and W, under the headings it had at `21f0191c`. Ten are rows
 below. The other two, the agreement tests and the manual, are this plan's
 tests and documentation, and the last five rows are Brett's answers of round
 1 and Q1's. The `P<n>` ranges stay at `21f0191c`, as "How it cites" says. W
-changed the proposal's test 10, where the 50 ms is now the fixture's, and its
+changed the proposal's test 10, where the 50 ms then became the fixture's (since the follow-up's commit 17 its gate is 007's T343 on its scratch database, and the fixture's figure only warns), and its
 answers to Q22, Q24, Q28 and Q29. Its twelve subsections keep their names.
 
 | Requirement | Tests |
@@ -8447,7 +8504,7 @@ at commit I. Four marks say what changed:
 Each row's tests are written against the text at W. 79 of the 88 have tests;
 nine have none or only a partial one (below).
 
-`specs/sql-register/spec.md`, 69 requirements:
+`specs/sql-register/spec.md`, 69 requirements at W. A seventieth, "`lanes-index` starts from its cached module", added in the follow-up's commit 18, has no row of its own, so that no line moves: its tests are AT-14's T124 cases, `test_a_start_runs_the_cached_module_whose_checked_hash_matches_its_source`, `test_a_start_never_runs_cached_bytecode_whose_source_has_changed` and `test_a_start_runs_the_module_source_where_it_has_no_bytecode`, and T347's two, `test_install_places_the_cached_module_and_its_checked_hash_bytecode_beside_the_launcher` and `test_the_release_digest_list_names_the_cached_module_and_not_its_bytecode`, and, since commit 20, T282's parity case, `test_each_subcommand_answers_alike_from_the_cached_module_and_from_its_source`, for every subcommand (the review of commit 18's delta), and P8's `[cache-payload]` for check 1's comparison of the cached module; with T124's own verify for its unchanged subcommands:
 
 | Requirement | Tests |
 |---|---|
@@ -8470,7 +8527,7 @@ nine have none or only a partial one (below).
 | Handoffs stay git files written by the lane | 11; 2 (the queued handoff) |
 | `lane-start`'s bind is one write ‡ ¶ | AT-F6 (one register commit and push in files mode and one journal entry on primary; two sessions on one lane in both modes; a refused or in-doubt bind's `bind-failed` record; the bind child's lookup with the five copied values: `test_the_bind_childs_lookup_sends_the_five_copied_values[<case>]`); 11 (a resume's note, stamp and launch, and a new lane's death with the code, on `start-record`'s 75, 3 or 69); AT-F5 (`start-record`'s union expectation); a bind refused with another 2: `test_lane_start_dies_with_2_on_any_2_from_start_record_not_only_the_expectations[<case>]` (AT-11) |
 | Every database path is bounded | D9; section 4.4; 10; AT-F6 (answer 2, detached, inside the budget; the body past its bound: `test_a_bind_body_past_its_bound_ends_with_the_bounds_code_and_leaves_no_process[<case>]`); AT-F7 (the 3.65 s cap under a declaration); AT-F8 (the mode query's hang); AT-LR4 (an import's `not_after`: `test_an_import_carries_not_after_of_its_330_s_timer_plus_2_s`) |
-| `rename-lane` commits the transaction before moving the handoff | 1 (`test_rename_lane_commits_the_transaction_then_a_rerun_makes_only_the_move`, and the `rename-lane` case) |
+| `rename-lane` commits the transaction before moving the handoff | 1 (`test_rename_lane_commits_the_transaction_then_a_rerun_makes_only_the_move`, and the `rename-lane` case; `test_rename_lane_commits_the_transaction_only_where_its_handoffs_path_has_no_cache_part_on_primary`, a handoff path with a cache part) |
 | A claim's comment cites the register sequence | 4 (`test_claim_prints_its_register_seq`: the printed `register seq <n>` is the entry's seq, and the claim comment, through a fake `gh`, cites the same `<n>`); 1 (part G: the mirror commit on origin whose `Register-Seq:` trailer is the entry's seq, found by `git log`'s trailer format, which is the scenario "Finding the commit": `test_the_mirror_on_origin_equals_a_full_render_after_each_write[<verb>]`). The manual's text: **not covered** |
 | The journal records each write † ‡ | 1; 5; 12 (`lanes-index journal --write-id`); AT-F10 (`args_sha256`); AT-LR4 (the operator flag); AT-F1 (exactly two operator entries); AT-F2; AT-SET (no kind commits in a state its row refuses, and an operator entry writing outside `lanes/STORE` is refused with LR004); AT-F18; AT-LR009 (`test_act_id_is_the_acts_id_on_a_write_and_null_on_every_other_entry`, `test_the_act_id_checks_refuse_an_act_id_on_another_kind_and_a_malformed_one`, `test_each_entry_stores_the_keys_its_lines_derive[<kind>]`, `test_an_import_a_cutover_and_a_rollback_store_only_the_star_key`, `test_a_stray_import_stores_its_keys_and_a_stray_revert_none`, `test_an_aborted_cutover_and_a_reimport_leave_no_scopes_at_a_deleted_seq`) |
 | UTC comes from the database's clock in whole seconds | 1 (with `test_a_caller_composed_utc_and_log_paused_utc_stay_as_written`); 7 (the `WORD` lines whose UTC carries milliseconds, kept as they are: `test_word_lines_with_milliseconds_import_verbatim_and_flagged`) |
@@ -8505,7 +8562,7 @@ nine have none or only a partial one (below).
 | A rollback needs the database | 8 (b); section 4.2; D22; AT-F18 (the disaster path); AT-LRMPG (the restore from the dump and from the provider's own copy: `test_a_restore_from_the_dump_equals_its_source_with_new_passwords`, `test_a_restore_from_the_providers_copy_keeps_the_roles_and_takes_new_passwords`) |
 | A writer the rollback missed cannot write | 8 (c); section 4.2; AT-SET (an older snapshot fails 40001, then 69) |
 | The operator's bootstrap is idempotent and holds no secret † ◊ | P8 (a connection string refused with 2; `PGSERVICE` only in the environment); AT-VER; AT-LRMPG (the bootstrap without a superuser: `test_bootstrap_without_a_superuser_runs_twice_with_one_catalog`, `test_bootstrap_refuses_a_database_its_admin_does_not_own`; each engineer's two logins and the dump job's, made, rotated and revoked by `lanes-index login`, each with its group's floors, and the delta's "An engineer's logins" scenario: `test_two_writer_logins_write_alike_and_the_log_names_each`, `test_a_revoked_login_is_refused_69_and_writes_nothing[<case>]`, `test_an_open_session_gets_42501_between_the_revokes_steps_then_57p01`, `test_a_write_cut_by_a_revoke_mid_commit_is_in_doubt_and_ends_3_with_nothing_written`, `test_login_add_makes_an_engineers_two_logins_with_their_floors_and_prints_their_lines_once`, `test_login_add_run_again_puts_back_a_lost_membership_and_changes_nothing_else`, `test_login_rotate_keeps_an_open_session_and_refuses_the_old_password`, `test_login_refuses_a_bad_name_a_connection_string_and_a_pipe[<case>]`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`) |
-| The readiness check proves an environment before the cutover † ◊ | P8 (every check, the schema's window among them; the endpoint's address count, check 13: `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[<case>]`); 14; AT-VER; AT-LRMPG (checks 11 to 12: `test_ready_check_11_needs_tls_and_the_primary[<case>]`, `test_ready_check_12_passes_the_logins_the_step_made`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`; the reader's `target_session_attrs`: `test_reader_url_takes_target_session_attrs_primary_not_read_write[<case>]`) |
+| The readiness check proves an environment before the cutover † ◊ | P8 (every check, the schema's window among them; the endpoint's address count, check 13: `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[<case>]`; git 2.32 or later, check 14: `test_the_readiness_check_fails_on_each_fault[old-git]`; the cached module, check 1: `test_the_readiness_check_fails_on_each_fault[cache-payload]`); 14; AT-VER; AT-LRMPG (checks 11 to 12: `test_ready_check_11_needs_tls_and_the_primary[<case>]`, `test_ready_check_12_passes_the_logins_the_step_made`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`; the reader's `target_session_attrs`: `test_reader_url_takes_target_session_attrs_primary_not_read_write[<case>]`) |
 | The `mode=primary` flip is a command run once per host † | P8 |
 | Claim order is commit order | 4; C10; D19; AT-SPL; AT-LR5; section 4.1 |
 | `HOLD` and `LANDING` are ordered by commit sequence † ¶ ◊ | 4 (b); 4 (f) (a taking line that names no repository: `test_a_hold_line_that_names_no_repository_is_refused_with_2`); a taking line with no readable UTC, refused with 2 on primary naming the rule, `take-no-utc` at the commit (U3), and loaded as it stands by an import: AT-F13 (`test_on_primary_a_take_with_no_readable_utc_is_refused_before_the_lock_and_written_off_primary[<case>]`), AT-LR5 (`test_on_primary_a_take_with_no_readable_utc_is_lr005_take_no_utc_and_writes_nothing[<case>]`, `test_a_refresh_or_a_line_of_no_kind_with_no_utc_commits_and_a_take_with_none_loads_at_files[<case>]`) and AT-7 (`test_import_loads_takes_with_no_readable_utc_and_a_holderless_landing_expired_as_they_stand[<case>]`); AT-LR5 (one repository under two spellings, `HOLD` or `LANDING`, either order; each rule's DETAIL token: `test_each_claim_and_main_rule_lr005_carries_its_detail_token[<case>]`) |
@@ -8525,10 +8582,10 @@ nine have none or only a partial one (below).
 
 | Requirement | Tests |
 |---|---|
-| The service serves the reads and the guard, and writes do not depend on it | 10; 2 (`test_a_write_goes_on_with_the_service_down`) |
+| The service serves the reads and the guard, and writes do not depend on it | 10; 2 (`test_a_write_goes_on_with_the_service_down`); 10's T512 cases for the socket and who may connect (SVC-2), `test_the_socket_directory_is_a_0700_directory_of_this_uid_and_never_a_symlink`, `test_a_client_of_another_uid_is_closed_by_so_peercred` and `test_an_owner_file_from_another_namespace_or_boot_is_no_service`, and for primary only (SVC-5), `test_serve_refuses_unless_the_mode_answer_is_primary` |
 | Every answer that decides state is read fresh | 10 (the fresh write; never a cached `ok`) |
 | The service reaches the database only through `psql` | 10 (`test_the_service_reaches_the_database_only_through_psql`, FP) |
-| The service starts on demand with no supervisor of its own | 10 (`test_the_first_call_starts_the_service_with_no_supervisor`, `test_a_service_that_cannot_start_falls_back_to_the_direct_read`) |
+| The service starts on demand with no supervisor of its own | 10 (`test_the_first_call_starts_the_service_with_no_supervisor`, `test_a_service_that_cannot_start_falls_back_to_the_direct_read`; T512's SVC-4 cases, `test_one_instance_holds_register_lock_and_a_second_starter_exits_0`, `test_a_stale_socket_is_unlinked_under_the_lock_and_rebound` and `test_the_service_stops_after_its_idle_time_and_unlinks_its_socket`, and its failure stamp, `test_status_prints_the_services_lines_and_its_failure_stamp`) |
 | New code keeps to the toolchain floor | the existing hygiene suite (bash 3.2's rules, Python 3.9 and the standard library); partial, since nothing runs on 3.9 but the `package` job |
 | The `UserPromptSubmit` guard is the service's client † ‡ | 10 (the request carries only file names); AT-F6 (answer 2, detached) |
 | The `CLAUDE_NO_LANE=1` exception is kept | 10; P3 |
@@ -8541,7 +8598,7 @@ nine have none or only a partial one (below).
 | The guard fails closed during a database outage | P3; 10 |
 | A declared outage lets the guard answer from the mirror † ¶ | D20 (with the rollback's start: `test_a_rollbacks_start_declares_the_outage[<mode>]`); 10; AT-F7; AT-F11 (no `Register-Seq` within the bound; a ref behind a rollback's head: `test_the_guard_refuses_a_ref_behind_a_rollbacks_head`); AT-D20 (a rollback's declaration counts only where the guard's own read finds the switch at `files`, so not once the switch is primary again, and not in a partition: `test_a_rollbacks_declaration_counts_only_where_the_guards_read_finds_the_switch_at_files[<case>]`; a rollback rerun's declaration: `test_a_rollback_rerun_declares_before_it_goes_on[<case>]`; the floor is AT-F7's) |
 | `outage declare` during a rollback records the rollback's head ¶ | D20 (`test_outage_declare_is_refused_where_the_probe_reads_primary[<form>]`; Brett's word during a rollback: `test_outage_declare_on_a_persons_word_during_a_rollback_is_refused_and_prints_the_rollback_form`; a wrong `<k>` and a switch it cannot read: `test_outage_declare_rollback_is_refused_for_a_wrong_k_a_missing_mirror_seq_or_a_switch_it_cannot_read[<case>]`); D9 (the probe's row: `test_the_outage_declare_probe_ends_inside_its_bound_and_the_declaration_follows_the_rule[<fault>-<form>]`) |
-| The service answers the guard's read fast, and the cost is recorded | 10 (M5 and M10's four parts: `test_the_guard_answer_time_is_recorded_beside_todays_direct_guard`; M5b: `test_todays_direct_guard_is_timed_in_its_four_parts`; M10's parse: `test_the_guards_register_parse_is_timed_on_a_real_sized_register_beside_todays_six_reads_through_git`); section 5 (M13); the 50 ms is the suite's fixture register's, and against the Azure server the service's answer is over 50 ms above an RTT of about 40 ms, which act 3 records beside Q29's figure (section 5.6; lane 5's netem run, comment 6722703424) |
+| The service answers the guard's read fast, and the cost is recorded | 10 (M5 and M10's four parts: `test_the_guard_answer_time_is_recorded_beside_todays_direct_guard`; M5b: `test_todays_direct_guard_is_timed_in_its_four_parts`; M10's parse: `test_the_guards_register_parse_is_timed_on_a_real_sized_register_beside_todays_six_reads_through_git`); section 5 (M13); CI records the 50 ms on the suite's fixture register with a warning, and against the Azure server the service's answer is over 50 ms above an RTT of about 40 ms, which act 3 records beside Q29's figure (section 5.6; lane 5's netem run, comment 6722703424); the 50 ms gates at the release, on the scratch database of 007's T343, never in CI (section 5.4) |
 | The socket API is documented | **not covered**: documentation |
 | The cutover waits for the service only if the guard needs it | **not covered** by a test: Brett decides, from act 3's figure, the warm p95 of the guard without the service, against the limit he named, 1 s (comment 6722025863; section 5.6, where lane 5's netem run, comment 6722703424, puts the direct guard over 1 s above an RTT of about 57 to 63 ms) |
 
@@ -8810,7 +8867,9 @@ frame do not yet make it. None adds a requirement.
    after the verb returns, the renderer may not yet have started, so a free
    lock proves nothing alone. Every test uses one of two waits, and no other:
    - **Where the lag is expected to reach 0,** a poll of `lanes-index status`
-     every 100 ms until its lag is 0, with a 30 s ceiling.
+     every 100 ms until its lag is 0, with a 30 s ceiling, each poll after a
+     fetch of the W `status` reads (T117), made by the test with plain git:
+     `status` never fetches, and no write on primary fetches W (D12).
    - **Where the lag is expected to stay above 0** (test 5's kill and failed
      render, test 6's stop, test D22's lag), a wait for the renderer's exit.
      Test 5's `git` wrapper logs, at each call, the pid of the
@@ -8997,7 +9056,7 @@ frame do not yet make it. None adds a requirement.
     that workstation's attempt p95)`, with `T_write` and `bound_s`
     recomputed (the phase plan's "Over a remote database"). The tests set
     D7 by `LANES_REGISTER_DEADLINE_S` for their short cases, run test 4's
-    burst with it unset, and assert the 30 s default once (AT-4 (h)). A
+    burst under the runner's own D7 by that formula, set from its own measured attempts (Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13, which answers this point for AT-4 (c)), and assert the 30 s default once (AT-4 (h)). A
     per-workstation D7 would add a configured value for them to read.
 33. **`max_connections` against the connections the register opens.** The
     design says the server's `max_connections` must hold one service
@@ -9116,7 +9175,7 @@ marked against V:
 5. **Row 37.** Answered by the design's table of the bind child's variables,
    in lane 4's section ("Answer 2's detached bind"): `LANES_GIT_TIMEOUT` is
    45, beside the bind's bound, `bound_s`: 500 s at `c` = 2 and 530 s at `c`
-   = 3, with one address (W). AT-F6's case 13 asserts it.
+   = 3, with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5483`) (W). AT-F6's case 13 asserts it.
 6. **Row 10's fork in phase W.** Answered yes: the phase plan says a stub
    test asserts the fork's argv. AT-14 has it,
    `test_a_primary_write_forks_render_checkout_on_the_lane_checkout_detached[<case>]`,

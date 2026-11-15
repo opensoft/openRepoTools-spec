@@ -6,9 +6,10 @@ frozen at Y but for the edits below. This file records what the rulings since
 the freeze decide for 007, and the errors found in the frozen text.
 
 **The edits to Y's files since Y,** by round. All but the first, round
-B13's `design.md` fold and round B14's test-plan edits are made in place, so
-every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
-`design.md` to design:1192, keeps Y's number:
+B13's `design.md` fold, the test-plan edits that add lines in rounds B14,
+B15 and B16 and in the follow-up, and the follow-up's fold of T1 are made in
+place, so every line of `operations.md`, `clarifications.md` and
+`proposal.md`, and of `design.md` to design:489, keeps Y's number:
 
 - **Round B4, the two spec files** (`dabd74bd`, `ce3fad83`, `ad82c2f4` and
   `04a9de6b`; lane 3's rulings B4, #165 6738474549, and (a), 6727022920): the
@@ -86,23 +87,65 @@ every line of `operations.md`, `clarifications.md` and `proposal.md`, and of
   and design:4272 (Y:4226), the cost note's second connect (lane 3's R07,
   round B15, #165 6809568632); ops:129 and :219–220, which name v1.3.0 as
   007's release, v1.2.0 being the way back (Brett's "v1.2.0 now, 007 later
-  (Recommended)", 2026-11-10T13:22:23Z); ops:242, :244, :617 and :636, which
+  (Recommended)", answered by 2026-11-10T13:22:23Z, #165 6768477034, `RULINGS-brett-20261110-standing-landing-word.md`); ops:242, :244, :617 and :636, which
   name v1.3.0, and at :636 `release/v1.3`, as the release that carries 007
   or waits for its service (Brett's "v1.2.0 now, 007 later (Recommended)"
-  (2026-11-10T13:22:23Z; #165 6768477034)); and ops:247 and :252, act 4's
+  (answered by 2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`)); and ops:247 and :252, act 4's
   steps 1 and 3, which carry the holders' notice (Brett's "Holders release +
   check (Recommended)", #165 6782534165).
+- **Round B16:** lane 2's TX13 on the plan (#165 6812272109, taken in
+  6812295982; `TX13-TEXTS-lane2-for-spec17-6e534355.md`, `c6c2bf52…`):
+  TX13-2, AT-14's render fork, re-wrapped in place at TP:2629–2630, and
+  TX13-4, AT-P3's fixture, where B15's :2995 becomes three lines, so
+  `test-plan.md` is `523f78b0…`, 9,162 lines, and its lines from B15's :2996
+  sit two below B15's numbers.
+- **The follow-up, T345's fold of T1:** T1's 116-column line (design:489) is
+  folded at a space into design:489 and :490, word for word, and no other line
+  of D8's bullet changes. It adds one line, so `design.md`'s lines after
+  design:489 sit one below Y's numbers, and those after design:1192 up to 47
+  below, and round B8's design:620–621 are now :621–622, round B9's
+  design:621 and :625 are now :622 and :626, round B13's design:1467 and :1485
+  (B12b's, as that entry says) are now :1468 and :1486, round B14's design:722
+  is now :723, and round B15's design:2363, :3564, :5715, :5257 and :5264,
+  :5759 and :4272 are now :2364, :3565, :5716, :5258 and :5265, :5760 and :4273.
+- **The follow-up, lane 2's test-plan texts:** TX13b-1 and TX13b-6 (#165
+  6813121206; `TX13b-TEXTS-lane2-for-spec17-6e534355.md`, `41cbe18c…`) at
+  TP:2847–2848, `lane-worktrees`' direct reads, and :6414–6416, AT-F7's age
+  at the client's check; and RD14d's two (#165 6814602159;
+  `RD14d-TEXTS-lane2-for-followups-6e534355.md`, `75dc2c80…`) at :5568,
+  AT-F2's rerun after a files-mode write, and :5578, AT-F2's Tests. So
+  `test-plan.md` is `6701c704…`, 9,221 lines, and its lines sit below B17's
+  numbers: from B17's :691, four below, by lane 2's HW17 (opensoft/openRepoTools#165 6834015783); from B17's :1521, eleven below, by lane 2's TX15-4 (opensoft/openRepoTools#165 6826709932); from B17's :2849, thirteen below; from B17's :3351, sixteen below, by lane 2's TX18-1d (opensoft/openRepoTools#165 6834871295), AT-D8's G6 sentence; from B17's :3500, seventeen below, by lane 2's TX18-1e, AT-D8's test list; from B17's :4218, thirty-nine below, by lane 2's TX17-9a to -9e (opensoft/openRepoTools#165 6833867473), whose blocks at B17's :4183–4217 move the lines between them by twenty-four to thirty-five; from B17's :5566, forty-three below, by lane 2's TX19-C1 (opensoft/openRepoTools#165 6836739058), CF15-2's line wrapped; from B17's :5569, forty-six below; from
+  B17's :5579, forty-eight below; from B17's :6259, fifty-three below, by lane 2's TX17-10j, AT-F6's row (d) (opensoft/openRepoTools#165 6833867473); from B17's :6417, fifty-four below; from B17's :6779, fifty-six below, by AT-F13 (j)'s findings (lane 3, opensoft/openRepoTools#165 6833678789; lane 2, 6834138362); from B17's :6877, fifty-seven below, by lane 2's N2-17 (opensoft/openRepoTools#165 6833722259); from B17's :8814, fifty-nine below, by lane 2's words for open point 8 (opensoft/openRepoTools#165 6834234333). And, in place, in
+  the follow-up: design:2771–2772 (Y:2724–2725), T5's line, folded at a space,
+  word for word; design:5022 (Y:4975), Q29's clause, which reads as settled;
+  design:6001 (Y:5954), F29's `interpret-trailers` row, superseded by D15;
+  and design:6078–6079 (Y:6031–6032), rows 5 and 6, applied in D15 (T345,
+  R61's items 1 and 2; lane 4, #165 6726436890); design:6478–6479
+  (Y:6431–6432) and proposal:2022, Q24's install question, answered as
+  `./setup.sh` (Brett's "1a 2b", typed in lane 3's session at about 04:00Z
+  on 2026-11-12; #165 6814260122); ops:229, act 3 step 8, whose scratch
+  configuration leaves `render_key=` out (lane 3's review of T327, MUST-2);
+  ops:247 and :252, act 4's steps 1 and 3, where `cutover`'s open-`HOLD`
+  check is for only a run that will make step 1, and a `HOLD` with no
+  readable time counts (lane 3, #165 6813195977); and ops:275, where a cutover's
+  rerun after a 3 that proves the marker absent pushes again, and step 2's
+  own ends follow (lane 3, #165 6770600106, T116's point 1; T327's review,
+  NIT-1; the follow-up's check, S1). TP:2216 (B17's :2205; Y's :2201) stays as B17 has
+  it: lane 2 withdrew the merge20 point behind lane 3's draft there (lane
+  2, #165 6826474591, CF15-1). And TP:5603–5608 (B17's :5564–5565), AT-F2's "Unconfirmed": a cutover's rerun that proves the marker absent pushes again (lane 2's CF15-2, #165 6826474591; ops:275). And, in place, lane 2's TX17-2b, -2c and -10i (#165 6833867473): TP:4345 (B17's :4306; Y's :4297), AT-SPL's fixture, and TP:4575 (B17's :4536; Y's :4523), AT-LR4's fixture, which name AT-LR006's register in place of "the imported register", and TP:6392 (B17's :6339; Y's :6322), AT-F6's list of names, where row (d)'s new name, `test_two_sessions_binding_one_lane_in_files_mode_both_binds_land`, takes the place of `test_two_sessions_binding_one_lane_in_files_mode_the_second_is_refused_at_the_reread`; none moves a line. And, in place, in fold 1112g: design:1258 (Y's :1254), the `register_lines` comment, which now says "of a kind" (lane 1, #165 6834413025; ERR-49); design:5114 (Y's :5067), `migrate_state_cells`' row, which gains T413's whole seconds under the flag (lane 3, #165 6834516611; lane 4 confirmed it, #165 6836180079); and operations.md:283, act 4 step 9, where the lag of 0 is read after a fetch of W, since `status` never fetches (lane 3's ruling (a), #165 6833830078). And, in place, in fold 1112h: TP:6925–6927 (B17's :6869–6871; Y's :6852–6854), AT-F14's oracle, where each committed writer prints its success text (claim's `register seq <s>` line, on stderr) exactly once, in place of "stdout carries" (lane 2's TX19-B3, N2-17b's words, #165 6836739058); design:5114 (Y's :5067) again, whose cell now names "the `log_lines` CHECK on primary's `utc`" (lane 4, #165 6836180079); and TP:4214–4216 (B17's :4189–4190; Y's :4180–4181), AT-SET's oracle after the cutover's entry, and TP:5602–5612 (B17's :5563–5564; Y's :5547–5548), AT-F2's "Unconfirmed", re-broken in place, where a write behind the marker `adding` "exits 69 on the switch its snapshot reads, or on LR002" in place of failing with LR002 (lane 3's ruling, #165 6836905010; lane 1, #165 6837147488); none moves a line. And, in place, in two earlier edits this list had missed, and in fold 1112k: design:5547 (B17's :5546; Y's :5500), row (d)'s files-mode half, where the fourth cell says that two binds that both read the lane free both land, in place of `lane-start`'s re-read at `:2614` (lane 4, #165 6833596198; `88c10cc`); TP:6951 (B17's :6894; Y's :6877), AT-F14's oracle for a child whose parent is killed while it waits, where the fake `gh` "makes no comment call" in place of "is not called" (lane 2's N2-17, #165 6833722259; `e5017f9`); and TP:5518–5521 (B17's :5479–5482; Y's :5463–5466), AT-F1's oracle, where the write tried meanwhile becomes "A direct `commit_write` tried meanwhile" (lane 2's TX19h-3, #165 6838448299); none moves a line. And, in place, in folds 1112n and 1112o: TP:3442 (Y's :3419), the `[rename-lane-stops]` case, where the handoff file is emptied in the lane's checkout, in place of removed from it, so the replay's stamp proof refuses before the seam (lane 3, #165 6841366245; lane 2's T245v, #165 6841506953); and ops:278, act 4's step 8, which now names each host's need, before its flip, of the register checkout of every lane it may write for, or write routing on first (lane 3, #165 6841265575); none moves a line. And, in place, in fold 1112p, on lane 3's rulings on T510's points (#165 6841918192): TP:5928 (Y's :5864), the order oracle's guard's child, whose refused write's own code is never 0 while the guard's body exits 0 and the bind ends `bound`; TP:6152 (Y's :6087), AT-F6's case 8, whose scope is read in the attempt's `out` file while `why` stays `lane-start`'s refusal line; and TP:6159 (Y's :6094), case 10's `[absent]`, which ends 3 since its deadline's lookup fails too; and, on lane 3's ruling on T422's stops replay, TP:3442–3443 (Y's :3419–3420), where the handoff is committed empty in the lane's checkout, and the stamp proof refuses it with 5 though the checks before it pass it (lane 2, #165 6841965598; lane 3, #165 6841366245), in the words fold 1112q gave :3443 (the fourth adversarial review's S1); none moves a line. And, in place, in fold 1112r: TP:2843 (Y's :2828), where the restart skill's `lread` refuses 69 through the `69)` arm T407 adds, and 75 and 3 through its `*)` arm (lane 2, #165 6851002528; lane 3, #165 6851059362); TP:6168 (Y's :6103), where case 10's `[absent]` arm is disarmed before the next `2`, so that the lookup answers absent (lane 3, #165 6841918192; lane 5, #165 6850767626; lane 2, #165 6851156663); and TP:6173 and TP:7068 (Y's :6108 and :6994), where the replay's snapshot takes `--checkout <c>`, as the code passes it (lane 4, #165 6850778146; lane 2, #165 6851156663); none moves a line. And, in place, also in fold 1112r: TP:3447–3450 (Y's :3424–3427), the `[rename-lane-differs]` case, where the handoff file is removed by a commit on the lanes origin and the text names `lanes/LANES.md`, in place of moved by hand to the new path, whose replay meets `rename-lane`'s refusal of an occupied target before the seam and stops (lane 2, #165 6851227703; lane 3, #165 6851669848); none moves a line. And, in place, in the same fold: TP:3442–3443 (Y's :3419–3420), the `[rename-lane-stops]` case, where the handoff is committed empty on the lanes origin, so the rerun's lane checkout holds it, in place of committed empty in the lane's checkout (lane 2, #165 6850952424; lane 3, #165 6841366245); none moves a line. And, in place, in fold 1113d: TP:7824 and TP:7827 (Y's :7750 and :7753), section 4.4's remote-database option, where the whole-file fetch's 165 ms is brought lower by the fetch's own `lanes-index` start and second connect (design:4273), and no share expires on a link that answers once the image cache is filled, while a prompt that must fetch a whole file may answer 2 and leave the file for the next prompt (lane 5, #165 6852197902; lane 3, #165 6858923154); TP:8386 and TP:8389 (Y's :8312 and :8315), section 5.6's option B, where T229's relay connects upstream at once, so TCP's handshake crosses it with no RTT and it checks n less one round trip a connect (lane 5, #165 6852197902; lane 3, #165 6858923154); TP:580 (Y's :580), AT-1's message check, where `rename-lane`'s message on primary is the one the design names under Q13(a) (lane 3, #165 6859179515); TP:6168 (Y's :6103), case 10's `[absent]` arm, which cites the bind's own row, Y's :5516, beside Y's :5244 (lane 5, #165 6858973903); and design:3498 (Y's :3451), Q13(a)'s rerun, which names `rename-lane`'s entry message on primary under Q13(a) (lane 3, #165 6859179515); and, from the seventh review's S1, TP:546 (Y's :546), the rendering test's check that the journal entry carries the write's commit message, design:5144 (Y's :5097), "The rule: one run, one journal entry", design:2844 (Y's :2797), "The journal", and the delta spec's `specs/sql-register/spec.md:392` (Y-spec's :387), "The journal records each write", each of which now excepts `rename-lane`'s message on primary, the one Q13(a) names (lane 3, #165 6859179515), as does proposal:313, which restates the requirement, from the eighth review's N7 (lane 3, #165 6859179515); none moves a line. And, in place, also in fold 1113d: TP:6251 (Y's :6186), case 21's setup, where the image cache is filled by the offer made over the cluster's own port, whose whole-file fetch fills it, and no service is started, from a state home whose socket path is over 103 bytes, so that the client reads directly (Y's :3778–3779; lane 2, #165 6859896678; lane 5, #165 6852197902); TP:7826 and TP:7827 (Y's :7752 and :7753), section 4.4's remote-database option, where under section 5.6's option A or B a healthy delayed link is crossed by AT-F6's case 21 and AT-D9c (d) alone, in place of every case of the section, and the fault cases stay on loopback (lane 2, #165 6859896678; lane 5, #165 6852197902; lane 3, #165 6858923154); and TP:7096–7097, TP:7104 and TP:7105–7106 (Y's :7022–7023, :7030 and :7031–7032), AT-F34's rerun cases, where NIT-4 (b)'s case, two matching call lines, is one line after the "No record" case, its test name takes the line the run-time bullet began on, the run-time bullet is joined into one line and reads about 1.5 to 2 min, and lane 4's two-line bullet is joined into one, so that the plan keeps its count (lane 2, ID's T245ze, #165 6859896678; lane 3, #165 6851422597 and 6860075071); none moves a line. And, in place, in fold 1113e: TP:6255 (Y's :6190), case 21's oracle, where the guard's register read is the `2`'s own prefetch, `register read --for guard` in form 2 (the register-read contract's section 3.6), a call through the relay at `c` = 3 under the guard's 1500 ms statement bound, in place of the plan's naming it only as the hook's last database call (lane 2, #165 6866822075; lane 3, #165 6860626333); and, in the same fold, on Brett's answers of 2026-11-13 (`RULINGS-brett-20261113e-q1-q6.md`): TP:458–459 and TP:463 (Y's :458–459 and :463), where Q24's install route reads as answered, `./setup.sh` (Brett's "1a 2b", 2026-11-12), and check 1 there rests on the re-vendor's package ("Vendor release as package (Recommended)"); TP:901–902, TP:925, TP:1001, TP:1011–1012 and TP:1016 (Y's :896–897, :920, :996, :1006–1007 and :1011), AT-4's deadline and case (c), and TP:7579–7580, TP:7598–7599, TP:7630–7631 and TP:7633 (Y's :7505–7506, :7524–7525, :7556–7557 and :7559), section 4.1's deadline and its record, where the burst runs under the runner's own D7, `max(30 s, 10 × the runner's attempt p95)`, set from the test's own measured attempts, its oracle still strict ("(d) Both (a) and (c) (Recommended)"); TP:3781 (Y's :3755), AT-D9c (d)'s burst, which keeps the variable unset, as AT-4 (h) does; TP:9059 (Y's :8983), open point 32, answered for AT-4 (c); and design:304 and design:6340 (Y's :304 and :6293), Q24 (a) and the release, where the re-vendor vendors the release as a package ("Vendor release as package (Recommended)"); none moves a line. And, in place, in fold 1114b: TP:925 (Y's :920), AT-4 (c)'s burst, whose test rounds the deadline up itself, since the writer honours whole seconds only, and takes the runner's attempts from a measuring burst of the same shape run just before it (lane 2, #165 6869910867); design:5108 (Y's :5061), the seam's step 3, whose `msg` holds `$msg` as files mode's `git commit -m` stores it: cleaned once by `git stripspace`, git's default cleanup (`whitespace`), with no final LF of its own, in place of verbatim (lane 3's ruling, #165 6859073786; lane 1, #165 6869810000; lane 4, #165 6870452610); and ERR-56 (lane 3, #165 6867981064) leaves design:5589 (Y's :5542) and spec:318 as they are; none moves a line. And, in place, in fold 1114b's commit 15: TP:580 (Y's :580), AT-1's message check, whose message equals the twin's commit message less that message's one final LF, and design:5108 (Y's :5061), whose `msg` clause now says that files mode's commit message ends in the one LF git adds, which the twin test allows (lane 4, #165 6870452610); none moves a line. And, in place, in fold 1114c's commit 17, on spec#17's Codex review (lane 3, commit 17's post): TP:618 (Y's :618), AT-1's test list, which gains T240's cache-path case; TP:1893, :1907, :2007 and :2067 (Y's :1878, :1892, :1992 and :2052), AT-10's proof, fixture, oracle and test list, which gain lane 5's eight T512 cases; TP:8530, :8585 and :8588 (Y's :8456, :8511 and :8514), their rows in section 6.2; TP:8052, :8056, :8357, :8366–8367 and :8601 (Y's :7978, :7982, :8283, :8292–8293 and :8527), where SC-005's 50 ms gates at the release, on the scratch database of 007's T343, and CI's figure, on the test fixture's register, only warns; svc:278, the service's 50 ms requirement, whose text says so likewise; design:301, :337, :3678, :4873, :6335 and :6338 (Y's :301, :337, :3631, :4826, :6288 and :6291) and proposal:3, :1143 and :1209, which name v1.3.0 as 007's release, and design:6481 (Y's :6434) and proposal:2021, which keep Brett's answer of 2026-11-08 and add that his "v1.2.0 now, 007 later (Recommended)" (#165 6768477034) moved #165 to v1.3.0; none moves a line. And, in place, in fold 1114d's commit 18, on spec#17's re-review and the review of commit 17 (lane 3, commit 18's post): TP:454–455 and :458–459 (Y's :454–455 and :458–459), Q24's answer, where v1.3.0 carries #165 after Brett's "v1.2.0 now, 007 later (Recommended)", and every host shell but Eagle's and Raven's installs by pipx; TP:1888–1889 (Y's :1873–1874), :8050–8052 (Y's :7976–7978) and :8446 (Y's :8372), where SC-005's 50 ms gates at the release, on the scratch database of 007's T343, and CI's figure on the fixture only warns; TP:2566, :2574 and :2660 (Y's :2551, :2559 and :2645), AT-14's proof, fixture and test list, which gain T124's three cached-module cases and T347's two, and TP:8507 (Y's :8433), section 6.2's note of the requirement added since W; design:4442, :4447–4449 and :4461 (Y's :4395, :4400–4402 and :4414), SVC-10, whose gate is T343's and whose figure on the fixture is a CI warning; proposal:39, :870 and :938, which name v1.3.0 and SC-005's gate; clarifications.md:521, where the release tag is v1.3.0's; plan.md:183, the service's 50 ms, gated at the release by T343 on quickstart's scratch database, with CI's figure on the fixture a warning only (spec#17's re-review r4, its second NIT); operations.md:218–220, act 3's step 5, the install by host, `./setup.sh` on Eagle and Raven and pipx elsewhere, and quickstart.md:53 likewise; none moves a line. spec.md gains FR-064 after FR-063, which moves the lines below it by 13, and no citation names them; the sql-register delta gains its seventieth requirement at its end. And, in place, in fold 1114e's commit 19, on lane 1's words for T119's check 14, git 2.32 or later (lane 1, #165 6877889644; lane 3, #165 6877365776): TP:3056, :3069, :3092, :3133 and :3181 (Y's :3036, :3049, :3072, :3113 and :3161), AT-P8's proof, kinds, fixture, oracle and test list, which gain check 14 and its FP fault `[old-git]`, and TP:8565 (Y's :8491), section 6.2's row for the readiness check; spec.md:1410 and :1413, FR-055, and :677, US7's scenario 5; and the contract's :5 and :970, its draft 4.29, K10, in §10; none moves a line. And, in place, in fold 1114e's commit 20, on the review of commit 18's delta and spec#17's re-review r4 (lane 3's ruling, commit 20's post): TP:1888–1889 (Y's :1873–1874), :8051 (Y's :7977) and :8056 (Y's :7982), where CI's figure is T237's served median of the whole hook, a warning that gates nothing, and T343 records n, the samples and their nearest-rank median and p95 over at least 20 warm requests; TP:1949, :1951–1953 (Y's :1934, :1936–1938), AT-10's environment, where only inherited environments are free of the passfile's path and each `psql` child carries its role's `PGPASSFILE`; TP:2566, :2574 and :2660 (Y's :2551, :2559 and :2645), AT-14's proof, fixture and test list, which gain T282's parity case, check 1's comparison of the cached module and T347's positive case, with T347's two marked the fold writer's choice, and TP:8507 (Y's :8433); TP:3056, :3069, :3092, :3133, :3181 and :8565 (Y's :3036, :3049, :3072, :3113, :3161 and :8491), AT-P8's `[cache-payload]`; TP:4572 and :4642 (Y's :4520 and :4590), AT-LR4's proof and T231f's `journal_files` function; design:1154, :2058 and :2065 (Y's :1153, :2011 and :2018), `journal_files.path`'s CHECK and step 8's two checks; design:4442–4443 and :4447–4449 (Y's :4395–4396 and :4400–4402), SVC-10's gate and CI's median; proposal:870 and :938; the register-service delta's :279 and :283 (Y's :269 and :273); spec.md:724, :1484 and :1554; plan.md:183; and, on the later posts of lanes 4 and 5 and lane 3's rulings on them: TP:458 (Y's :458), proposal:3, :39 and :2021, design:6481 (Y's :6434), clarifications.md:521, spec.md:1588 and research.md:90, :93, :1057 and :1076, where the time of Brett's release answer, 2026-11-10T13:22:23Z, gains lane 3's record of it; spec.md:735, the register-service delta's :45 (Y's :45) and TP:2053 (Y's :2038), lane 3's erratum on the call that starts the service; the register-service delta's :142 (Y's :140) and TP:6037 (Y's :5972), the child's start time where it can be read; research.md:1551, socket-api.md's draft 12; none moves a line. The sql-register delta gains two scenarios at its end, check 1's refusal of a cache that is not the release's and a fresh install's pass. And, in place, in fold 1114f's commit 22, on spec#17's re-review r5, Codex review 7e of commits 19 and 20, Codex review 8f of spec#55 and lane 3's rulings on them (lane 3's ruling, commit 22's post): TP:458 (Y's :458), :2566 (Y's :2551), :2574 (Y's :2559), :2660 (Y's :2645), :4572 (Y's :4520) and :4642 (Y's :4590), AT-14's parity case, which gains the argv observed at the module's entry or dispatch (TP:2566, :2574, :2660), AT-LR4's proof and its new stray-revert case (TP:4572, :4642), and the time of Brett's release answer, which is now "answered by" (TP:458); design:1545 (Y's :1541), :2058 (Y's :2011), :2065 (Y's :2018) and :6481 (Y's :6434), step 8's refusal of a `lanes/STORE` row for a `stray-revert` (design:1545, :2058, :2065) and the same time (design:6481); proposal:3, :39 and :2021, the same time; plan.md:469 and :523, operations.md:635–636, the release's wait for a successful T343; the sql-register delta's :1121, reinstall's repair on a byte-stable interpreter; spec.md:1588, clarifications.md:521 and research.md:90, :93, :1057 and :1076, the same time, with research.md:90's comment id; none moves a line. And, in place, in fold 1114f's commit 23, on Codex's re-review of spec#47 at `746e931c` (`spec-47-746e931c0f43.md`, sha256 `75956a84…`), its SHOULDs 7, 8 and 10, and lane 3's rulings on them (lane 3's ruling, commit 23's post): design:4361 (Y's :4314), :4708 (Y's :4661), :4769 (Y's :4722), :5443 (Y's :5396), :5477 (Y's :5430) and :5481 (Y's :5434), where the bind record's pid is always there and its start time only where it can be read; design:5483 (Y's :5436) and :6110 (Y's :6063), the bind's bound at `c` = 3 and the 540 s band; the register-service delta's :124 (Y's :124), the same rule for the offer file; spec.md:1511 and plan.md:190; none moves a line. And, in place, in fold 1114g's commit 24, on Codex's re-review of spec#47 at `746e931c` (`spec-47-746e931c0f43.md`, sha256 `75956a84…`), its SHOULDs 8 and 9 (lane 3's post, #165 6880414089; lane 5, #165 6880616998), Codex's re-review r6 of spec#17 at `870ed1fb` (`spec17-33eb0829-r6.md`, sha256 `bc841020…`), its findings 1 and 2, and lane 4's confirmation (lane 4, #165 6880652751), and lane 3's rulings on them (lane 3's ruling, commit 24's post): TP:2566 (Y's :2551), :2574 (Y's :2559) and :2660 (Y's :2645), AT-14's parity case, whose argv, observed at the module's entry or dispatch, is also asserted equal to the exact vector passed to the launcher, `argv[0]` included; TP:6040 (Y's :5975) and :6041 (Y's :5976), :6092 (Y's :6027), :6265 (Y's :6200), :6409 (Y's :6339) and :6413 (Y's :6343), AT-F6's summary of `bound_s` and its fixture, case 22's boundary pair `[c3-w473]` and `[c3-w474]` at the 540 s band, and its list of names, which gains lane 5's five tests of spec#47's draft 13; TP:7916 (Y's :7842), :7917 (Y's :7843) and :7922 (Y's :7848), section 5.1's M9 summary of `bound_s`, which names `w_s_ms` and the 473/474 band; the contract's :5 and :303, its draft 4.30, K11, O16 qualified by `w_s_ms`; design:3567 (Y's :3520), :4359 (Y's :4312), :4821 (Y's :4774; row 37's sentence runs from :4820), :5476 (Y's :5429) and :6053 (Y's :6006), and TP:8268 (Y's :8194) and :9178 (Y's :9102), the other summaries of the bind's bound, "530 s at `c` = 3", which now name `w_s_ms` and the 473 and 474 band as design:5483 does (lane 3's ruling on the other summaries, commit 24's post; design:5506, whose bullet states the band itself, and the summaries whose context fixes `w_s_ms` below 474 are left); design:4030 (Y's :3983), :4031 (Y's :3984) and :4590 (Y's :4543), the service's marker, `\warn … :SQLSTATE` on stderr, in place of Y's `\echo` (ERR-57; Codex's delta review of spec#46's draft 13 at `fa613b9d`, `spec-46-fa613b9d8781.md`, sha256 `2b515eb5…`, its S5, and N1; lane 3's rulings, #165 6880934796); research.md:148, the errata's count, and ERR-57, appended at the file's end; research.md:1551, which gains draft 13's line beside draft 12's; and tasks.md's four reverse cites into `socket-api.md`, at :1625, :2292, :2300 and :2301 (draft 12's lines to draft 13's, `fa613b9d`, pinned); none moves a line above ERR-57. And, in place, in fold 1114h's commit 25, on lane 4's correction of its two counts (lane 4, #165 6881437390), lane 5's check of commit 24 (lane 5, #165 6881591729), lane 2's C1 in part (lane 2, #165 6881947623), lane 1's check of commits 18 to 24 (lane 1, #165 6881658031), Codex's re-review r7 of spec#17 at `f9d6069e` (`spec17-33eb0829-r7.md`, sha256 `845f8997…`), its BLOCKING finding on lane 3's deliberate choice 4, Codex's delta review 7g of commit 24 (`followups-delta-f9d6069e5425.md`, sha256 `2b782d4a…`), its BLOCKING finding on T501, and the independent review of spec#57 at `8aaf0fd2` (`review-spec57-8aaf0fd2-1114d.md`, sha256 `8644091e…`), its SHOULD-1, and lane 3's rulings on them (lane 3's ruling, commit 25's post): TP:6413 (Y's :6343), AT-F6's list of names, where `test_the_outcome_rewrite_has_three_results[io-failure]` now removes the outer's facts file, as the code does, and leaves the record as another writer may have left it (lane 3's ruling, #165 6880978929); design:5610 (Y's :5563), the exhaustive AT-F6 list, whose case 22 now names `w_s_ms` and the 473 and 474 band, `[c3-w473]` and `[c3-w474]`; the contract's :5 and :303, its draft 4.31, K12, lane 1's words, which qualify O16's `c` = 2 clause by `w_s_ms` (368 giving 500 s and 369 giving 510 s at one address); tasks.md's :101 (the U5 gate's words), :638, :644 and :648 (T501's `pidstart`, optional where readable), :653 and :2008 (T512 named beside T214 and T507), :1345 (lane 4's counts, 82 and 86), :1440 (S6's reason), :1687 (the cite into `lanes-index`) :2009 (the facts file and result 1's wording) and :2853 (the module's name) and :2803 (the v1.3.0 release row: Brett publishes the draft himself, 2026-11-13, "You publish the draft (Recommended)"; lane 3's ruling on the independent review of spec#57, its SHOULD-1), and operations.md:220 (the way back, with 1.3.0's module staying, unused); none moves a line. And, in place, in fold 1114i's commit 26, on Codex's re-review r8 of spec#17 at `d1a66b2e` (`spec17-33eb0829-r8.md`, sha256 `7a8b8dcb…`), its BLOCKING finding and its NIT, with lane 2's confirmation of the two `c` = 2 ids (lane 2, #165 6882513333), on lane 5's words for T510's rerun table (lane 5, #165 6882303043), on lane 3's ruling on lane 1's 6882354358 (T107's final-newline case, option 2, in its coalesce form), on section 8's case ids (Codex's re-review r7 of spec#17 at `f9d6069e` (`spec17-33eb0829-r7.md`, sha256 `845f8997…`), its SHOULD, and Codex's delta review 7g of commit 24 (`followups-delta-f9d6069e5425.md`, sha256 `2b782d4a…`), its SHOULD; lane 5's ids, #165 6881714002, as lane 2 confirms them, #165 6882026139, Part B, K1 to K5, and its RS-26 report, `REPORT-RS-26-2.md`, sha256 `2be3edd3…`), lane 2's other items (lane 2, #165 6881947623, and its later #165 6883445731), lane 1's T119 ask (lane 1, #165 6881993079) and lane 1's `ready` form (lane 1, #165 6882063682), and lane 3's rulings on them (lane 3's ruling, commit 26's post): design:5506 (Y's :5459) and :5507 (Y's :5460), the sum's bullet and the body's `timeout`, with plan.md:190, K12's `c` = 2 boundary, `w_s_ms` = 368 giving 500 s and 369 giving 510 s, the body at 490 s and 500 s; TP:6265 (Y's :6200) and :6409 (Y's :6339), tasks.md's :653 and :2008 and the map's row 442, AT-F6 case 22's `[c2-w368]` and `[c2-w369]`; quickstart.md:53, the install route's cite, now `ops:218–220`; tasks.md's :1434, :1436 and :1439, T510's rerun table, in lane 5's words; design:2058 (Y's :2011) and :2065 (Y's :2018), step 8's comment and third check, which also takes a present `files` row whose path the entry does not edit where its `final_newline` differs from that path's `files.final_newline`, since a change of only a final newline is an edit, while a row whose `present` or `final_newline` is null is refused there too (lane 3's ruling on lane 1's 6882354358); TP:2566 (Y's :2551) and :2660 (Y's :2645), AT-14's parity case, whose argv is observed exactly once at the module's entry and once at its dispatch, `argv[0]` the launcher's path as the test spells it; TP:6092 (Y's :6027) and :6413 (Y's :6343), AT-F6's fixture note and list of names, which gain nine of lane 5's names for section 8's other bullets and T254's tenth, with K4's "no temporary file in `offers/`" in S1's `[io-failure]`; tasks.md's :555 (T119's verify call 1, `and not cache-payload`), :650, :652 and :653 (T502's selector, title, Depends and note), :1421 and :1440 (T510's first run and note), :1755, :1900 and :1901 (the map's count and digest, 623 rows), :1993, :1994, :1995, :2005, :2009 and :2013 (T214's nodes, count and text), :2008 (case 22's pair on the record the outer leaves), :2056 and :2537 (the drill's two edits, in lane 2's later words), :2409, :2410 and :2411 (T254's tenth), :2544 (T276's Order, step 1, and its two step-1 ids by id), :1992 (T213r's `PGPASSFILE` clause), :2854 and :2876 (the argv oracle's precision fixes); test-map.tsv, ten rows appended at the end (615 to 624); and quickstart.md's :63 and :66 (`ready`'s full form); none moves a line above the appended rows. And, in place, in fold 1114j's commit 27, on Codex's re-review r9 of spec#17 at `e616f5a5` (`spec17-33eb0829-r9.md`, sha256 `2c5bfd93…`), its three BLOCKING findings, and Codex's delta review 7i of commit 26 (`followups-delta-e616f5a5d70a.md`, sha256 `db3b21c4…`), its two BLOCKING findings, and lane 3's rulings on them (lane 3's ruling, commit 27's brief): design:2065 (Y's :2018) and :2058 (Y's :2011), ruling 3's exception leaving `lanes/STORE` out, as only cutover and rollback may name it, and the stray revert free of `journal_edits`; design:1605 (Y's :1601), `files`' comment; TP:4572 (Y's :4520) and :4642 (Y's :4590), AT-LR4's prose, `[untouched-file]`'s stored `final_newline`, the stray-revert entry with no `journal_edits` row, and ruling 3's two cases, lane 3's names for lane 2 to confirm; tasks.md's :290 (T107), :2221, :2222 and :2231 (T231's nodes, count and Order), :1755, :1900 and :1901 (the map's count and digest, 625 rows), and test-map.tsv's row 609 and two rows appended (625, 626); operations.md:222, :248, :280 and :386, TP:2498 (Y's :2483) and tasks.md:1719, `ready`'s full form, as quickstart.md:66 gives it; TP:6413 (Y's :6343) and tasks.md:2009, `[made-empty-first]`'s pre-existing, non-empty facts file (spec#47's `bind-record.md` at `5e095c52`, :135); none moves a line above the appended rows. And, in place, in fold 1114k's commit 28, on Codex's re-review r10 of spec#17 at `07a40aef` (`spec17-33eb0829-r10.md`, sha256 `7c3951e8…`), its one BLOCKING finding, and lane 3's ruling on it (lane 3's ruling, commit 28's brief): design:2065 (Y's :2018) and :2058 (Y's :2011), step 8's fourth check and its comment, and design:1545 (Y's :1541), the kinds table's stray-revert row: a stray revert's `files` rows prove the register's current truth and never change it; TP:4572 (Y's :4520) and :4642 (Y's :4590), AT-LR4's prose and the stray revert's case; and its valid equal proof (Codex's delta review 7j of commit 27, its item 4); tasks.md's :2221, :2222 and :2231 (T231's nodes, count and Order), :1755, :1900 and :1901 (the map's count and digest, 627 rows), and test-map.tsv's rows 627 and 628, appended; none moves a line above the appended rows. And, in place, in fold 1114l's commit 29, on Codex's re-review r11 of spec#17 at `6450dce2` (`spec17-33eb0829-r11.md`, sha256 `516e89a1…`), its one BLOCKING finding, and Codex's delta review 7k of commit 28 (`followups-delta-6450dce243ae.md`, sha256 `97f55e4d…`), its one, the same (lane 3's ruling, commit 29's brief): design:2065 (Y's :2018), step 8's fourth check, which now refuses a stray revert's row with `present` false for a path in `files` before the loop, with its comment, design:2058 (Y's :2011), and design:1545 (Y's :1541), the kinds table's stray-revert row; TP:4642 (Y's :4590), the refusal function's fifth id, `[present-false-existing-path]`; tasks.md's :2221, :2222 and :2231 (T231's node, count and Order) and :1755 (the map's digest, 627 rows); and test-map.tsv's row 627, its `new_ids`; no line moves. And, in place, in fold 1114m's commit 30, on Codex's re-review r12 of spec#17 at `a227bea9` (`spec17-33eb0829-r12.md`, sha256 `ba20b9f6…`), its two BLOCKING findings (lane 3's ruling, commit 30's brief): TP:4642 (Y's :4590) and tasks.md's :2231, the fourth check's own message as the stray revert's refusal ids' discriminator, and `[present-false-existing-path]`'s wait for lane 1's T107 follow-up; and TP:7365–7367 (Y's :7291–7293) and tasks.md's :1887, the environment each `psql` child rebuilds: the inherited five dropped, then the role's `PGPASSFILE`, or, on the admin path, only `PGSERVICE`; no line moves. Lane 2's slices of waves 1 to 14 that no As built line in tasks.md names, 133 of them, are recorded in lane 2's inventory rather than in tasks.md (lane 3, #165 6837015299): `INVENTORY-lane2-007-slices-for-followups-09096c6dc267.tsv` (`082d49cd…`), in lane 2's `BUILD-W18/TX19/`, one row per slice bundle in lane 2's share, with its task, commit, tag, report, files and subject, and `group` 4 for 131 of those 133 and `TX19-B5/after-B5` for the other two, T278b and T278c (a third row so marked, T278f, is in tasks.md at T278's line).
 
 So a `Y:<n>`, `ops:<n>`, `clar:<n>`, `Y-spec:<n>` or `Y-svc:<n>` citation
 quotes Y's text at `a6497d00`; where a round above changed that line, the
 branch holds the newer text at the same number, except in `design.md` after
-design:1192, which round B13's fold moved up to 46 lines down. A
+design:489, which the follow-up's fold of T1 moved one line down, and after
+design:1192, which round B13's fold moved up to 46 more. A
 `test-plan.md:<n>` or `TP:<n>` citation is likewise Y's line; in the branch,
 round B14's edits put the plan's lines from :820 to :2900 one line down, and
 those from :2903 two; round B15's texts move them further, as its entry
-above says.
+above says, and round B16's AT-P3 fixture (lane 2's TX13-4) moves those from B15's :2996 two more; the follow-up's test-plan texts move them further, as its entry above says.
 
-- **Part 1, the errata** (ERR-01 to ERR-55; ERR-19 is now DEC-21): a line
+- **Part 1, the errata** (ERR-01 to ERR-57; ERR-19 is now DEC-21; ERR-56 and ERR-57 are appended at the file's end, so that no line above moves): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
 - **Part 2, the decisions** (DEC-01 to DEC-36): a choice the change leaves
@@ -127,8 +170,8 @@ files' lines at Y, used only where an entry quotes Y's words that the
 branch has since changed. A line of commit X above X:3955 is Y's line
 less one, since Y rewrote only SVC-5's X:3951–3955 as Y:3951–3956; lane 3's
 memo cites X, and each X line is mapped to Y here by its words. Lane 1's
-contract is its draft 4.20 (`contracts/register-cli.md`, `9efdff34…`,
-#165 6813103156, 6813129629, with lane 3's two words) and its block is v4.11 (`625a0b84…`, #165 6754645319),
+contract is in the branch as draft 4.31 (`contracts/register-cli.md`, `d6ba44ea…`,
+lane 1's draft 4.27, #165 6834642319, with lane 3's K9, #165 6870473237, K10, `ready`'s check 14, #165 6877889644, K11, O16's `w_s_ms` qualifier, lane 3's fold of Codex's re-review r6 of spec#17 at `870ed1fb`, its finding 2, and K12, the same qualifier on O16's `c` = 2 clause, lane 1's words, #165 6881658031; lane 1, #165 6877326009) and its block is v4.11 (`625a0b84…`, #165 6754645319),
 both keyed to Y. The block keeps v4.2's line numbers; the draft keeps them
 to :637 and moves each later line down one, as draft 4.12 does.
 
@@ -532,12 +575,12 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   `set-lane-state`, `handoff-path` and `write-handoff`, and the skill's own
   calls of these verbs (after slice 3, `handoff-path --create` and
   `write-handoff --prepend`), and, at the ownership seam, `managed-projection`
-  (DEC-27). Only `who` and `lane-last` still exit 69 under it. No register
+  (DEC-27). So do `lane-handoff`'s two reads that gate the handoff file, each with the variable on its own call: `lane-last` at the closed-lane fence, which opensoft/openRepoTools#118 moved from the late path into every other mode (code `ba2e6b9`; `lane-handoff:2153–2155` at `8a5edd97`), and which still refuses 2 where the mirror's last lane-kind line is `ENDED` or `RETIRED` and 1 where the mirror read fails too (Amendment 7(d)); and `restart-intent` at the preservation check (`:2164`), which Y:5646 calls host-local and T504's table reads as a deciding read. Only `who` still ignores the variable; `--late`'s own `lane-last` read and `lane-start`'s (spec:664) carry none and still exit 69, so `--late` in an outage refuses 1 there and writes nothing; and `lane-handoff` and, with lane 4's strip join (merge96 `baaaf517`), `lane-start`, `lane-end` and `lane`, and with its follow-up join (merge99 `69e0e94c`), `lane-rename` and `lane-worktrees`, unset an inherited `LANES_READ_MIRROR` at entry, so that no value a caller exported lowers those reads (lane 3, #165 6861148117 and 6866808028; lane 4, #165 6867496126; lane 1, #165 6867564602). No register
   write rests on those answers: `PAUSED`, the `LANES.md` line and the row
   still exit 69 with their notes, and the lane stays `SWAPPING`. spec:692
   already requires it.
 - **Whose:** lane 3's ruling on lane 4's item 1, #165 6746035594, with its list by
-  verb (#165 6747422030). The
+  verb (#165 6747422030); widened to those two reads by lane 3's ruling on round 6h's #56 (#165 6859801732). The
   ownership seam in an outage (spec:648–649 against `lane-handoff:1728–1741`
   at code `ddc972d`) was his spec-PR list item 9, and is answered: DEC-27.
 - **Source:** Y:4895; Y:4928; `test-plan.md:2198–2204`; spec:692;
@@ -1008,10 +1051,10 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 
 ## Part 2: decisions
 
-### DEC-01. The service is built beside groups A and B, and the v1.2.0 tag waits for it (R35)
+### DEC-01. The service is built beside groups A and B, and the v1.3.0 tag waits for it (R35)
 
 - **The decision:** `lanes-index serve` is built beside groups A and B, not
-  last. The cutover and the v1.2.0 tag wait for it, since from Eagle the
+  last. The cutover and the v1.3.0 tag wait for it (the v1.2.0 tag in his ruling below; v1.3.0's since his "v1.2.0 now, 007 later (Recommended)", answered by 2026-11-10T13:22:23Z, #165 6768477034, `RULINGS-brett-20261110-standing-landing-word.md`, shipped v1.2.0 without #165), since from Eagle the
   guard without the service takes about 1.2 to 2.1 s, which misses Brett's
   1 s.
 - **Whose: Brett's.** His words, verbatim, typed in lane 3's session at about
@@ -1030,7 +1073,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 
 - **The decision:** spec:626's launcher half, the launcher's bare window
   reads of the mirror, offline, is a change in workBenches, which no 007
-  task can carry. It rides the v1.2.0 workBenches re-vendor, whose scope
+  task can carry. It rides the v1.3.0 workBenches re-vendor (v1.2.0's in his answer below; v1.3.0's since his "v1.2.0 now, 007 later (Recommended)", answered by 2026-11-10T13:22:23Z, #165 6768477034, `RULINGS-brett-20261110-standing-landing-word.md`, shipped v1.2.0 without 007), whose scope
   gains it, and the release checklist names it. 007 meets the rest of
   spec:626.
 - **Whose: Brett's.** His "5A" in the same words, "4A, 5A, 1 let them stand,
@@ -1180,16 +1223,16 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 
 - **The decision:** each writer process asks the mode once, before slice
   1a's routing. On primary it skips `lane_checkout_enter`, takes `<c>` from
-  `lane_checkout_path` with no S3 work, and refuses with 2, naming
-  `lanes-edit.sh lane-checkout <lane> --create`, which makes it, as
-  `lane-start` does at a launch, where that checkout does not exist. In
+  `lane_checkout_path` with no S3 work, and refuses with 2 (but `request-handoff`, which refuses 64, as for each of its refusals before the claim, T415, tasks:1155; lane 4, #165 6877053562), naming
+  `lanes-edit.sh lane-checkout <lane> --create`, which makes it,
+  where that checkout does not exist, an explicit `LANES_REPO` included. In
   files and `index` mode it routes as today, and carries the answer across
   1a's `exec` as `LANES__MODE`, with the `LANES__PID` check. `reg_open`
   takes the same answer. Lane 4's T409 adds the carry, so slice 1a does not
   change.
 - **Whose:** lane 3's ruling R17 (#165 6726556972), on lane 4's Q-L3-2; the
   carry's place, lane 3's #165 6726831985; the command the refusal names,
-  lane 3's #165 6769061039, T415's question 2.
+  lane 3's #165 6769061039, T415's question 2; `LANES_REPO`, lane 3's #165 6841265575; `request-handoff`'s 64, lane 3's #165 6780753157, Q35, and #165 6807881675, batch c Q67, and lane 3's ruling on spec#17's Codex review, commit 17's post.
 - **Source:** Y:4983; Y:5452; Y:4858; D12 (Y:522).
 
 ### DEC-11. `rename-lane`'s handoff half runs in the parent (R18)
@@ -1274,7 +1317,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 
 - **The decision:** no `psql` is kept open across an attempt's two calls in
   phase 1. Tests 9 and 4 decide it at phase 2; a cached module or lazy
-  imports come first.
+  imports come first. The cached module comes now, in 007: Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13, picked in a dialog in lane openRepoTools-3's session and received by 22:32:28Z, takes PC-2's cached module, and the install ships it (T124, T347); the pipe pair still waits for phase 2.
 - **Whose:** lane 3's ruling R24 (#165 6726556972), which PC-2 settles.
 - **Source:** Y:5868.
 
@@ -1321,8 +1364,8 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Why:** option A needs root and a `sch_netem` no one has checked on
   GitHub's runner; option C leaves the guard's timing under a slow read, and
   libpq's connect path under delay, to act 3's rows. The relay delays the
-  TCP handshake, TLS and each query round trip, the terms the design's
-  figures count. It models no slow start and no loss: lane 5's netem run and
+  SSLRequest, TLS, the startup, SCRAM and each query round trip, the terms the design's figures count but TCP's handshake, which they count too (design:5921) and the ruling named, and which T229's relay does not delay, since it connects upstream at once (lane 5, #165 6852197902; lane 3, #165 6858923154).
+  It models no slow start and no loss: lane 5's netem run and
   act 3's rows cover those.
 - **Source:** the test plan's open point 23 at Y (section 5.6); T510.
 
@@ -1379,7 +1422,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
 - **Why:** the fix belongs with the change that needs it, and keeps that pull
   request green on its own. It follows Q-L2-3 (a), where lane 4's T417 adds
   its `_EXIT_3_CAUSES` entries and lane 2 reviews the hunk.
-- **Source:** T404; T401; T417.
+- **Source:** T404; T401; T417; T403's `failedit` re-point, which meets it (lane 3, #165 6851059362).
 
 ### DEC-25. A claim whose owner cannot be tested here counts as live for the seam's cap, then dead (T412's G10)
 
@@ -1505,7 +1548,7 @@ It adds a refusal Y never had, so it is a decision, not an error in Y.
   from the family: its `.log.<key>` and `.logpath.<key>` are removed, so the
   first read that asks for it ends 69. Contract draft 4.11 states it at its
   :673, and drafts 4.12 and 4.13, in the branch since rounds B10 and B11,
-  at their :674; lane 5's T511 draft follows at its D4:565.
+  at their :674; lane 5's T511 draft 12, `010e88e2`, follows at `socket-api.md:532`, and draft 13, `fa613b9d`, at `:555`.
 - **Whose:** lane 3's ruling, #165 6752360829, on N-g of lane 1's U5
   re-check of T511's draft 4 (6752336451).
 - **Why:** a read should not fail on a member it never asked for, and the
@@ -1686,7 +1729,7 @@ lane 3's ruling.
 | # | Choice | Taken | Source at Y |
 | --- | --- | --- | --- |
 | PC-1 | The image cache's form | Question 13's: content-addressed objects, per-seq manifests, a forward-only head under a short `fcntl.flock`, collection after 10 minutes, and the service writing through | Y:4960 |
-| PC-2 | The pipe pair | not in phase 1; decided at phase 2 (DEC-18) | Y:5868 |
+| PC-2 | The pipe pair | not in phase 1; decided at phase 2 (DEC-18); its cached module is taken in 007 by Brett's "(d) Both (a) and (c) (Recommended)", 2026-11-13 (T124, T347) | Y:5868 |
 | PC-3 | The renderer's batch and cap | 64 seqs a pass and 16 passes; the gap after six lost races accepted, and `reconcile` closes it | Y:5779 |
 | PC-4 | Which way out the runbook prefers | both tools ship; the runbook prefers `render --revert` | Y:2933 |
 | PC-5 | Test 14's two states | a copy of `lanes-index` with the constant rewritten, in the test's temporary directory; no environment override | Y:4872 |
@@ -1701,3 +1744,96 @@ lane 3's ruling.
 | PC-14 | D9's values beyond the guard's | D9's table as written; lane 2's tests confirm each bound | Y:3501 |
 | PC-15 | The CI cost of tests 9 and 10 | every trigger until measured, then lane 3 decides | Y:6084 |
 | PC-16 | Governing all of `lanes-edit.sh` | yes, for 007, so its edits are `[O]` | — |
+
+### ERR-56. Off primary, a resume's `start-record` 2 is Amendment 23's refusal (T428)
+
+- **The erratum:** Y:5542 ("or any other 2", `die 2`), spec:318 ("or
+  any other refusal that exits 2") and FR-029 ("any 2 at W7's `log` arm
+  dies") hold under a seq base, on `mode=primary`. Under a base
+  `<act-id>@files`, a `start-record` that makes no row and exits 2 is
+  Amendment 23's refusal, with nothing written: `lane-start` keeps the
+  writer's words, prints the note it prints for a resume's other codes,
+  with the command that writes the record later, writes the Rule 3 stamp
+  and launches, as W2 to W7's refusals did before T428. A `start-record`
+  that makes the row still dies with 2, and the guard's child still ends
+  `bind-failed` with `rc=2`. Under a seq base the write refuses without the
+  lane's checkout (R17), so there the note on a checkout that could not be
+  made does not say that the launch goes on (`12fe0e43:lane-start:4566`);
+  under `@files` it says "This alone does not refuse the launch"
+  (`:4564`). After an `@files` 2, `lane-start` runs `act-begin` again and
+  dies 2 if the base is now a seq one, so a launch whose host flipped to
+  primary in between does not take the refusal path
+  (`12fe0e43:lane-start:5173–5196`; item 2 of lane 3's ruling, #165
+  6867981064). Y:5542, spec:318 and FR-029 keep their words.
+- **Why:** off primary no write reads `LANES_EXPECT` (Y:5596, Y:5609), so
+  no 2 there is the second binding Y:5542 gives as its reason, and two binds
+  that both read a lane free both land (design:5547, Y's :5500). The 2s a
+  resume's `start-record` gives there are Amendment 23's: S1's failed clone,
+  S3's refusals, a failed fetch among them (its ratified choice 2), and the
+  router's before the clone. Of these S3 says that `lane-start` "prints a
+  note with the reasons and the commands that write the record later, and
+  the launch is not refused" (Amendment 8(d)), and its act 2's tests prove
+  "every launch still exiting 0". Y:5542's rule entered with the arms row's
+  "any 2 at `:4181` die, LR010's included" (Y:4689) and was written against
+  `2a057a6d`, before act 2's code was read (Y:65; Y:6073); Y's differences
+  from Amendments 22 and 23 for Brett (Y:696–729) list none from S3, and off
+  primary only the bind as one write (Y:722). Under a seq base every 2 still
+  dies, LR009's and LR010's included, so no second binding goes through.
+- **Whose:** lane 3's ruling, #165 6867981064, on lane 4's cause B (#165
+  6867422776). It narrows lane 3's own ruling behind Y:3029 and Y:5542
+  (#165 6710770304, on lane 4's check of v2.5, 6711949237) so that it keeps
+  Amendment 23 S3, which Brett Heap ratified on 2026-10-17 ("ratify 61";
+  "apply the edits, 7-9 as recommended"), and it keeps every primary
+  outcome, so it is not Brett's. T428's fix round builds it, in two commits
+  on line R's merge99 `69e0e94c`: `47b7d15d` (lane 4, #165 6868674698) and
+  `12fe0e43`, lane 3's wording of the note (lane 3, #165 6868697201; lane 4,
+  #165 6869332549 and 6869523533). It joined line R in merge101
+  `44f487d1`, as those two commits (lane 1, #165 6869553734).
+- **Source:** Y:3026–3034; Y:4689; Y:5539–5544; Y:5731; spec:318;
+  spec:332–334; FR-025; FR-029; tasks:1351;
+  `lane-collision-protocol-amendment-23.md:7–10`, `:112–129`, `:231–233`,
+  `:335–337`, `:424–428`; at line R's merge91 `78933393`,
+  `lane-start:4529–4539` and `:5112–5130`, `lanes-edit.sh:12786–12788`,
+  `:28313` and `:3677`, and the code leg's
+  `tests/test_a23_lane_start_read.py:163–186` and
+  `tests/test_a23_lane_start.py:170–188`, `:306–336` and `:368–394`; and,
+  in T428's fix round, `12fe0e43:lane-start:4548`, `:4564`, `:4566`,
+  `:5173–5196`, `:5210` and `:5247–5248`.
+
+### ERR-57. The service's marker is `\warn … :SQLSTATE` on stderr, not `\echo` (spec#46's S5; T512)
+
+- **The erratum:** Y:3983–3984 ("each query ends with an `\echo` of a
+  per-request marker, and the service reads `psql`'s output until it")
+  has the service end each query with an `\echo`, which `psql` prints on
+  its standard output. The service's marker is `\warn` of the
+  per-request marker and `:SQLSTATE`, which `psql` prints on its
+  standard error and never sends to the server. The service reads
+  `psql`'s output until that line, and the request's own rows open with
+  a marker of their own on standard output (spec#46's draft 13,
+  `fa613b9d`, `socket-api.md:300–301` and `:980`, and its section 5.2,
+  where the SQLSTATE tells a failed statement from a whole answer; as
+  built, in T512's follow-up at `88b50886`, `lanes-index:7899–7925` and
+  `:8324–8358`, as at merge106). Y's point stands, a per-request marker
+  that `psql` prints and the service reads to: the command and the
+  channel are what this erratum changes. Y:3983–3984 keeps its words, as
+  the frozen text does, and this branch's `design.md:4030`, `:4031` and
+  `:4590`, which repeated Y's `\echo` for the service's marker, are
+  aligned in place with `\warn … :SQLSTATE` on stderr. The snapshot's
+  own marker is another one and stays: #160's `\echo`, which the client
+  sends as a `COPY` (`design.md:1421` and `:5923`;
+  `contracts/register-cli.md:234`; `tasks.md:284`).
+- **Why:** the marker stays off stdout, which carries the answer, so no
+  answer line can read as a marker (lane 3's reason).
+- **Whose:** lane 3's ruling on S5, #165 6880934796, on Codex's delta
+  review of spec#46's draft 13 (`spec-46-fa613b9d8781.md`, sha256
+  `2b515eb5bb1de8a72d61b4d4c2a8a3a6dd4023eadd50274841ce57973282a7d1`),
+  which kept S5 open because the contract took `\warn` with no recorded
+  ruling or erratum behind it. Lane 5's draft 13 had taken `\warn` as
+  T512 built it, and left an erratum on Y:3983 to lane 3
+  (`socket-api.md:301`; lane 5, #165 6880500257). The ruling is lane 3's
+  and no word of Brett's, and lane 3's post says that spec#46's draft 14
+  cites this entry.
+- **Source:** Y:3982–3984; `socket-api.md:300–301` and `:980` at draft
+  13, `fa613b9d`; `lanes-index:7899–7925` and `:8324–8358` at T512's
+  `88b50886`; `spec-46-fa613b9d8781.md`, its S5; #165 6880500257 and
+  6880934796.

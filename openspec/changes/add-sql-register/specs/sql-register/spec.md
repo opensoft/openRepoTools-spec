@@ -389,7 +389,7 @@ The claim comment SHALL cite "register seq `<n>`", where `<n>` matches the `Regi
 - **THEN** the mirror commit with `Register-Seq: n` in `git log` is that write's commit
 
 ### Requirement: The journal records each write
-Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`) and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically. An entry whose edits touch only `lanes/STORE` SHALL be an operator entry, flagged as such in the journal. Exactly two kinds of operator entry SHALL pass the switch check, each written in its command's own transaction: the cutover's entry, at the seq after the head (seq 1 at a first cutover; `m+1` after a re-import, where the cutover's after-loss form writes the marker's rewrite so that the next write is `m+2`; or `b+1` after a restore), in the transaction that sets the switch to `primary`; and the rollback's last seq, in the transaction that sets the switch to `files`. Besides the import's baseline (seq 0, or `m` after a loss), which is journalled while the switch is `files`, no other entry SHALL be journalled while the switch is not `primary`. An operator entry SHALL write no row outside `lanes/STORE`: a cutover's or rollback's entry that also writes any other row, another file's row or any structured row, SHALL be refused when it is committed, and nothing SHALL be written, so that no such row is left in the journal to make a later abort of that entry fail.
+Each transaction SHALL append one journal entry holding a sequence number, the write's commit message exactly as today (`LANES(<lane>@<ws>): …` or `LOG(<lane>@<ws>): …`), or for `rename-lane` on primary the message the design names under Q13(a), since its handoff is not in the entry, and the line edits its mirror commit makes. The sequence number SHALL follow commit order and run without gaps. An entry SHALL be able to span more than one rendered file, with file creates, renames and removals among its edits, and SHALL replay byte-identically. An entry whose edits touch only `lanes/STORE` SHALL be an operator entry, flagged as such in the journal. Exactly two kinds of operator entry SHALL pass the switch check, each written in its command's own transaction: the cutover's entry, at the seq after the head (seq 1 at a first cutover; `m+1` after a re-import, where the cutover's after-loss form writes the marker's rewrite so that the next write is `m+2`; or `b+1` after a restore), in the transaction that sets the switch to `primary`; and the rollback's last seq, in the transaction that sets the switch to `files`. Besides the import's baseline (seq 0, or `m` after a loss), which is journalled while the switch is `files`, no other entry SHALL be journalled while the switch is not `primary`. An operator entry SHALL write no row outside `lanes/STORE`: a cutover's or rollback's entry that also writes any other row, another file's row or any structured row, SHALL be refused when it is committed, and nothing SHALL be written, so that no such row is left in the journal to make a later abort of that entry fail.
 
 #### Scenario: An operator entry that writes outside `lanes/STORE`
 - **WHEN** a cutover's or a rollback's entry also writes a row outside `lanes/STORE`
@@ -1116,3 +1116,40 @@ The manual SHALL carry a runbook for acts 3 and 4 and the rollback: every act, w
 #### Scenario: The rollback's triggers
 - **WHEN** the runbook is read for the rollback
 - **THEN** it names the triggers, the words and the owner of each step
+
+### Requirement: `lanes-index` starts from its cached module
+`lanes-index` SHALL be a short launcher that runs its body from PC-2's cached module, a file beside it (`lanes_index_main.py`, whose name lane 1 fixes), by that module's checked-hash cached bytecode (PEP 552), so that a start does not compile the whole script. Every subcommand's argv, stdout, stderr and exit code SHALL stay as they are without the module. Bytecode whose module source has changed SHALL never run, since the launcher checks it against the module's bytes; where the module has no valid bytecode, as where the install could not write it, the launcher SHALL run the module's source. `openRepoTools --install` SHALL place the module beside `lanes-index` and write its checked-hash bytecode for the interpreter that `lanes-index` runs on, and on a `./setup.sh` host the module SHALL arrive with the package re-vendor. The release's digest list SHALL name the module, which `ready`'s check 1 digests beside `lanes-index` and `lanes-edit.sh`, and SHALL NOT name its bytecode. `ready`'s check 1 SHALL also compile the digest-checked module with the interpreter that `lanes-index` runs on, in checked-hash mode (PEP 552, flags 0b11), and SHALL fail, naming the cached module as not matching the release's source, unless the result equals the installed bytecode byte for byte. The launcher SHALL still run the cache with no compile at a start, so the guarantee holds at check time, as check 1's does for every other installed file; where the compiler's output is not byte-stable for the same source and interpreter, check 1 fails closed, and `openRepoTools --install`, which writes the cache again, repairs a stale or corrupt cache on a byte-stable interpreter, while an interpreter that is genuinely not byte-stable stays failed closed.
+
+> Brett's answer of 2026-11-13 on D7's 30 s deadline against the ten-writer burst: "(d) Both (a) and (c) (Recommended)", whose option read "Precompile lanes-index AND run AT-4 (c) under a per-workstation D7."; the question's (a): "Precompile `lanes-index` in 007, taking PC-2's cached module now." (lane 3's record of the dialog, `RULINGS-brett-20261113e-q1-q6.md`).
+
+#### Scenario: A start runs the cached module
+- **WHEN** `lanes-index` starts and the module's checked-hash bytecode carries the hash of the module's bytes
+- **THEN** the launcher runs that bytecode and does not compile the module's source
+
+#### Scenario: Stale bytecode never runs
+- **WHEN** the module's bytes have changed since its bytecode was written
+- **THEN** the launcher never runs that bytecode, and runs the module's current source
+
+#### Scenario: The source runs where the module has no bytecode
+- **WHEN** the module has no valid bytecode, as where the install could not write it
+- **THEN** the launcher runs the module's source, and the subcommand's stdout, stderr and exit code are those of a start from valid bytecode
+
+#### Scenario: Every subcommand behaves as before
+- **WHEN** any `lanes-index` subcommand runs from the cached module
+- **THEN** its argv, stdout, stderr and exit code are as they were before the module
+
+#### Scenario: The install places the module and its bytecode
+- **WHEN** `openRepoTools --install` installs the release
+- **THEN** `lanes_index_main.py` is beside `lanes-index`, with its checked-hash bytecode written for the interpreter that `lanes-index` runs on
+
+#### Scenario: The release's digest list names the module
+- **WHEN** the release builds its digest list
+- **THEN** the list names `lanes_index_main.py` beside `lanes-index` and `lanes-edit.sh`, which `ready`'s check 1 digests, and names no bytecode
+
+#### Scenario: Check 1 refuses a cache that is not the release's
+- **WHEN** the installed bytecode's code payload differs from a checked-hash compilation of the digest-checked module, though its header keeps flags 0b11 and the module's source hash
+- **THEN** `ready`'s check 1 fails, naming the cached module as not matching the release's source, and `ready` exits 2
+
+#### Scenario: A fresh install passes check 1
+- **WHEN** `openRepoTools --install` has just installed the release
+- **THEN** check 1's checked-hash compilation of the installed module equals the installed bytecode byte for byte, and check 1 passes

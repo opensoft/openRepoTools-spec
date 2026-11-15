@@ -1,6 +1,6 @@
 # Proposal: the SQL register under `lanes-edit.sh` (Amendment 22, act 2)
 
-Governing issue: opensoft/openRepoTools#165, milestone `v1.2.0`, claimed by lane
+Governing issue: opensoft/openRepoTools#165, milestone `v1.3.0` (`v1.2.0` until Brett's "v1.2.0 now, 007 later (Recommended)" (answered by 2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`)), claimed by lane
 openRepoTools-3 on 2026-10-05. Sole implementation feature: Speckit
 `007-sql-register`, not yet created (see "Speckit handoff"). This change lives in
 the spec leg, opensoft/openRepoTools-spec. The code it governs is
@@ -36,7 +36,7 @@ Brett Heap ruled on 2026-10-05, in Amendment 22 ("ratify 50"), that on a
 workstation configured `mode=primary` the register is a Postgres database: each
 write is one transaction, the git files are its rendered mirror, and nothing
 falls back to writing the files. Act 2 of that amendment, the tooling, is this
-change. It was scheduled for v1.2.0 after the release work; v1.1.0 is tagged, and
+change. It was scheduled for v1.2.0 after the release work, and Brett's "v1.2.0 now, 007 later (Recommended)" (answered by 2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`) moved it to v1.3.0; v1.1.0 is tagged, and
 Brett started it on 2026-10-31.
 
 ### What Amendment 23's act 2 leaves for this change
@@ -310,7 +310,7 @@ answer to Q14 (#165 6710653292). Each item names the test that checks it; the ag
 
 - **The journal.** Each transaction appends a sequence number (commit order),
   the write's commit message exactly as today (`LANES(<lane>@<ws>): …`,
-  `LOG(<lane>@<ws>): …`), and the line edits its mirror commit makes. Rule 9(d)'s
+  `LOG(<lane>@<ws>): …`; `rename-lane`'s on primary excepted, design:3498), and the line edits its mirror commit makes. Rule 9(d)'s
   discipline, under which every write's file change is a known, finite set of
   line edits, is what makes it replayable.
 - **The renderer.** After the transaction commits, the writer forks it. It
@@ -867,7 +867,7 @@ also open a database connection per prompt.
   read; the
   hook's environment, and every environment a session inherits, carries no
   database URL or password (Amendment 14(c)); the service answers the guard's
-  read in under 50 ms on the suite's fixture register, its answer time,
+  read in under 50 ms, its answer time, gated at the release by 007's T343 (a nearest-rank p95 of at least 20 warm requests on quickstart's scratch database, on a workstation with PostgreSQL 16, from the client's connect to the last byte of a digest-checked answer, rounded up to whole milliseconds, failing at 50 ms or above), and on the suite's fixture register CI's figure, T237's, the served median of the whole hook, is a warning only that gates nothing and is not that connect-to-last-byte p95,
   measured as Q10 settles and recorded in the PR body, with the whole guard's
   figure, which is Q29's, and today's direct guard recorded beside it (P5;
   design SVC-10).
@@ -935,7 +935,7 @@ and credentials, the 69 refusal, the SQL's shape) always run.
 10. The guard through the service: byte-identical answers (stdout, stderr less
     the fallback line, and the exit code), the fallback line, no credential in
     any environment a session inherits, and the service's answer to the
-    guard's read under 50 ms on the suite's fixture register, recorded in
+    guard's read under 50 ms, gated at the release by 007's T343's nearest-rank p95 of at least 20 warm requests on quickstart's scratch database, failing at 50 ms or above, and on the suite's fixture register CI's figure, T237's served median of the whole hook, a warning only that gates nothing and is not SC-005's p95, recorded in
     the PR body (Q10), with today's direct guard beside it, and the whole
     guard's figure, which is Q29's, taken at act 3 against the server (P5;
     design SVC-10); and the hook inside its 5 s against a database that does not
@@ -1140,7 +1140,7 @@ R3 completes this order, as a proposal (Q24 and Q25 carry its questions):
   half), serialized on `lanes-edit.sh`; the spec docs PR; a draft root PR bumping
   both legs to the PR heads, so `exact-pins` proves code, spec and root docs
   together, the only run that does; the legs landed on the proven heads, then
-  the final root bump; v1.2.0 (Q24); the installs, acts 3 and 4, and the archive
+  the final root bump; v1.3.0 (Q24); the installs, acts 3 and 4, and the archive
   PR with one more bump.
 
 ## Open design questions
@@ -1206,7 +1206,7 @@ rollback's start declares one too, which narrows Amendment 22; Q28 (i) and (a),
 the cutover waits for Amendment 23's six act-2 PRs, which lane openRepoShape-2
 re-homes; and Q29 (a), the cutover waits for the service only if the guard,
 measured without it, is slower than a limit he names; lane 5's figure puts it
-over his 1 s (#165 6725361742), so the cutover and the v1.2.0 tag wait for the
+over his 1 s (#165 6725361742), so the cutover and the v1.3.0 tag wait for the
 service, built beside the first two groups of 007's slices, not last (lane 3's
 ruling, #165 6724332510 and 6726078173). **Named on 2026-11-08:** Q29's time
 limit, "1 s (Recommended)"; Q22's database host, its backups and how long it may
@@ -2018,8 +2018,8 @@ org's GitHub plan supports such a ruleset, which nobody has checked yet.
     **Answered, Brett's, on 2026-11-08:** v1.2.0 carries #165 and T017's five
     fixes, #290, #291, #295, #301 and #302, and the other issues milestoned
     v1.2.0 move to v1.2.1: "set 1.2.0 for 165 alone, 1.2.1 for the rest", then
-    "let T017 ride in 1.2.0, retitle #343" (#165 6721648587 and 6721870837).
-    Whether Eagle and Raven use pipx or `./setup.sh` stays open.
+    "let T017 ride in 1.2.0, retitle #343" (#165 6721648587 and 6721870837). Brett's "v1.2.0 now, 007 later (Recommended)" (answered by 2026-11-10T13:22:23Z; #165 6768477034; `RULINGS-brett-20261110-standing-landing-word.md`) then moved #165 to v1.3.0: v1.2.0 shipped without it, and what this question asks of v1.2.0's routes, its pipx artifact and its rc1 holds for v1.3.0.
+    Whether Eagle and Raven use pipx or `./setup.sh` is answered: `./setup.sh`, option b of lane 3's question, which Brett chose with "1a 2b", typed in lane 3's session at about 04:00Z on 2026-11-12 (lane 3, #165 6814260122).
 25. **The landing's mechanics (R3c's questions 1, 2 and 9; for Brett).**
     - (a) The merge method per leg: (i) a merge commit on both legs, as spec #1,
       #3 and #4 and code #1 were merged; (ii) a squash with an explicit body;
