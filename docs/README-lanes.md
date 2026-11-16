@@ -5183,8 +5183,9 @@ lanes-index bootstrap --admin-service '<service>' --label '<name>' --repository 
   PUBLIC. It is safe to repeat, and prints `unchanged` where the roles are
   already in place.
 
-**`lanes-index login`** makes, rotates and revokes the logins, from Brett's
-shell after the bootstrap, through the same admin service and under the
+**`lanes-index login`** makes and rotates the logins, and revokes an
+engineer's two, from Brett's shell after the bootstrap, through the same
+admin service and under the
 bootstrap's rules for a secret: `add` and `rotate`, which print a password,
 refuse when stdout is not a terminal, and it sets each password as a
 SCRAM-SHA-256 verifier computed on the client.
@@ -5218,7 +5219,9 @@ lanes-index login revoke <engineer> --admin-service '<service>'
   `^[a-z][a-z0-9_]{0,40}$`, an argument that carries a connection string or a
   password, or, for `add` and `rotate`, stdout that is not a terminal; 69 where
   the admin connection fails or the database refuses a step; 64 for usage,
-  `rotate` with neither an engineer nor `--dump-job`, or with both, among it.
+  `rotate` with neither an engineer nor `--dump-job`, or with both, and
+  `revoke` with `--dump-job` or with no engineer, among it. The dump job's login
+  is rotated, never revoked, by this command.
 - **What a restore keeps.** A database dump holds no login, membership,
   verifier or floor, and a physical backup of the cluster holds them all. After
   a point-in-time restore each login is there with its old password, and `login
@@ -5294,8 +5297,8 @@ as a reader's do. `request-handoff`'s wait on primary is the tail that always
 does, its polls reading through `lanes-index register read --since`. Others
 read too, among them: the lifecycle follow-up of a `log ENDED` or `RETIRED`,
 which reads the lane's log at most once; `retire-rows`, which reads each
-retired lane's log; and `rename-lane`'s comments, unless `--no-github`, which
-read every lane's log.
+retired lane's log; and `rename-lane`'s comments, unless `--no-github` or
+`LANES_NO_GITHUB=1`, which read every lane's log.
 
 On a workstation that is not `mode=primary` no client asks the socket.
 
@@ -5407,13 +5410,16 @@ re-indexes, or reads the mirror or the outage declaration.
   or an owner file from another install on a socket whose server is of its own
   uid, unless a failure stamp younger than 60 s stands. Never the guard's second
   read, and never a write's own snapshot or commit; a writer's tail reads as
-  any client does, and `request-handoff`'s wait is one. The call that starts a
-  service reads directly; the service answers from the next call.
+  any client does, and `request-handoff`'s wait is one. A call that finds no
+  socket, or a dead one, reads directly, and a service it starts answers from
+  the next call. A call that finds another install's owner file on such a
+  socket still sends its request: it takes that service's text or `refuse db`
+  answer, and reads directly only where the answer is `unavailable`.
 - **How:** detached, from Python and never bash (`setsid`, its input and output
   on `/dev/null`, its errors to `register.log`), with a reduced environment of
   `PATH`, `HOME`, `LANG`, the `XDG_*` variables, `LANES_INDEX_CONFIG` and, where
   they are set, the two test-only variables below, and no password and no URL.
-- **One instance an environment:** `serve` holds `register.lock` for its life,
+- **One instance per environment:** `serve` holds `register.lock` for its life,
   and a second starter that finds it held exits 0.
 - **It stops** after 900 s with no request, removing its socket. On a request
   that finds its own install's files changed, or its configuration now refused
@@ -5436,8 +5442,10 @@ service is dormant on every host until that refusal is lifted.
 `serve` exit before it listens, each with 2: `path-too-long`, `config-refused`
 (a refused configuration, a mode other than `primary`, or a URL parameter it
 does not map) and `no-psql` (no `psql`, or one older than 15). It holds the UTC
-and the cause, nothing else. A client that meets a stamp younger than 60 s
-starts nothing and reads directly. A database that refuses or does not answer
+and the cause, nothing else. Every start reads it first, and one younger than
+60 s holds back that start alone: a client that found no socket, or a dead
+one, reads directly, and one that found another install's owner file takes
+that service's answer, as above. A database that refuses or does not answer
 is never stamped: the service listens, answers, and reconnects in the
 background. The service removes the stamp once it listens, and again at its
 first good connect. `lanes-index status` reports a stamp and its cause, and a
@@ -5452,9 +5460,11 @@ for usage. The `SessionStart` block exits 0 always, and never reads that exit.
 
 **Two test-only variables,** `LANES_REGISTER_SERVE_IDLE_CHECK_S` (the `SELECT 1`
 interval, 60 by default, ignored at 240 or more) and
-`LANES_REGISTER_SERVE_IDLE_STOP_S` (the idle stop, 900 by default), are honoured
-only where set, as whole seconds of at least 1; any other value is ignored, and
-the default kept.
+`LANES_REGISTER_SERVE_IDLE_STOP_S` (the idle stop, 900 by default), are
+honoured only where set, as one to nine ASCII digits, leading zeros counted,
+naming whole seconds of at least 1; any other value, ten digits or more among
+them, is ignored, and the default kept, so the idle stop honours at most
+999,999,999 s.
 
 ### The runbook: acts 3 and 4, and the rollback
 
@@ -5671,8 +5681,21 @@ runs it again at the window, and again after any recreate.
      (step 9), with the lines the bootstrap and `login add` printed, its own
      engineer's alone. In both URLs, `<root file>`, as `login add` prints it,
      becomes the path on that host of the root file item 9 recorded: a URL
-     whose `sslrootcert=` names no existing file is refused at load.
-   - **Check:** `lanes-index status` reads; `ready` (step 6).
+     whose `sslrootcert=` names no existing file is refused at load. Where the
+     host's index half is on the register's database, the file also carries
+     the indexer's `url=` and `passfile=`: the one shared login,
+     `lanes_indexer`, whose password-file line step 2's bootstrap printed
+     once, which goes alone in the 0600 file `passfile=` names, and a URL
+     that the bootstrap prints no line for, which Brett writes with the
+     same `sslmode=verify-full` and the same root file as the other two:
+
+     ```text
+     url=postgresql://lanes_indexer@<endpoint>:5432/<database>?sslmode=verify-full&sslrootcert=<root file>
+     passfile=<indexer password file>
+     ```
+   - **Check:** `lanes-index status` reads; `ready` (step 6); and, where `url=`
+     is set, `lanes-index sync --source inventory` ends 0, which logs in as the
+     indexer, whose login `ready` does not read.
    - **Refusal:** `lanes-index` refuses a file that is not a regular file or
      has any group or other permission bit, one inside a git work tree or under
      `~/.agents/`, and a URL that carries a password ("`mode=primary`").
@@ -5756,15 +5779,17 @@ runs it again at the window, and again after any recreate.
    **Refusal:** any failure stops the window.
 3. **The freeze.** Brett gives the word, the coordinator posts N3, and Brett
    prompts each pane. Every lane but the operator lane and the coordinator
-   reaches a stopping point and writes its `PAUSED` record with a plain
+   reaches a stopping point, writes its `PAUSED` record with a plain
    `/handoff` (never `/ctx` or `--restart`, whose respawn runs `lane-start` and
-   writes `RESUMED`). Every lane that holds a `HOLD`, those two included,
-   writes `HOLD RELEASED` first. Those writes must land before the import. The
+   writes `RESUMED`), and writes nothing more until N4. Every lane that holds
+   a `HOLD`, those two included, writes `HOLD RELEASED` first. Those writes
+   must land before the import. The
    operator lane and the coordinator write no `PAUSED`, since a plain
-   `/handoff` ends a lane's turn and its resume is a write: they stay live, the
-   coordinator writes no register line until N4, and the operator lane writes
-   only what steps 6, 7 and 9 give it, the import, the cutover and the smoke
-   test's `log NOTED`, each after the quiet check.
+   `/handoff` ends a lane's turn and its resume is a write: they stay live.
+   After any `HOLD RELEASED` of their own, the coordinator writes no register
+   line until N4, and the operator lane writes only what steps 6, 7 and 9 give
+   it, the import, the cutover and the smoke test's `log NOTED`, each after the
+   quiet check.
 
    The guard itself writes no register line, but two things it starts do.
    While a `HANDOFF-REQUESTED` stands unanswered for a lane, its guard types
@@ -5936,7 +5961,7 @@ Brett.
 |---|---|---|
 | N1 | before act 3's rebuild | the rebuild ends every lane in its container; act 3 changes no register mode (`mode=index` stays), though the new tools change how a lane starts and binds in every mode; `ready` will run in each environment |
 | N2 | once Brett names the window, before it opens | "What changes for a lane" in full; the window; the freeze's form; the rollback's triggers |
-| N3 | at the freeze word | stop at a stopping point, write `PAUSED` with a plain `/handoff` (never `/ctx` or `--restart`, whose respawn runs `lane-start` and writes `RESUMED`), and write nothing more until N4, since the ruleset goes on after the drain; the operator lane and the coordinator write no `PAUSED` and stay live, and the operator lane writes only what act 4's steps 6, 7 and 9 give it; until N4 nobody answers the guard's 2, whose bind writes, and nobody prompts a paused lane's pane, whose guard lets the prompt through |
+| N3 | at the freeze word | a lane that holds a `HOLD` writes `HOLD RELEASED` first; then every lane but the operator lane and the coordinator stops at a stopping point, writes `PAUSED` with a plain `/handoff` (never `/ctx` or `--restart`, whose respawn runs `lane-start` and writes `RESUMED`), and writes nothing more until N4, since the ruleset goes on after the drain; the operator lane and the coordinator write no `PAUSED` and stay live, and after any `HOLD RELEASED` of their own the coordinator writes no register line until N4 and the operator lane writes only what act 4's steps 6, 7 and 9 give it, each after the quiet check; until N4 nobody answers the guard's 2, whose bind writes, and nobody prompts a paused lane's pane, whose guard lets the prompt through |
 | N4 | after the smoke test | the marker's commit and seq 1; the smoke test's result; resume; the files now lag |
 | N5 | at a rollback's start, or a declared outage | what refuses; what the guard answers; until when |
 | N6 | after the rollback | the register is files again, and what returns |
@@ -6140,7 +6165,19 @@ database, run with every workstation's lanes paused first.
      Brett sets `register_url=`, `reader_url=`, their password files and
      `register_label=` to the replacement's, **in one edit**, with the lines
      the bootstrap printed and that workstation's own engineer's lines from
-     `login add` or `login rotate`. `register_label=` names the replacement:
+     `login add` or `login rotate`. In both URLs, `<root file>`, as `login add`
+     prints it, becomes the path on that host of the root file item 9
+     recorded, as at act 3: a URL whose `sslrootcert=` names no existing file
+     is refused at load, so the after-loss import and the cutover refuse, and
+     `ready` fails, there. Where the host's file carries the indexer's
+     `url=` and `passfile=`, the same edit sets them to the replacement's:
+     `url=` to its indexer URL, with that same root file, and `passfile=` to
+     the 0600 file that holds the `lanes_indexer` line which the roles-only
+     bootstrap printed, once, where it made the role. Where the role already
+     exists, as after a restore from the physical backups, no line is
+     printed, the old password and its file stand, and `url=` changes only
+     where the host or the database name does. `register_label=` names the
+     replacement:
      after a re-import, the label its bootstrap wrote; after a restore, the
      `--label` Brett gave its bootstrap, which must differ from the lost
      database's label that the restored switch still holds. The lanes stay
@@ -6171,8 +6208,11 @@ database, run with every workstation's lanes paused first.
    workstation first, since `ready`'s check 7 fails while a declaration is
    recorded. Then `lanes-index ready --expect primary --release 1.3.0 --env
    <label>` in each environment, with each one's own label, and the smoke test
-   (act 4's step 9, at `m+2` after a re-import or `b+2` after a restore); the
-   lanes stay paused until both pass. The coordinator posts N8, naming `m`, `h`
+   (act 4's step 9, at `m+2` after a re-import or `b+2` after a restore); and,
+   on each host whose file carries `url=`, `lanes-index sync --source
+   inventory`, which ends 0 only where the indexer's login works, since
+   `ready` reads no indexer login; the lanes stay paused until all pass. The
+   coordinator posts N8, naming `m`, `h`
    and the loss. Each lane then checks its last records against the mirror, and
    writes any owed record again, with the database's UTC (a late `PAUSED` is
    dated by its `--at`, and a UTC inside an `append-line` text stays as
@@ -6183,7 +6223,12 @@ commit removing the marker, made and confirmed by the S4 read-back, with any
 ruleset turned off first, then `lanes-index set-mode index` on each configured
 workstation. It loses the same tail, and it is safe only after step 5, since its
 leak, a database that comes back with the switch still at `primary`, needs the
-old database to come back.
+old database to come back. Then `lanes-index outage clear` on each configured
+workstation, which removes the declaration that step 2 made there, and a
+files-mode write, which must succeed; the lanes stay paused until it has. The
+coordinator posts N8, naming `m`, `h` and the loss, and Brett prompts each pane
+to resume; each lane then checks its last records against the mirror, and
+writes any owed record again, as step 7 has it.
 
 ## Retiring a lane's worktrees — `lane-worktrees sweep` (#162)
 
