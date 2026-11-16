@@ -4674,7 +4674,9 @@ configuration exists**: the file at the default path, or `LANES_INDEX_CONFIG`
 set and not empty. With none, no `lanes-index` process starts, and the writers
 and readers are the v1.1.0 tools' but for the marker check, the three
 exceptions every mode has, and the 69 of a register read that fails ("The
-switch and `lanes/STORE`"). The answer is read with a 2 s timer:
+switch and `lanes/STORE`"). The answer is read with a 2 s timer, which
+`timeout` holds where it is installed; without `timeout` the question
+has no bound:
 
 | the query ends | the writer does |
 |---|---|
@@ -5303,8 +5305,9 @@ every `refuse db` answer carry fixed phrases and the SQLSTATE only, never
   install's identity and, on Linux, its pid namespace and boot id. A client
   whose own namespace or boot differs, or that cannot use the file, treats the
   service as unavailable and starts none. A client that finds another install's
-  file starts a service, and an old service whose own files changed answers
-  `unavailable restarting` and exits.
+  file starts a service where the server's uid is its own (the uid check wins),
+  and an old service whose own files changed answers `unavailable restarting`
+  and exits.
 - **Trust rests on the checked directory, the owner file and the uid check at
   both ends,** not on the digests in an answer, which prove only that the bytes
   arrived as sent.
@@ -5812,10 +5815,11 @@ runs it again at the window, and again after any recreate.
    `lanes-index status`, after a fetch of `W` (`lanes-edit.sh
    refresh-workspace`), since `status` never fetches. **Refusal:** any miss is
    a rollback trigger, on Brett's word. A 69 that says "configure
-   `mode=primary`" on a host already on `mode=primary` follows the warning
-   ``WARNING: `lanes-index mode` did not answer within 2 s``: run the write
-   again before you read it as a miss. That 2 s bound holds where `timeout` is
-   installed; without it the question has no bound.
+   `mode=primary`" on a host already on `mode=primary` follows a
+   ``WARNING: `lanes-index mode` …`` line naming the failed question, most
+   often ``did not answer within 2 s``: run the write again before you read it
+   as a miss. That 2 s bound holds where `timeout` is installed; without it the
+   question has no bound.
 10. **The thaw.** The coordinator posts N4, and Brett prompts each pane to
     resume.
 
@@ -5967,9 +5971,9 @@ database, run with every workstation's lanes paused first.
        restore through one admin service, which names the register's database:
        1. the register's database exists, owned by the admin: the new
           Cluster's `initdb` made it;
-       2. `lanes-index bootstrap --roles-only`, which also makes the three
-          database-level statements a dump does not carry ("Roles and
-          logins");
+       2. `lanes-index bootstrap --admin-service '<service>' --roles-only`,
+          which also makes the three database-level statements a dump does
+          not carry ("Roles and logins");
        3. `lanes-index login add <engineer> --admin-service '<service>'` for
           each engineer, and
           `lanes-index login add --dump-job --admin-service '<service>'`;
@@ -5979,7 +5983,9 @@ database, run with every workstation's lanes paused first.
           pg_restore --exit-on-error --no-password --dbname=<database> <file>
           ```
 
-       5. `lanes-index bootstrap`, which prints `unchanged`.
+       5. `lanes-index bootstrap --admin-service '<service>' --label '<name>'
+          --repository '<owner/name>' --lane '<name>'`, which prints
+          `unchanged`.
    - **Re-import,** the default, where no backup is newer than `m`. Brett runs
      `lanes-index bootstrap --roles-only`, then `bootstrap`, then
      `lanes-index login add` for each engineer and the dump job, since a
