@@ -55,7 +55,7 @@ python3 -m zipfile -l "$out"/a/*.whl
 ```
 
 The listing must be exactly [contracts/wheel.md](contracts/wheel.md)'s
-members: the three modules, the 24 payload files and the five `.dist-info`
+members: the three modules, the 25 payload files and the five `.dist-info`
 names.
 
 ## 4. The built-wheel tests
