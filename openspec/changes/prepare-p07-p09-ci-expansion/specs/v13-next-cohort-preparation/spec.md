@@ -26,7 +26,9 @@ review approval, activation, landing, release and assembly acceptance.
 
 Preparation SHALL name only P07 and P09, their fixed PR identities, complete
 task/path/status inventories, bounded exact linear histories and an immutable
-main. Missing final owner bindings SHALL remain pending. Changed main, malformed
+main. Each source SHALL declare an exact anchor already landed in that main
+and containing the common prerequisite; its complete source chain and inventory
+SHALL be checked from that anchor. Missing final owner bindings SHALL remain pending. Changed main, malformed
 or duplicate data, unknown paths, invalid modes, nonempty markers, merge commits,
 undeclared fixes, dependent members or merge conflicts SHALL refuse preview.
 
@@ -41,6 +43,10 @@ undeclared fixes, dependent members or merge conflicts SHALL refuse preview.
 #### Scenario: Current main moved
 - **WHEN** the observed main differs from the explicit frozen main
 - **THEN** refuse the stale preview and require a reviewed refresh
+
+#### Scenario: P09 starts at landed P03
+- **WHEN** P09 declares landed P03 as its anchor and P07 declares P01
+- **THEN** validate each complete chain independently and reject unlanded anchors or skipped source commits
 
 ### Requirement: Foundation and owner evidence remain separate gates
 

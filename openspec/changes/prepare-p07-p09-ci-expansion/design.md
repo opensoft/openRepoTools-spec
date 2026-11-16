@@ -30,6 +30,10 @@ assembly adoption, installed tools or running-lane changes.
    review receipts or human approval.
 3. Inspect exact ordered linear source histories, regular-file modes, empty
    added task markers and complete path/status inventories. Enforce a finite
+   history from each declared source anchor, which must contain the common
+   prerequisite and already be landed in frozen main. P07 starts at P01;
+   P09 starts at landed P03, not at P01. Never omit intervening source commits
+   or import main's control commits into a source chain. Enforce a finite
    history bound and disjoint member paths. Compute P09-then-P07 merge previews
    only when both bindings exist. Synthetic commits, if needed, are immutable
    objects in the private/CI Git object database, never branch/index changes.
