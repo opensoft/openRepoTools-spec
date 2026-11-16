@@ -4672,8 +4672,8 @@ endpoint and never through a pooler.
 writer, before it routes, clones, fetches or locks, and **only where a
 configuration exists**: the file at the default path, or `LANES_INDEX_CONFIG`
 set and not empty. With none, no `lanes-index` process starts, and the writers
-and readers are the v1.1.0 tools' but for the marker check, the three
-exceptions every mode has, and the 69 of a register read that fails ("The
+and readers are the v1.1.0 tools' but for the marker check and the four
+exceptions every mode has, the fourth a failed register read's 69 ("The
 switch and `lanes/STORE`"). The answer is read with a 2 s timer, which
 `timeout` holds where it is installed; without `timeout` the question
 has no bound:
@@ -5074,8 +5074,8 @@ indexer by a GRANT the bootstrap makes first, and runs `bootstrap` and
   v1.3.0 does not yet write.
 - **READER,** through the reader login (`reader_url=` and `reader_passfile=`):
   the register service's one connection, the guard's direct read, the readers
-  and the listings, `status`, `reconcile` and `ready`. The `SessionStart` block
-  makes no register call.
+  and the listings, `status`, `reconcile`, `set-mode`'s read of the switch, and
+  `ready`. The `SessionStart` block makes no register call.
 - **The indexer** (`url=` and `passfile=`): `lanes-index sync` and `reconcile`
   of the index half. Its one login is shared. On the register's database it is
   `lanes_indexer`, which owns `lanes_index`, and the index half's reads go
@@ -5096,8 +5096,8 @@ indexer by a GRANT the bootstrap makes first, and runs `bootstrap` and
 
 REGISTER-WRITER has no INSERT, UPDATE, DELETE or DDL anywhere: a write is a
 call of one of its five functions. The indexer has nothing in `lanes_register`.
-`ready`'s check 4 tries a write outside each role's scope, and fails unless the
-database refuses it with SQLSTATE 42501.
+`ready`'s check 4 tries, as each of the engineer's two logins, a write outside
+its scope, and fails unless the database refuses it with SQLSTATE 42501.
 
 **Each login carries its group's floors itself,** since PostgreSQL applies a
 role's settings only to a session that logs in as that role, so a group's
@@ -5109,10 +5109,12 @@ lanes_w_<engineer>   lock_timeout=2000ms  statement_timeout=5s  idle_in_transact
 lanes_r_<engineer>   default_transaction_read_only=on  lock_timeout=1000ms  statement_timeout=1500ms
 ```
 
-**One engineer's file.** Each workstation's `lanes-index.conf` names only its
-own engineer's two logins, each as the user of its URL, and their two password
-files, each holding only its own login's line. No workstation holds another
-engineer's line. `<endpoint>` is the register's DNS name (the runbook, below):
+**One engineer's file.** Each workstation's `lanes-index.conf` names, of the
+register's logins, only its own engineer's two, each as the user of its URL,
+and their two password files, each holding only its own login's line. No
+workstation holds another engineer's line. Where its index half is on the
+register's database, it also names the indexer's one shared login, in `url=`
+and `passfile=`. `<endpoint>` is the register's DNS name (the runbook, below):
 
 ```text
 register_url=postgresql://lanes_w_<engineer>@<endpoint>:5432/<database>?sslmode=verify-full&sslrootcert=<root file>
@@ -5147,9 +5149,11 @@ lanes-index bootstrap --admin-service '<service>' --label '<name>' --repository 
 - **What it prints:** one line per object, `created` or `unchanged`; the
   `lanes-index.conf` lines, with no secret, `register_label=` among them; and,
   where it creates the indexer's login, that login's password-file line, once.
-  **It refuses when stdout is not a terminal,** so no lane transcript, log or
-  pipe ever holds a password, and it sets each password as a SCRAM-SHA-256
-  verifier computed on the client, never as clear text in SQL.
+  **It refuses when stdout is not a terminal,** unless `--no-passwords` is
+  given for roles that log in by peer, trust or certificate, when it makes and
+  prints no password; so no lane transcript, log or pipe ever holds a
+  password, and it sets each password as a SCRAM-SHA-256 verifier computed on
+  the client, never as clear text in SQL.
 - **A v1.3.0 limit:** the indexer's password-file line is printed only after
   its step commits; where the response is lost after that commit, a rerun
   prints `unchanged` and no line, and Brett resets the password by hand with
@@ -5162,8 +5166,9 @@ lanes-index bootstrap --admin-service '<service>' --label '<name>' --repository 
   database, a schema newer than this build's, a role that holds a privilege
   outside its scope, an existing `lanes_indexer` that cannot log in, before any
   write and under `--roles-only` too, `store=sqlite`, or stdout that is not a
-  terminal; 69 where the admin connection fails or the database refuses a step,
-  a migration's lock wait among them, which is run again; 64 for usage.
+  terminal without `--no-passwords`; 69 where the admin connection fails or the
+  database refuses a step, a migration's lock wait among them, which is run
+  again; 64 for usage.
 - **`--roles-only`,** for the disaster path, makes only what a database dump
   does not carry: the roles, the admin's membership in the owner and the
   indexer, and three database-level statements, `REVOKE ALL ON DATABASE … FROM
@@ -5174,8 +5179,9 @@ lanes-index bootstrap --admin-service '<service>' --label '<name>' --repository 
 
 **`lanes-index login`** makes, rotates and revokes the logins, from Brett's
 shell after the bootstrap, through the same admin service and under the
-bootstrap's rules for a secret: it refuses when stdout is not a terminal, and it
-sets each password as a SCRAM-SHA-256 verifier computed on the client.
+bootstrap's rules for a secret: `add` and `rotate`, which print a password,
+refuse when stdout is not a terminal, and it sets each password as a
+SCRAM-SHA-256 verifier computed on the client.
 
 ```sh
 lanes-index login add <engineer> --admin-service '<service>'
@@ -5204,9 +5210,9 @@ lanes-index login revoke <engineer> --admin-service '<service>'
   lookup cannot reconnect, and the journal answers it by its write id.
 - **Exits:** 0, each step's result printed; 2 for an engineer name that is not
   `^[a-z][a-z0-9_]{0,40}$`, an argument that carries a connection string or a
-  password, or stdout that is not a terminal; 69 where the admin connection
-  fails or the database refuses a step; 64 for usage, `rotate` with neither an
-  engineer nor `--dump-job`, or with both, among it.
+  password, or, for `add` and `rotate`, stdout that is not a terminal; 69 where
+  the admin connection fails or the database refuses a step; 64 for usage,
+  `rotate` with neither an engineer nor `--dump-job`, or with both, among it.
 - **What a restore keeps.** A database dump holds no login, membership,
   verifier or floor, and a physical backup of the cluster holds them all. After
   a point-in-time restore each login is there with its old password, and `login
@@ -5476,9 +5482,10 @@ where the install places it, and a checkout's directory holds no release list.
 2. `psql` 16 is present;
 3. the configuration is readable, has no group or other permission bit, lies
    outside every git work tree and `~/.agents/`, and says the expected mode;
-4. each role connects within the workstation's `c`, at each address the endpoint
-   resolves to, and a write outside its scope, under `BEGIN READ WRITE` in a
-   transaction that always rolls back, fails with SQLSTATE 42501;
+4. each of the engineer's two logins connects within the workstation's `c`, at
+   each address the endpoint resolves to, and a write outside its scope, under
+   `BEGIN READ WRITE` in a transaction that always rolls back, fails with
+   SQLSTATE 42501;
 5. the installed `lanes-index` no longer refuses `mode=primary`;
 6. the workstation's name is set, so no write is stamped with a container's
    hostname;
@@ -5489,7 +5496,7 @@ where the install places it, and a checkout's directory holds no release list.
 10. with the switch at `primary`, whatever `--expect` says, `register_label=`
     equals the switch's label, or it fails with `register_label=<x>, but the
     switch names <y>`;
-11. each role's connection carries `sslmode=verify-full` and an `sslrootcert=`
+11. each login's connection carries `sslmode=verify-full` and an `sslrootcert=`
     (never `system`), its own session shows `ssl`, and it reaches the primary;
 12. each login carries its group's floors;
 13. the endpoint resolves to no more addresses than `register_addresses=`;
@@ -5737,8 +5744,29 @@ runs it again at the window, and again after any recreate.
    Codex lane's tools, which Brett reads on each host. Only the process check
    sees a tool between two of its writes, such as `lane-handoff`, `lane-end` or
    `lane-worktrees sweep`, and `write-handoff`'s push under `handoffs/`, which
-   leaves the `lanes` tree id unchanged. **Refusal:** if the tree id moves, the
-   2 minutes start again.
+   leaves the `lanes` tree id unchanged. The process check runs in each
+   container and each host shell. It matches each tool's name as a word of the
+   whole command line, since the tools run as `bash` and `python3`, and prints
+   only a tool's name and its pids, never a command line, which can hold a
+   secret. It exits 0, printing nothing, where none runs, 1 where one does,
+   and 2 where `pgrep` fails; a container without `pgrep` needs procps. Its
+   own text never matches, so `sh -c`, `docker exec` or `ssh` around it is
+   safe:
+
+   ```sh
+   f=0
+   for t in '[l]anes-edit[.]sh' '[l]ane-start' '[l]ane-end' '[l]ane-handoff' '[l]ane-rename' '[l]ane' '[l]ane-worktrees'; do
+     p=$(pgrep -f "(^|[ /])$t( |\$)"); r=$?
+     [ "$r" -le 1 ] || { echo "CHECK FAILED: pgrep exited $r" >&2; f=2; }
+     [ "$r" -ne 0 ] || { echo "RUNNING $(printf %s "$t" | tr -d '[]') pid $(printf %s "$p" | tr '\n' ' ')"; [ "$f" -ne 0 ] || f=1; }
+   done
+   (exit "$f")
+   ```
+
+   It reads one moment, which is why the freeze comes first: a lane idle
+   between two tool calls has no process. **Refusal:** if the tree id moves,
+   or where the process check names a tool, the operator lane finds the lane
+   that runs it and waits for it to end, and the 2 minutes start again.
 5. **The ruleset on,** where act 3's step 9 prepared one. Brett enforces it
    once the quiet check has passed, after the drain's last `PAUSED` write and
    before the import: no writer the quiet check can see is left to push, so
