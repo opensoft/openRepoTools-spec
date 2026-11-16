@@ -5786,12 +5786,13 @@ runs it again at the window, and again after any recreate.
    **Refusal:** if the tree id moves, the 2 minutes start again. Where the
    process check names a tool, the operator lane finds the lane that runs it
    from the pid, never by printing a command line or environment. It waits for
-   that tool to end, and the 2 minutes start again. A pid that the three reads
-   above show to be a hung report is not waited for. The operator lane writes
-   down its pid and its `etime` as shown inert. Where every pid the process
-   check names is shown inert, the process check counts as quiet, even though
-   its script still exits 1 for such a pid. Where the process check exits 2, it
-   has not looked, and the quiet check has not passed.
+   that tool to end, and the 2 minutes start again. A pid named under
+   `lane-worktrees` that the three reads above show to be a hung report is not
+   waited for. The operator lane writes down its pid and its `etime` as shown
+   inert. Where the process check exits 1, names at least one pid, and every
+   pid it names is shown inert, the process check counts as quiet, even though
+   its script exits 1. Where it exits 2, or exits 1 and names no pid, it has
+   not looked, and the quiet check has not passed.
 5. **The ruleset on,** where act 3's step 9 prepared one. Brett enforces it
    once the quiet check has passed, after the drain's last `PAUSED` write and
    before the import: no writer the quiet check can see is left to push, so
