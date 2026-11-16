@@ -5281,8 +5281,12 @@ the readers' prefetch and their second read, and the guard's prefetch,
   reads directly, since a request cannot name an `n`;
 - the `SessionStart` block, which only starts the service, after its own
   answer and without waiting, and asks it nothing;
-- every writer but one: `request-handoff`'s wait on primary, whose every poll
-  reads through `lanes-index register read --since` and so asks it.
+- every write's own snapshot and commit, which open their own connections.
+
+A writer's reads after its commit, its tail's, are readers' reads and ask it
+as a reader's do. `request-handoff`'s wait on primary is the tail that always
+does, its polls reading through `lanes-index register read --since`; the
+lifecycle follow-up of a `log ENDED` or `RETIRED` reads the lane's log once.
 
 On a workstation that is not `mode=primary` no client asks the socket.
 
@@ -5393,8 +5397,8 @@ re-indexes, or reads the mirror or the outage declaration.
   `lanes-index serve --start`; and any client that finds no socket, a dead one,
   or an owner file from another install on a socket whose server is of its own
   uid, unless a failure stamp younger than 60 s stands. Never the guard's second
-  read, and never a writer but `request-handoff`'s wait on primary, whose polls
-  read through `lanes-index register read --since`. The call that starts a
+  read, and never a write's own snapshot or commit; a writer's tail reads as
+  any client does, and `request-handoff`'s wait is one. The call that starts a
   service reads directly; the service answers from the next call.
 - **How:** detached, from Python and never bash (`setsid`, its input and output
   on `/dev/null`, its errors to `register.log`), with a reduced environment of
