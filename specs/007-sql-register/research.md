@@ -2017,23 +2017,41 @@ lane 3's ruling.
   without it the question has no bound." The manual says so in act 4's
   step 9 (:5879–5880) and in part 1's "Where the mode is asked"
   (:4677–4679).
-- **(f) Pending lane 5's word: the service's "never a writer":**
+- **(f) The erratum, the service's "never a writer":**
   socket-api.md:150 ("**every writer:** "No writer is a client (4A): a
   write's snapshot and commit open their own connections with the
   REGISTER-WRITER credential, and never wait for or start the
   service""), and :375 (who starts the service: "**and never a
-  writer**"), hold for a write's snapshot and commit, but not for
-  `request-handoff`'s wait on primary. Each of its polls drops the read
-  family (`reg_flush`, `lanes-edit.sh`:33842) and reads the binding
-  through `lane_binding_scan` (:33844) down to `reg_second_read`
-  (:7070–7097), which runs `lanes-index register read --since`. That
-  read's forms 1 to 3 ask the service for any caller, and start it where
-  there is no socket and no fresh stamp (`lanes-index`:7355–7357;
-  `register_read_ask`, :10183–10215). Each statement names that one
-  exception; Y:3829–3831 keeps its words. The manual names it since fix
-  round 1's third commit (:5395–5397). Lane 5's word on it is owed
-  (lane 3's ask, #165 6902870227); until it comes, this item is lane
-  3's reading of the code.
+  writer**"), are Y:3829–3831's, whose words are scoped: a write's own
+  snapshot and commit. They hold for those, which connect as the writer
+  (`lanes-index`:4559–4560) and never reach `register read`, the one
+  caller of `register_read_ask` (:7356, :24759). They do not hold for a
+  writer's reads after its commit: the seam's `committed` sets
+  `REG_STORE=sql` and drops the read family, so the child's tail reads
+  take D17's path (`lanes-edit.sh`:5240–5248, :5611–5620;
+  register-cli.md:821; Y:5011), which ends at `reg_second_read`
+  (:7070–7097) and runs `lanes-index register read --since`, form 3.
+  Forms 1 to 3 ask the service for any caller (`lanes-index`:7355–7357)
+  and start it where the client finds no socket, a dead one or an owner
+  file from another install, unless a failure stamp is fresh
+  (`register_read_ask`, :10205–10209; `register_serve_ask`, :9817–9818,
+  :9843); a `.direct` that an earlier read left, which `reg_flush` keeps
+  (:6884), stops both. Two tails read:
+  - `request-handoff`'s wait on primary, the tail that always does: each
+    poll drops the family (`reg_flush`, :33842) and reads the binding
+    through `lane_binding_scan` (:33844);
+  - the lifecycle follow-up of a `log` `ENDED` or `RETIRED`, which reads
+    the lane's log once: `write_event` calls `lane_state_follow`
+    (:15346) for the seam-8 verbs (:15290–15295), which calls
+    `lane_control_root` (:27757), which with no `dir` in the payload
+    calls `lane_payload_field` (:27387), `lane_log_events` and `reg_log`
+    (:12043–12044). `ENDED` and `RETIRED` carry no payload
+    (`lane-end`:3579–3583), and `retire-rows`'s follow loop passes none
+    (:26775).
+  So each statement is scoped, not excepted: it reads "a write's own
+  snapshot and commit", and a writer's tail reads as a reader does. The
+  manual reads so (spec#73, lane 5's #165 6915847203). Lane 5 confirms
+  this reading of the code at merge216 `941caa67`.
 - **(g) The erratum, `ready`'s checks 4 and 11:** ops:448 (Y's :447),
   check 4, has "each role" connect, and ops:455 (Y's :454), check 11,
   reads "each role's connection", with "Any role reads both, and lane 1
@@ -2079,13 +2097,13 @@ lane 3's ruling.
   6902870227, on lane 4's read of spec#73, #165 6902833578
   (`S73-L4-report-1115.md`, sha256
   `2c41c9e66297832ed12679b40878d0c3cd9534f399d1d81844e099aed089b565`).
-  (f) waits for lane 5's word. Lane 3's #165 6905395421 adds (a)'s
-  ops:426, (g)'s check 4 and (b)'s 69, the last from lane 1's read of
-  spec#73, #165 6903681456; (g)'s check 11 is lane 1's X11, #165
-  6905444938, and (b)'s `login` secret is S73D-1, lanes 1 and 2, #165
-  6905444938 and 6905437522, both of which lane 3 took in #165
-  6905699566; and (h) is SHOULD 4 of p17e, lane 3's early review of P17
-  (`opus-p17-cut-172aad0d97d0-early.md`, sha256
+  Lane 5 confirmed (f)'s scoped reading in #165 6915888950. Lane 3's
+  #165 6905395421 adds (a)'s ops:426, (g)'s check 4 and (b)'s 69, the
+  last from lane 1's read of spec#73, #165 6903681456; (g)'s check 11 is
+  lane 1's X11, #165 6905444938, and (b)'s `login` secret is S73D-1,
+  lanes 1 and 2, #165 6905444938 and 6905437522, both of which lane 3
+  took in #165 6905699566; and (h) is SHOULD 4 of p17e, lane 3's early
+  review of P17 (`opus-p17-cut-172aad0d97d0-early.md`, sha256
   `650b1b4b222748a04c761a31d25969e5536bb8b4d1dcf9f133bbdaf2db19a8dc`),
   which asked for a row in the T514 spec PR; lane 3's ruling 3, #165
   6906278982, takes it here instead. These are lane 3's rulings and no
