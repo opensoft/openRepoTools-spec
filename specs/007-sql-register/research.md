@@ -145,7 +145,7 @@ round B14's edits put the plan's lines from :820 to :2900 one line down, and
 those from :2903 two; round B15's texts move them further, as its entry
 above says, and round B16's AT-P3 fixture (lane 2's TX13-4) moves those from B15's :2996 two more; the follow-up's test-plan texts move them further, as its entry above says.
 
-- **Part 1, the errata** (ERR-01 to ERR-58; ERR-19 is now DEC-21; ERR-56 to ERR-58 are appended at the file's end, so that no line above moves): a line
+- **Part 1, the errata** (ERR-01 to ERR-59; ERR-19 is now DEC-21; ERR-56 to ERR-59 are appended at the file's end, so that no line above moves): a line
   at Y that 007 reads otherwise. The frozen text keeps its words; the code
   and the manual follow the erratum.
 - **Part 2, the decisions** (DEC-01 to DEC-36): a choice the change leaves
@@ -1883,3 +1883,250 @@ lane 3's ruling.
   at spec `main` `22eaa08b`, where spec#62 landed;
   `register_serve_launch`'s docstring, `lanes-index:7776–7813` at
   T512's `4444ddc4`; #165 6894714082, 6895008151 and 6895062857.
+
+### ERR-59. `bootstrap`'s full form, `login` through `--admin-service`, `rollback`'s refusals and the operator texts the code reads otherwise (T341's review; T109, T110, T119, T304, T423)
+
+- **Lines:** a spec line is this branch's, at spec#69's head
+  `69ebdccd`, on which this entry stacks, and this entry moves none. In
+  `operations.md`, whose lines from Y's :435 on sit one below Y's (:11
+  and :142 above), Y's number follows as "Y's :N" where it differs.
+  The manual's lines are `docs/README-lanes.md` at spec#73's
+  `8baf428e`. Code lines are line R's merge216 `941caa67`, lane 1's:
+  its `lanes-index` and `lanes-edit.sh` are byte-identical to merge213
+  `dfdbf728`'s, at which lane 4's read cites them, and its `lane-start`
+  is not.
+- **(a) The erratum, `bootstrap`'s command line and its secret:**
+  ops:202 ("**Command:** `lanes-index bootstrap --admin-service
+  '<service>' --label '<name>'`") and quickstart.md:26, the same line,
+  give a short form that the code refuses. The full form is
+  `lanes-index bootstrap --admin-service '<service>' --label '<name>'
+  --repository '<owner/name>' --lane '<name>'`: ops:414 makes
+  `--repository` and `--lane` inputs that fill NOT NULL columns, T109
+  lists them (tasks.md:323–328), and T109 as built requires them.
+  `_BOOTSTRAP_USAGE` gives `--label <name> --repository <owner/name>
+  --lane <name>` (`lanes-index`:11810–11813), and a run without them
+  ends 64, "bootstrap needs … (or --roles-only)" (:12437–12440,
+  :12453–12455). ops:426 ("It refuses when stdout is not a terminal"),
+  exit-codes.md:181, which cites it, and T109's "Secrets" (tasks.md:336)
+  state no exception. The code refuses only where `--no-passwords` is
+  not given (:12478–12481), the flag T109 lists (tasks.md:328), "for
+  roles that log in by peer, trust or certificate" (:11826), with which
+  it makes and prints no password (:12564–12568). The manual writes the
+  full form (:5128, :5628) and the exception (:5152–5155, :5169).
+- **(b) The erratum, `login`'s admin connection and its 69:** ops:206
+  ("Brett runs `lanes-index login add <engineer>` … and `lanes-index
+  login add --dump-job`"), ops:483–485 (Y's :482–484), whose `add
+  <engineer>`, `--dump-job`, `rotate <engineer>` and `revoke
+  <engineer>` name no admin service, and quickstart.md:37–38
+  (`lanes-index login add <engineer>`, `lanes-index login add
+  --dump-job`) leave the flag out. ops:482 (Y's :481) has `login`
+  connect "through `--admin-service` as the bootstrap connects", and
+  quickstart.md:34 leaves "the flag's position" to T110. T110 as built
+  requires it on every form: without it a run ends 64, "login needs
+  --admin-service <service>" (`lanes-index`:13932–13933,
+  :13952–13954). Its usage puts it after the engineer or `--dump-job`
+  (`_LOGIN_USAGE`, :13687–13691), and its parser takes it anywhere in
+  the line (:13877–13944; lane 1, #165 6903681456). The forms read:
+  - `lanes-index login add <engineer> --admin-service '<service>'`;
+  - `lanes-index login add --dump-job --admin-service '<service>'`;
+  - `lanes-index login rotate <engineer> --admin-service '<service>'`;
+  - `lanes-index login rotate --dump-job --admin-service '<service>'`;
+  - `lanes-index login revoke <engineer> --admin-service '<service>'`.
+
+  ops:488 (Y's :487) and exit-codes.md:187 (`main`'s :186) give
+  `login`'s 69 as "the admin connection fails" alone. The code ends 69
+  where the admin connection fails or the database refuses a step: its
+  usage ("69 the admin connection failed, or the database refused a
+  step", :13715–13716) and its message (:13974–13976) say so, as ops:402
+  and exit-codes.md:172 do for every operator tool. The manual gives the
+  five forms since fix round 1 (s73a's B1; :5187–5191), its runbook's
+  typed `login add` commands carry the flag too (:5636–5638,
+  :6035–6037), and it gives the 69 so (:5213–5214). `login add`'s
+  `--sslrootcert <path>` (:13687, :13711–13713) is not named here: it
+  waits for a spec text of its own (s73a's conflict 4; lane 1, T110).
+
+  ops:482 (Y's :481) also gives `login` "the bootstrap's rules for a
+  secret: it refuses when stdout is not a terminal", and
+  exit-codes.md:186 (`main`'s :185) lists "stdout not a terminal" among
+  `login`'s 2s, on every form. The code refuses it only for `add` and
+  `rotate`, which print a password, `--dump-job` included; `revoke`
+  prints none and does not refuse a pipe (`_login`,
+  `lanes-index`:13982–13985; lanes 1 and 2, #165 6905444938 and
+  6905437522). It reads: "with the bootstrap's rules for a secret:
+  `add` and `rotate`, which print a password, refuse when stdout is not
+  a terminal". The manual reads so since fix round 3 (S73D-1;
+  :5180–5184, :5211–5213).
+- **(c) The erratum, the rollback's declare line:** ops:501 (Y's
+  :500): "Brett runs `outage declare --rollback --mirror-seq <k>`, as
+  `rollback` prints it, on each other host, and on its own host where it
+  runs in a bench". `rollback` prints that line only where it cannot
+  declare. `_rollback_declare` (`lanes-index`:24130–24154) writes the
+  declaration itself where the configuration directory can be written,
+  and then prints `outage declared: <path>`, the declaration's lines and
+  its `mirror-seq` (:5861–5865), and no line to run. It prints the line
+  where the directory cannot be written, as on a bench's read-only
+  mount, or where the declaration is refused. ops:334 already reads that
+  way. The text reads: Brett runs `outage declare --rollback --mirror-seq
+  <k>`, with the `k` the rollback found, on each other host, and on its
+  own host where it ran in a bench; on a host where he runs `outage
+  declare` on his word instead, it refuses with 2 and prints that line
+  to run (ops:508, Y's :507). The manual reads so since fix round 1
+  (s73b's SHOULD 2; :5933–5939). This entry takes the code's reading.
+  The other way, `rollback` printing the line on every route, would
+  change T304 instead.
+- **(d) The erratum, three operator texts the lane tools contradict**
+  (lane 4's read of spec#73, #165 6902833578, and its
+  `S73-L4-report-1115.md`, rows 1 to 3; lane 3's rulings, #165
+  6902870227):
+  - ops:220, "On `mode=index` nothing changes, on either route". With
+    v1.3.0 installed every writer asks `lanes-index mode` first
+    (`lanes-edit.sh`:6295–6300, :31083) and checks the marker after its
+    fetch (:3953–3972, :4062); `lane-start` writes its row, its state
+    and its `STARTED` or `RESUMED` line as one `start-record`, one
+    commit and push in files mode (`lane-start`:178–182, :5197–5204;
+    `lanes-edit.sh`:66–73); and the guard's answer 2 binds in a detached
+    child in files mode too (`lanes-edit.sh`:20333–20337, :23778). It
+    reads: "On `mode=index` the register is read and written as today,
+    but for what every mode meets: `lane-start`'s one `start-record`
+    write, the guard's detached bind, `wip init`'s refusals, the mode
+    question, the marker check, and a failed register read ending 69",
+    as the manual's act 3 has it (:5674–5677), and as its "Where the
+    marker is absent nothing changes" lists them (:4761–4783).
+  - ops:589 (Y's :588), N1's "act 3 changes nothing about how lanes
+    write (`mode=index`)": the same cause. It reads "act 3 changes no
+    register mode (`mode=index` stays), though the new tools change how
+    a lane starts and binds in every mode", as the manual's N1 does
+    (:5896).
+  - ops:281, "from the marker's push to the last flip, every register
+    write refuses". The marker check is gated to files and `index` mode
+    (`case "$REG_ASK:$REG_MODE" in 1:files|1:index)`,
+    `lanes-edit.sh`:3954), so a host already on `mode=primary` writes to
+    SQL while another has not flipped. It reads "from the marker's push
+    until a host's own flip, every register write on that host refuses,
+    since a files-mode writer meets the marker", as the manual's act 4
+    has it (:5865–5867), and as its part 1 says ("Between the marker
+    and a workstation's own flip", :4758).
+
+  The manual reads so since fix round 1's third commit.
+- **(e) The erratum, the mode question's timer:** register-cli.md:374,
+  "The caller's timer is 2 s", holds only where `timeout` is installed.
+  `lanes-edit.sh` asks under `timeout -k 1 2` where `command -v timeout`
+  finds one, and otherwise asks with no bound: "where it is not, the
+  question runs unbounded" (`lanes-edit.sh`:6326–6329, :6364–6368). It
+  reads: "The caller's timer is 2 s where `timeout` is installed;
+  without it the question has no bound." The manual says so in act 4's
+  step 9 (:5879–5880) and in part 1's "Where the mode is asked"
+  (:4677–4679).
+- **(f) The erratum, the service's "never a writer":**
+  socket-api.md:150 ("**every writer:** "No writer is a client (4A): a
+  write's snapshot and commit open their own connections with the
+  REGISTER-WRITER credential, and never wait for or start the
+  service""), and :375 (who starts the service: "**and never a
+  writer**"), are Y:3829–3831's, whose words are scoped: a write's own
+  snapshot and commit. They hold for those, which connect as the writer
+  (`lanes-index`:4559–4560) and never reach `register read`, the one
+  caller of `register_read_ask` (:7356, :24759). They do not hold for a
+  writer's reads after its commit: the seam's `committed` sets
+  `REG_STORE=sql` and drops the read family, so the child's tail reads
+  take D17's path (`lanes-edit.sh`:5240–5248, :5611–5620;
+  register-cli.md:821; Y:5011), which ends at `reg_second_read`
+  (:7070–7097) and runs `lanes-index register read --since`, form 3.
+  Forms 1 to 3 ask the service for any caller (`lanes-index`:7355–7357)
+  and start it where the client finds no socket, a dead one or an owner
+  file from another install, unless a failure stamp is fresh
+  (`register_read_ask`, :10205–10209; `register_serve_ask`, :9817–9818,
+  :9843); a `.direct` that an earlier read left, which `reg_flush` keeps
+  (:6884), stops both. Two tails read:
+  - `request-handoff`'s wait on primary, the tail that always does: each
+    poll drops the family (`reg_flush`, :33842) and reads the binding
+    through `lane_binding_scan` (:33844);
+  - the lifecycle follow-up of a `log` `ENDED` or `RETIRED`, which reads
+    the lane's log once: `write_event` calls `lane_state_follow`
+    (:15346) for the seam-8 verbs (:15290–15295), which calls
+    `lane_control_root` (:27757), which with no `dir` in the payload
+    calls `lane_payload_field` (:27387), `lane_log_events` and `reg_log`
+    (:12043–12044). `ENDED` and `RETIRED` carry no payload
+    (`lane-end`:3579–3583), and `retire-rows`'s follow loop passes none
+    (:26775).
+  So each statement is scoped, not excepted: it reads "a write's own
+  snapshot and commit", and a writer's tail reads as a reader does. The
+  manual reads so (spec#73, lane 5's #165 6915847203). Lane 5 confirms
+  this reading of the code at merge216 `941caa67`.
+- **(g) The erratum, `ready`'s checks 4 and 11:** ops:448 (Y's :447),
+  check 4, has "each role" connect, and ops:455 (Y's :454), check 11,
+  reads "each role's connection", with "Any role reads both, and lane 1
+  read them as all three". As built (T119), `ready` connects as the
+  engineer's two logins only, `register_url=`'s REGISTER-WRITER login
+  and `reader_url=`'s READER login (`_READY_ROLES`,
+  `lanes-index`:12779–12780), and no check reads `url=`'s indexer
+  (:12686–12689). Each login makes one read, which takes check 4's scope
+  and check 11's `pg_stat_ssl` row and `pg_is_in_recovery()`
+  (:12694–12695; `_ready_roles`, :12975–12982; `_ready_check_tls`,
+  :13307). Check 4 reads "each of the engineer's two logins connects",
+  and check 11 "each login's connection", as the manual's checks do
+  (:5485, :5499; and :5099).
+- **(h) The erratum, `rollback`'s exit-2 rows:** exit-codes.md:146–149,
+  `rollback`'s rows for 2, leave out three of T304's refusals, each made
+  before step 0 with nothing written: a switch at `primary` with the
+  marker `adding`, whose cutover's entry stands unconfirmed
+  (`lanes-index`:23796–23799); a switch at `files` with the marker
+  `absent`, with nothing to roll back (:23800–23803); and the operator's
+  identity, read before either: no `LANES_LANE`, or one that is not a
+  lane's name (`_rollback_lane`, :23915–23928), a workstation name that
+  cannot be read, is empty, or is a container's with no
+  `LANES_WORKSTATION` (`_rollback_workstation`, :23931–23951), and no
+  author that git can name (`_rollback_author`, :23954–23970). Each is a
+  refusal that `cmd_rollback` ends 2 (:23734–23736). The general row,
+  exit-codes.md:27 ("a refusal, with nothing written"), covers them, so
+  the code is right and the table is short. p17e found them at P17's cut
+  `37fcac14` (its :17047 and :17051).
+- **In place:** ops:202, :206, :220, :281, :426, :448, :455, :482–485,
+  :488, :501 and :589, quickstart.md:26 and :37–38,
+  tasks.md:336, register-cli.md:374, socket-api.md:150 and :375, and
+  exit-codes.md:146–149, :181, :186 and :187 keep their words, so this
+  entry is their erratum. For (h), exit-codes.md gains no row: a row
+  would move every later line of a file that other files cite by line.
+- **Whose:** (a) to (c) are lane 3's, from the two Opus reviews of
+  spec#73 at `fa22b7bd`, which lane 3 took in fix round 1:
+  `opus-spec-73-roles-fa22b7bda6a7.md` (s73a, sha256
+  `61763076f55b76162f17c3158d58bd4ee51b06bd5f30e5ec5c335e9271aeb87b`),
+  its B1 and the writer's conflict 1, and
+  `opus-spec-73-runbook-fa22b7bda6a7.md` (s73b, sha256
+  `99771bf24ab69d71017d2d907b0895492b0efce70bb53be9e8dababb0edf9d01`),
+  its SHOULD 2 and NIT 7. (d) to (f) are lane 3's rulings, #165
+  6902870227, on lane 4's read of spec#73, #165 6902833578
+  (`S73-L4-report-1115.md`, sha256
+  `2c41c9e66297832ed12679b40878d0c3cd9534f399d1d81844e099aed089b565`).
+  Lane 5 confirmed (f)'s scoped reading in #165 6915888950. Lane 3's
+  #165 6905395421 adds (a)'s ops:426, (g)'s check 4 and (b)'s 69, the
+  last from lane 1's read of spec#73, #165 6903681456; (g)'s check 11 is
+  lane 1's X11, #165 6905444938, and (b)'s `login` secret is S73D-1,
+  lanes 1 and 2, #165 6905444938 and 6905437522, both of which lane 3
+  took in #165 6905699566; and (h) is SHOULD 4 of p17e, lane 3's early
+  review of P17 (`opus-p17-cut-172aad0d97d0-early.md`, sha256
+  `650b1b4b222748a04c761a31d25969e5536bb8b4d1dcf9f133bbdaf2db19a8dc`),
+  which asked for a row in the T514 spec PR; lane 3's ruling 3, #165
+  6906278982, takes it here instead. These are lane 3's rulings and no
+  word of Brett's.
+- **Source:** Y:3829–3831 and :5011; ops:202, :206, :220, :281, :334,
+  :402, :414, :426, :448, :455, :482–485, :488, :501, :508 and :589;
+  quickstart.md:26, :34 and :37–38; tasks.md:323–328 and :336;
+  register-cli.md:374 and :821; socket-api.md:150 and :375;
+  exit-codes.md:27, :146–149, :172, :181, :186 and :187; at line R's
+  merge216 `941caa67`, `lanes-index`:4559–4560, :5861–5865, :7355–7357,
+  :9817–9818, :9843, :10183–10215, :11810–11813, :11826, :12437–12440,
+  :12453–12455, :12478–12481, :12564–12568, :12686–12689, :12694–12695,
+  :12779–12780, :12975–12982, :13307, :13687–13691, :13711–13716,
+  :13877–13944, :13932–13933, :13952–13954, :13974–13976, :13982–13985,
+  :23734–23736, :23796–23803, :23915–23970, :24130–24154 and :24759,
+  `lanes-edit.sh`:66–73, :3953–3972, :4062, :5240–5248, :5611–5620,
+  :6295–6300, :6326–6329, :6364–6368, :6884, :7070–7097, :12043–12044,
+  :15290–15295, :15346, :20333–20337, :23778, :26775, :27387, :27757,
+  :31083, :33842 and :33844, `lane-end`:3579–3583, and
+  `lane-start`:178–182 and :5197–5204; the manual at `8baf428e`,
+  :4677–4679, :4758, :4761–4783, :5099, :5128, :5152–5155, :5169,
+  :5180–5184, :5187–5191, :5211–5214, :5485, :5499, :5628, :5636–5638,
+  :5674–5677, :5865–5867, :5879–5880, :5896, :5933–5939 and :6035–6037;
+  P17's cut `37fcac14`, `lanes-index`:17047 and :17051; #165 6902833578,
+  6902870227, 6903681456, 6905395421, 6905437522, 6905444938,
+  6905699566, 6906278982, 6915847203 and 6915888950.
