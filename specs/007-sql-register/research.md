@@ -1906,13 +1906,13 @@ lane 3's ruling.
   `_BOOTSTRAP_USAGE` gives `--label <name> --repository <owner/name>
   --lane <name>` (`lanes-index`:11810–11813), and a run without them
   ends 64, "bootstrap needs … (or --roles-only)" (:12437–12440,
-  :12453–12455). ops:426 ("It refuses when stdout is not a terminal")
-  and exit-codes.md:181, which cites it, state no exception. The code
-  refuses only where `--no-passwords` is not given (:12478–12481), the
-  flag T109 lists (tasks.md:328), "for roles that log in by peer, trust
-  or certificate" (:11826), with which it makes and prints no password
-  (:12564–12568). The manual writes the full form (:5128, :5628) and
-  the exception (:5152–5155, :5169).
+  :12453–12455). ops:426 ("It refuses when stdout is not a terminal"),
+  exit-codes.md:181, which cites it, and T109's "Secrets" (tasks.md:336)
+  state no exception. The code refuses only where `--no-passwords` is
+  not given (:12478–12481), the flag T109 lists (tasks.md:328), "for
+  roles that log in by peer, trust or certificate" (:11826), with which
+  it makes and prints no password (:12564–12568). The manual writes the
+  full form (:5128, :5628) and the exception (:5152–5155, :5169).
 - **(b) The erratum, `login`'s admin connection and its 69:** ops:206
   ("Brett runs `lanes-index login add <engineer>` … and `lanes-index
   login add --dump-job`"), ops:483–485 (Y's :482–484), whose `add
@@ -1944,6 +1944,18 @@ lane 3's ruling.
   :6035–6037), and it gives the 69 so (:5213–5214). `login add`'s
   `--sslrootcert <path>` (:13687, :13711–13713) is not named here: it
   waits for a spec text of its own (s73a's conflict 4; lane 1, T110).
+
+  ops:482 (Y's :481) also gives `login` "the bootstrap's rules for a
+  secret: it refuses when stdout is not a terminal", and
+  exit-codes.md:186 (`main`'s :185) lists "stdout not a terminal" among
+  `login`'s 2s, on every form. The code refuses it only for `add` and
+  `rotate`, which print a password, `--dump-job` included; `revoke`
+  prints none and does not refuse a pipe (`_login`,
+  `lanes-index`:13982–13985; lanes 1 and 2, #165 6905444938 and
+  6905437522). It reads: "with the bootstrap's rules for a secret:
+  `add` and `rotate`, which print a password, refuse when stdout is not
+  a terminal". The manual reads so since fix round 3 (S73D-1;
+  :5180–5184, :5211–5213).
 - **(c) The erratum, the rollback's declare line:** ops:501 (Y's
   :500): "Brett runs `outage declare --rollback --mirror-seq <k>`, as
   `rollback` prints it, on each other host, and on its own host where it
@@ -2050,12 +2062,12 @@ lane 3's ruling.
   exit-codes.md:27 ("a refusal, with nothing written"), covers them, so
   the code is right and the table is short. p17e found them at P17's cut
   `37fcac14` (its :17047 and :17051).
-- **In place:** ops:202, :206, :220, :281, :426, :448, :455, :483–485,
+- **In place:** ops:202, :206, :220, :281, :426, :448, :455, :482–485,
   :488, :501 and :589, quickstart.md:26 and :37–38,
-  register-cli.md:374, socket-api.md:150 and :375, and
-  exit-codes.md:146–149, :181 and :187 keep their words, so this entry
-  is their erratum. For (h), exit-codes.md gains no row: a row would
-  move every later line of a file that other files cite by line.
+  tasks.md:336, register-cli.md:374, socket-api.md:150 and :375, and
+  exit-codes.md:146–149, :181, :186 and :187 keep their words, so this
+  entry is their erratum. For (h), exit-codes.md gains no row: a row
+  would move every later line of a file that other files cite by line.
 - **Whose:** (a) to (c) are lane 3's, from the two Opus reviews of
   spec#73 at `fa22b7bd`, which lane 3 took in fix round 1:
   `opus-spec-73-roles-fa22b7bda6a7.md` (s73a, sha256
@@ -2070,26 +2082,31 @@ lane 3's ruling.
   (f) waits for lane 5's word. Lane 3's #165 6905395421 adds (a)'s
   ops:426, (g)'s check 4 and (b)'s 69, the last from lane 1's read of
   spec#73, #165 6903681456; (g)'s check 11 is lane 1's X11, #165
-  6905444938; and (h) is SHOULD 4 of p17e, lane 3's early review of P17
+  6905444938, and (b)'s `login` secret is S73D-1, lanes 1 and 2, #165
+  6905444938 and 6905437522, both of which lane 3 took in #165
+  6905699566; and (h) is SHOULD 4 of p17e, lane 3's early review of P17
   (`opus-p17-cut-172aad0d97d0-early.md`, sha256
   `650b1b4b222748a04c761a31d25969e5536bb8b4d1dcf9f133bbdaf2db19a8dc`),
-  which asked for a row in the T514 spec PR; lane 3 takes it here
-  instead. These are lane 3's rulings and no word of Brett's.
-- **Source:** ops:202, :206, :220, :281, :334, :402, :414, :426, :448,
-  :455, :482–485, :488, :501, :508 and :589; quickstart.md:26, :34 and
-  :37–38; tasks.md:323–328; register-cli.md:374; socket-api.md:150 and
-  :375; exit-codes.md:27, :146–149, :172, :181 and :187; at line R's
-  merge216 `941caa67`, `lanes-index`:5861–5865, :7355–7357,
-  :10183–10215, :11810–11813, :11826, :12437–12440, :12453–12455,
-  :12478–12481, :12564–12568, :12686–12689, :12694–12695,
-  :12779–12780, :12975–12982, :13307, :13687–13691, :13711–13716,
-  :13877–13944, :13932–13933, :13952–13954, :13974–13976,
-  :23734–23736, :23796–23803, :23915–23970 and :24130–24154,
-  `lanes-edit.sh`:66–73, :3953–3972, :4062, :6295–6300, :6326–6329,
-  :6364–6368, :7070–7097, :20333–20337, :23778, :31083, :33842 and
-  :33844, and `lane-start`:178–182 and :5197–5204; the manual at
-  `8baf428e`, :4677–4679, :4758, :4761–4783, :5099, :5128, :5152–5155,
-  :5169, :5187–5191, :5213–5214, :5395–5397, :5485, :5499, :5628,
-  :5636–5638, :5674–5677, :5865–5867, :5879–5880, :5896, :5933–5939
-  and :6035–6037; #165 6902833578, 6902870227, 6903681456, 6905395421
-  and 6905444938.
+  which asked for a row in the T514 spec PR; lane 3's ruling 3, #165
+  6906278982, takes it here instead. These are lane 3's rulings and no
+  word of Brett's.
+- **Source:** Y:3829–3831; ops:202, :206, :220, :281, :334, :402, :414,
+  :426, :448, :455, :482–485, :488, :501, :508 and :589;
+  quickstart.md:26, :34 and :37–38; tasks.md:323–328 and :336;
+  register-cli.md:374; socket-api.md:150 and :375; exit-codes.md:27,
+  :146–149, :172, :181, :186 and :187; at line R's merge216 `941caa67`,
+  `lanes-index`:5861–5865, :7355–7357, :10183–10215, :11810–11813,
+  :11826, :12437–12440, :12453–12455, :12478–12481, :12564–12568,
+  :12686–12689, :12694–12695, :12779–12780, :12975–12982, :13307,
+  :13687–13691, :13711–13716, :13877–13944, :13932–13933, :13952–13954,
+  :13974–13976, :13982–13985, :23734–23736, :23796–23803, :23915–23970
+  and :24130–24154, `lanes-edit.sh`:66–73, :3953–3972, :4062,
+  :6295–6300, :6326–6329, :6364–6368, :7070–7097, :20333–20337, :23778,
+  :31083, :33842 and :33844, and `lane-start`:178–182 and :5197–5204;
+  the manual at `8baf428e`, :4677–4679, :4758, :4761–4783, :5099, :5128,
+  :5152–5155, :5169, :5180–5184, :5187–5191, :5211–5214, :5395–5397,
+  :5485, :5499, :5628, :5636–5638, :5674–5677, :5865–5867, :5879–5880,
+  :5896, :5933–5939 and :6035–6037; P17's cut `37fcac14`,
+  `lanes-index`:17047 and :17051; #165 6902833578, 6902870227,
+  6903681456, 6905395421, 6905437522, 6905444938, 6905699566 and
+  6906278982.
