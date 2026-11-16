@@ -5586,8 +5586,8 @@ runs it again at the window, and again after any recreate.
      plugin hold, read at act 3, and 3 and 2 the superuser's and the admin's
      reserved slots. Four engineers with three environments and eight lanes
      each, with `C_op` at 5, give 120. Its memory is at least `shared_buffers`
-     plus `max_connections` times the memory per connection act 3 measures,
-     with room: to start, a 1 GiB limit with `shared_buffers` at 128 MB for
+     plus `max_connections` times the memory one connection takes, with room:
+     to start, a 1 GiB limit with `shared_buffers` at 128 MB for
      100 connections, raised with `max_connections`. Its CPU request is 100m
      and its limit 1, and its storage 8 GiB on the cluster's premium class.
   9. **What it hands back,** for Brett to record on #165: the endpoint and its
