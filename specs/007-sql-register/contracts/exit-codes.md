@@ -2,7 +2,7 @@
 
 - **Owner of the `lanes-index` section:** lane 1 (`[L1]`), task T102. Each other lane adds its callers' arms in a section of its own below that section (plan.md's tree; [README.md](README.md)). A change to a `lanes-index` row goes through lane 1.
 - **Keyed to commit Y, `a6497d00`.** `Y:<n>` is a line of Y's `design.md`, and `ops:<n>` a line of Y's `operations.md` (the contract writes `Y-ops:<n>`). `code/lanes-index:<n>` is the code leg at the pin Y cites.
-- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.31 (sha256 `d6ba44ea…`; lane 1's draft 4.27, #165 6834642319, with lane 3's K9, #165 6870473237, K10, #165 6877889644, K11, O16's `w_s_ms` qualifier, lane 3's fold of Codex's re-review r6 of spec#17 at `870ed1fb`, its finding 2, and K12, the same qualifier on O16's `c` = 2 clause, lane 1's words, #165 6881658031), which keeps every line of drafts 4.16, 4.15, 4.14, 4.13 and 4.12, with §10, from draft 4.15, and §11, from draft 4.17, after the last line; draft 4.12 keeps every section, and every line to :637, and from :638 on each line is one below draft 4.11's. Its §2.7 75 row (:337) gives an LR004's moved head as lane 3's ruling (#165 6771318480), with no [P]. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
+- **The contract** is [register-cli.md](register-cli.md), lane 1's contract between groups A and B and the readers' forms, cited by section. This file was written against its draft 4.5, and checked against draft 4.6 (sha256 `028937e6…`), which keeps every line number and changes only lines of §3.6; a cite "draft 4.6, :n" is a line of draft 4.6. The copy in this branch is draft 4.32 (sha256 `50a1abb6…`; lane 1's draft 4.27, #165 6834642319, with lane 3's K9, #165 6870473237, K10, #165 6877889644, K11, O16's `w_s_ms` qualifier, lane 3's fold of Codex's re-review r6 of spec#17 at `870ed1fb`, its finding 2, K12, the same qualifier on O16's `c` = 2 clause, lane 1's words, #165 6881658031, and K13, the private-file rule as the code has it, lane 3's words, #165 6899567732 and 6900107119), which keeps every line of drafts 4.16, 4.15, 4.14, 4.13 and 4.12, with §10, from draft 4.15, and §11, from draft 4.17, after the last line; draft 4.12 keeps every section, and every line to :637, and from :638 on each line is one below draft 4.11's. Its §2.7 75 row (:337) gives an LR004's moved head as lane 3's ruling (#165 6771318480), with no [P]. Where a row here and the contract differ, the contract holds, and the row is a fault in this file.
 - **By lane openRepoTools-1, 2026-11-09.** It answers PC-10 (research.md's Part 3; plan.md) and the test plan's open point 1, "The tests read the design's constant".
 
 **The marks:**
@@ -43,7 +43,7 @@ Each code is a named constant in `lanes-index`, and the tests read the constant,
 
 ### 2. Rules for every subcommand
 
-- **A refused configuration is 2** (`code/lanes-index:72–76`; Y:4872). The contract fixes two exceptions: 3 on `journal --write-id` (CO-3, §3.4) and 1 under `register read --for guard` (O14, §2.7). `lanes-index mode` refuses one with 2 (Y:4830). [config.md](config.md) §4 lists the refusals.
+- **A refused configuration is 2** (`code/lanes-index:72–76`; Y:4872). The contract fixes three exceptions: 3 on `journal --write-id` (CO-3, §3.4); 1 under `register read --for guard` (O14, §2.7); and 0 from `set-mode index`, which writes the `mode=` line, or finds it already `index`, and notes on stderr that the file is still refused (§3.3; lane 3's ruling 1, #165 6769217709). `lanes-index mode` refuses one with 2 (Y:4830). [config.md](config.md) §4 lists the refusals.
 - **Q6(c), while `RENDER_GIT_HALF` is False** [Y]:
   - `mode=primary` makes `mode`, and `register read` in every form, exit 78 (Y:2449–2451; Y:4872);
   - every other subcommand refuses it with 2, "as the configuration parser does" (Y:2451–2453), `serve` among them (FR-003);
@@ -179,12 +179,13 @@ ops §2.4's four rules hold for each (ops:402–405) [Y]:
 | `bootstrap` | 0 | each object `created` or `unchanged` | ops:422–425 | T109 |
 | `bootstrap` | 2 | an argument carrying a connection string or a password; an admin that may not create roles or schemas, or does not own the database; a schema newer than this build's `REGISTER_SCHEMA_VERSION`; a role holding a privilege outside its scope; `store=sqlite` | ops:429–433 | T109 |
 | `bootstrap` | 2 | stdout not a terminal | ops:426, with ops:402's 2 for a refusal | T109 |
+| `bootstrap` | 2 | an existing `lanes_indexer` that cannot log in (`rolcanlogin` false), named, before any write and under `--roles-only` too: the bootstrap never grants LOGIN, and changes no existing role's attributes | lane 3's ruling, #165 6894116246 | T109 |
 | `bootstrap` | 69 | the admin connection fails; [P] a migration's lock wait refused, which D9 says to rerun (Y:3531), since ops:402 gives 69 where the database refuses | ops:428; ops:402 | T109 |
-| `bootstrap` | 64 | usage | ops:402 | T109 |
+| `bootstrap` | 64 | usage. An unknown argument, positional or not, is quoted only where all of it matches `--?[A-Za-z][A-Za-z-]{0,30}`, as `bootstrap: unknown argument '<arg>'`, and is otherwise named `bootstrap: unknown argument that is not one of its flags`, so that an argument holding a digit, `=` or any symbol but `-`, or longer than 33 characters, is never shown (Form 2, as `ready` names one). An argument carrying a connection string or a password is refused with 2 before usage is read (the first 2 row) | ops:402; lane 3's ruling, #165 6894208108 | T109 |
 | `login` (`add`, `rotate`, `revoke`, `--dump-job`) | 0 | each step's result printed | ops:482–484 | T110 |
 | `login` | 2 | an engineer name that is not `^[a-z][a-z0-9_]{0,40}$`; an argument carrying a connection string or a password; stdout not a terminal, under the bootstrap's rule for a secret | ops:481, ops:487; T110 | T110 |
 | `login` | 69 | the admin connection fails | ops:487 | T110 |
-| `login` | 64 | usage; `rotate` with neither an engineer nor `--dump-job`, or with both | ops:402; T110 | T110 |
+| `login` | 64 | usage; `rotate` with neither an engineer nor `--dump-job`, or with both; an unknown argument that starts with `-`, named as the `bootstrap` row says, as `login: unknown argument '<arg>'` or `login: unknown argument that is not one of its flags`. A word that does not start with `-` is the action or the engineer: a word too many, or a first word that is not `add`, `rotate` or `revoke`, is usage whose message shows no word but the action | ops:402; T110; lane 3's ruling, #165 6894208108 | T110 |
 | `ready` | 0 | every check passed | ops:458 | T119 |
 | `ready` | 2 | any check failed, each failure named. A database it cannot reach fails check 4, so `ready` exits 2, never 69 (ops:458 over ops:402; section 5's note) | ops:458 | T119 |
 | `ready` | 64 | usage | ops:458 | T119 |
@@ -289,7 +290,7 @@ F8's table (Y:5707–5716) [Y] is the callers' map, and each caller's arm belong
 
 | `lanes-index mode`'s end | What the caller does (Y) |
 |---|---|
-| 2: a named file that is missing; a key, line or 0600 check refused; a mode value other than `index` or `primary` | files mode, with a warning |
+| 2: a named file that is missing; a key, line or file-permission check refused (not a regular file, or any group or other permission bit); a mode value other than `index` or `primary` | files mode, with a warning |
 | 64, from a `lanes-index` too old to have `mode` | files mode, with a warning |
 | 127, `lanes-index` or `python3` missing | files mode, with a warning |
 | 1, or 128+n: a crash, a signal | files mode, with a warning |

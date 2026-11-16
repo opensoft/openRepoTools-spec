@@ -7,7 +7,7 @@ to commit Y (`a6497d00`) of the change `add-sql-register`, which the spec
 branch merges whole at `066ad8f1`. Citations are spec.md's: `spec:<n>`
 and `svc:<n>` are lines of the change's two spec files on this branch, at
 `ad82c2f4`; `Y:<n>`, `ops:<n>` and `clar:<n>` are lines of `design.md`,
-`operations.md` and `clarifications.md`, which are unchanged from Y.
+`operations.md` and `clarifications.md`, which are cited as Y has them; where a branch line has moved from Y's, research.md:138–142 gives the rule (in `operations.md`, from ops:435 on, Y's line N is the branch's N+1: the bootstrap's Limit bullet, lane 1's C14, commit `3b6fde18`).
 
 > **Assembly phase A.** This plan, spec.md and research.md are keyed to Y,
 > with lane 3's rulings memo (R01 to R61), lane 3's assembly notes and the
@@ -200,7 +200,7 @@ one-line install.
 - Every database path is bounded (D9).
 - Each phase lands as a working, tested state, with `mode=primary` refused
   until group C's last pull request.
-- Nothing changes where the marker is absent, except the three exceptions.
+- Nothing changes where the marker is absent, except the delta's four exceptions.
 - The hook string and `GUARD_TIMEOUT` are byte-unchanged.
 - The suite reaches no network and creates no real repository. The cluster
   is local, and only the timeout stand-ins bind 127.0.0.1.
@@ -241,7 +241,7 @@ is filled once Phase 1's contracts have landed.
 | G4 | No credential in an inherited environment (Amendment 14(c)) | PASS: 0600 files; the URL-to-`PG*` mapping; the admin connection by `PGSERVICE` alone | to check |
 | G5 | The suite reaches no network and creates no real repository (root `AGENTS.md`) | PASS, with the root `AGENTS.md` text naming the cluster and the loopback listener, by lane 1's root act R2 | to check |
 | G6 | Tests skip loudly without their prerequisite, and CI refuses where it has the binaries | PASS: `OPENREPOTOOLS_REQUIRE_PG` (test plan §3.3) | to check |
-| G7 | Nothing changes where the marker is absent, except three exceptions | PASS | to check |
+| G7 | Nothing changes where the marker is absent, except four exceptions | PASS | to check |
 | G8 | Governed files are `[O]` work (protocol, Build Tiers; "Governed invariants" below) | PASS | to check |
 | G9 | Nothing under `upstream/openRepoShape` is edited, and the pin does not move in 007 (code#15 moved it to v1.1.1 before 007's branch was cut) | PASS | to check |
 | G10 | Brett decides every act: the tag, the uploads, acts 3 and 4, the ruleset and the install. Pull requests land on his standing word; the spec PR on his own word | PASS: no act is a build task | to check |
@@ -265,7 +265,7 @@ specs/007-sql-register/
 ├── quickstart.md        # Phase 1: the operator's and an engineer's first steps
 ├── contracts/
 │   ├── README.md        # the copy's source and digest, and each contract's owner
-│   ├── register-cli.md  # [L1] T101; now draft 4.31, lane 1's draft 4.27 with lane 3's K9, K10 and K11 and lane 1's K12, from 007's follow-up spec PR.
+│   ├── register-cli.md  # [L1] T101; now draft 4.32, lane 1's draft 4.27 with lane 3's K9, K10 and K11 and lane 1's K12, from 007's follow-up spec PR, and lane 3's K13, from its follow-ups 4.
 │   │                    #   THE CONTRACT BETWEEN GROUPS A AND B (FR-013 to FR-017),
 │   │                    #   and the readers' four forms (§3.6, which lane 5 reviews)
 │   ├── exit-codes.md    # [L1] T102: the lanes-index rows; each lane adds its callers' arms
@@ -280,13 +280,13 @@ specs/007-sql-register/
 
 `contracts/register-cli.md` is fixed before group B codes against it. Lane 1
 writes it, lane 4 confirms group B's sections, lane 5 reviews §3.6, and lane
-3 rules (R01, R06). Draft 4.31, keyed to Y (`d6ba44ea…`, 1023 lines;
-lane 1's draft 4.27, #165 6834642319, with lane 3's K9, #165 6870473237, K10, #165 6877889644, K11, O16's `w_s_ms` qualifier, lane 3's fold of Codex's re-review r6 of spec#17 at `870ed1fb`, its finding 2, and K12, the same qualifier on O16's `c` = 2 clause, lane 1's words, #165 6881658031), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
+3 rules (R01, R06). Draft 4.32, keyed to Y (`50a1abb6…`, 1023 lines;
+lane 1's draft 4.27, #165 6834642319, with lane 3's K9, #165 6870473237, K10, #165 6877889644, K11, O16's `w_s_ms` qualifier, lane 3's fold of Codex's re-review r6 of spec#17 at `870ed1fb`, its finding 2, K12, the same qualifier on O16's `c` = 2 clause, lane 1's words, #165 6881658031, and K13, the private-file rule as the code has it, lane 3's words, #165 6899567732 and 6900107119), is draft 4.2 (`dea51e43…`, 6741494851) with O21 closed by
 lane 4's (a) (6741093519), then lane 5's 6741787745, lane 4's log set, the
 endpoint's name, lane 1's T511 answers and U5 fixes, B6's, B9's, B10's, B11's, B12b's and B13's, and lane 3's batches 7 and 9 (#165 6780364102, 6781033556). Draft 4.1 is
 draft 4 (6738871108), with form 4, lane 5's review of §3.6, lane 3's B4 and
 B7 and lane 5's check (6739068493). Lane 3 copied draft 4.27 into the path
-as it is, then made K9 in it as draft 4.28, K10 as draft 4.29, K11 as draft 4.30 and K12, lane 1's words, as draft 4.31, and [contracts/README.md](contracts/README.md) names its
+as it is, then made K9 in it as draft 4.28, K10 as draft 4.29, K11 as draft 4.30, K12, lane 1's words, as draft 4.31 and K13 as draft 4.32, and [contracts/README.md](contracts/README.md) names its
 source and digest. Its §8 closes O14 to O21. T101 rides the spec PR (B4).
 
 ### Source Code (the code leg, `opensoft/openRepoTools-code` at `e39395895`)

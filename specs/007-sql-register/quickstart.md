@@ -7,7 +7,7 @@ and points at their text; it restates no requirement, and the runbook in
 
 **Citations** are spec.md's: `spec:<n>` and `svc:<n>` are lines of the
 change's two spec files on this branch, at `ad82c2f4`; `Y:<n>` is a line of
-`design.md` and `ops:<n>` of `operations.md`, which are unchanged from Y.
+`design.md` and `ops:<n>` of `operations.md`, which are cited as Y has them; where a branch line has moved from Y's, research.md:138–142 gives the rule (in `operations.md`, from ops:435 on, Y's line N is the branch's N+1: the bootstrap's Limit bullet, lane 1's C14, commit `3b6fde18`).
 
 Every step here is an act, on a person's word, never a build task. Nothing
 here runs before the codeXfactory prod install exists ("Wait for the
@@ -55,9 +55,9 @@ install", #165 6723925474).
 ## An engineer's workstation
 
 1. **Its file reads:** Brett checks it with `lanes-index status` (ops:210).
-   `lanes-index` refuses a file that is group- or world-readable, inside a
-   git work tree or under `~/.agents/`, or a URL that carries a password
-   (ops:211).
+   `lanes-index` refuses a file that is not a regular file or has any group
+   or other permission bit (0600 and 0400 both pass), inside a git work
+   tree or under `~/.agents/`, or a URL that carries a password (ops:211).
 2. **Readiness.** The operator lane runs it in every writing environment
    the workstation has, each bench container and each host shell
    (ops:221–222), with each environment's own label (lane 1, #165 6882063682):
