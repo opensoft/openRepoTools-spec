@@ -11,6 +11,7 @@
 - [x] 2.1 Add the separate disabled manifest and non-gating Git inspector; verify immutable scope/history and ordered-preview tests, including foundation reporting.
 - [x] 2.2 Add rejection/pending/full-fallback regressions and run the canonical targeted suite; verify live controls, workflows and all coverage definitions are unchanged.
 - [x] 2.3 Pass strict OpenSpec and diff checks; obtain independent exact-head code/spec review and resolve actionable findings. Genuine Codex reviews completed clean on the published preparation heads.
+- [ ] 2.4 Review profile-specific P07/P09 history ceilings with boundary/overflow and complete-lineage regressions; preserve pending product bindings and live limits.
 
 ## 3. Publish preparation only
 
@@ -102,3 +103,43 @@ The separate fast-preparation jobs refused stale PR-base identities; no event
 repair, close/reopen or live operation was performed. Task1.3 remains pending
 until fresh exact-head product reviews are published. Both PRs remain open,
 P08 remains held, and lanes1–5 and every existing exclusion are preserved.
+
+## Approved exact history-ceiling preparation
+
+Subsequent user authority permits P07/P09 fix rollout, reviewed history bounds,
+and checked111/78 merges only after spec80, fresh genuine product-head reviews
+and CI pass, followed by the separately reviewed narrow live rollout/canary.
+This supersedes only the earlier instruction to leave preparation unmerged;
+the preparation remains disabled and does not activate anything. All other
+exclusions, P08 and lanes1–5 remain held.
+
+Lane2 report6932839428 supplies P07 tip6d4794186940f64a6904b7551d5d96d40d14b78e
+with nine linear fixes; confirmation6932867799 gives13 commits total from P01.
+Its bundle checksum863216ba5cedb468a8a64bb70bf9a2e244944d481184ca81da1f43cdb5b238d4
+matches the copied immutable bundle. The new product head is NOT yet bound:
+normal owner publication, ungated22-node verification, fresh full CI, a clean
+genuine Codex review, spec80 and conditional owner consent remain required.
+The P09 report gives24 commits as built (8+16); its final review remains pending.
+
+Independent isolated checking of P07's bundle passed its complete13-commit
+lineage and exact final path/status inventory without binding it. Lane1 report
+6933008946 records22 targeted ids run ungated with zero skips/failures. Live
+API readback confirms verify43982384254 succeeded at581beb859ecb33e50fa3fbeb2173723aca0a9629,
+tree812d3c98f81382337844fe1fe46c3e15a3f90ff1, sole parent804a97be.
+This is targeted verification, not fresh product review or canary qualification.
+
+The separate ceilings are13/24, not one global increase or allowance for
+unknown fixes. Each exact SHA, parent and cumulative cut remains checked, and
+P07 cannot borrow P09's larger limit. Boundary/overflow regressions use both
+real Git chains and distinct schema inputs. Canonical focused54 tests passed;
+expanded355 tests passed,6571 deselected,zero skips,in165.85s. Strict OpenSpec
+and diff checks pass. A strengthened overflow refusal assertion passed all4
+ceiling cases again,6922 deselected,in6.01s. Existing full43966304266 and reusable43966304339 passed
+at0bfd5b44; these do not prove future published updates.
+
+Local history-bound review is INCOMPLETE: architecture, security and QA found
+no actionable issues; performance, contract and data reviewers could not run
+because the workspace reported out of credits. Remaining panel roles have not
+completed. No paid credits/upgrade or review waiver was enabled. Task2.4 stays
+open until independent review finishes; do not call this a completed nine-role
+review or reuse the earlier preparation review for the new change.

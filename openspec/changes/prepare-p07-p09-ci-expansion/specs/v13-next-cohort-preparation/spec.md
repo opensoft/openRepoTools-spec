@@ -31,6 +31,9 @@ and containing the common prerequisite; its complete source chain and inventory
 SHALL be checked from that anchor. Missing final owner bindings SHALL remain pending. Changed main, malformed
 or duplicate data, unknown paths, invalid modes, nonempty markers, merge commits,
 undeclared fixes, dependent members or merge conflicts SHALL refuse preview.
+The preparation ceilings SHALL be 13 commits for P07 and 24 for P09, with every
+SHA explicitly declared and every cumulative cut checked. These ceilings SHALL
+NOT bind unpublished heads, approve reviews or alter live delivery limits.
 
 #### Scenario: Owner has not finalized a head
 - **WHEN** either final source binding is missing
@@ -47,6 +50,10 @@ undeclared fixes, dependent members or merge conflicts SHALL refuse preview.
 #### Scenario: P09 starts at landed P03
 - **WHEN** P09 declares landed P03 as its anchor and P07 declares P01
 - **THEN** validate each complete chain independently and reject unlanded anchors or skipped source commits
+
+#### Scenario: A history reaches or exceeds its own ceiling
+- **WHEN** P07 has 13 commits or P09 has 24 commits in its exact declared linear chain
+- **THEN** validate every prefix without granting live authority, and reject one additional commit or an undeclared fix
 
 ### Requirement: Foundation and owner evidence remain separate gates
 

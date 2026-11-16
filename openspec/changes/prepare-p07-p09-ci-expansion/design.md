@@ -37,6 +37,12 @@ assembly adoption, installed tools or running-lane changes.
    history bound and disjoint member paths. Compute P09-then-P07 merge previews
    only when both bindings exist. Synthetic commits, if needed, are immutable
    objects in the private/CI Git object database, never branch/index changes.
+   Preparation ceilings are profile-specific: P07 13 and P09 24 commits from
+   their declared anchors. These match the reported four-plus-nine and
+   eight-plus-sixteen chains, not an arbitrary global increase. Every SHA and
+   cumulative cut remains checked. A ceiling is not an owner head binding or
+   approval; changed chains above it require another reviewed update, never
+   truncation, implicit acceptance or rewriting another lane's history.
 4. Always output `required_ci: full`, `skip_ci: false` and
    `queue_admission: false`, even for a valid preview or linked reviews.
    The inspector has no network, status, dispatch, queue or merge operations.
@@ -61,6 +67,9 @@ assembly adoption, installed tools or running-lane changes.
 ## Migration Plan
 
 Open paired preparation PRs, request fresh Codex and owner review, and leave
-them open. No activation, merge, live batch or assembly refresh follows from
-this request. Dropping these additive preparation files leaves all production
-behavior unchanged.
+them open under the original preparation request. Subsequent owner authority
+permits checked merges only after spec#80, fresh product-head reviews and CI
+pass. Merging these additive files still activates nothing. The separately
+approved narrow live rollout needs its own reviewed live contract and canary;
+it is not a preparation toggle. No assembly refresh follows. Dropping these
+additive preparation files leaves all production behavior unchanged.
