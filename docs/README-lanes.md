@@ -5764,9 +5764,34 @@ runs it again at the window, and again after any recreate.
    ```
 
    It reads one moment, which is why the freeze comes first: a lane idle
-   between two tool calls has no process. **Refusal:** if the tree id moves,
-   or where the process check names a tool, the operator lane finds the lane
-   that runs it and waits for it to end, and the 2 minutes start again.
+   between two tool calls has no process.
+
+   A `lane-worktrees` line is not always a writer. `lane-start` runs
+   `lane-worktrees sweep --all --dry-run --report` once a day, detached. It
+   only reads and writes one report file at its end, takes no lock and writes
+   no register line, so it cannot move the `lanes` tree id. A build from
+   before opensoft/openRepoTools-code#70 waits for ever in `open()` of a FIFO
+   named `.git` that a test left in the estate. A pid is such a hung report
+   only where all three hold, and none of them prints a command line:
+
+   ```sh
+   ps -o etime=,ppid= -p "$pid"    # a day or more (a "-" in etime), and a parent of 1
+   ps -o pid= --ppid "$pid"        # prints nothing: no child
+   cat "/proc/$pid/wchan"          # wait_for_partner
+   ```
+
+   Anywhere else, or where there is no `/proc`, the pid is a tool that may
+   write: wait for it.
+
+   **Refusal:** if the tree id moves, the 2 minutes start again. Where the
+   process check names a tool, the operator lane finds the lane that runs it
+   from the pid, never by printing a command line or environment. It waits for
+   that tool to end, and the 2 minutes start again. A pid that the three reads
+   above show to be a hung report is not waited for. The operator lane writes
+   down its pid and its `etime` as shown inert. Where every pid the process
+   check names is shown inert, the process check counts as quiet, even though
+   its script still exits 1 for such a pid. Where the process check exits 2, it
+   has not looked, and the quiet check has not passed.
 5. **The ruleset on,** where act 3's step 9 prepared one. Brett enforces it
    once the quiet check has passed, after the drain's last `PAUSED` write and
    before the import: no writer the quiet check can see is left to push, so
