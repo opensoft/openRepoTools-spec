@@ -403,8 +403,8 @@ passages, and the absence of the pipx route.
   `openrepotools/payload/<path>`, every one byte-identical to the commit's
   blob and with the commit's mode (`100755` or `100644`):
   - every file the installer's payload list names: the seventeen
-    installables (sixteen commands and `repos.tsv`), the three skills and
-    the three command files;
+    installables (sixteen commands and `repos.tsv`), `lanes_index_main.py`
+    (since 007's T347), the three skills and the three command files;
   - and `contracts/openreposhape-pin.yaml`.
 - **FR-007**: The installer's payload list MUST stay the only list of payload
   files. A test MUST fail, naming the file, when a file is in that list but
@@ -851,8 +851,8 @@ passages, and the absence of the pipx route.
   three states: unstamped (the committed file), stamped (written only by the
   release build), or broken (anything else, always refused).
 - **The payload list**: the installer's own list of every file `--install`
-  reads, the seventeen installables, three skills and three command files.
-  The wheel adds the openRepoShape pin.
+  reads, the seventeen installables, `lanes_index_main.py` (since 007's T347),
+  three skills and three command files. The wheel adds the openRepoShape pin.
 - **The package**: the `openrepotools` wheel. It holds the entry module, the
   stamp, and the payload at `openrepotools/payload/`, with a `.dist-info` of
   exactly five names.
