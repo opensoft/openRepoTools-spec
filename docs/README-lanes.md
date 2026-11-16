@@ -5765,6 +5765,15 @@ runs it again at the window, and again after any recreate.
    coordinator writes no register line until N4, and the operator lane writes
    only what steps 6, 7 and 9 give it, the import, the cutover and the smoke
    test's `log NOTED`, each after the quiet check.
+
+   The guard itself writes no register line, but two things it starts do.
+   While a `HANDOFF-REQUESTED` stands unanswered for a lane, its guard types
+   `/handoff --exit` into the lane's pane at its next prompt, which writes
+   `PAUSED` and ends the session; and an answer `2` to the guard's question
+   binds the window to another lane, which writes. So from the freeze word
+   until N4 no request may stand for the operator lane or the coordinator,
+   nobody answers `2`, and no paused lane's pane is prompted, since its guard
+   lets the prompt through.
    **Way back:** the thaw (step 10); nothing has changed yet.
 4. **The quiet check.** The operator lane confirms that the `lanes` tree id on
    origin is unchanged for 2 minutes, and that no `lanes-edit.sh`,
@@ -5927,7 +5936,7 @@ Brett.
 |---|---|---|
 | N1 | before act 3's rebuild | the rebuild ends every lane in its container; act 3 changes no register mode (`mode=index` stays), though the new tools change how a lane starts and binds in every mode; `ready` will run in each environment |
 | N2 | once Brett names the window, before it opens | "What changes for a lane" in full; the window; the freeze's form; the rollback's triggers |
-| N3 | at the freeze word | stop at a stopping point, write `PAUSED` with a plain `/handoff` (never `/ctx` or `--restart`, whose respawn runs `lane-start` and writes `RESUMED`), and write nothing more until N4, since the ruleset goes on after the drain; the operator lane and the coordinator write no `PAUSED` and stay live, and the operator lane writes only what act 4's steps 6, 7 and 9 give it |
+| N3 | at the freeze word | stop at a stopping point, write `PAUSED` with a plain `/handoff` (never `/ctx` or `--restart`, whose respawn runs `lane-start` and writes `RESUMED`), and write nothing more until N4, since the ruleset goes on after the drain; the operator lane and the coordinator write no `PAUSED` and stay live, and the operator lane writes only what act 4's steps 6, 7 and 9 give it; until N4 nobody answers the guard's 2, whose bind writes, and nobody prompts a paused lane's pane, whose guard lets the prompt through |
 | N4 | after the smoke test | the marker's commit and seq 1; the smoke test's result; resume; the files now lag |
 | N5 | at a rollback's start, or a declared outage | what refuses; what the guard answers; until when |
 | N6 | after the rollback | the register is files again, and what returns |
