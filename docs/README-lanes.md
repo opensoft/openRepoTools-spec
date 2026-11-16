@@ -5772,13 +5772,17 @@ runs it again at the window, and again after any recreate.
    no register line, so it cannot move the `lanes` tree id. A build from
    before opensoft/openRepoTools-code#70 waits for ever in `open()` of a FIFO
    named `.git` that a test left in the estate. A pid is such a hung report
-   only where all three hold, and none of them prints a command line:
+   only where all four hold, and none of them prints a command line:
 
    ```sh
    ps -o etime=,ppid= -p "$pid"    # a day or more (a "-" in etime), and a parent of 1
    ps -o pid= --ppid "$pid"        # prints nothing: no child
    cat "/proc/$pid/wchan"          # wait_for_partner
+   pgrep -f -- '[s]weep --all --dry-run --report' | grep -qx -- "$pid"   # exit 0: the daily report
    ```
+
+   The fourth names the daily report itself: a `--dry-run` sweep writes no
+   register line, so even woken it cannot move the tree id.
 
    Anywhere else, or where there is no `/proc`, the pid is a tool that may
    write: wait for it.
@@ -5787,7 +5791,7 @@ runs it again at the window, and again after any recreate.
    process check names a tool, the operator lane finds the lane that runs it
    from the pid, never by printing a command line or environment. It waits for
    that tool to end, and the 2 minutes start again. A pid named under
-   `lane-worktrees` that the three reads above show to be a hung report is not
+   `lane-worktrees` that the four reads above show to be a hung report is not
    waited for. The operator lane writes down its pid and its `etime` as shown
    inert. Where the process check exits 1, names at least one pid, and every
    pid it names is shown inert, the process check counts as quiet, even though
