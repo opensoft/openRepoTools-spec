@@ -4068,12 +4068,12 @@ lane 3's ruling 6 (#165 comment 6578020193).
     their lines.
   - Every operator command runs with `LANES_LANE=` the operator lane, through
     its checkout (F12).
-  - Each host's configuration is re-pointed at B before any command reaches
-    it, in one edit: `register_url=`, `reader_url=`, their password files and
-    `register_label=`, B's own (§2.3's re-pointing; F18). For the restore
-    branch B's label differs from A's, since B's `bootstrap` took a new
-    `--label` (N4). A second configuration still reaches A and keeps A's
-    `register_label=`, for the host-still-on-the-live-database case.
+  - Each host's configuration is re-pointed at B before any command that connects
+    through `lanes-index.conf` reaches B, in one edit: `register_url=`,
+    `reader_url=`, their password files and `register_label=`, B's own (§2.3's
+    re-pointing; F18). For the restore branch B's label differs from A's, since B's
+    `bootstrap` took a new `--label` (N4). A second configuration still reaches A
+    and keeps A's `register_label=`, for the host-still-on-the-live-database case.
 - **Oracle.**
   - **Re-import** (§2.3, step 6).
     - After `lanes-index import --at <M> --after-loss`, B's head is `m`, and
@@ -5228,13 +5228,13 @@ texts that W folded (#165 6722314667 and 6722693446).
     `SUPERUSER`, as `azure_pg_admin`'s members are, twice with one catalog,
     and refuses with 2 a database that admin does not own, where its
     database-level `REVOKE` and `GRANT` would only warn (M4, O7);
-  - `lanes-index login add <engineer>` makes that engineer's two logins,
-    `lanes_w_<engineer>` and `lanes_r_<engineer>`, each a member of its group and carrying
-    its group's floors, and prints their password-file lines once; `add --dump-job` makes
-    `lanes_register_dump`, a member of READER alone; a rerun of `add <engineer>` puts back
-    a lost membership or floor, repeats the URL lines, prints no password line for a login
-    that exists and changes nothing else; `rotate` and `revoke` act as §2.4 has them; and
-    a member made without the login step carries none of the floors;
+  - `lanes-index login add <engineer>` makes that engineer's two logins, `lanes_w_<engineer>` and
+    `lanes_r_<engineer>`, each a member of its group and carrying its group's floors, and prints their
+    password-file lines once; `add --dump-job` makes `lanes_register_dump`, a member of READER alone; a
+    rerun of `add <engineer>` puts back a lost membership or floor of a login that exists and can still
+    log in, repeats the URL lines, prints no password line for it and changes nothing else; either form
+    of `add` refuses an existing revoked login with 2 and writes nothing; `rotate` and `revoke` act as
+    §2.4 has them; and a member made without the login step carries none of the floors;
   - two engineers' writer logins write alike, and the server's log names
     the login that wrote; a revoked login is refused at connect and in its
     open session, and its writes and reads exit 69;
