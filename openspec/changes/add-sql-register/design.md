@@ -6023,7 +6023,7 @@ A prototype renderer in stdlib Python, the form `lanes-index render` would take,
 
 One input remains, the git version: how `interpret-trailers` parses a message has changed between releases, and its `trailer.*` configuration moves the trailer (`trailer.where=start`, above). So `lanes-index` composes the message itself and never runs `interpret-trailers`; then no host's git version or configuration is an input. D15 at `21f0191c` still says "as `git interpret-trailers` places it" (`design.md:428–430`).
 
-**The final-trailer mechanics** (D15, `design.md:428–432`; lane 3's ask, `:3564–3566`). The render commit's message is the journal entry's message byte for byte, with `Register-Seq: <k>` in its last paragraph:
+**The final-trailer mechanics** (D15, `design.md:428–432`; lane 3's ask, `:3567–3569`). The render commit's message is the journal entry's message byte for byte, with `Register-Seq: <k>` in its last paragraph:
 - where the message has a body whose last paragraph is already a trailer block, every line `Token: value` with a token of letters, digits and `-`, the trailer is appended as that paragraph's last line;
 - otherwise (a subject alone, or a body ending in prose), one blank line and `Register-Seq: <k>` start a new last paragraph. A subject alone never counts as trailers, since git reads the first paragraph as the title;
 - the message goes to `commit-tree -F -` with no cleanup, so every renderer commits the bytes `lanes-index` composed ([L4-1]);
@@ -6034,7 +6034,7 @@ D15's "(it honours `commit.gpgSign`)" (`design.md:427`) is false for 2.43; `--no
 
 ### The routed items, answered
 
-Every item in "What lane 4's phase plan must confirm for S1" (`design.md:1823–1841`), "What lane 4's prototype must confirm" (`:1975–1982`) and lane 4's routed part (`:3544–3567`), with lane 3's asks of 6708646285. An item listed in two places has one row.
+Every item in "What lane 4's phase plan must confirm for S1" (`design.md:1823–1841`), "What lane 4's prototype must confirm" (`:1975–1982`) and lane 4's routed part (`:3547–3570`), with lane 3's asks of 6708646285. An item listed in two places has one row.
 
 | # | Item | Listed at | Answered in | Answer |
 |---|---|---|---|---|

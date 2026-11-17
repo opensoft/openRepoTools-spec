@@ -7362,8 +7362,8 @@ design. No other host path appears in a test.
     10 s for the renderer's reads and `reconcile`, 1000 and 5000 ms for
     `status`, 5000 ms and 10 s for each `rollback` call, and 2000 ms and
     300 s for `import`;
-  - the environment of each call, as the child rebuilds it, and not the one it inherits (`contracts/config.md:94–112`, its password-file row at :108; `contracts/register-cli.md:210–216`; design:3852–3859; AT-10's environment oracle, :1949–1953): the inherited `PGPASSFILE`, `PGPASSWORD`, `PGSERVICEFILE`, `PGSYSCONFDIR` and `PGSERVICE` are dropped first, on every path (`contracts/config.md:112`), and on register paths every inherited `PG*` variable (`contracts/register-cli.md:214`);
-    then each ordinary role call, the writer's, the reader's, the indexer's, a direct read's and the service child's, receives its configured role's `PGPASSFILE` (`contracts/config.md:108`; design:3858, "`PGPASSFILE` and `PGOPTIONS` are the service's own"), and the admin path receives, of the five, only `PGSERVICE=<service>` (`contracts/register-cli.md:214`; T109);
+  - the environment of each call, as the child rebuilds it, and not the one it inherits (`contracts/config.md:94–112`, its password-file row at :108; `contracts/register-cli.md:210–216`; design:3855–3862; AT-10's environment oracle, :1949–1953): the inherited `PGPASSFILE`, `PGPASSWORD`, `PGSERVICEFILE`, `PGSYSCONFDIR` and `PGSERVICE` are dropped first, on every path (`contracts/config.md:112`), and on register paths every inherited `PG*` variable (`contracts/register-cli.md:214`);
+    then each ordinary role call, the writer's, the reader's, the indexer's, a direct read's and the service child's, receives its configured role's `PGPASSFILE` (`contracts/config.md:108`; design:3861, "`PGPASSFILE` and `PGOPTIONS` are the service's own"), and the admin path receives, of the five, only `PGSERVICE=<service>` (`contracts/register-cli.md:214`; T109);
     and no call carries `PGPASSWORD`, a literal password or a connection URL (SVC-2; spec#17's re-review r12, its second BLOCKING finding; lane 3's ruling, commit 30).
 - **What it covers, and always runs:**
   - **argv.**
@@ -8265,7 +8265,7 @@ them. Those totals use A's measured network share, its median less its
   register read is M5's request or, with the service down, a direct read.
   M13 counts each verb's reads.
 - **M9:** the Rule 3 stamp is a git push, not the database. Every total is
-  inside `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5496`),
+  inside `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5499`),
   and the phase plan puts the healthy bind at about 18 s at 20 ms, 44 s at
   150 ms and 75 s at 300 ms ("Answer 2's detached bind").
   `start-record` may change the read count; M13 counts it.
@@ -9175,7 +9175,7 @@ marked against V:
 5. **Row 37.** Answered by the design's table of the bind child's variables,
    in lane 4's section ("Answer 2's detached bind"): `LANES_GIT_TIMEOUT` is
    45, beside the bind's bound, `bound_s`: 500 s at `c` = 2 and 530 s at `c`
-   = 3, with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5496`) (W). AT-F6's case 13 asserts it.
+   = 3, with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5499`) (W). AT-F6's case 13 asserts it.
 6. **Row 10's fork in phase W.** Answered yes: the phase plan says a stub
    test asserts the fork's argv. AT-14 has it,
    `test_a_primary_write_forks_render_checkout_on_the_lane_checkout_detached[<case>]`,
