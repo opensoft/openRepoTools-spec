@@ -4057,15 +4057,15 @@ lane 3's ruling 6 (#165 comment 6578020193).
     asserts that it equals A's head when the dump was taken. `pg_dump` and
     `pg_restore` come from the directory the fixture chose, as in AT-LRMPG,
     whose cases also hold the provider's point-in-time restore.
-  - A is then destroyed, and stoppable cluster B is new. `lanes-index
-    bootstrap --roles-only` runs on B first (F18). For the restore branch
-    the backup is restored next, and then `bootstrap` runs again; for the
-    re-import, `bootstrap` follows at once (§2.3, the disaster path's
-    step 6). On either branch `lanes-index login add` then makes the
-    engineers' logins on B again, with new passwords, since B is a new
-    server and a dump holds no login (§1.4, "What a revoked login sees";
-    `operations.md` §2.4's restores), and the re-pointing below writes
-    their lines.
+  - A is then destroyed, and stoppable cluster B is new. The restore branch takes the order of `research.md`'s
+    ERR-03, through one admin service that names the register's database: (1) the database, which the admin makes
+    through his own maintenance connection; (2) `lanes-index bootstrap --roles-only` (F18); (3) `login add` for
+    every current engineer, and `login add --dump-job`, with new passwords, since B is a new server and a dump
+    holds no login (§1.4, "What a revoked login sees"; `operations.md` §2.4's restores); (4) `pg_restore` of the
+    backup; (5) `bootstrap` again. The re-import (§2.3, the disaster path's step 6) takes: (1) `bootstrap
+    --roles-only`; (2) the full `bootstrap`; (3) `login add` for every current engineer; (4) `login add
+    --dump-job`. On both, the re-pointing below writes each engineer's URL and password-file lines from its `login
+    add`, and the dump job's password-file line to its Key Vault secret, which has no URL line.
   - Every operator command runs with `LANES_LANE=` the operator lane, through
     its checkout (F12).
   - Each host's configuration is re-pointed at B before any command that connects
