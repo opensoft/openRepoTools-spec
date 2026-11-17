@@ -657,9 +657,9 @@ fixture: tests 7, 8 and 13, P8, D22, and AT-F18.
 4. **Given** the bootstrap run twice through the admin service, as the
    database's owner that CNPG's `initdb` made (Y:2283), **When** the second
    run ends, **Then** one schema and the same GRANTs are left. It prints no
-   secret unless stdout is a terminal. Each engineer's two logins, and the
-   dump job's, are made, rotated and revoked by `lanes-index login`, never
-   by CNPG's declared roles (Y:2285; ops:477).
+   secret unless stdout is a terminal. Each engineer's two logins are made,
+   rotated and revoked, and the dump job's made and rotated, by
+   `lanes-index login`, never by CNPG's declared roles (Y:2285; ops:477).
 5. **Given** each failure in `ready`'s list, **When** `ready` runs, **Then**
    it fails it, among them:
    - a stale digest;
@@ -1003,9 +1003,16 @@ are lane 3's rulings memo's).
   - the indexer;
   - the dump job's READER login, `lanes_register_dump`.
 
-  Each engineer's two logins and the dump job's login MUST be made, rotated
-  and revoked by `lanes-index login`, through the admin service: Brett's
+  Each engineer's two logins MUST be made, rotated and revoked, and the dump
+  job's login made and rotated but never revoked, by `lanes-index login`,
+  through the admin service: Brett's
   "lanes-index login (Recommended)" (clar:497–498; #165 6726078173).
+  `login revoke --dump-job` MUST be refused as a usage error, exit 64, in the
+  code's words, "login revoke takes an engineer; the dump job's login is
+  rotated, never revoked, by this command" (`lanes-index` at `941caa67`,
+  :13922–13924), since a revoke would stop the daily dump (Q22): the dump
+  job's login is made and rotated, and never revoked (lane 3's ruling, #165
+  6933947760).
   `bootstrap` MUST make the two groups, the owner and the indexer's login
   (Y:2235–2238). CNPG's `initdb` makes the database's owner, Brett's admin,
   a role apart from `lanes_register_owner` (Y:2283). The dump job's
@@ -1389,9 +1396,14 @@ are lane 3's rulings memo's).
     FROM PUBLIC` (the dump route's (a), lane 3's ruling, 6727022920;
     Y:2243–2244; Y:2256–2257). `bootstrap` itself still changes nothing else
     with the switch at `primary` (ops:434);
-  - after a CNPG point-in-time restore, which carries the roles, their
-    verifiers, memberships and floors, no roles-only step, and
-    `lanes-index login rotate` for each engineer and the dump job (ops:372);
+  - after a CNPG point-in-time restore, which carries the roles, their verifiers,
+    memberships and floors, no roles-only step; then the full `bootstrap`; then
+    `lanes-index login add` for every current engineer and `login add --dump-job`;
+    `login revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's
+    `pg_roles` that belongs to no current engineer; `login rotate` for every
+    current engineer and `login rotate --dump-job`; and the re-pointing of every
+    current engineer and the dump job, its secret included, with each engineer's
+    URL lines from `add` and each login's last password-file line (ops:372);
   - the after-loss cutover;
   - a new generation.
 
