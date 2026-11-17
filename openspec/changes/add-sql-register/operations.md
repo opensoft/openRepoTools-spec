@@ -172,7 +172,7 @@ Brett's ruling (#165 6723925474): the register's database is "CNPG in the instal
      - 2: `reserved_connections`, Brett's admin's.
    - For example, 4 engineers with 3 environments and 8 lanes each give 1.25 × (4 × 19 + 4 + 2) = 102.5. With `C_op` at 5 that is 113, so 120.
    - A login that finds no slot is refused at connect, "remaining connection slots are reserved…" (lane 1's run). Each path reads that as a failed connect, `psql`'s exit 2.
-   - The instance's memory is at least `shared_buffers` plus `max_connections` times the memory per connection act 3 measures, with room.
+   - The instance's memory is sized with room for its `max_connections`.
      - As a start, the Keycloak database's shape: a 1 GiB limit with `shared_buffers` at 128 MB for 100 connections, raised with `max_connections`.
      - A CPU request of 100m and a limit of 1.
      - Storage of 8 GiB on the cluster's premium class, far above the register's size.
@@ -445,7 +445,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
   1. the installed tools' digests equal the release's;
   2. `psql` 16 is present;
   3. the configuration is readable, a regular file with no group or other permission bit, such as 0600 or 0400, outside every git work tree and `~/.agents/` (`code/lanes-index:66-68`), and says the expected mode;
-  4. each role connects within the workstation's `connect_timeout=`, its own `c` (D9), at each address the endpoint resolves to, and is refused outside its scope. A write tried in a transaction that always rolls back, opened with `BEGIN READ WRITE`, must fail with SQLSTATE 42501, which is this part's concrete form of "refused outside its scope". The `READ WRITE` matters for the READER, whose role default is read-only (`design.md` §1.4): a plain write there fails with 25006 before any privilege is checked;
+  4. each role makes one libpq connection, which tries the addresses the endpoint resolves to in turn and allows the workstation's `connect_timeout=`, its own `c` (D9), for each, so it takes at most `N_a`·`c` (one working address is enough; check 13 counts the addresses), and is refused outside its scope. A write tried in a transaction that always rolls back, opened with `BEGIN READ WRITE`, must fail with SQLSTATE 42501, which is this part's concrete form of "refused outside its scope". The `READ WRITE` matters for the READER, whose role default is read-only (`design.md` §1.4): a plain write there fails with 25006 before any privilege is checked;
   5. the installed `lanes-index` no longer carries Q6(c)'s refusal of `mode=primary`: `lanes-index mode` on a `mode=primary` configuration does not exit 78 (`EX_CONFIG`), Q6(c)'s code (F8; agreement test 14, `proposal.md:913-921`);
   6. the workstation's name is set, so a write is never stamped with a container's hostname (`r3b/REPORT.md:192-194`);
   7. no outage declaration is recorded (2.5);

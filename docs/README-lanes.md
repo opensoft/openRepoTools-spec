@@ -5301,7 +5301,7 @@ the readers' prefetch and their second read, and the guard's prefetch,
 - every write's own snapshot and commit, which open their own connections.
 
 A writer's reads after its commit, its tail's, are readers' reads and ask it
-as a reader's do. `request-handoff`'s wait on primary is the tail that always
+as readers do. `request-handoff`'s wait on primary is the tail that always
 does, its polls reading through `lanes-index register read --since`. Others
 read too, among them: the lifecycle follow-up of a `log ENDED` or `RETIRED`,
 which reads the lane's log at most once; `retire-rows`, which reads each
@@ -5393,8 +5393,10 @@ database is behind: run the bootstrap" where they are above it.
   service costs one wait a prompt, never one a read.
 - **The service's timer** is 200 ms a request from its arrival, or
   `register_rtt_ms=` plus 100 ms above 100, with the server's own bounds just
-  inside it, `lock_timeout` 150 ms and `statement_timeout` 180 ms. At its expiry
-  the service cancels the query and answers `unavailable slow`.
+  inside it, `lock_timeout` 150 ms and `statement_timeout` 180 ms. At its
+  expiry a query still running is cancelled with `SIGINT`, and a request still
+  queued is dropped with no `SIGINT`, which would cancel whatever the held
+  child is running; both are answered `unavailable slow`.
 - **16 MB** an answer: the client reads at most that, and the service builds no
   answer past it, answering `unavailable` instead.
 - **At most 16 connections at once,** with a backlog of 64. A connect that is
@@ -5513,10 +5515,11 @@ where the install places it, and a checkout's directory holds no release list.
 2. `psql` 16 is present;
 3. the configuration is readable, has no group or other permission bit, lies
    outside every git work tree and `~/.agents/`, and says the expected mode;
-4. each of the engineer's two logins connects within the workstation's `c`, at
-   each address the endpoint resolves to, and a write outside its scope, under
-   `BEGIN READ WRITE` in a transaction that always rolls back, fails with
-   SQLSTATE 42501;
+4. each of the engineer's two logins makes one libpq connection, which tries
+   the addresses the endpoint resolves to in turn and allows the workstation's
+   `c` for each (one working address is enough; check 13 counts them), and a
+   write outside its scope, under `BEGIN READ WRITE` in a transaction that
+   always rolls back, fails with SQLSTATE 42501;
 5. the installed `lanes-index` no longer refuses `mode=primary`;
 6. the workstation's name is set, so no write is stamped with a container's
    hostname;
@@ -5603,10 +5606,9 @@ runs it again at the window, and again after any recreate.
      operator command, `C_op` the connections the operator and the backup
      plugin hold, read at act 3, and 3 and 2 the superuser's and the admin's
      reserved slots. Four engineers with three environments and eight lanes
-     each, with `C_op` at 5, give 120. Its memory is at least `shared_buffers`
-     plus `max_connections` times the memory one connection takes, with room:
-     to start, a 1 GiB limit with `shared_buffers` at 128 MB for
-     100 connections, raised with `max_connections`. Its CPU request is 100m
+     each, with `C_op` at 5, give 120. Its memory starts at a 1 GiB limit with
+     `shared_buffers` at 128 MB for 100 connections, raised with
+     `max_connections`. Its CPU request is 100m
      and its limit 1, and its storage 8 GiB on the cluster's premium class.
   9. **What it hands back,** for Brett to record on #165: the endpoint and its
      address; the root file; the owner's name and the Key Vault secret its
