@@ -5270,13 +5270,13 @@ texts that W folded (#165 6722314667 and 6722693446).
     given `--no-passwords` (§2.4, "The secret"), as AT-P8 shows. The design
     supports both for `bootstrap`, and this entry uses both. A run whose
     roles need no
-    password here, the bootstrap without a superuser and the database the
-    admin does not own, passes `--no-passwords`. A run that must show a
-    password line, or show that it prints none, runs under a pty
-    (`pty.openpty()`), as AT-P8's printing run does, and the test reads its
-    output: each restore's `bootstrap --roles-only` and the `bootstrap` after it,
-    and every `lanes-index login add` and `login rotate` run, which print a password
-    and refuse off a terminal (§2.4, ERR-59; `revoke` prints none and does not).
+    password here, the bootstrap without a superuser and the database the admin does not own, passes
+    `--no-passwords`. A run that must show a password line, or show that it prints none, runs under a pty
+    (`pty.openpty()`), as AT-P8's printing run does, and the test reads its output: each restore's
+    `bootstrap --roles-only` and the `bootstrap` after it, and every `lanes-index login add` and `login
+    rotate` run, which can print a password and so always refuse off a terminal (§2.4, ERR-59). `add`
+    prints one only for a login it creates, and a repeated `add` of a login that exists prints none
+    (`lanes-index` at `208a955e`, :14060–14073); `login revoke` prints none and does not refuse.
   - **The logins' password files** are 0600 files under the test's own
     temporary `$HOME`: `$HOME/passfiles/<login>` for each login, holding the
     line `login add` printed for it, or, for a bare member, the password
