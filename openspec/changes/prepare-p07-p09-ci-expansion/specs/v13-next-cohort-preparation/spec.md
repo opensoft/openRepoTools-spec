@@ -31,13 +31,28 @@ and containing the common prerequisite; its complete source chain and inventory
 SHALL be checked from that anchor. Missing final owner bindings SHALL remain pending. Changed main, malformed
 or duplicate data, unknown paths, invalid modes, nonempty markers, merge commits,
 undeclared fixes, dependent members or merge conflicts SHALL refuse preview.
-The preparation ceilings SHALL be 13 commits for P07 and 24 for P09, with every
+The preparation ceilings SHALL be 16 commits for P07 and 24 for P09, with every
 SHA explicitly declared and every cumulative cut checked. These ceilings SHALL
 NOT bind unpublished heads, approve reviews or alter live delivery limits.
+Preparation SHALL preview P07 before P09, rejecting the reverse order. The
+P07 prefix SHALL retain the frozen foundation; P09's declared helper change
+SHALL appear only in the second prefix.
+
+#### Scenario: Owner-required source order
+- **WHEN** both sources validate and are previewed
+- **THEN** preview P07 first without a foundation transition, then P09 with its declared helper change, and refuse a reversed manifest order
 
 #### Scenario: Owner has not finalized a head
 - **WHEN** either final source binding is missing
 - **THEN** report pending rather than borrowing an older observed head
+
+#### Scenario: A previously observed cut is superseded
+- **WHEN** an owner is fixing a rejected cut and no new accepted head exists
+- **THEN** retain only its observed hash as context, with null head/review/consent and empty source history, producing no preview or authority
+
+#### Scenario: P07 declares the shared cleanup helper
+- **WHEN** the exact P07 preparation inventory includes `tests/sql_register_cleanup.py`
+- **THEN** require it as an added regular file, reject a missing or differently typed entry, and preserve final spec ownership and product-review gates
 
 #### Scenario: A source gains an extra file or fix commit
 - **WHEN** its actual scope or history differs from the declared immutable cut
@@ -52,7 +67,7 @@ NOT bind unpublished heads, approve reviews or alter live delivery limits.
 - **THEN** validate each complete chain independently and reject unlanded anchors or skipped source commits
 
 #### Scenario: A history reaches or exceeds its own ceiling
-- **WHEN** P07 has 13 commits or P09 has 24 commits in its exact declared linear chain
+- **WHEN** P07 has 16 commits or P09 has 24 commits in its exact declared linear chain
 - **THEN** validate every prefix without granting live authority, and reject one additional commit or an undeclared fix
 
 ### Requirement: Foundation and owner evidence remain separate gates

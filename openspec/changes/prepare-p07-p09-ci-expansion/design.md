@@ -28,21 +28,31 @@ assembly adoption, installed tools or running-lane changes.
    state reports pending. Old observed heads are not accepted replacements.
    Fresh owner/review comment references are context, not machine-authenticated
    review receipts or human approval.
+   Superseded cuts are explicitly unbound: null source head, empty history and
+   null review/consent, with observed hashes retained only as context. P07's
+   exact inventory includes added regular file `tests/sql_register_cleanup.py`,
+   per owner handoff6940832411 and lane3 agreement6940947493. This stages the
+   path only; final helper ownership records and code acceptance stay separate.
 3. Inspect exact ordered linear source histories, regular-file modes, empty
    added task markers and complete path/status inventories. Enforce a finite
    history from each declared source anchor, which must contain the common
    prerequisite and already be landed in frozen main. P07 starts at P01;
    P09 starts at landed P03, not at P01. Never omit intervening source commits
    or import main's control commits into a source chain. Enforce a finite
-   history bound and disjoint member paths. Compute P09-then-P07 merge previews
+   history bound and disjoint member paths. Compute P07-then-P09 merge previews
    only when both bindings exist. Synthetic commits, if needed, are immutable
    objects in the private/CI Git object database, never branch/index changes.
-   Preparation ceilings are profile-specific: P07 13 and P09 24 commits from
-   their declared anchors. These match the reported four-plus-nine and
-   eight-plus-sixteen chains, not an arbitrary global increase. Every SHA and
+   Preparation ceilings are profile-specific: P07 16 and P09 24 commits from
+   their declared anchors. These match P07's owner-confirmed four-plus-nine-plus-three
+   chain (issue165 comment6935365475) and P09's prior eight-plus-sixteen ceiling,
+   not an arbitrary global increase. P09's observed29-commit export still needs
+   its final owner handoff before another explicit reviewed update. Every SHA and
    cumulative cut remains checked. A ceiling is not an owner head binding or
    approval; changed chains above it require another reviewed update, never
    truncation, implicit acceptance or rewriting another lane's history.
+   Renewed owner consent (issue165 comments6938017311/6938099557) requires
+   P07 before P09. Reject the reverse order and verify that the P07 prefix
+   retains the original foundation before P09's declared helper transition.
 4. Always output `required_ci: full`, `skip_ci: false` and
    `queue_admission: false`, even for a valid preview or linked reviews.
    The inspector has no network, status, dispatch, queue or merge operations.
