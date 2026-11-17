@@ -297,3 +297,26 @@ These conditions sit next to Gate B but belong to other gates:
   runs "after Gates A/B" (openspec/changes/migrate-to-triad/tasks.md:11–14). The
   leg names and visibility are a confirmed Gate C input (line 1). The frozen
   source commit and the final mapping are not yet approved.
+
+*Updated 2026-11-08, in the follow-up to lane 2's NIT 6 on opensoft/openRepoTools-spec#6: the
+line numbers of the October 4 mapping and of the feature's plan, tasks and spec.* Lines 131, 133,
+166, 167, 169 and 221 of this record cite `adoption-plan.yaml:N`. Each number is a line of
+`openspec/changes/migrate-to-triad/adoption-plan.yaml` at `593250d` (375 lines, blob `f9d26fbe`,
+the same bytes as `ff6f6a7`'s, the commit this record says it read), and each holds there. The
+path holds a later plan now: at `9f8b21a`, run C's plan (445 lines, blob `8b360179`), where the
+same numbers name other lines. Read them with
+`git show 593250d:openspec/changes/migrate-to-triad/adoption-plan.yaml | cat -n`.
+Lines 11, 17, 106, 110, 112, 123, 126, 131–136, 138, 142–145, 147, 151–156, 158, 160,
+166–171, 173, 177, 179–180, 182, 186–187, 189, 193–195, 197, 201–204, 206, 210–214,
+220, 222–225, 229, 237, 239, 292 and 296 cite `plan.md:N`, `tasks.md:N`, `spec.md:N` or
+`cap-spec:N` (lines 49 and 50 define it), and line 297 cites
+`openspec/changes/migrate-to-triad/tasks.md:11–14`, all without a revision. Line 52 reads them at
+`ff6f6a7`, a commit of opensoft/openRepoTools, not of this repository. Those files are the same
+bytes at `593250d` as at `ff6f6a7`, and each cited range holds at `593250d`, except that
+`tasks.md:36–38` in line 135 stops a line before the end of the clause it quotes, which ends on
+line 39. Since then `plan.md` has changed from its line 26, `tasks.md` from its line 78 and
+`cap-spec` at its lines 45 to 48, so at `9f8b21a` many of these numbers name other lines. Read
+them with `git show 593250d:<path> | cat -n`, where `<path>` is
+`specs/004-migrate-to-triad/plan.md` (or `tasks.md`, or `spec.md`) or the path that line 50 or
+line 297 gives.
+No line above was changed.
