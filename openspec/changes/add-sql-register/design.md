@@ -3328,20 +3328,18 @@ workstation's lanes paused first, as for the freeze, and the outage declared
    backup's head seq, if there is one: the daily dump's, or the head at the
    recovery point of a CNPG point-in-time restore from its Barman Cloud backups,
    which counts as a backup too ("Count both (Recommended)", #165 6722541787).
-2. Run `lanes-index bootstrap --roles-only` against the new database server first, for a restore from the
-   daily dump or a re-import: roles are cluster objects, and a database dump does not hold them (F18). A
-   CNPG point-in-time restore is instead a new Cluster, recovered from the Barman Cloud backups, and a
-   physical restore carries the roles, their verifiers, memberships and per-role settings (lane 1's
-   engine proof, #165 6724409717), so it needs no roles-only bootstrap: step 2 prints `unchanged`. Brett
-   runs `login add` for every current engineer and `login add --dump-job`; `login revoke` for each
-   `lanes_w_*` and `lanes_r_*` pair in the restored copy's `pg_roles` that belongs to no current
-   engineer; and `login rotate` for every current engineer and `login rotate --dump-job`. Step 5's
-   re-pointing, of every current engineer and the dump job, its secret included, writes each engineer's
-   URL lines from `add` and each login's last password-file line (`operations.md` §2.3's step 6).
-3. If `b > m`, restore that backup into a new database; its journal already
-   holds `m+1 … b`, and the renderer catches up. Otherwise re-import at
-   origin's tip into a new database, with the head set to `m`, so
-   `Register-Seq` stays monotonic in `git log` (D22).
+2. Prepare the replacement by the route that fits the backup, each `lanes-index` step and the `pg_restore` through one admin service
+   that names the new database (`operations.md` §2.3's step 6). **Physical**, a CNPG point-in-time restore recovered from the Barman
+   Cloud backups, whose copy carries the roles, their verifiers, memberships and per-role settings (lane 1's engine proof, #165
+   6724409717), so `--roles-only` would print `unchanged`: recover first, then `login add` for every current engineer and `login add
+   --dump-job`; `login revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's `pg_roles` that belongs to no current
+   engineer; and `login rotate` for every current engineer and `login rotate --dump-job`. **Daily dump**, whose roles a database dump
+   does not hold (F18): the register's database; `lanes-index bootstrap --roles-only`; `login add` for every current engineer and
+   `login add --dump-job`; `pg_restore`; then `bootstrap`. **Re-import:** `bootstrap --roles-only`; the full `bootstrap`; `login add`
+   for every current engineer; `login add --dump-job`. Step 5 follows each, and on the re-import it comes before the import.
+3. If `b > m`, the replacement is that backup in a new database, its journal already holding `m+1 … b`, which the renderer catches up;
+   otherwise a re-import at origin's tip into a new database, with the head set to `m`, so `Register-Seq` stays monotonic in `git log`
+   (D22).
 4. The new generation. On a re-import, the bootstrap writes the new
    database's switch row with a new generation id (`operations.md` §2.4), so
    the lost database's generation is refused from there on; after a restore,
@@ -3351,9 +3349,11 @@ workstation's lanes paused first, as for the freeze, and the outage declared
    generation is new, a pending record of the old generation is refused,
    since the write ids up to `m` went with the old journal, and a rerun under
    one could apply a write the mirror already holds (D8, D22).
-5. Re-point every host's `register_url` and `reader_url` at the new database,
-   and set its `register_label=` to the new database's label in the same edit
-   (§1.4), from the host as the flip is (Q23(a)).
+5. Re-point every host's `register_url` and `reader_url` at the new database, and set its `register_label=` to the new database's label
+   in the same edit (§1.4), from the host as the flip is (Q23(a)): each engineer's from its URL lines and last password-file lines, the
+   dump job's from its Key Vault secret, with no URL line. It comes before any command that connects through `lanes-index.conf` reaches
+   the replacement, a re-import's `lanes-index import --at <M> --after-loss` among them, which loads the configuration to choose its
+   database (`lanes-index` at `208a955e`, :21802–21810); the logins above went through the admin service.
 6. Run the cutover in its after-loss form, `lanes-index cutover --import <M>
    --after-loss` after a re-import, or `lanes-index cutover --after-loss` with
    no import after a restore: in one transaction it sets the switch to
