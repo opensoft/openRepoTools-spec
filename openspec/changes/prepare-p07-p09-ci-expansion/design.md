@@ -42,11 +42,12 @@ assembly adoption, installed tools or running-lane changes.
    history bound and disjoint member paths. Compute P07-then-P09 merge previews
    only when both bindings exist. Synthetic commits, if needed, are immutable
    objects in the private/CI Git object database, never branch/index changes.
-   Proposed preparation ceilings are profile-specific: P07 40 and P09 24 commits
+   Proposed preparation ceilings are profile-specific: P07 40 and P09 165 commits
    from their declared anchors. P07's complete40-commit CX-37 chain is owner-confirmed
-   in code97 comment6947653181. P09 retains its prior eight-plus-sixteen ceiling
-   pending its next completed owner handoff, not an arbitrary global increase.
-   P07's head remains unbound pending its fresh product review, full CI and all
+   in code97 comment6947653181. P09's complete165-commit CX-36 chain is confirmed
+   in code103 comment6956070097 and agreed by lane3 in6956738431, not inferred
+   from an intermediate draft or an arbitrary global increase. Both heads remain
+   unbound pending full CI and all
    consent gates. Every SHA and
    cumulative cut remains checked. A ceiling is not an owner head binding or
    approval; changed chains above it require another reviewed update, never
@@ -57,8 +58,9 @@ assembly adoption, installed tools or running-lane changes.
 4. Always output `required_ci: full`, `skip_ci: false` and
    `queue_admission: false`, even for a valid preview or linked reviews.
    The inspector has no network, status, dispatch, queue or merge operations.
-5. Report any changed frozen foundation path separately. P09's pgcluster delta
-   requires a future reviewed foundation/landing contract; this preparation
+5. Report any changed frozen foundation path separately. P09's exact modified-file
+   inventory includes both tests/conftest.py and tests/pgcluster.py. Both deltas
+   require a future reviewed foundation/landing contract; this preparation
    deliberately does not broaden the live foundation verifier. Future activation
    also requires fresh current-main/source/review proof and a separately approved
    live batch. A successful preview is insufficient.

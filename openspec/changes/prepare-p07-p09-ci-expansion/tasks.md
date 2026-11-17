@@ -319,3 +319,47 @@ independent review is pending; task2.5 stays open for the final paired bounds.
 Lane1's hosted verify44080972637 on verify/l1/fix97-cab8fcfd-c1 is running,
 not claimed passed. No publication, product acceptance, merge, live gate or
 exclusion changes.
+
+## Final P09 intake and proposed40/165 preparation bounds
+
+Owner handoff6956070097 supplies final P09 head1d16c0cc5092fd8704a67399acee81ef2436f21a,
+165 linear commits from landed P03, with conditional consent. Lane3's cut check
+6956738431 agrees; final spec80 head8fbc268167c63b69694d682e2f52efc679e664a0
+has lane2 confirmation6957251633. Fresh exact-head local Codex receipts are
+6958093018 (P09, report783e75797593cdefc931d89fbb3b05b968c99eaaf00d365a4ad3e5c026745a8a)
+and6958094085 (spec80, report9db000b5da71a736525a7ddcf6ed57f6aa381992d06b5a07199251bc70f44e07),
+each with zero BLOCKING/SHOULD/NIT. These are source reviews, not CI or landing.
+
+The private preparation stages the exact P09 ceiling as165 (not a global
+limit), alongside P0740, and adds tests/conftest.py as a required modified
+regular inventory entry. Both conftest and pgcluster are frozen-foundation
+deltas, so the first P07 prefix must preserve both original blobs and only
+the second prefix may show their declared transition. Regression work retains
+earlier24/25 histories as previews and adds165/166 boundary and unsafe-hook
+coverage. Every live control and coverage definition stays unchanged.
+
+Canonical regression validation and fresh independent review of this
+preparation delta are pending; tasks1.3/2.5 remain open. Both
+bindings, histories, review and consent remain null/empty until the remaining
+qualification gates pass. No published111/78 update or merge is claimed here.
+
+Spec80 was normally merged at c245bc3726bfd80aea8ddbe4b8d167c64916e0c9;
+independent readback confirmed its tree0175a30c2454e5e08a14faba2577a2df7f659a86
+exactly matches the reviewed source. The disabled manifest now references that
+landed revision, not an unpublished proposal or an assembly-pin update.
+P09 ordinary full44149241312 and Sonar pass at the final head. The hosted
+verify44146097308 JUnit artifact independently matches all218 requested ids
+exactly, zero extra/missing/failed/skipped. The219th listed item is explicitly
+GATED-ONLY and was never requested ungated. Fast44149241253 still refuses its
+stale stored-base/event context; no required check is waived.
+
+Complete immutable-object structural inspection passed all40 P07 and165 P09
+linear prefixes, exact inventories, regular modes and every empty marker.
+Ordered final preview tree is44003edfeceaf843c19b447f41a6ebaa26d853cd. P07
+preserves the original foundation; P09 changes conftest from5c4e3d182094bd149e9a68f826ae427dc9739b5d
+to551ae334dc7515c053ad60b7fa1252cd08ff094f and pgcluster from97871b78a222b1b3d7cc05ef1bc4bbbeeaa4419d
+to4efc76f6370af46c9c2fe9a807555a3d532d3960. An earlier content-read inspection
+stopped on a Git object-read error and is not counted as a pass; this completed
+inspection used tree/blob metadata and canonical empty-blob identity at every
+prefix without changing the published manifest, source refs, checkout or index.
+This is structural evidence, not product execution, live admission or acceptance.

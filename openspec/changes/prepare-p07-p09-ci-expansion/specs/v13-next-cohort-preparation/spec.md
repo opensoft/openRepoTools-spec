@@ -31,7 +31,7 @@ and containing the common prerequisite; its complete source chain and inventory
 SHALL be checked from that anchor. Missing final owner bindings SHALL remain pending. Changed main, malformed
 or duplicate data, unknown paths, invalid modes, nonempty markers, merge commits,
 undeclared fixes, dependent members or merge conflicts SHALL refuse preview.
-The preparation ceilings SHALL be 40 commits for P07 and 24 for P09, with every
+The preparation ceilings SHALL be 40 commits for P07 and 165 for P09, with every
 SHA explicitly declared and every cumulative cut checked. These ceilings SHALL
 NOT bind unpublished heads, approve reviews or alter live delivery limits.
 Preparation SHALL preview P07 before P09, rejecting the reverse order. The
@@ -67,7 +67,7 @@ SHALL appear only in the second prefix.
 - **THEN** validate each complete chain independently and reject unlanded anchors or skipped source commits
 
 #### Scenario: A history reaches or exceeds its own ceiling
-- **WHEN** P07 has 40 commits or P09 has 24 commits in its exact declared linear chain
+- **WHEN** P07 has 40 commits or P09 has 165 commits in its exact declared linear chain
 - **THEN** validate every prefix without granting live authority, and reject one additional commit or an undeclared fix
 
 ### Requirement: Foundation and owner evidence remain separate gates
@@ -78,9 +78,9 @@ receipts. P09's helper change SHALL NOT weaken the active foundation contract.
 P08 SHALL remain held. Existing live verifiers, full coverage, fallback, workflows,
 queue settings, lanes and assembly pins SHALL remain unchanged.
 
-#### Scenario: P09 changes the PostgreSQL helper
-- **WHEN** the preview includes the declared pgcluster modification
-- **THEN** report it for later explicit foundation/landing review while live delivery still falls back to full CI
+#### Scenario: P09 changes both frozen test-foundation files
+- **WHEN** the preview includes the declared modified regular files tests/conftest.py and tests/pgcluster.py
+- **THEN** report both before/after blobs for later explicit foundation/landing review, reject missing or incorrectly typed inventory entries, and retain full-CI fallback
 
 #### Scenario: A review reference is present
 - **WHEN** an operator records an exact-head owner review link
