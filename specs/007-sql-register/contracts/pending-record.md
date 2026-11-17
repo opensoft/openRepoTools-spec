@@ -1,7 +1,7 @@
 # Contract: the pending record, its claims, the done mark and the write id (feature 007)
 
 - Owner: lane openRepoTools-4, under R34. Feature 007, `contracts/pending-record.md`, which tasks.md's T412 lands with the write id and the pending-record library in `lanes-edit.sh`.
-- Readers: `lanes-edit.sh`'s write path (T412 to T418); `lanes-index status`, which lists the pending records and resolves each by its id (Y:2501–2502, Y:4853); lane openRepoTools-5's T510, which copies five values out of `start-record`'s record (Y:5431, Y:5515; L5-B1); and lane openRepoTools-2's tests (L2-W3).
+- Readers: `lanes-edit.sh`'s write path (T412 to T418); `lanes-index status`, which lists the pending records and resolves each by its id (Y:2501–2502, Y:4853); lane openRepoTools-5's T510, which copies five values out of `start-record`'s record (Y:5431, Y:5515; L5-B1) and decodes its `cmdline` for the found rerun; and lane openRepoTools-2's tests (L2-W3).
 - Status: draft 2, 2026-11-09T21:11Z: draft 1 (`83f1013`) with lane 3's rulings on T412's G1 to G13 applied, by lane openRepoTools-4's writer for T412. Lane 4 offers it to lane openRepoTools-3 to fold into the spec PR.
 - Citations: `Y:<n>` is a line of the add-sql-register change's `design.md` at spec commit Y, `a6497d00`. "The contract" is `contracts/register-cli.md`, draft 4.10 (`e2b51782`). `FR-<n>` is `spec.md`. `ERR-<n>` and `DEC-<n>` are `research.md` Part 1's errata and decisions, which round B8 records. `R<nn>` is lane 3's ruling of that number (#165 6726556972). "The block" is lane 4's block w11, and "the plan" its `group-B-plan.md`.
 - Where Y left a point open, §9 gives lane 3's ruling on it, and §9.1 what is still open after the rulings.
@@ -83,7 +83,7 @@
 | `session` | `<LANES_SESSION>` as the digest took it | [Y, Y:5172] |
 | `verb` | the verb as the digest took it | [Y, Y:5172] |
 | `args_sha256` | `<d>`, which must equal the file's own name | [Y, Y:5171–5172] |
-| `cmdline` | `lanes-edit.sh`, then every word of the original command line, global flags included, each quoted by bash's `printf '%q'`, so that bash can `eval` it. The quoting follows the locale, so read it with bash and never by bytes | [Y, Y:5172 "`cmdline` (shell-quoted)"]; [L4] for the quoting |
+| `cmdline` | `lanes-edit.sh`, then every word of the original command line, global flags included, each quoted by bash's `printf '%q'` in the C locale, whatever the writer's own, with one space before each. So it is printable ASCII alone: `%q` writes a byte from 0x80 as `\` and three octal digits inside `$'...'`, never raw. `lanes-edit.sh` runs it only by decoding that canonical form, byte by byte, straight into an argv, and never by `eval`; any other text, a raw byte from 0x80 among it, is no command, and the record is kept. A raw NUL anywhere in the record makes it a record that is not whole (§3.1). The printed reruns (§8) give the same words to a person's shell, and a bash in the C locale or a UTF-8 locale reads that ASCII back to the same bytes | [Y, Y:5172 "`cmdline` (shell-quoted)"]; [L4] for `printf '%q'`; lane 3's ruling on T510, #165 6936232672, for the C locale, no `eval` and the refusals |
 | `created_utc` | when the record was first written, on this host's clock | [Y, Y:5172] |
 | `updated_utc` | when it was last written, on this host's clock (§3.3) | [Y, Y:5172]; [B] for the clock |
 | `pid`, `pid_start`, `host`, `container` | copies of the owner's claim (§4.1), kept for `status` and the texts. Liveness is never read from them | [Y, Y:5172, Y:5185] |
