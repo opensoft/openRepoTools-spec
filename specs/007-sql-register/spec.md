@@ -1398,7 +1398,7 @@ are lane 3's rulings memo's).
     with the switch at `primary` (ops:434);
   - after a CNPG point-in-time restore, which carries the roles, their
     verifiers, memberships and floors, no roles-only step; then `lanes-index
-    `login add` for every current engineer and `login add --dump-job`; `login
+    login add` for every current engineer and `login add --dump-job`; `login
     revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's
     `pg_roles` that belongs to no current engineer; `login rotate` for every
     current engineer and `login rotate --dump-job`; and the re-pointing, with
