@@ -12,7 +12,7 @@
 - [x] 2.2 Add rejection/pending/full-fallback regressions and run the canonical targeted suite; verify live controls, workflows and all coverage definitions are unchanged.
 - [x] 2.3 Pass strict OpenSpec and diff checks; obtain independent exact-head code/spec review and resolve actionable findings. Genuine Codex reviews completed clean on the published preparation heads.
 - [x] 2.4 Review profile-specific P07/P09 history ceilings with boundary/overflow and complete-lineage regressions; preserve pending product bindings and live limits.
-- [ ] 2.5 Validate and independently review only the final owner-confirmed P07/P09 ceilings, including complete real-chain prefix and boundary/overflow coverage; preserve pending bindings and live limits until those cuts qualify.
+- [x] 2.5 Validate and independently review only the final owner-confirmed P07/P09 ceilings, including complete real-chain prefix and boundary/overflow coverage; preserve pending bindings and live limits until those cuts qualify.
 - [x] 2.6 Align disabled previews with renewed owner consent requiring P07 before P09; validate reversed-order refusal and foundation preservation in the P07 prefix, without changing live controls or accepting moved product heads.
 - [x] 2.7 Explicitly unbind superseded cuts and stage P07's owner-agreed shared helper inventory; validate pending-context and exact regular-file regressions, retaining fresh review before publication.
 
@@ -363,3 +363,13 @@ stopped on a Git object-read error and is not counted as a pass; this completed
 inspection used tree/blob metadata and canonical empty-blob identity at every
 prefix without changing the published manifest, source refs, checkout or index.
 This is structural evidence, not product execution, live admission or acceptance.
+
+The exact private preparation checkpoint code558b5094d2e0437c169987b111b0ec49b7b9b0f1
+and spec59aaa081e87758a7e96a2e3f6dd41c41bbda215f passed368 canonical isolated
+regressions,6571 deselected,zero skips,in240.13s. Strict OpenSpec and both diff
+checks pass. Nine fresh local Codex expert roles plus master synthesis are
+clean, BLOCKING0/SHOULD0/NIT0, on that pair. This completes task2.5 for the
+disabled bounds/inventory delta only. Task1.3 remains pending final qualified
+bindings; no required fast check is waived and no live control changes.
+The following task-status documentation update needs exact-head confirmation
+before publication; current published111/78 heads remain unchanged.
