@@ -305,7 +305,7 @@ In files mode the marker check then refuses on a SQL estate (D3; Y:5718).
 
 Each lane adds its callers' arms below, in a section of its own, keyed to Y and to the rows above. D10's map is the frame for them: a refused direct write exits 2, 69 tells a lane to stop and tell Brett, and the guard maps 69, 75 and 3 to 2 (Y:508–514).
 
-## The answer-2 section (lane 5, T502 and T510)
+## The answer-2 section (lane 5, T502, T510 and T514)
 
 - **Owner:** lane 5 (`[L5]`), tasks T502, T510 and T514 (T502's parts 8 to 63 since spec#74's split). Section 5 above leaves the codes of the guard's answer 2 (Y:3520) to this section (lane 3's ruling, #165 6879754335, point 24).
 - **The source is [bind-record.md](bind-record.md) section 7,** `guard-bind`'s exits, which this section copies. Where the two differ, that table holds, and the row here is a fault in this file. Its cites of `lanes-edit.sh` at line R's `bc9ed80b` are given there and not here. T502's hygiene exit table takes the same table.
