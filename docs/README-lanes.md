@@ -5208,13 +5208,12 @@ lanes-index login revoke <engineer> --admin-service '<service>'
 
 - **`add <engineer>`** makes `lanes_w_<engineer>` and `lanes_r_<engineer>`, each
   with a password it generates and its group's floors, and prints their two
-  password-file lines, once, and the `register_url=` and `reader_url=` lines
-  for that engineer's file. Run again, it prints the URL lines again and no
-  password line for a login that exists, changes no password, and puts back
-  what such a login lost: its membership of its group and any of the group's
+  password-file lines, once, and the `register_url=` and `reader_url=` lines for
+  that engineer's file. Run again, it prints the URL lines again; a login that
+  exists and can still log in gets no password line, keeps its password, and has
+  what it lost put back: its membership of its group and any of the group's
   floors it lacks, each named. **`add --dump-job`** makes `lanes_register_dump`
-  alone, whose password Brett stores as the Key Vault secret the dump job
-  reads.
+  alone, whose password Brett stores as the Key Vault secret the dump job reads.
 - **`rotate <engineer>`** sets new passwords for both logins and prints the new
   lines; a session already open goes on until it ends. Until that engineer's
   two password files carry the new lines, that workstation's new connections
@@ -5228,11 +5227,12 @@ lanes-index login revoke <engineer> --admin-service '<service>'
   lookup cannot reconnect, and the journal answers it by its write id.
 - **Exits:** 0, each step's result printed; 2 for an engineer name that is not
   `^[a-z][a-z0-9_]{0,40}$`, an argument that carries a connection string or a
-  password, or, for `add` and `rotate`, stdout that is not a terminal; 69 where
-  the admin connection fails or the database refuses a step; 64 for usage,
-  `rotate` with neither an engineer nor `--dump-job`, or with both, and
-  `revoke` with `--dump-job` or with no engineer, among it. The dump job's login
-  is rotated, never revoked, by this command.
+  password, an existing login that was revoked (either form of `add` refuses it
+  and writes nothing), or, for `add` and `rotate`, stdout that is not a
+  terminal; 69 where the admin connection fails or the database refuses a step;
+  64 for usage, `rotate` with neither an engineer nor `--dump-job`, or with
+  both, and `revoke` with `--dump-job` or with no engineer, among it. The dump
+  job's login is rotated, never revoked, by this command.
 - **What a restore keeps.** A database dump holds no login, membership,
   verifier or floor, and a physical backup of the cluster holds them all. After
   a point-in-time restore each login is there with its old password, but not
