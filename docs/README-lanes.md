@@ -5207,11 +5207,14 @@ lanes-index login revoke <engineer> --admin-service '<service>'
 ```
 
 - **`add <engineer>`** makes `lanes_w_<engineer>` and `lanes_r_<engineer>`, each
-  with a password it generates and its group's floors, and prints, once, their
-  two password-file lines and the `register_url=` and `reader_url=` lines for
-  that engineer's file. Run again, it changes nothing but a lost membership,
-  which it puts back. **`add --dump-job`** makes `lanes_register_dump` alone,
-  whose password Brett stores as the Key Vault secret the dump job reads.
+  with a password it generates and its group's floors, and prints their two
+  password-file lines, once, and the `register_url=` and `reader_url=` lines
+  for that engineer's file. Run again, it prints the URL lines again and no
+  password line for a login that exists, changes no password, and puts back
+  what such a login lost: its membership of its group and any of the group's
+  floors it lacks, each named. **`add --dump-job`** makes `lanes_register_dump`
+  alone, whose password Brett stores as the Key Vault secret the dump job
+  reads.
 - **`rotate <engineer>`** sets new passwords for both logins and prints the new
   lines; a session already open goes on until it ends. Until that engineer's
   two password files carry the new lines, that workstation's new connections
@@ -5610,7 +5613,9 @@ runs it again at the window, and again after any recreate.
      each, with `C_op` at 5, give 120. Its memory is set with room, since each
      connection takes some of its own and the checks of act 3 measure none of
      it: to start, a 1 GiB limit with `shared_buffers` at 128 MB for
-     100 connections, raised with `max_connections`. Its CPU request is 100m
+     100 connections. Nothing here fixes a limit for more, the 120 above
+     included: the install sets it with `max_connections`. Its CPU request is
+     100m
      and its limit 1, and its storage 8 GiB on the cluster's premium class.
   9. **What it hands back,** for Brett to record on #165: the endpoint and its
      address; the root file; the owner's name and the Key Vault secret its
@@ -5672,8 +5677,15 @@ runs it again at the window, and again after any recreate.
    - **Check:** a second run prints `unchanged` for every object.
    - **Refusal:** as listed there; nothing is left half-made.
    - **Way back:** the schema holds no register data before the import. Brett
-     drops schema `lanes_register` and the roles the bootstrap made, through
-     the same admin service.
+     drops, through the same admin service and in this order: both schemas the
+     bootstrap made, `lanes_register`, which `lanes_register_owner` owns, and
+     `lanes_index`, which `lanes_indexer` owns, with what they hold; then the
+     logins `login add` made, which own nothing; then the roles the bootstrap
+     made. PostgreSQL drops no role that still owns an object or holds a
+     privilege, so the schemas go before their owners, and the `CONNECT` the
+     bootstrap granted on the database to the two groups and the indexer, and
+     the owner's default privileges for new functions, are taken away before
+     those roles go. A role's memberships go with it.
    - **Then the logins:** `lanes-index login add <engineer> --admin-service
      '<service>'` for each engineer, human or AI host, and
      `lanes-index login add --dump-job --admin-service '<service>'` for the
@@ -6112,6 +6124,8 @@ database, run with every workstation's lanes paused first.
 
        ```sh
        lanes-index bootstrap --admin-service '<service>' --label '<new name>' --repository '<owner/name>' --lane '<name>'
+       lanes-index login add <engineer> --admin-service '<service>'
+       lanes-index login add --dump-job --admin-service '<service>'
        lanes-index login rotate <engineer> --admin-service '<service>'
        lanes-index login rotate --dump-job --admin-service '<service>'
        ```
@@ -6119,10 +6133,17 @@ database, run with every workstation's lanes paused first.
        The bootstrap migrates it forward or prints `unchanged`, and writes no
        label, since the restored switch reads `primary`; its `--label` names
        the replacement, differs from the lost database's, and is the
-       `register_label=` it prints (the re-pointing, below). `login rotate`
-       runs once for each engineer, so that a workstation not yet re-pointed
-       cannot log in there, and once for the dump job, whose new password
-       Brett stores as its Key Vault secret.
+       `register_label=` it prints (the re-pointing, below). `login add` runs
+       first, once for each engineer and once for the dump job, since the
+       backup's `b` may predate a login, an engineer's added after it, say, and
+       `login rotate` refuses a login that does not exist, with 2. `login add`
+       makes each login that is missing, prints each engineer's `register_url=`
+       and `reader_url=` lines whether or not it made one, and prints a
+       password line only for a login it made. `login rotate` then runs once
+       for each engineer, so that a workstation not yet re-pointed cannot log
+       in there, and once for the dump job, whose new password Brett stores as
+       its Key Vault secret. The last password line printed for a login is
+       the one that stands.
      - **From the daily dump,** in this order, each `lanes-index` step and the
        restore through one admin service, which names the register's database:
        1. the register's database exists, owned by the admin: the new
@@ -6176,8 +6197,10 @@ database, run with every workstation's lanes paused first.
      lines it uses): on each configured workstation, from each host,
      Brett sets `register_url=`, `reader_url=`, their password files and
      `register_label=` to the replacement's, **in one edit**, with the lines
-     the bootstrap printed and that workstation's own engineer's lines from
-     `login add` or `login rotate`. In both URLs, `<root file>`, as `login add`
+     the bootstrap printed and that workstation's own engineer's lines: its URL
+     lines from `login add`, and each password-file line from the last of
+     `login add` and `login rotate` that printed it. In both URLs,
+     `<root file>`, as `login add`
      prints it, becomes the path on that host of the root file item 9
      recorded, as at act 3: a URL whose `sslrootcert=` names no existing file
      is refused at load, so the after-loss import and the cutover refuse, and
