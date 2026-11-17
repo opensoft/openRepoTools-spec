@@ -5235,10 +5235,13 @@ lanes-index login revoke <engineer> --admin-service '<service>'
   is rotated, never revoked, by this command.
 - **What a restore keeps.** A database dump holds no login, membership,
   verifier or floor, and a physical backup of the cluster holds them all. After
-  a point-in-time restore each login is there with its old password, and `login
-  rotate` gives each a new one; on a new Cluster restored from a dump, or
-  re-imported, `bootstrap --roles-only` makes the groups and `login add` makes
-  each engineer's logins again ("The database lost for good", below).
+  a point-in-time restore each login is there with its old password, but not
+  one made after its moment: `login add` makes the pair of an engineer added
+  after it, `login revoke` ends the logins of an engineer who has left, and
+  `login rotate` gives each remaining login a new one; on a new Cluster
+  restored from a dump, or re-imported, `bootstrap --roles-only` makes the
+  groups and `login add` makes each engineer's logins again ("The database
+  lost for good", below).
 
 ### What the REGISTER-WRITER secret can reach
 
@@ -6126,6 +6129,7 @@ database, run with every workstation's lanes paused first.
        lanes-index bootstrap --admin-service '<service>' --label '<new name>' --repository '<owner/name>' --lane '<name>'
        lanes-index login add <engineer> --admin-service '<service>'
        lanes-index login add --dump-job --admin-service '<service>'
+       lanes-index login revoke <engineer> --admin-service '<service>'
        lanes-index login rotate <engineer> --admin-service '<service>'
        lanes-index login rotate --dump-job --admin-service '<service>'
        ```
@@ -6139,11 +6143,18 @@ database, run with every workstation's lanes paused first.
        `login rotate` refuses a login that does not exist, with 2. `login add`
        makes each login that is missing, prints each engineer's `register_url=`
        and `reader_url=` lines whether or not it made one, and prints a
-       password line only for a login it made. `login rotate` then runs once
-       for each engineer, so that a workstation not yet re-pointed cannot log
-       in there, and once for the dump job, whose new password Brett stores as
-       its Key Vault secret. The last password line printed for a login is
-       the one that stands.
+       password line only for a login it made. `login revoke` then runs once
+       for each engineer whose logins the copy holds but who is not a current
+       engineer: one who left after `b` has live logins there, with their old
+       passwords, which `login rotate`, run for the current engineers only,
+       does not change. `login` has no list, so Brett reads the copy's role
+       names from `pg_roles` through his admin service, takes each that
+       follows `lanes_w_` or `lanes_r_`, and revokes each engineer he ran no
+       `login add` for; a login already revoked prints `unchanged` at steps 1
+       and 2. `login rotate` then runs once for each current engineer, so that
+       a workstation not yet re-pointed cannot log in there, and once for the
+       dump job, whose new password Brett stores as its Key Vault secret. The
+       last password line printed for a login is the one that stands.
      - **From the daily dump,** in this order, each `lanes-index` step and the
        restore through one admin service, which names the register's database:
        1. the register's database exists, owned by the admin: the new

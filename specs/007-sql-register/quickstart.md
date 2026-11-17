@@ -75,7 +75,8 @@ install", #165 6723925474).
 ## If something goes wrong
 
 - **The schema, before the import:** it holds no register data. Brett
-  drops `lanes_register` and the roles the bootstrap made, through the same
+  drops both schemas the bootstrap made, `lanes_register` and `lanes_index`,
+  then the logins, then the roles the bootstrap made, through the same
   admin service (ops:205).
 - **A file:** remove the new keys; `mode=index` behaves as today (ops:212).
 - **A restore from a dump,** after a loss: the order is research.md's
