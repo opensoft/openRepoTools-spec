@@ -5274,9 +5274,9 @@ texts that W folded (#165 6722314667 and 6722693446).
     admin does not own, passes `--no-passwords`. A run that must show a
     password line, or show that it prints none, runs under a pty
     (`pty.openpty()`), as AT-P8's printing run does, and the test reads its
-    output: each restore's `bootstrap --roles-only` and the `bootstrap`
-    after it, and every `lanes-index login` run, which also refuses off a
-    terminal (§2.4).
+    output: each restore's `bootstrap --roles-only` and the `bootstrap` after it,
+    and every `lanes-index login add` and `login rotate` run, which print a password
+    and refuse off a terminal (§2.4, ERR-59; `revoke` prints none and does not).
   - **The logins' password files** are 0600 files under the test's own
     temporary `$HOME`: `$HOME/passfiles/<login>` for each login, holding the
     line `login add` printed for it, or, for a bare member, the password
