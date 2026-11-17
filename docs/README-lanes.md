@@ -5232,16 +5232,16 @@ lanes-index login revoke <engineer> --admin-service '<service>'
   64 for usage, `rotate` with neither an engineer nor `--dump-job`, or with
   both, and `revoke` with `--dump-job` or with no engineer, among it. The dump
   job's login is rotated, never revoked, by this command.
-- **What a restore keeps.** A database dump holds no login, membership, verifier
-  or floor, and a physical backup of the cluster holds them all. After a
-  point-in-time restore each login is there with its old password, but not one
-  made after its moment: the route is `login add` for every current engineer and
-  `login add --dump-job`, `login revoke` for an engineer who has left, `login
-  rotate` for every current engineer and `login rotate --dump-job`, and the
-  re-pointing of every current engineer and the dump job, its secret included,
-  from `add`'s URL lines and each login's last password-file line; after a dump
-  or a re-import, `bootstrap --roles-only` makes the groups and `login add` each
-  engineer's logins again ("The database lost for good", below).
+- **What a restore keeps.** A dump holds no login; a physical backup holds all.
+  After a point-in-time restore each login is there with its old password, but
+  none made after its moment: `login add` for every current engineer and `login
+  add --dump-job`; `login revoke` for each restored `lanes_w_*` and `lanes_r_*`
+  pair that belongs to no current engineer; `login rotate` for every current
+  engineer and `login rotate --dump-job`; then re-point each engineer from its
+  URL lines (only `login add <engineer>` prints them; the dump job has none) and
+  every login from its last password-file line (the dump job's is its Key Vault
+  secret). After a dump or re-import, `bootstrap --roles-only` makes the groups,
+  and `login add` each engineer's logins and the dump job's again (below).
 
 ### What the REGISTER-WRITER secret can reach
 
