@@ -871,6 +871,11 @@ This change SHALL build a `lanes-index` bootstrap that makes the register's sche
 - **THEN** after the first, that engineer's writer login and reader login exist, each a member of its group and carrying its group's floors, and their password-file lines were printed once
 - **AND** after the second, a new connection by either login is refused, and an open session's next statement is refused
 
+#### Scenario: The dump job's login is never revoked
+- **WHEN** `lanes-index login revoke --dump-job` runs
+- **THEN** it exits 64 and prints, on stderr, `lanes-index: login revoke takes an engineer; the dump job's login is rotated, never revoked, by this command - see lanes-index login --help`
+- **AND** the refusal is made at the parse, before any configuration is read or any connection to the database is made, so no role, membership or password is changed
+
 #### Scenario: A dump restored after the roles-only form (real engine)
 - **WHEN** a dump is restored after the roles-only form
 - **THEN** PUBLIC holds no CONNECT on the database and no EXECUTE on its functions, the writer and reader groups and the indexer's login hold CONNECT, and a function the owner makes after the restore is not executable by PUBLIC
