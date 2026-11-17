@@ -5228,13 +5228,13 @@ texts that W folded (#165 6722314667 and 6722693446).
     `SUPERUSER`, as `azure_pg_admin`'s members are, twice with one catalog,
     and refuses with 2 a database that admin does not own, where its
     database-level `REVOKE` and `GRANT` would only warn (M4, O7);
-  - `lanes-index login add <engineer>` makes that engineer's two logins,
-    `lanes_w_<engineer>` and `lanes_r_<engineer>`, each a member of its group
-    and carrying its group's floors, and prints their password-file lines once;
-    `add --dump-job` makes `lanes_register_dump`, a member of READER alone; a
-    rerun puts back a lost membership or floor, repeats the URL lines, prints
-    no password and changes nothing else; `rotate` and `revoke` act as §2.4 has
-    them; and a member made without the login step carries none of the floors;
+  - `lanes-index login add <engineer>` makes that engineer's two logins, `lanes_w_<engineer>` and `lanes_r_<engineer>`,
+    each a member of its group and carrying its group's floors, and prints their password-file lines once; `add
+    --dump-job` makes `lanes_register_dump`, a member of READER alone; a rerun of `add <engineer>` puts back a lost
+    membership or floor, repeats the URL lines, prints no password line for a login that exists and changes nothing
+    else; a rerun of `add --dump-job` puts back a lost READER membership or floor, keeps the password and prints neither
+    URL lines nor a password line (LANE 3 DRAFT, for lane 2 to confirm, from `lanes-index` at `208a955e`, :14077–14082);
+    `rotate` and `revoke` act as §2.4 has them; and a member made without the login step carries none of the floors;
   - two engineers' writer logins write alike, and the server's log names
     the login that wrote; a revoked login is refused at connect and in its
     open session, and its writes and reads exit 69;
@@ -7363,7 +7363,7 @@ design. No other host path appears in a test.
     `status`, 5000 ms and 10 s for each `rollback` call, and 2000 ms and
     300 s for `import`;
   - the environment of each call, as the child rebuilds it, and not the one it inherits (`contracts/config.md:94–112`, its password-file row at :108; `contracts/register-cli.md:210–216`; design:3855–3862; AT-10's environment oracle, :1949–1953): the inherited `PGPASSFILE`, `PGPASSWORD`, `PGSERVICEFILE`, `PGSYSCONFDIR` and `PGSERVICE` are dropped first, on every path (`contracts/config.md:112`), and on register paths every inherited `PG*` variable (`contracts/register-cli.md:214`);
-    then each ordinary role call, the writer's, the reader's, the indexer's, a direct read's and the service child's, receives its configured role's `PGPASSFILE` (`contracts/config.md:108`; design:3861, "`PGPASSFILE` and `PGOPTIONS` are the service's own"), and the admin path receives, of the five, only `PGSERVICE=<service>` (`contracts/register-cli.md:214`; T109);
+    then each ordinary role call, the writer's, the reader's, the indexer's, a direct read's and the service child's, receives its configured role's `PGPASSFILE` (`contracts/config.md:108`; design:3862, "`PGPASSFILE` and `PGOPTIONS` are the service's own"), and the admin path receives, of the five, only `PGSERVICE=<service>` (`contracts/register-cli.md:214`; T109);
     and no call carries `PGPASSWORD`, a literal password or a connection URL (SVC-2; spec#17's re-review r12, its second BLOCKING finding; lane 3's ruling, commit 30).
 - **What it covers, and always runs:**
   - **argv.**

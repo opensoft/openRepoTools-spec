@@ -376,7 +376,7 @@ T240.
     - `lanes_w_<engineer>` joins REGISTER-WRITER and carries the writer's floors: `lock_timeout` 2000ms, `statement_timeout` 5s and `idle_in_transaction_session_timeout` 5s.
     - `lanes_r_<engineer>` joins READER and carries `default_transaction_read_only` on, `lock_timeout` 1000ms and `statement_timeout` 1500ms.
     - `--dump-job` makes `lanes_register_dump` alone, with the reader's floors. Brett stores its password as the Key Vault secret the dump CronJob reads.
-    - A rerun (LANE 3 DRAFT, for lane 1 to confirm, from `lanes-index` at `208a955e`) is idempotent for a login that exists: it puts back a lost membership and any of its group's floors that the login lacks, each named; it repeats the `register_url=` and `reader_url=` lines; it prints no password line and keeps the existing password. Only a login it makes gets a new password and its line.
+    - A rerun of `login add <engineer>` (LANE 3 DRAFT, for lane 1 to confirm, from `lanes-index` at `208a955e`) is idempotent for a login that exists: it puts back a lost membership and any of its group's floors that the login lacks, each named; it repeats the `register_url=` and `reader_url=` lines, which only `login add <engineer>` prints (`:14077–14082`); it prints no password line and keeps the existing password. Only a login it makes gets a new password and its line. A rerun of `login add --dump-job` restores a missing READER membership and any of the reader floors that `lanes_register_dump` lacks, keeps its password, and prints neither the URL lines nor a password line for a login that exists.
   - **Revoke** is Y:2302–2309, for each of the engineer's logins in order:
     - `NOLOGIN`;
     - the membership revoked;
