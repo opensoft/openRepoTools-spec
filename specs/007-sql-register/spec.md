@@ -1396,10 +1396,10 @@ are lane 3's rulings memo's).
     FROM PUBLIC` (the dump route's (a), lane 3's ruling, 6727022920;
     Y:2243–2244; Y:2256–2257). `bootstrap` itself still changes nothing else
     with the switch at `primary` (ops:434);
-  - after a CNPG point-in-time restore, which carries the roles, their
-    verifiers, memberships and floors, no roles-only step; then `lanes-index
-    login add` for every current engineer and `login add --dump-job`; `login
-    revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's
+  - after a CNPG point-in-time restore, which carries the roles, their verifiers,
+    memberships and floors, no roles-only step; then the full `bootstrap`; then
+    `lanes-index login add` for every current engineer and `login add --dump-job`;
+    `login revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's
     `pg_roles` that belongs to no current engineer; `login rotate` for every
     current engineer and `login rotate --dump-job`; and the re-pointing of every
     current engineer and the dump job, its secret included, with each engineer's
