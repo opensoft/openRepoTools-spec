@@ -293,3 +293,29 @@ completion update receives a fresh exact-head confirmation before publication;
 the reviewed report is retained outside the source repositories. The redundant
 old14-hash refusal case does not itself test the held16 ceiling, but dedicated
 16/17 and24/25 boundary regressions independently do; no runtime gate is weakened.
+
+## Completed P07 CX-37 intake; proposed40 bound remains unbound
+
+Owner handoff6947653181 supplies completed P07cab8fcfdee749dbeac5fc916d1c9b642e6d6cc4c,
+40 linear commits from P01, with conditional consent requiring fresh Codex READY,
+all CI including the fast identity check,158 hosted ids, a reviewed40 bound,
+final notes c7j and reviewed/landed80 before any product landing.
+Source bundle SHA256587303dc4dbf8d60ae6e9cb84ebe1803e688a848e7a83adad0f2a4511d5d220e
+matches the copied artifact; bundle verification passed and only objects were
+imported. Complete lineage/inventory checking passed in155.28s: all40 linear
+prefixes, exact final inventory, regular modes and empty markers. The shared
+helper blob isc2094ee6bc1758b9a7fab4911b4f83a5df68234c. This is structural
+acquisition only, not product review, runtime acceptance or head binding.
+
+This private proposal stages P07's exact40 ceiling, retaining13/16 previews and
+adding40/41 boundary coverage. P09 stays24 until its next completed handoff.
+Observed hashes are context only; both bindings, review and consent stay null.
+The old synthetic overlong-history case now uses the active P07 limit plus one,
+so it tests the intended schema refusal rather than nonexistent-object failure.
+Canonical isolated QA passed361 tests,6571 deselected,zero skips,in151.71s,
+including the real40-commit preview and40/41 schema boundary, with P09's24/25
+boundary unchanged. Strict OpenSpec and both diff checks passed. Fresh
+independent review is pending; task2.5 stays open for the final paired bounds.
+Lane1's hosted verify44080972637 on verify/l1/fix97-cab8fcfd-c1 is running,
+not claimed passed. No publication, product acceptance, merge, live gate or
+exclusion changes.

@@ -42,11 +42,12 @@ assembly adoption, installed tools or running-lane changes.
    history bound and disjoint member paths. Compute P07-then-P09 merge previews
    only when both bindings exist. Synthetic commits, if needed, are immutable
    objects in the private/CI Git object database, never branch/index changes.
-   Preparation ceilings are profile-specific: P07 16 and P09 24 commits from
-   their declared anchors. These match P07's owner-confirmed four-plus-nine-plus-three
-   chain (issue165 comment6935365475) and P09's prior eight-plus-sixteen ceiling,
-   not an arbitrary global increase. P09's observed29-commit export still needs
-   its final owner handoff before another explicit reviewed update. Every SHA and
+   Proposed preparation ceilings are profile-specific: P07 40 and P09 24 commits
+   from their declared anchors. P07's complete40-commit CX-37 chain is owner-confirmed
+   in code97 comment6947653181. P09 retains its prior eight-plus-sixteen ceiling
+   pending its next completed owner handoff, not an arbitrary global increase.
+   P07's head remains unbound pending its fresh product review, full CI and all
+   consent gates. Every SHA and
    cumulative cut remains checked. A ceiling is not an owner head binding or
    approval; changed chains above it require another reviewed update, never
    truncation, implicit acceptance or rewriting another lane's history.
