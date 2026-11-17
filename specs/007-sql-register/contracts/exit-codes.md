@@ -263,7 +263,7 @@ D9's table gives each path's expiry (Y:3516–3537) [Y]. For `lanes-index`'s own
 | D9 row | Line | The code on expiry |
 |---|---|---|
 | the guard's direct read | Y:3518 | form 2: 2, too late to verify, but 69, with `.outage`, where an unexpired declaration that is not a rollback's names this database and the read is cut at the declared cap, `T0` + 3.65 s (contract §3.6, draft 4.19, :776; lane 3's ruling, #165 6807694145); form 4: a log that could not be read (contract §2.7) |
-| the mode query, `lanes-index mode` | Y:3521 | the caller's 2 s timer kills it, and the verb runs files mode with a warning (F8, section 6) |
+| the mode query, `lanes-index mode` | Y:3521 | the caller's timer kills it, 5 s for a writer and 2 s for the `SessionStart` block (register-cli.md §3.1), and the verb runs files mode with a warning (F8, section 6) |
 | a writer's snapshot, and `act-begin`'s | Y:3522 | 69, a failed read; the caller makes F3's lookup first where an earlier commit call of the write was in doubt |
 | a writer's commit | Y:3523 | 3, in doubt |
 | the in-doubt lookup | Y:3524 | a try with no answer, tried again in the window; then 3, the record kept |
@@ -294,7 +294,7 @@ F8's table (Y:5707–5716) [Y] is the callers' map, and each caller's arm belong
 | 64, from a `lanes-index` too old to have `mode` | files mode, with a warning |
 | 127, `lanes-index` or `python3` missing | files mode, with a warning |
 | 1, or 128+n: a crash, a signal | files mode, with a warning |
-| the caller's 2 s timer | files mode, with a warning |
+| the caller's timer, 5 s, or 2 s in the `SessionStart` block | files mode, with a warning |
 | 0 with stdout that is not exactly one line, `index` or `primary` | files mode, with a warning |
 | any other code, 69, 75 and 3 included | files mode, with a warning |
 | 78 | the writer exits 69, writing nothing |

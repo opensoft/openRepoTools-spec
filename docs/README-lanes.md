@@ -4687,7 +4687,7 @@ configuration exists**: the file at the default path, or `LANES_INDEX_CONFIG`
 set and not empty. With none, no `lanes-index` process starts, and the writers
 and readers are the v1.1.0 tools' but for the marker check and the four
 exceptions every mode has, the fourth a failed register read's 69 ("The
-switch and `lanes/STORE`"). The answer is read with a 2 s timer, which
+switch and `lanes/STORE`"). The answer is read with a 5 s timer, which
 `timeout` holds where it is installed; without `timeout` the question
 has no bound:
 
@@ -4696,7 +4696,7 @@ has no bound:
 | `primary` | the primary branch below (a dry run, which writes nothing, makes one attempt that reads the register at its head and sends no commit) |
 | `index` | files mode, as today, plus the marker check |
 | 78, the build's own refusal of `mode=primary` | exits **69**, repeats its text, writes nothing |
-| a configuration `lanes-index` refuses (2), a `lanes-index` too old to know `mode` (64), none to run (127), a crash, its 2 s timer, or an answer that is not exactly one line | files mode, with one warning naming the failure; the marker check then refuses on a SQL estate |
+| a configuration `lanes-index` refuses (2), a `lanes-index` too old to know `mode` (64), none to run (127), a crash, its 5 s timer, or an answer that is not exactly one line | files mode, with one warning naming the failure; the marker check then refuses on a SQL estate |
 
 **A build can refuse `mode=primary`.** `lanes-index` carries a constant,
 `RENDER_GIT_HALF`, which stays `False` until the renderer's git half is
@@ -5968,8 +5968,8 @@ runs it again at the window, and again after any recreate.
    a rollback trigger, on Brett's word. A 69 that says "configure
    `mode=primary`" on a host already on `mode=primary` follows a
    ``WARNING: `lanes-index mode` …`` line naming the failed question, most
-   often ``did not answer within 2 s``: run the write again before you read it
-   as a miss. That 2 s bound holds where `timeout` is installed; without it the
+   often ``did not answer within its 5 s timer``: run the write again before you read it
+   as a miss. That 5 s bound holds where `timeout` is installed; without it the
    question has no bound.
 10. **The thaw.** The coordinator posts N4, and Brett prompts each pane to
     resume.
