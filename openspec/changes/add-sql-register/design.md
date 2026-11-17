@@ -637,10 +637,10 @@ the section that carries it.
   first, as `bootstrap --roles-only`, because roles are cluster objects a
   database dump does not hold. A CNPG point-in-time restore is instead a new Cluster whose physical restore carries the roles, their
   verifiers, memberships and per-role settings (lane 1's engine proof, #165 6724409717), so `--roles-only` is not needed and prints
-  `unchanged`. Then `login add` for every current engineer and `login add --dump-job`; `login revoke` for each `lanes_w_*` and
-  `lanes_r_*` pair in the restored copy's `pg_roles` that belongs to no current engineer; `login rotate` for every current engineer and
-  `login rotate --dump-job`; and the re-pointing of every host at the new database, for every current engineer and the dump job, its
-  secret included, with each engineer's URL lines from `add` and each login's last password-file line (`operations.md` §2.3's step 6).
+  `unchanged`: recover first, then the full `bootstrap`, then `login add` for every current engineer and `login add --dump-job`; `login revoke`
+  for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's `pg_roles` that belongs to no current engineer; `login rotate` for every
+  current engineer and `login rotate --dump-job`; and the re-pointing of every host at the new database, for every current engineer and the dump
+  job, its secret included, with each engineer's URL lines from `add` and each login's last password-file line (`operations.md` §2.3's step 6).
   The re-import rewrites the marker as the cutover's entry, at `m+1`, so the
   next write is `m+2` (`b+1` after a restore; D24), and `ready` and `set-mode`
   check that `lanes/STORE` names this database (lane 3's ruling, #165
