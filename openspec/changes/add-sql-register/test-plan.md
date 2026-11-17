@@ -5415,17 +5415,17 @@ texts that W folded (#165 6722314667 and 6722693446).
     printed lines connect. The new cluster's log holds each printed password
     only as a SCRAM verifier, never as clear text, since `bootstrap` sets it
     on the client (O6).
-  - **The restore from the provider's copy** (O5; 6722541787): a copy of the source cluster's stopped data directory, started as a new
-    server, stands for a provider's snapshot or point-in-time restore, which keeps the roles and their passwords. `bootstrap --roles-only`,
-    run under the pty, prints `unchanged` and no password line. After the recovery and the full `bootstrap`, the route is `login add` for
-    every current engineer and `login add --dump-job`; `login revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's
-    `pg_roles` that belongs to no current engineer; `login rotate` for every current engineer and `login rotate --dump-job`; and the
-    re-pointing of every current engineer and the dump job, its secret included, with each engineer's URL lines from `add` and each login's
-    last password-file line. Here every login is in the copy and every engineer current, so the test runs the full `bootstrap` after the
-    recovery, under the pty, and checks its output (the migrations it applies, or `unchanged`, and the replacement `register_label=` it
-    prints, which the re-pointing then uses), then the third step only, `login rotate` for the engineer and `login rotate --dump-job`, which
-    give each a new password, and writes each printed line into its login's password file: the old password is refused, the new one connects,
-    and the log holds each new password only as a SCRAM verifier. An engineer made, and one who left, after the copy are 6.2's planned case.
+  - **The restore from the provider's copy** (O5; 6722541787): a copy of the source cluster's stopped data directory, started as a new server, stands for a
+    provider's snapshot or point-in-time restore, which keeps the roles and their passwords; the source is cut over to `primary` before the copy is made.
+    `bootstrap --roles-only`, run under the pty, prints `unchanged` and no password line. After the recovery and the full `bootstrap`, the route is `login add`
+    for every current engineer and `login add --dump-job`; `login revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's `pg_roles` that
+    belongs to no current engineer; `login rotate` for every current engineer and `login rotate --dump-job`; and the re-pointing of every current engineer and
+    the dump job, its secret included, with each engineer's URL lines from `add` and each login's last password-file line. Here every login is in the copy and
+    every engineer current, so the test runs the full `bootstrap` after the recovery, under the pty, with a new `--label`, distinct from the source's, and the
+    `--repository` and `--lane` that the manual's command gives (`docs/README-lanes.md` :6129), and checks its output (the migrations it applies, or `unchanged`,
+    and the exact `register_label=` line naming the new label, which the re-pointing then uses), then the third step only, `login rotate` for the engineer and
+    `login rotate --dump-job`, which give each a new password, and writes each printed line into its login's password file: the old password is refused, the new
+    one connects, and the log holds each new password only as a SCRAM verifier. An engineer made, and one who left, after the copy are 6.2's planned case.
   - **Check 11** (O8), on the TLS cluster: with each connection's URL
     carrying `sslmode=verify-full` and `sslrootcert=` naming the test CA,
     which stands for the provider's, check 11 passes. It fails for a URL
