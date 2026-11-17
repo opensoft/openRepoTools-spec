@@ -34,7 +34,7 @@ The spec leg's branch `007-sql-register` merges Y whole, at merge commit
 `svc:<n>` of `specs/register-service/spec.md`, as this branch has them at
 `ad82c2f4`, where lane 3's rulings since Y change them (research.md's ERR-03
 and DEC-05). `Y:<n>` is a line of `design.md`, `ops:<n>` of `operations.md`
-and `clar:<n>` of `clarifications.md`, which are unchanged from Y. Each was
+and `clar:<n>` of `clarifications.md`, which are cited as Y has them; where a branch line has moved from Y's, research.md:138–142 gives the rule (in `operations.md`, from ops:435 on, Y's line N is the branch's N+1: the bootstrap's Limit bullet, lane 1's C14, commit `3b6fde18`). Each was
 checked by script against the text it stands for.
 
 **Marks used in this file:**
@@ -164,7 +164,7 @@ The terms used below:
 
 A person on a workstation with no configuration, or with `mode=index`,
 installs the release that carries this feature. Everything reads and writes
-as before, except the sql spec's three exceptions (spec:60), which scenario 8
+as before, except the sql spec's four exceptions (spec:60's three, and a fourth that follow-ups 4 adds to that line), which scenario 8
 names, and two refusals:
 
 - A build without the renderer's git half refuses `mode=primary`, and says
@@ -220,12 +220,12 @@ database:
    lacks `lanes/LANES.md` or `lanes/log/README.md`, **When**
    `openRepoTools wip init` runs, **Then** it refuses and commits nothing
    (Q14(a), narrowed: FR-005).
-8. **Given** the three exceptions, **When** they run in any mode, **Then**
+8. **Given** the four exceptions, **When** they run in any mode, **Then**
    each is exactly what this feature specifies:
    - answer 2's bind runs detached (User Story 5);
    - `lane-start`'s three register writes are one, `start-record` (User
      Story 5);
-   - `wip init` refuses in scenario 7's narrowed form (FR-005).
+   - `wip init` refuses in scenario 7's narrowed form (FR-005); and, the fourth, `lane-start` and `lane-end` read the register through `lanes-edit.sh register-text` in every mode, so a read that fails ends 69 and writes nothing.
 
 **OpenSpec requirements**:
 
@@ -1481,7 +1481,7 @@ are lane 3's rulings memo's).
   launcher MUST run the module's source. `openRepoTools --install` MUST place the
   module beside `lanes-index` and write its checked-hash bytecode for the
   interpreter `lanes-index` runs on, and the release's digest list MUST name the
-  module, which `ready`'s check 1 digests, and not its bytecode; check 1 MUST also compile the digest-checked module with that interpreter in checked-hash mode and fail, naming the cached module as not matching the release's source, unless the result equals the installed bytecode byte for byte, so that the code the launcher runs, with no compile at a start, is the release's at check time, as every other installed file is. The one exception is Python 3.9 and 3.10, whose compiler output is not byte-stable: there the install MUST write no bytecode, the launcher MUST read no bytecode and run the module's source, as it does where `sys.implementation.cache_tag` is None or `sys.flags.optimize` is not 0, and check 1 MUST report the module's source path and pass, comparing bytes on 3.11 and later only (lane 3's ruling 2, #165 6885378657, on lane 1's question 4, #165 6882454897). Sources:
+  module, which `ready`'s check 1 digests, and not its bytecode; check 1 MUST also compile the digest-checked module with that interpreter in checked-hash mode and fail, naming the cached module as not matching the release's source, unless the result equals the installed bytecode byte for byte, so that the code the launcher runs, with no compile at a start, is the release's at check time, as every other installed file is. The one exception is Python 3.9 and 3.10, whose compiler output is not byte-stable: there the install MUST write no bytecode, the launcher MUST read no bytecode and run the module's source, as it does where `sys.implementation.cache_tag` is None or `sys.flags.optimize` is not 0, and check 1 MUST report the module's source path and pass, comparing bytes on 3.11 and later only, and there only where `sys.implementation.cache_tag` is not None: where it is None, on any version, the module has no bytecode path, so check 1 MUST compare no bytes, and MUST report the module's source path and pass (lane 3's ruling 2, #165 6885378657, on lane 1's question 4, #165 6882454897; where the cache tag is None: lane 1's NIT 2, opensoft/openRepoTools#165 6894131980, which lane 3 sends to follow-ups 4, opensoft/openRepoTools#165 6894208108). Sources:
   "`lanes-index` starts from its cached module" (the sql-register delta, since
   the follow-up's commit 18); PC-2; T124, T347.
 
@@ -1563,7 +1563,7 @@ are lane 3's rulings memo's).
   (spec:416).
 - **SC-008**: On an unconfigured or `mode=index` workstation, the output and
   exit codes of every writer and reader equal the v1.1.0 tools', apart from
-  the three named exceptions. Test 1's files-mode twin shows it (spec:59).
+  the four named exceptions. Test 1's files-mode twin shows it (spec:59).
 - **SC-009**: Test 8's leak test fails on today's leak, and passes on this
   build. A writer the rollback missed exits 69 and the journal's count is
   unchanged, in each of test 8's cases (spec:824).

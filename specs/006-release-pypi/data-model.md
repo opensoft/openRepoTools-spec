@@ -49,18 +49,19 @@ hatch's version source, at build time. The two must read the same `VERSION`
 ## The payload list and the force-include map
 
 - **The payload list**: the output of `payload_names` in `openRepoTools`. It
-  is the 17 `INSTALLABLES`, then `skills/<n>/SKILL.md` for the 3 `SKILLS`,
-  then `commands/<n>.md` for the 3 `COMMANDS`, in that order: 23 paths.
-- **The force-include map**: those 23 paths plus
-  `contracts/openreposhape-pin.yaml`, 24 in all. Each key `<P>` maps to the
+  is the 17 `INSTALLABLES`, then `lanes_index_main.py` (since 007's T347),
+  then `skills/<n>/SKILL.md` for the 3 `SKILLS`, then `commands/<n>.md` for
+  the 3 `COMMANDS`, in that order: 24 paths.
+- **The force-include map**: those 24 paths plus
+  `contracts/openreposhape-pin.yaml`, 25 in all. Each key `<P>` maps to the
   value `openrepotools/payload/<P>`.
 - **Rule**: the map's keys, the built wheel's `openrepotools/payload/`
   members and the payload list plus the pin are one set, compared in both
   directions (FR-007).
 - **Modes**: each entry has the commit's mode. At this branch's head that is
-  16 at `100755` (the sixteen commands) and 8 at `100644` (`repos.tsv`, the
-  three skills, the three command files and the pin). The full list is in
-  [contracts/wheel.md](contracts/wheel.md).
+  16 at `100755` (the sixteen commands) and 9 at `100644` (`repos.tsv`,
+  `lanes_index_main.py`, the three skills, the three command files and the
+  pin). The full list is in [contracts/wheel.md](contracts/wheel.md).
 
 ## The package layout, installed
 

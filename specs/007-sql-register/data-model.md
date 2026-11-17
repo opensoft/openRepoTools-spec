@@ -7,7 +7,7 @@ requirement, and the requirement's own words hold.
 
 **Citations** are spec.md's: `spec:<n>` and `svc:<n>` are lines of the
 change's two spec files on this branch, at `ad82c2f4`; `Y:<n>` is a line of
-`design.md` and `ops:<n>` of `operations.md`, which are unchanged from Y.
+`design.md` and `ops:<n>` of `operations.md`, which are cited as Y has them; where a branch line has moved from Y's, research.md:138–142 gives the rule (in `operations.md`, from ops:435 on, Y's line N is the branch's N+1: the bootstrap's Limit bullet, lane 1's C14, commit `3b6fde18`).
 
 ## Where it lives
 

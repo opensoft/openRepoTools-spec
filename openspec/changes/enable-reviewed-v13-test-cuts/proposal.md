@@ -29,6 +29,11 @@ either refuse all work or misrepresent what was qualified.
   Keep unknown hints, real base/head changes, strict later rereads and incomplete
   admission on full fallback. This is a bounded amendment to the earlier nullable
   hint rule, not permission to ignore arbitrary metadata differences.
+- Recognize bounded authentic fast-workflow history on an unchanged source
+  head. Select only the unique newest canonical workflow sequence and its exact
+  check/run/job proof; never borrow an older green when that newest evidence is
+  missing, failed or pending. Preserve immediate full refusal for missing jobs
+  and existing authenticated-pending behavior without adding a retry mechanism.
 
 ## Capabilities
 

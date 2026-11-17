@@ -16,7 +16,7 @@
 
 - [x] 3.1 Fill only verified exact epoch/profile data, update the named queue/instructions for P05/P06 and enable delivery; rerun canonical full focused contracts, strict spec and preservation/diff checks and record actual counts.
 - [x] 3.2 Perform exact-head expert and genuine Codex review plus ordinary full/reusable qualification; normally merge paired PRs only when all latest-head/current-main gates pass, then verify actual main/policy/trees without resetting an active owner candidate.
-- [ ] 3.3 Reproduce and repair the reopen-generated equivalent merge hint refusal with bounded authenticated immutable-object checks; retain full refusal coverage and normally publish paired repair PRs after exact-head expert/Codex review and full/reusable qualification.
+- [ ] 3.3 Reproduce and repair equivalent generated merge hints and authentic same-head fast history with bounded immutable-object/newest-canonical-run checks; retain missing-job/full refusal coverage and normally publish paired repair PRs after exact-head expert/Codex review and full/reusable qualification.
 
 ## 4. Separately consented live acceptance
 
@@ -252,3 +252,56 @@ profile registry, flag, queues, contracts and foundation helpers are unchanged.
 Source PR107 has fresh Codex request6901134076; hosted full/reusable and bot
 results remain pending. Task3.3 is not complete until its paired normal checked
 publication; group4's actual source/one-heavy/landed-tree evidence is still owed.
+
+### Companion historical fast-run repair preparation
+
+Spec#71 subsequently merged normally as37cd414d2ca92e10a803629b7700291d2cd8bb6f,
+with reviewed source tree3025e32a833a6bd189ae12b0ef90a0e6d1ddd9a3. The earlier
+code107 head588's hosted full/reusable and genuine Codex checks passed, but a
+further read-only preflight found three historical named fast checks per source
+head even with filter=latest. Global check uniqueness would refuse any next
+event. Root records6901557100/6901558100 disclosed that blocker and kept code107
+draft, without source head rewrites or queue admission.
+
+The companion23-case suite first reproduced5 failures and18 passes. Its missing
+latest-job case also demonstrated why an older green must never be selected.
+The existing immediate missing-job refusal was preserved, not changed into a
+new pending/wait grant. The combined history/previous-pending subset then passed
+90tests in28.68s. Final canonical validation on combined code
+16a289a2b370ed907afe2736065264bb0c6f4269 passed925tests,5541deselected,zero skipped,
+in303.76s:874 original plus28 hint and23 history cases. No previous test or gate
+was removed. All workflows, baseline, registry/flag, queues, provider/contracts
+and four foundation files remain unchanged by Git preservation checks.
+
+A separate read-only real API evaluation authenticated each three-row catalogue
+and selected P05's newest workflow sequence109 (run43758555631,job132947940454)
+and P06's110 (run43758579653,job132948014280), including the existing current
+run/job/source/base-history and final rereads. It explicitly granted neither
+queue admission nor CI omission. These are preparation receipts, not actual
+fast-only source CI or a live accepted batch.
+
+The next meaningful code head requires new exact-head expert/Codex review and
+fresh full/reusable CI;588's passing checks do not qualify this extension.
+Task3.3 and all group4 tasks remain incomplete pending checked paired source
+publication and the original live canary gates. Prior spec71 remains historical;
+this new bounded contract amendment is separately reviewed and published.
+
+### Exact-head review correction before publication
+
+Independent data-integrity and reliability reviews of private code16a289a2
+found one deduplicated P2: the final catalogue reread compared only run ID and
+could ignore an explicitly observed newer attempt/state on that same ID. The
+initial catalogue-to-run identity check also needed attempt agreement. Neither
+private head was pushed or merged with this finding open.
+
+Eight new initial/final catalogue-race cases all failed before the correction.
+Corrected code3b95350a5a09dcac0f70c9145ccba5a3aa3f8c3d binds initial and final
+selected identity including attempt, evaluates initial catalogue state and
+requires final state to match the independently authenticated successful run.
+The history/previous-pending subset passed98tests,6376deselected,in28.37s.
+Missing latest jobs still refuse immediately; no assertion or gate was removed.
+The full canonical selector is running at this checkpoint, not yet reported
+passed for this new head. The earlier925 result belongs to16a289a2 only.
+
+Fresh exact-head expert/Codex review and hosted full/reusable CI are required
+for the corrected head. Task3.3 and all live group4 tasks remain incomplete.

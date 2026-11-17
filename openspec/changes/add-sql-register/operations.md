@@ -208,7 +208,7 @@ Brett's ruling (#165 6723925474): the register's database is "CNPG in the instal
    - **Command:** place the 0600 password files and `lanes-index.conf` in the host's dedicated read-only mount (Q23 (a), `proposal.md:1836-1839`). The file carries `mode=index`, `reader_url=`, and the REGISTER-WRITER's pair, `register_url=` and `register_passfile=` (`proposal.md:152-153`, which names them "for example"; R3a's spelling, `r3a/REPORT.md:323`), `register_label=` **(new)**, the label step 2's `--label` gave the database those URLs reach, which `cutover` sends as its label (2.3, S-2), and, under Q21(b) (B), `render_key=`, which names the renderer identity's 0600 key file (D23; step 9).
    - **Per engineer:** each workstation's file names its own engineer's two logins and its own two 0600 password files (`design.md` §1.4, "One engineer's file"); no workstation holds another engineer's line.
    - **Check:** `lanes-index status` reads; `ready` (step 6).
-   - **Refusal:** `lanes-index` refuses the file when it is group- or world-readable, inside a git work tree or under `~/.agents/`, or when a URL carries a password (`code/lanes-index:60-70`).
+   - **Refusal:** `lanes-index` refuses the file when it is not a regular file or has any group or other permission bit (0600 and 0400 both pass), inside a git work tree or under `~/.agents/`, or when a URL carries a password (`code/lanes-index:60-70`).
    - **Way back:** remove the new keys. `mode=index` behaves as today (`proposal.md:88-90`).
 4. **The bench images, once.** Brett acts.
    - **Command:** one rebuild, then a recreate. The rebuild carries the re-vendor (Q24), the configuration mount (Q23) and 1A's `postgresql-16` (`proposal.md:947-950`, `:1853`).
@@ -432,6 +432,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
   - 2: a role holds a privilege outside its scope. The privilege is named and never revoked silently;
   - 2: `store=sqlite` (`proposal.md:162-163`).
 - **With the switch at `primary`,** it only verifies, applies a pending migration (`design.md` §1.5), and changes nothing else.
+- **Limit:** a stated limit for v1.3.0, not a v1.3.0 build. The bootstrap sets the indexer's verifier in its roles step, one transaction, and prints that login's password-file line only after the step has committed. If the bootstrap's response is lost after PostgreSQL commits the indexer's verifier, the credential cannot be recovered: the bootstrap ends 69, or is cut before it prints the line, and a rerun finds `lanes_indexer`, so it generates no password and prints `role lanes_indexer: unchanged` and no password-file line. The operator resets it by hand: Brett, through his own admin service, with psql's `\password lanes_indexer`, which computes the verifier on the client, then writes the indexer's password file again. `rotate --indexer`, a `lanes-index login` form for that login, is a named follow-up after v1.3.0, in its own PR (lane 3's ruling, #165 6894116246).
 - **Test:** run twice, it leaves one schema and the same GRANTs (`proposal.md:623-624`).
 
 #### `lanes-index ready` (new)
@@ -443,7 +444,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 - **Checks,** each a read that writes nothing (`proposal.md:612-619`):
   1. the installed tools' digests equal the release's;
   2. `psql` 16 is present;
-  3. the configuration is readable, 0600, outside every git work tree and `~/.agents/` (`code/lanes-index:66-68`), and says the expected mode;
+  3. the configuration is readable, a regular file with no group or other permission bit, such as 0600 or 0400, outside every git work tree and `~/.agents/` (`code/lanes-index:66-68`), and says the expected mode;
   4. each role connects within the workstation's `connect_timeout=`, its own `c` (D9), at each address the endpoint resolves to, and is refused outside its scope. A write tried in a transaction that always rolls back, opened with `BEGIN READ WRITE`, must fail with SQLSTATE 42501, which is this part's concrete form of "refused outside its scope". The `READ WRITE` matters for the READER, whose role default is read-only (`design.md` §1.4): a plain write there fails with 25006 before any privilege is checked;
   5. the installed `lanes-index` no longer carries Q6(c)'s refusal of `mode=primary`: `lanes-index mode` on a `mode=primary` configuration does not exit 78 (`EX_CONFIG`), Q6(c)'s code (F8; agreement test 14, `proposal.md:913-921`);
   6. the workstation's name is set, so a write is never stamped with a container's hostname (`r3b/REPORT.md:192-194`);
@@ -462,7 +463,7 @@ The proposal leaves the three tools' names to the design (`proposal.md:602-605`)
 #### `lanes-index set-mode` (new)
 
 - **Inputs:** `primary` or `index`, and `--config '<path>'`, which defaults to the configured file (`code/lanes-index:62-64`).
-- **What it does:** it rewrites only the `mode=` line, adding one where none exists, by writing a temporary file in the same directory and renaming it. The file keeps its 0600 mode (`proposal.md:626-627`).
+- **What it does:** it rewrites only the `mode=` line, adding one where none exists, by writing a temporary file in the same directory and renaming it. The file keeps its own permission bits, so a 0600 file stays 0600 (`proposal.md:626-627`).
 - **Output:** the path, the old mode and the new one. Where the file already says the mode, the same line, ending 'the file says so already; nothing was written', and nothing is written (lane 3, #165 6778959652, T120 fu1 Q1).
 - **Refusals, setting `primary`:**
   - 2: the switch is not `primary` with the marker `present`, or the fetched `origin/main` has no `lanes/STORE` naming this database. A flip before the cutover makes every write refuse (Q20 (A), `proposal.md:1772-1773`);

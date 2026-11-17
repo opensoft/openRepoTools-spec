@@ -29,7 +29,7 @@ path = "src/openrepotools/_release.py"
 packages = ["src/openrepotools"]
 
 [tool.hatch.build.targets.wheel.force-include]
-# the 24 entries below, each "<P>" = "openrepotools/payload/<P>"
+# the 25 entries below, each "<P>" = "openrepotools/payload/<P>"
 ```
 
 - The `description`, `authors`, `classifiers` and `[project.urls]` keys are
@@ -69,15 +69,17 @@ packages = ["src/openrepotools"]
 | 15 | `claude-restart-check` | `100755` |
 | 16 | `lanes-index` | `100755` |
 | 17 | `lane-worktrees` | `100755` |
-| 18 | `skills/handoff/SKILL.md` | `100644` |
-| 19 | `skills/lane-swap/SKILL.md` | `100644` |
-| 20 | `skills/restart/SKILL.md` | `100644` |
-| 21 | `commands/handoff.md` | `100644` |
-| 22 | `commands/ctx.md` | `100644` |
-| 23 | `commands/swap.md` | `100644` |
-| 24 | `contracts/openreposhape-pin.yaml` | `100644` |
+| 18 | `lanes_index_main.py` | `100644` |
+| 19 | `skills/handoff/SKILL.md` | `100644` |
+| 20 | `skills/lane-swap/SKILL.md` | `100644` |
+| 21 | `skills/restart/SKILL.md` | `100644` |
+| 22 | `commands/handoff.md` | `100644` |
+| 23 | `commands/ctx.md` | `100644` |
+| 24 | `commands/swap.md` | `100644` |
+| 25 | `contracts/openreposhape-pin.yaml` | `100644` |
 
-Rows 1 to 23 are `payload_names` in its own order. The test derives them
+Rows 1 to 24 are `payload_names` in its own order (row 18,
+`lanes_index_main.py`, since 007's T347). The test derives them
 from the bash file and never from this table. The table records what the
 file holds today.
 
@@ -87,7 +89,7 @@ file holds today.
 openrepotools/__init__.py
 openrepotools/cli.py
 openrepotools/_release.py
-openrepotools/payload/<P>                      # each of the 24
+openrepotools/payload/<P>                      # each of the 25
 openrepotools-<version>.dist-info/METADATA
 openrepotools-<version>.dist-info/WHEEL
 openrepotools-<version>.dist-info/RECORD
