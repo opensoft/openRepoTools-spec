@@ -3331,7 +3331,7 @@ workstation's lanes paused first, as for the freeze, and the outage declared
 2. Prepare the replacement by the route that fits the backup, each `lanes-index` step and the `pg_restore` through one admin service
    that names the new database (`operations.md` §2.3's step 6). **Physical**, a CNPG point-in-time restore recovered from the Barman
    Cloud backups, whose copy carries the roles, their verifiers, memberships and per-role settings (lane 1's engine proof, #165
-   6724409717), so `--roles-only` would print `unchanged`: recover first, then `login add` for every current engineer and `login add
+   6724409717), so `--roles-only` would print `unchanged`: recover first, then the full `bootstrap`, `login add` for every current engineer and `login add
    --dump-job`; `login revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's `pg_roles` that belongs to no current
    engineer; and `login rotate` for every current engineer and `login rotate --dump-job`. **Daily dump**, whose roles a database dump
    does not hold (F18): the register's database; `lanes-index bootstrap --roles-only`; `login add` for every current engineer and
