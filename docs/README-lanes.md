@@ -5515,11 +5515,12 @@ where the install places it, and a checkout's directory holds no release list.
 2. `psql` 16 is present;
 3. the configuration is readable, has no group or other permission bit, lies
    outside every git work tree and `~/.agents/`, and says the expected mode;
-4. each of the engineer's two logins makes one libpq connection, which tries
-   the addresses the endpoint resolves to in turn and allows the workstation's
-   `c` for each (one working address is enough; check 13 counts them), and a
-   write outside its scope, under `BEGIN READ WRITE` in a transaction that
-   always rolls back, fails with SQLSTATE 42501;
+4. each of the engineer's two logins connects to its URL as every register path
+   does, through libpq, which tries the addresses the endpoint resolves to in
+   turn, each within the workstation's `c`, so that one address that answers is
+   enough, and check 13 only counts them; and a write outside its scope, under
+   `BEGIN READ WRITE` in a transaction that always rolls back, fails with
+   SQLSTATE 42501;
 5. the installed `lanes-index` no longer refuses `mode=primary`;
 6. the workstation's name is set, so no write is stamped with a container's
    hostname;
@@ -5606,9 +5607,10 @@ runs it again at the window, and again after any recreate.
      operator command, `C_op` the connections the operator and the backup
      plugin hold, read at act 3, and 3 and 2 the superuser's and the admin's
      reserved slots. Four engineers with three environments and eight lanes
-     each, with `C_op` at 5, give 120. Its memory starts at a 1 GiB limit with
-     `shared_buffers` at 128 MB for 100 connections, raised with
-     `max_connections`. Its CPU request is 100m
+     each, with `C_op` at 5, give 120. Its memory is set with room, since each
+     connection takes some of its own and the checks of act 3 measure none of
+     it: to start, a 1 GiB limit with `shared_buffers` at 128 MB for
+     100 connections, raised with `max_connections`. Its CPU request is 100m
      and its limit 1, and its storage 8 GiB on the cluster's premium class.
   9. **What it hands back,** for Brett to record on #165: the endpoint and its
      address; the root file; the owner's name and the Key Vault secret its

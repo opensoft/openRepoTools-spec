@@ -1004,8 +1004,8 @@ are lane 3's rulings memo's).
   - the dump job's READER login, `lanes_register_dump`.
 
   Each engineer's two logins MUST be made, rotated and revoked, and the dump
-  job's login made and rotated, by `lanes-index login`, through the admin
-  service: Brett's
+  job's login made and rotated but never revoked, by `lanes-index login`,
+  through the admin service: Brett's
   "lanes-index login (Recommended)" (clar:497–498; #165 6726078173).
   `login revoke --dump-job` MUST be refused as a usage error, exit 64, in the
   code's words, "login revoke takes an engineer; the dump job's login is

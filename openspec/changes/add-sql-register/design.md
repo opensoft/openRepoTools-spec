@@ -3522,10 +3522,11 @@ as `lanes_r_<engineer>`, a member of the reader group, and each workstation's
 `lanes-index.conf` names only its own engineer's two logins and their password
 files. The dump job logs in as `lanes_register_dump`, a member of READER alone.
 `lanes-index login` makes and rotates them, and revokes an engineer's two,
-through Brett's admin service; it never revokes the dump job's login, and
-`login revoke --dump-job` is a usage error, exit 64 (lane 3's ruling, #165
-6933947760). Each login carries its group's floors itself, since a role's
-settings reach no member (§1.4's login step; `operations.md` §2.4). Revoking an
+through Brett's admin service, and each login carries its group's floors
+itself, since a role's settings reach no member (§1.4's login step;
+`operations.md` §2.4). It never revokes the dump job's login. `login revoke
+--dump-job` is a usage error, exit 64 (lane 3's ruling, #165 6933947760).
+Revoking an
 engineer's logins ends that engineer's reach alone; the indexer keeps one shared
 login.
 
