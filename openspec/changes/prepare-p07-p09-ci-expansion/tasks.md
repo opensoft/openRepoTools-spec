@@ -14,7 +14,7 @@
 - [x] 2.4 Review profile-specific P07/P09 history ceilings with boundary/overflow and complete-lineage regressions; preserve pending product bindings and live limits.
 - [ ] 2.5 Validate and independently review only the final owner-confirmed P07/P09 ceilings, including complete real-chain prefix and boundary/overflow coverage; preserve pending bindings and live limits until those cuts qualify.
 - [x] 2.6 Align disabled previews with renewed owner consent requiring P07 before P09; validate reversed-order refusal and foundation preservation in the P07 prefix, without changing live controls or accepting moved product heads.
-- [ ] 2.7 Explicitly unbind superseded cuts and stage P07's owner-agreed shared helper inventory; validate pending-context and exact regular-file regressions, retaining fresh review before publication.
+- [x] 2.7 Explicitly unbind superseded cuts and stage P07's owner-agreed shared helper inventory; validate pending-context and exact regular-file regressions, retaining fresh review before publication.
 
 ## 3. Publish preparation only
 
@@ -280,5 +280,16 @@ in161.74s. Strict OpenSpec and both diff checks passed. The actual inspector
 reports pending-owner-heads/unbound-source with full CI, no skipping, no
 admission and no activation. Missing, modified-status and executable helper
 regressions pass alongside current-observation/pending-head coverage.
-Fresh independent review remains required before publication; task2.7 and
-final bindings/bounds stay pending. Published111/78 are still06129307/8a5a7e2e.
+At this validation checkpoint, fresh independent review was still pending.
+Published111/78 are still06129307/8a5a7e2e; final bindings/bounds stay pending.
+
+The subsequent private checkpoint code33f09c52e9d02200c716cff9a6f1bd7a5a087686
+and specbf59bfef057bed18ab5ce4d3869ab82bcaf18f45 completed all nine local
+expert-role assignments plus master synthesis with no actionable finding.
+Roles ran in bounded waves through three Codex agents. This completes task2.7
+for the pending preparation, not final product binding, publication, CI,
+merge, activation, live qualification or assembly acceptance. This documentation
+completion update receives a fresh exact-head confirmation before publication;
+the reviewed report is retained outside the source repositories. The redundant
+old14-hash refusal case does not itself test the held16 ceiling, but dedicated
+16/17 and24/25 boundary regressions independently do; no runtime gate is weakened.
