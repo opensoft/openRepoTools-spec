@@ -5191,11 +5191,10 @@ lanes-index bootstrap --admin-service '<service>' --label '<name>' --repository 
   PUBLIC. It is safe to repeat, and prints `unchanged` where the roles are
   already in place.
 
-**`lanes-index login`** makes and rotates the logins, and revokes an
-engineer's two, from Brett's shell after the bootstrap, through the same
-admin service and under the
-bootstrap's rules for a secret: `add` and `rotate`, which print a password,
-refuse when stdout is not a terminal, and it sets each password as a
+**`lanes-index login`** makes and rotates the logins, and revokes an engineer's
+two, from Brett's shell after the bootstrap, through the same admin service and
+under the bootstrap's rules for a secret: `add` and `rotate`, which print a
+password, refuse when stdout is not a terminal, and it sets each password as a
 SCRAM-SHA-256 verifier computed on the client.
 
 ```sh
@@ -5233,15 +5232,16 @@ lanes-index login revoke <engineer> --admin-service '<service>'
   64 for usage, `rotate` with neither an engineer nor `--dump-job`, or with
   both, and `revoke` with `--dump-job` or with no engineer, among it. The dump
   job's login is rotated, never revoked, by this command.
-- **What a restore keeps.** A database dump holds no login, membership,
-  verifier or floor, and a physical backup of the cluster holds them all. After
-  a point-in-time restore each login is there with its old password, but not
-  one made after its moment: `login add` makes the pair of an engineer added
-  after it, `login revoke` ends the logins of an engineer who has left, and
-  `login rotate` gives each remaining login a new one; on a new Cluster
-  restored from a dump, or re-imported, `bootstrap --roles-only` makes the
-  groups and `login add` makes each engineer's logins again ("The database
-  lost for good", below).
+- **What a restore keeps.** A database dump holds no login, membership, verifier
+  or floor, and a physical backup of the cluster holds them all. After a
+  point-in-time restore each login is there with its old password, but not one
+  made after its moment: the route is `login add` for every current engineer and
+  `login add --dump-job`, `login revoke` for an engineer who has left, `login
+  rotate` for every current engineer and `login rotate --dump-job`, and the
+  re-pointing of every current engineer and the dump job, its secret included,
+  from `add`'s URL lines and each login's last password-file line; after a dump
+  or a re-import, `bootstrap --roles-only` makes the groups and `login add` each
+  engineer's logins again ("The database lost for good", below).
 
 ### What the REGISTER-WRITER secret can reach
 

@@ -1401,9 +1401,9 @@ are lane 3's rulings memo's).
     login add` for every current engineer and `login add --dump-job`; `login
     revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's
     `pg_roles` that belongs to no current engineer; `login rotate` for every
-    current engineer and `login rotate --dump-job`; and the re-pointing, with
-    the URL lines from `add` and the password-file lines from the last command
-    that printed each line (ops:372);
+    current engineer and `login rotate --dump-job`; and the re-pointing of every
+    current engineer and the dump job, its secret included, with each engineer's
+    URL lines from `add` and each login's last password-file line (ops:372);
   - the after-loss cutover;
   - a new generation.
 
