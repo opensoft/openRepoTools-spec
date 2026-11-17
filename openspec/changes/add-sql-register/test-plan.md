@@ -4057,23 +4057,23 @@ lane 3's ruling 6 (#165 comment 6578020193).
     asserts that it equals A's head when the dump was taken. `pg_dump` and
     `pg_restore` come from the directory the fixture chose, as in AT-LRMPG,
     whose cases also hold the provider's point-in-time restore.
-  - A is then destroyed, and stoppable cluster B is new. `lanes-index
-    bootstrap --roles-only` runs on B first (F18). For the restore branch
-    the backup is restored next, and then `bootstrap` runs again; for the
-    re-import, `bootstrap` follows at once (§2.3, the disaster path's
-    step 6). On either branch `lanes-index login add` then makes the
-    engineers' logins on B again, with new passwords, since B is a new
-    server and a dump holds no login (§1.4, "What a revoked login sees";
-    `operations.md` §2.4's restores), and the re-pointing below writes
-    their lines.
+  - A is then destroyed, and stoppable cluster B is new. The restore branch takes the order of `research.md`'s
+    ERR-03, through one admin service that names the register's database: (1) the database, which the admin makes
+    through his own maintenance connection; (2) `lanes-index bootstrap --roles-only` (F18); (3) `login add` for
+    every current engineer, and `login add --dump-job`, with new passwords, since B is a new server and a dump
+    holds no login (§1.4, "What a revoked login sees"; `operations.md` §2.4's restores); (4) `pg_restore` of the
+    backup; (5) `bootstrap` again. The re-import (§2.3, the disaster path's step 6) takes: (1) `bootstrap
+    --roles-only`; (2) the full `bootstrap`; (3) `login add` for every current engineer; (4) `login add
+    --dump-job`. On both, the re-pointing below writes each engineer's URL and password-file lines from its `login
+    add`, and the dump job's password-file line to its Key Vault secret, which has no URL line.
   - Every operator command runs with `LANES_LANE=` the operator lane, through
     its checkout (F12).
-  - Each host's configuration is re-pointed at B before any command reaches
-    it, in one edit: `register_url=`, `reader_url=`, their password files and
-    `register_label=`, B's own (§2.3's re-pointing; F18). For the restore
-    branch B's label differs from A's, since B's `bootstrap` took a new
-    `--label` (N4). A second configuration still reaches A and keeps A's
-    `register_label=`, for the host-still-on-the-live-database case.
+  - Each host's configuration is re-pointed at B before any command that connects
+    through `lanes-index.conf` reaches B, in one edit: `register_url=`,
+    `reader_url=`, their password files and `register_label=`, B's own (§2.3's
+    re-pointing; F18). For the restore branch B's label differs from A's, since B's
+    `bootstrap` took a new `--label` (N4). A second configuration still reaches A
+    and keeps A's `register_label=`, for the host-still-on-the-live-database case.
 - **Oracle.**
   - **Re-import** (§2.3, step 6).
     - After `lanes-index import --at <M> --after-loss`, B's head is `m`, and
@@ -5228,13 +5228,13 @@ texts that W folded (#165 6722314667 and 6722693446).
     `SUPERUSER`, as `azure_pg_admin`'s members are, twice with one catalog,
     and refuses with 2 a database that admin does not own, where its
     database-level `REVOKE` and `GRANT` would only warn (M4, O7);
-  - `lanes-index login add <engineer>` makes that engineer's two logins,
-    `lanes_w_<engineer>` and `lanes_r_<engineer>`, each a member of its
-    group and carrying its group's floors, and prints their password-file
-    lines once; `add --dump-job` makes `lanes_register_dump`, a member of
-    READER alone; a rerun puts back a lost membership and changes nothing
-    else; `rotate` and `revoke` act as §2.4 has them; and a member made
-    without the login step carries none of the floors;
+  - `lanes-index login add <engineer>` makes that engineer's two logins, `lanes_w_<engineer>` and
+    `lanes_r_<engineer>`, each a member of its group and carrying its group's floors, and prints their
+    password-file lines once; `add --dump-job` makes `lanes_register_dump`, a member of READER alone; a
+    rerun of `add <engineer>` puts back a lost membership or floor of a login that exists and can still
+    log in, repeats the URL lines, prints no password line for it and changes nothing else; either form
+    of `add` refuses an existing revoked login with 2 and writes nothing; `rotate` and `revoke` act as
+    §2.4 has them; and a member made without the login step carries none of the floors;
   - two engineers' writer logins write alike, and the server's log names
     the login that wrote; a revoked login is refused at connect and in its
     open session, and its writes and reads exit 69;
@@ -5270,13 +5270,13 @@ texts that W folded (#165 6722314667 and 6722693446).
     given `--no-passwords` (§2.4, "The secret"), as AT-P8 shows. The design
     supports both for `bootstrap`, and this entry uses both. A run whose
     roles need no
-    password here, the bootstrap without a superuser and the database the
-    admin does not own, passes `--no-passwords`. A run that must show a
-    password line, or show that it prints none, runs under a pty
-    (`pty.openpty()`), as AT-P8's printing run does, and the test reads its
-    output: each restore's `bootstrap --roles-only` and the `bootstrap`
-    after it, and every `lanes-index login` run, which also refuses off a
-    terminal (§2.4).
+    password here, the bootstrap without a superuser and the database the admin does not own, passes
+    `--no-passwords`. A run that must show a password line, or show that it prints none, runs under a pty
+    (`pty.openpty()`), as AT-P8's printing run does, and the test reads its output: each restore's
+    `bootstrap --roles-only` and the `bootstrap` after it, and every `lanes-index login add` and `login
+    rotate` run, which can print a password and so always refuse off a terminal (§2.4, ERR-59). `add`
+    prints one only for a login it creates, and a repeated `add` of a login that exists prints none
+    (`lanes-index` at `208a955e`, :14060–14073); `login revoke` prints none and does not refuse.
   - **The logins' password files** are 0600 files under the test's own
     temporary `$HOME`: `$HOME/passfiles/<login>` for each login, holding the
     line `login add` printed for it, or, for a bare member, the password
@@ -5415,17 +5415,17 @@ texts that W folded (#165 6722314667 and 6722693446).
     printed lines connect. The new cluster's log holds each printed password
     only as a SCRAM verifier, never as clear text, since `bootstrap` sets it
     on the client (O6).
-  - **The restore from the provider's copy** (O5; 6722541787): a copy of the
-    source cluster's stopped data directory, started as a new server,
-    stands for a provider's snapshot or point-in-time restore, which keeps
-    the roles and their passwords. `bootstrap --roles-only`, run under the
-    pty, prints `unchanged` and no password line. The admin then sets a new
-    password for each login, as psql's `\password` does, and the test writes
-    each into its login's password file: the old password is refused, the
-    new one connects, and the server's log holds each new password only as
-    a SCRAM verifier, never as clear text. That is `\password`'s doing, not
-    `bootstrap`'s: O6's rule for `bootstrap`'s own statements is checked in
-    the restore from the dump, above.
+  - **The restore from the provider's copy** (O5; 6722541787): a copy of the source cluster's stopped data directory, started as a new server, stands for a
+    provider's snapshot or point-in-time restore, which keeps the roles and their passwords; the source is cut over to `primary` before the copy is made.
+    `bootstrap --roles-only`, run under the pty, prints `unchanged` and no password line. After the recovery and the full `bootstrap`, the route is `login add`
+    for every current engineer and `login add --dump-job`; `login revoke` for each `lanes_w_*` and `lanes_r_*` pair in the restored copy's `pg_roles` that
+    belongs to no current engineer; `login rotate` for every current engineer and `login rotate --dump-job`; and the re-pointing of every current engineer and
+    the dump job, its secret included, with each engineer's URL lines from `add` and each login's last password-file line. Here every login is in the copy and
+    every engineer current, so the test runs the full `bootstrap` after the recovery, under the pty, with a new `--label`, distinct from the source's, and the
+    `--repository` and `--lane` that the manual's command gives (`docs/README-lanes.md` :6129), and checks its output (the migrations it applies, or `unchanged`,
+    and the exact `register_label=` line naming the new label, which the re-pointing then uses), then the third step only, `login rotate` for the engineer and
+    `login rotate --dump-job`, which give each a new password, and writes each printed line into its login's password file: the old password is refused, the new
+    one connects, and the log holds each new password only as a SCRAM verifier. An engineer made, and one who left, after the copy are 6.2's planned case.
   - **Check 11** (O8), on the TLS cluster: with each connection's URL
     carrying `sslmode=verify-full` and `sslrootcert=` naming the test CA,
     which stands for the provider's, check 11 passes. It fails for a URL
@@ -7362,8 +7362,8 @@ design. No other host path appears in a test.
     10 s for the renderer's reads and `reconcile`, 1000 and 5000 ms for
     `status`, 5000 ms and 10 s for each `rollback` call, and 2000 ms and
     300 s for `import`;
-  - the environment of each call, as the child rebuilds it, and not the one it inherits (`contracts/config.md:94–112`, its password-file row at :108; `contracts/register-cli.md:210–216`; design:3852–3859; AT-10's environment oracle, :1949–1953): the inherited `PGPASSFILE`, `PGPASSWORD`, `PGSERVICEFILE`, `PGSYSCONFDIR` and `PGSERVICE` are dropped first, on every path (`contracts/config.md:112`), and on register paths every inherited `PG*` variable (`contracts/register-cli.md:214`);
-    then each ordinary role call, the writer's, the reader's, the indexer's, a direct read's and the service child's, receives its configured role's `PGPASSFILE` (`contracts/config.md:108`; design:3858, "`PGPASSFILE` and `PGOPTIONS` are the service's own"), and the admin path receives, of the five, only `PGSERVICE=<service>` (`contracts/register-cli.md:214`; T109);
+  - the environment of each call, as the child rebuilds it, and not the one it inherits (`contracts/config.md:94–112`, its password-file row at :108; `contracts/register-cli.md:210–216`; design:3855–3862; AT-10's environment oracle, :1949–1953): the inherited `PGPASSFILE`, `PGPASSWORD`, `PGSERVICEFILE`, `PGSYSCONFDIR` and `PGSERVICE` are dropped first, on every path (`contracts/config.md:112`), and on register paths every inherited `PG*` variable (`contracts/register-cli.md:214`);
+    then each ordinary role call, the writer's, the reader's, the indexer's, a direct read's and the service child's, receives its configured role's `PGPASSFILE` (`contracts/config.md:108`; design:3862, "`PGPASSFILE` and `PGOPTIONS` are the service's own"), and the admin path receives, of the five, only `PGSERVICE=<service>` (`contracts/register-cli.md:214`; T109);
     and no call carries `PGPASSWORD`, a literal password or a connection URL (SVC-2; spec#17's re-review r12, its second BLOCKING finding; lane 3's ruling, commit 30).
 - **What it covers, and always runs:**
   - **argv.**
@@ -8265,7 +8265,7 @@ them. Those totals use A's measured network share, its median less its
   register read is M5's request or, with the service down, a direct read.
   M13 counts each verb's reads.
 - **M9:** the Rule 3 stamp is a git push, not the database. Every total is
-  inside `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5496`),
+  inside `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5499`),
   and the phase plan puts the healthy bind at about 18 s at 20 ms, 44 s at
   150 ms and 75 s at 300 ms ("Answer 2's detached bind").
   `start-record` may change the read count; M13 counts it.
@@ -8559,9 +8559,9 @@ nine have none or only a partial one (below).
 | The cutover is one guarded sequence † | 7 (part G); 13; AT-F2 (the abort, the unconfirmed push); AT-F4 (the order); AT-SET (a write before the push is confirmed); AT-D22 (the restore form's abort) |
 | The cutover takes its database label from the workstation's configuration ¶ | AT-D22 (`test_an_after_loss_cutover_from_a_host_still_on_the_live_database_is_refused_with_2_and_writes_nothing`: a host still pointed at the live database; `test_the_restore_route_commits_under_the_replacements_register_label_and_check_10_fails_until_it_does`: the restore route); AT-P8 (`test_the_readiness_check_10_compares_register_label_with_the_switch_label[<case>]`: a label that is not the switch's at `primary`); AT-F18 (`test_the_after_loss_cutovers_label_rules_in_the_transaction[<case>]`, the engine half); AT-LRLABEL (`cutover`'s two refusals, a file with no `register_label=`: `test_cutover_without_register_label_is_refused_2_before_it_connects`, and a label that differs from the switch's at `files`: `test_cutover_at_files_with_a_label_not_the_switchs_is_refused_2_before_it_sends[<case>]`; and a first cutover's store: `test_a_first_cutovers_store_names_the_register_label`) |
 | Rollback returns the estate to the files † ¶ | 8 (a); 13; AT-SET; AT-F1; AT-F4 (`--hold-marker`); AT-F1 (LR012 over a recorded divergence: `test_a_rollback_entry_over_a_recorded_divergence_is_lr012[<case>]`, `test_rollback_exits_2_on_lr012_naming_the_divergence_and_both_ways_out`); AT-8 (a divergence recorded as the rollback starts: `test_a_rollback_goes_back_to_its_check_past_a_last_error_and_refuses_a_divergence_recorded_meanwhile[<case>]`; a stray on origin not yet recorded: `test_a_rollback_finds_a_stray_not_yet_recorded_records_it_and_exits_2[<case>]`; the retry through its check: `test_a_rollback_retries_a_lost_turn_on_a_fresh_k_through_its_check`, `test_a_rollback_goes_back_to_its_check_on_each_lost_turn_code[<code>]`); D9 (`test_a_rollback_that_keeps_losing_its_turn_exits_75_at_the_deadline_with_nothing_written`) |
-| A rollback needs the database | 8 (b); section 4.2; D22; AT-F18 (the disaster path); AT-LRMPG (the restore from the dump and from the provider's own copy: `test_a_restore_from_the_dump_equals_its_source_with_new_passwords`, `test_a_restore_from_the_providers_copy_keeps_the_roles_and_takes_new_passwords`) |
+| A rollback needs the database | 8 (b); section 4.2; D22; AT-F18 (the disaster path); AT-LRMPG (the restore from the dump and from the provider's own copy: `test_a_restore_from_the_dump_equals_its_source_with_new_passwords`, `test_a_restore_from_the_providers_copy_keeps_the_roles_and_takes_new_passwords`); and the physical-backup route's two cases past the recovery point, an engineer made after it and an engineer who left after it, to be added to T224's module by its next follow-up as one case and not yet written, its name a proposal: `test_a_restore_from_the_providers_copy_adds_an_engineer_made_after_the_copy_and_revokes_one_who_left_after_it_before_rotating_the_rest` (the route as the manual words it: after the recovery and the full `bootstrap`, `login add` for every current engineer and `login add --dump-job` first, which makes only the logins missing from the copy; then `login revoke` for each restored `lanes_w_*` and `lanes_r_*` pair that belongs to no current engineer, found by reading the copy's `pg_roles` for the names that follow `lanes_w_` or `lanes_r_` and are not a current engineer's, after which a new connection by either login of a pair is refused; then `login rotate` for every current engineer and `login rotate --dump-job`, which gives every login a new password; then, fourth, re-point each engineer from that engineer's URL lines, which only `login add <engineer>` prints, and every login from its last password-file line, the dump job's being its Key Vault secret, with no URL line expected for it; and, as the control, `login rotate` for the engineer made after the copy before its `login add` exits 2) |
 | A writer the rollback missed cannot write | 8 (c); section 4.2; AT-SET (an older snapshot fails 40001, then 69) |
-| The operator's bootstrap is idempotent and holds no secret † ◊ | P8 (a connection string refused with 2; `PGSERVICE` only in the environment); AT-VER; AT-LRMPG (the bootstrap without a superuser: `test_bootstrap_without_a_superuser_runs_twice_with_one_catalog`, `test_bootstrap_refuses_a_database_its_admin_does_not_own`; each engineer's two logins and the dump job's, made, rotated and revoked by `lanes-index login`, each with its group's floors, and the delta's "An engineer's logins" scenario: `test_two_writer_logins_write_alike_and_the_log_names_each`, `test_a_revoked_login_is_refused_69_and_writes_nothing[<case>]`, `test_an_open_session_gets_42501_between_the_revokes_steps_then_57p01`, `test_a_write_cut_by_a_revoke_mid_commit_is_in_doubt_and_ends_3_with_nothing_written`, `test_login_add_makes_an_engineers_two_logins_with_their_floors_and_prints_their_lines_once`, `test_login_add_run_again_puts_back_a_lost_membership_and_changes_nothing_else`, `test_login_rotate_keeps_an_open_session_and_refuses_the_old_password`, `test_login_refuses_a_bad_name_a_connection_string_and_a_pipe[<case>]`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`) |
+| The operator's bootstrap is idempotent and holds no secret † ◊ | P8 (a connection string refused with 2; `PGSERVICE` only in the environment); AT-VER; AT-LRMPG (the bootstrap without a superuser: `test_bootstrap_without_a_superuser_runs_twice_with_one_catalog`, `test_bootstrap_refuses_a_database_its_admin_does_not_own`; each engineer's two logins, made, rotated and revoked, and the dump job's, made and rotated, by `lanes-index login`, each with its group's floors, and the delta's "An engineer's logins" scenario: `test_two_writer_logins_write_alike_and_the_log_names_each`, `test_a_revoked_login_is_refused_69_and_writes_nothing[<case>]`, `test_an_open_session_gets_42501_between_the_revokes_steps_then_57p01`, `test_a_write_cut_by_a_revoke_mid_commit_is_in_doubt_and_ends_3_with_nothing_written`, `test_login_add_makes_an_engineers_two_logins_with_their_floors_and_prints_their_lines_once`, `test_login_add_run_again_puts_back_a_lost_membership_and_changes_nothing_else` (it covers the membership put back, no password line and the passwords left as they were; a rerun's floor put-back and URL lines are not yet covered, and T224's next follow-up is to add them to it), `test_login_rotate_keeps_an_open_session_and_refuses_the_old_password`, `test_login_refuses_a_bad_name_a_connection_string_and_a_pipe[<case>]`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`); and T110's case of FR-009's refusal of `login revoke --dump-job`, planned for T110's next follow-up and not yet written, its name a proposal: `test_login_revoke_with_dump_job_refuses_with_64_in_the_codes_words_before_any_configuration_or_psql` (`tests/test_lanes_index.py`: `login revoke --dump-job` exits 64 with the code's words, before any configuration or `psql` step) |
 | The readiness check proves an environment before the cutover † ◊ | P8 (every check, the schema's window among them; the endpoint's address count, check 13: `test_the_readiness_check_13_compares_each_hosts_address_count_with_register_addresses[<case>]`; git 2.32 or later, check 14: `test_the_readiness_check_fails_on_each_fault[old-git]`; the cached module, check 1: `test_the_readiness_check_fails_on_each_fault[cache-payload]`); 14; AT-VER; AT-LRMPG (checks 11 to 12: `test_ready_check_11_needs_tls_and_the_primary[<case>]`, `test_ready_check_12_passes_the_logins_the_step_made`, `test_a_member_made_without_the_login_step_carries_no_floor_and_fails_ready_check_12`; the reader's `target_session_attrs`: `test_reader_url_takes_target_session_attrs_primary_not_read_write[<case>]`) |
 | The `mode=primary` flip is a command run once per host † | P8 |
 | Claim order is commit order | 4; C10; D19; AT-SPL; AT-LR5; section 4.1 |
@@ -9175,7 +9175,7 @@ marked against V:
 5. **Row 37.** Answered by the design's table of the bind child's variables,
    in lane 4's section ("Answer 2's detached bind"): `LANES_GIT_TIMEOUT` is
    45, beside the bind's bound, `bound_s`: 500 s at `c` = 2 and 530 s at `c`
-   = 3, with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5496`) (W). AT-F6's case 13 asserts it.
+   = 3, with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5499`) (W). AT-F6's case 13 asserts it.
 6. **Row 10's fork in phase W.** Answered yes: the phase plan says a stub
    test asserts the fork's argv. AT-14 has it,
    `test_a_primary_write_forks_render_checkout_on_the_lane_checkout_detached[<case>]`,
