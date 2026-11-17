@@ -2176,9 +2176,9 @@ lane 3's ruling.
   fix round 11, a scenario for the refusal; exit-codes.md:185 and :188;
   design.md:3524–3529; test-plan.md:8564 and, from fix round 11, :8562,
   with test-map.tsv's rows 649 and 650; and the manual (:5194–5232 at
-  `761c37b0`). tasks.md's T110 (:371, :380–383, :389–391) keeps its words:
-  its Revoke is for the engineer's logins, and its refusals list 2, 2 and
-  69. The parser test for the refusal is T110's next follow-up, code.
+  `761c37b0`). tasks.md's T110 (:380–383, :389–391) keeps its words: its Revoke
+  is for the engineer's logins, and its refusals list 2, 2 and 69; fix round 12
+  adds to :371 and :379. The parser test is code, T110's next follow-up.
 - **Whose:** lane 3's ruling, #165 6933947760, on Codex's BLOCKING 1 at
   `6a8f6626` (`codex-spec-73-6a8f6626.md`, sha256
   `559065043df6ab92ed7f78585c0896795b7de9585406b11c62ea0e09ac3a5ed3`),

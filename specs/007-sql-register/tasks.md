@@ -368,7 +368,7 @@ T240.
     4. the writer and reader groups and the indexer hold CONNECT;
     5. the owner's global default privilege is there: a function the owner makes afterwards is not executable by a role outside the groups;
     6. `bootstrap` after the restore changes nothing: it re-runs no statement and writes no label.
-- [ ] T110 [US7] [O] `lanes-index login add`, `add --dump-job`, `rotate`, `rotate --dump-job` and `revoke` (Y ops §2.4, `:477`; FR-009, FR-054; L1-A8) `[X: logins]` `[X: backups]` (its verify leaves out lane 2's T216 and T224 tests: they fail until T228 or T229, which wait for this task; T228's verify runs T216's; lane 2, #165 6751920725) — files: `lanes-index` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
+- [ ] T110 [US7] [O] `lanes-index login add`, `add --dump-job`, `rotate`, `rotate --dump-job` and `revoke` (Y ops §2.4, `:477`; FR-009, FR-054; L1-A8) `[X: logins]` `[X: backups]` (LANE 3 DRAFT, for lane 1 to confirm: its planned parser case, in `tests/test_lanes_index.py`, is FR-009's refusal, `login revoke --dump-job`, a usage error, exit 64, made before any configuration is read or any SQL runs, `test_login_revoke_with_dump_job_refuses_with_64_in_the_codes_words_before_any_configuration_or_psql`, its name a proposal) (its verify leaves out lane 2's T216 and T224 tests: they fail until T228 or T229, which wait for this task; T228's verify runs T216's; lane 2, #165 6751920725) — files: `lanes-index`, `tests/test_lanes_index.py` — verify: `TMPDIR=/tmp OPENREPOTOOLS_REQUIRE_PG=1 bash tests/run.sh -k 'test_lanes_index.py or repo_hygiene'`
   - **Source:** L1:226.
   - **Depends on:** SPEC-PR; T109 (L1:492); lane 2's T200, T201, T205, T206: L2-0a and L2-0b, before any real-engine run (L1:507).
   - **Changed at assembly:** lane 3, round B8, 2026-11-09: its verify's runs of T216's and T224's tests are left out, since they fail until T228 or T229, which wait for it, so its verify is the regression run until lane 2 names a test of its own (lane 2, #165 6751920725; R1's SHOULD 3).
@@ -376,7 +376,7 @@ T240.
     - `lanes_w_<engineer>` joins REGISTER-WRITER and carries the writer's floors: `lock_timeout` 2000ms, `statement_timeout` 5s and `idle_in_transaction_session_timeout` 5s.
     - `lanes_r_<engineer>` joins READER and carries `default_transaction_read_only` on, `lock_timeout` 1000ms and `statement_timeout` 1500ms.
     - `--dump-job` makes `lanes_register_dump` alone, with the reader's floors. Brett stores its password as the Key Vault secret the dump CronJob reads.
-    - A rerun puts back a lost membership.
+    - A rerun (LANE 3 DRAFT, for lane 1 to confirm, from `lanes-index` at `208a955e`) is idempotent for a login that exists: it puts back a lost membership and any of its group's floors that the login lacks, each named; it repeats the `register_url=` and `reader_url=` lines; it prints no password line and keeps the existing password. Only a login it makes gets a new password and its line.
   - **Revoke** is Y:2302–2309, for each of the engineer's logins in order:
     - `NOLOGIN`;
     - the membership revoked;
