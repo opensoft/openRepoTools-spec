@@ -638,8 +638,8 @@ the section that carries it.
   database dump does not hold. A CNPG point-in-time restore is instead a new
   Cluster whose physical restore carries the roles, their verifiers, memberships
   and per-role settings (lane 1's engine proof, #165 6724409717), so it needs no
-  roles-only bootstrap: `--roles-only` prints `unchanged` there, and
-  `lanes-index login rotate` then gives each login a new password
+  roles-only bootstrap: `--roles-only` prints `unchanged`, then `login add`,
+  `login revoke` for each engineer who has left, and `login rotate` follow
   (`operations.md` §2.3's step 6). Every host is re-pointed at the new database.
   The re-import rewrites the marker as the cutover's entry, at `m+1`, so the
   next write is `m+2` (`b+1` after a restore; D24), and `ready` and `set-mode`
@@ -3334,10 +3334,10 @@ workstation's lanes paused first, as for the freeze, and the outage declared
    restore is instead a new Cluster, recovered from the Barman Cloud backups,
    and a physical restore carries the roles, their verifiers, memberships and
    per-role settings (lane 1's engine proof, #165 6724409717), so it needs no
-   roles-only bootstrap: there step 3 makes the Cluster, step 2 then prints
-   `unchanged`, and Brett runs `lanes-index login rotate` for each engineer and
-   the dump job, whose new lines step 5's re-pointing writes (`operations.md`
-   §2.3's step 6).
+   roles-only bootstrap: step 2 prints `unchanged`. Brett runs `login add` for
+   each current engineer and the dump job, `login revoke` for each engineer the
+   copy holds who is not current, and `login rotate` for the same; step 5's
+   re-pointing writes their lines (`operations.md` §2.3's step 6).
 3. If `b > m`, restore that backup into a new database; its journal already
    holds `m+1 … b`, and the renderer catches up. Otherwise re-import at
    origin's tip into a new database, with the head set to `m`, so

@@ -1397,8 +1397,10 @@ are lane 3's rulings memo's).
     Y:2243–2244; Y:2256–2257). `bootstrap` itself still changes nothing else
     with the switch at `primary` (ops:434);
   - after a CNPG point-in-time restore, which carries the roles, their
-    verifiers, memberships and floors, no roles-only step, and
-    `lanes-index login rotate` for each engineer and the dump job (ops:372);
+    verifiers, memberships and floors, no roles-only step; then `lanes-index
+    login add` for each current engineer and the dump job, `login revoke` for
+    each engineer the copy holds who is not current, and `login rotate` for
+    them, whose lines the re-pointing writes (ops:372);
   - the after-loss cutover;
   - a new generation.
 
