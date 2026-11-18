@@ -495,6 +495,13 @@ while they track `main`, which is the failure the Why exists to prevent.
   filled in or cut before the tag.
 - **Each GitHub Release** is created from its file, after PyPI serves the
   version, so the notes never name a version that PyPI lacks.
+  - **Departure noted 2026-11-12, on Brett Heap's "1a"** (feature 007's task
+    T346): the release now follows T346's draft flow, in which `release.yml`'s
+    `asset` job creates the GitHub Release as a draft holding check 1's digest
+    list, and the release owner publishes it with the notes file. The bullet
+    above is left as it stood. `design.md`'s Decision 11 and the
+    `release-tags-and-branches` delta spec's "Release notes and GitHub
+    Releases" carry the note whole, with Brett Heap's "3a" and "1a".
 - **README.md's paragraph** that says "There is no version number here" is
   rewritten. It says that releases are annotated tags, that the version comes
   only from the tag, and what `--version` prints when stamped and when
@@ -692,6 +699,20 @@ dispatch until the two environments exist with their rules.
      `tests.yml` runs have all finished, and the newest is green;
    - the release is dispatched, and Brett approves both deployments;
    - the GitHub Release is created from `docs/release-notes/v1.1.0.md`;
+     - **Departure noted 2026-11-14, on Brett Heap's "1a"** (feature 007's
+       task T346): this step now follows T346's draft flow, which Brett Heap
+       chose with "3a" (2026-11-11). `release.yml`'s `asset` job, which
+       needs the `pypi` job, has made the GitHub Release a draft holding
+       check 1's digest list, `openRepoTools-<version>.sha256`, and has read
+       the list back at the build's sha256. On Brett Heap's word the release
+       owner publishes that draft with the notes file: `gh release edit
+       v<version> --repo <repository> --draft=false --verify-tag
+       --notes-file <spec>/docs/release-notes/v<version>.md`. If `asset`
+       failed, it is re-run before publishing, and the release is never
+       published without the list. The step above is left as it stood.
+       `design.md`'s Decision 11 and the `release-tags-and-branches` delta
+       spec's "Release notes and GitHub Releases" carry the note whole, with
+       Brett Heap's "3a" and "1a".
    - `release/v1.1` is cut at `v1.1.0`;
    - lane 3 opens the assembly's README PR with the pipx route's text, once
      PyPI serves v1.1.0 and the workBenches condition holds.

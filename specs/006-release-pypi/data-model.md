@@ -155,12 +155,12 @@ openrepotools by its link instead of by a version.
 | tests.yml runs on the commit | all finished; the newest succeeded; each ran the four jobs |
 | tree digest | `sorted-ls-tree-r-v1`, the same locally and from the forge |
 | notes | `docs/release-notes/vX.Y.Z.md`, in the spec leg after the cutover |
-| GitHub Release | created by hand from the notes file, after PyPI serves the version |
+| GitHub Release | after PyPI serves the version, `release.yml`'s `asset` job creates it as a draft holding check 1's digest list, `openRepoTools-<version>.sha256`; the release owner publishes that draft with the notes file, on Brett Heap's word, and never without the list |
 
 **States of a version on the indexes**:
 
 ```text
-tagged ─▶ built (two builds, one file) ─▶ on TestPyPI ─▶ install-checked ─▶ on PyPI ─▶ Released (GitHub)
+tagged ─▶ built (two builds, one file) ─▶ on TestPyPI ─▶ install-checked ─▶ on PyPI ─▶ a draft holding the list ─▶ Released (GitHub)
              │ any gate fails: nothing uploaded       (pre-release stops at install-checked)
 ```
 
@@ -181,11 +181,14 @@ tagged ─▶ built (two builds, one file) ─▶ on TestPyPI ─▶ install-che
 | `testpypi` | exactly `id-token: write`, `actions: read`, `contents: read` | `testpypi` | a `v*` tag that the guard sends to TestPyPI |
 | `install` | `contents: read` | none | every dispatch the build passes: on the build's wheel for a branch, from TestPyPI for a tag |
 | `pypi` | exactly `id-token: write`, `actions: read`, `contents: read` | `pypi` | a `v*` tag of a final `X.Y.Z` in `opensoft/openRepoTools-code` only |
+| `asset` | exactly `contents: write` | none | where `pypi` runs, after it, since it needs `build` and `pypi`: it puts check 1's digest list on the GitHub Release `v<version>`, on a draft it creates where there is none, never in place of another file of that name, and reads the release's copy back at the recorded sha256 (feature 007's T346) |
 
 **Outputs of `build`**: the wheel's file name, its sha256, the tree digest,
-and the repository guard's `to-testpypi` and `to-pypi`. The two upload jobs'
-conditions read the guard's two outputs, and every later job checks the
-wheel and the digest against the others.
+the repository guard's `to-testpypi` and `to-pypi`, and check 1's digest
+list's file name and its sha256 (feature 007's T346). The two upload jobs'
+conditions read the guard's two outputs, and every later job but `asset`
+checks the wheel and the digest against the others. `asset` checks check 1's
+digest list against its recorded sha256 instead.
 
 **The repository guard** (FR-048):
 

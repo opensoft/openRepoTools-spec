@@ -495,6 +495,33 @@ over as they are. It differs in these places:
     draft ends with a line naming its own path in the spec leg, so the
     Release also links to the notes, as N3's default asks.
   - `release.yml`'s RELEASING header writes the step down.
+- **Departure noted 2026-11-12, on Brett Heap's "1a"** (feature 007's task
+  T346): the release owner no longer creates the GitHub Release by hand. The
+  bullet above is left as it stood, and the release follows T346's draft
+  flow.
+  - `release.yml`'s `asset` job creates the GitHub Release as a draft
+    holding check 1's digest list, `openRepoTools-<version>.sha256`. On
+    Brett Heap's word the release owner publishes that draft with the notes:
+    `gh release edit v<version> --repo <repository> --draft=false
+    --verify-tag --notes-file <spec>/docs/release-notes/v<version>.md`.
+  - If `asset` failed, it is re-run before publishing, and the release is
+    never published without the list. Step 5 of `release.yml`'s RELEASING
+    header writes this down.
+  - Brett Heap chose the draft flow with "3a" (2026-11-11, in lane
+    openRepoTools-3's session): "a. Accept the draft flow, and amend FR-034,
+    FR-042 and `data-model.md` (Recommended)". T346's spec
+    PR amends feature 006's FR-034 and FR-042
+    (`specs/006-release-pypi/spec.md`) and its `data-model.md` to say so.
+  - The invariant still holds. `asset` needs the `pypi` job, which ends with
+    PyPI serving the version, and it reads no notes file. The draft's
+    placeholder body is replaced by the notes file's text when the owner
+    publishes it.
+  - This note is placed here, in the `release-tags-and-branches` delta
+    spec's "Release notes and GitHub Releases", and, as a shorter note, in
+    `proposal.md`'s "Each GitHub Release" bullet, on Brett Heap's "1a"
+    (2026-11-12, typed as "1a 2b" in lane openRepoTools-3's session), which
+    chose "a. A dated departure note in `release-tags-pypi` itself, citing
+    "3a", in T346's spec PR (Recommended)".
 - **Alternative rejected:** moving the notes to code. It needs an exception
   in the plan, and buys nothing, since nothing at run time reads them.
 

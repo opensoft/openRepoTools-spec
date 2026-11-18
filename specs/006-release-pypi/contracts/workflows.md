@@ -111,8 +111,11 @@ defaults: {run: {shell: bash}}
 env:
   VERSION: ${{ inputs.version }}     # scripts read it from the environment; no expression is pasted into a script
   PYTHONUTF8: '1'
-jobs: {build, testpypi, install, pypi}
+jobs: {build, testpypi, install, pypi, asset}
 ```
+
+`asset` is feature 007's (T346): it puts check 1's digest list on the
+GitHub Release as a release asset (the `asset` section below).
 
 ### The header (RELEASING), in this order
 
@@ -120,15 +123,20 @@ jobs: {build, testpypi, install, pypi}
    (`190133d`), with design.md Decision 10's differences named.
 2. **The procedure for a release.**
    - The release owner, lane openRepoTools-3, acts on Brett Heap's word: it
-     tags, dispatches and creates the GitHub Release. Brett approves each
+     tags, dispatches and publishes the GitHub Release. Brett approves each
      deployment.
    - The tag message's form (FR-036).
    - A tag waits for its commit's `tests.yml` runs: all of them finished,
      and the newest green.
    - Dispatch on the tag, with `version` set to `X.Y.Z`.
    - Approve `testpypi`, then `pypi`.
-   - After PyPI serves the version, run
-     `gh release create v<version> --repo <repository> --verify-tag --notes-file <spec>/docs/release-notes/v<version>.md`.
+   - After PyPI serves the version, the `asset` job has made the GitHub
+     Release a draft holding check 1's digest list (007 T346). On Brett's
+     word, publish that draft with the notes:
+     `gh release edit v<version> --repo <repository> --draft=false --verify-tag --notes-file <spec>/docs/release-notes/v<version>.md`.
+     This replaced v1.2.0's `gh release create v<version> --repo <repository> --verify-tag --notes-file …`,
+     since the draft already names the tag. If `asset` failed, re-run it
+     before publishing; never publish without the list.
    - Then, for `vX.Y.0`, cut `release/vX.Y` at the tag.
 3. **The branch and tag policy**, from #850:
    - the trunk;
@@ -258,6 +266,30 @@ The steps are the model's, in its order. Each is a refusal on failure:
 14. Record these as job outputs: the wheel's name, its sha256, the digest,
     and step 1's `to-testpypi` and `to-pypi`. Keep the wheel as an
     artifact.
+15. **Check 1's digest list** (feature 007's T346, its FR-055 and its
+    contract `register-cli.md` §10). This step is this workflow's own, not
+    the model's. It runs after the wheel is kept, and writes
+    `openRepoTools-<version>.sha256` from the verified wheel:
+    - in `sha256sum`'s own form, one `<sha256>  <name>` line per file;
+    - one line for each file `openRepoTools --install` places beside
+      `lanes-index` from the payload. That is every name of the one-line
+      `INSTALLABLES` array in the wheel's own `payload/openRepoTools`, in its
+      order, but `openRepoTools` itself, whose place in a pipx install is
+      pipx's link to pip's console script;
+    - each digest of the wheel's own `openrepotools/payload/<name>` member.
+
+    A version that is not `X.Y.Z` or `X.Y.ZrcN`, an `INSTALLABLES` that is
+    not one one-line array, a name that is not one file name as
+    `lanes-index ready`'s check 1 reads one, a name twice, a list that would
+    not name both `lanes-index` and `lanes-edit.sh`, a member the wheel
+    lacks, and a written list that reads back as other bytes than were
+    written each refuse in an `::error::` line. Record the list's name and
+    sha256 as the job outputs `digest-list` and `digest-list-sha256`, and
+    keep the list as the artifact `digest-list`.
+
+    In a stamped package, `--install` writes the same file, byte for byte,
+    beside the `lanes-index` it places. It uses the same rule, from the
+    payload it copied.
 
 ### `testpypi` (`environment: testpypi`; permissions exactly `id-token: write`, `actions: read`, `contents: read`)
 
@@ -365,6 +397,45 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
 - Then PyPI must serve exactly `{wheel: sha256}`, read up to 20 times with
   `testpypi`'s retries and refusals.
 
+### `asset` (permissions exactly `contents: write`)
+
+Feature 007's T346: the GitHub Release carries check 1's digest list as a
+release asset. Its one grant makes the draft release and uploads its one
+file, and it reads the tag again with the same grant. It runs in no
+environment and asks for no approval: a draft is no publication, and Brett's
+word on the GitHub Release is the release owner's publication of it
+(the header's procedure).
+
+- It needs `build` and `pypi`. Its job-level `if:` is `pypi`'s:
+  - a `refs/tags/v*` tag;
+  - `needs.build.outputs.to-pypi == 'true'`;
+  - and no status function, so `build` and `pypi` succeeded.
+
+  So it runs only after PyPI serves the version, and only for a final
+  `X.Y.Z` in `opensoft/openRepoTools-code`. A rehearsal skips it: an rc
+  tag gets no GitHub Release, and a branch has no tag to hold one.
+- Its first step is `pypi`'s first step, line for line.
+- Download the artifact `digest-list`. It must hold the one file the build
+  named, at the sha256 the build recorded, or the job refuses.
+- The tag `v<version>` must still name `$GITHUB_SHA`, as each upload job
+  reads it again.
+- Then the releases are read from the forge, drafts among them, and at
+  most one may name the tag:
+  - **none yet,** as the procedure leaves it: make a draft release on the
+    tag, with `--verify-tag`, titled `openRepoTools v<version>`, its notes
+    one line of the job's own, and the list as its one asset. The job never
+    reads the release notes (FR-046).
+  - **one without the list:** upload the list to it, draft or published,
+    beside its other assets.
+  - **one holding a file of the list's name:** that file must be the list at
+    the recorded sha256. That is a re-run after an upload that went through,
+    and nothing is uploaded. Any other file under that name is refused,
+    never replaced (no `--clobber`).
+- Then the release's own copy is downloaded, and its sha256 must be the
+  recorded one.
+- Each refusal is one `::error::` line that names its cause, never a
+  traceback.
+
 ### Held by `tests/test_release_workflow.py` (offline)
 
 - A dispatch with `version` is the only trigger, and `permissions: {}` is
@@ -373,7 +444,8 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
   environment and on a `v*` tag alone. Each holds exactly `id-token: write`,
   `actions: read` and `contents: read`. `build` holds exactly
   `contents: read` and `actions: read`, and `install` holds exactly
-  `contents: read`.
+  `contents: read`. `asset` holds exactly `contents: write`, in no
+  environment.
 - The ref step passes a branch as a rehearsal and refuses any other non-tag
   ref, and the branch-membership step passes a rehearsal.
 - The wheel-check heredoc is run on four synthetic wheels made from HEAD's
@@ -412,7 +484,52 @@ These are the model's grants (`release.yml:1133-1136` at v1.1.0).
   refuses a final in `opensoft/openRepoTools` and any version elsewhere.
   `pypi` refuses everything but a final in `opensoft/openRepoTools-code`.
 - `testpypi`'s condition reads `to-testpypi`, and `pypi`'s reads `to-pypi`.
-  So in an rc rehearsal `pypi` is skipped.
+  So in an rc rehearsal `pypi` is skipped. `asset` runs exactly where `pypi`
+  runs, and needs `build` and `pypi`.
+- The build's step 15 is run, as GitHub runs it, on the wheel as built from
+  HEAD's blobs. Its list is HEAD's rule: `INSTALLABLES` but `openRepoTools`,
+  in order, each at the sha256 of HEAD's blob, in `sha256sum`'s form. It
+  records the list's name and sha256. Step 15 refuses each case of
+  `DIGEST_LIST_REFUSALS`
+  (`test_release_build_the_digest_list_step_refuses_a_list_check_1_could_not_read`),
+  naming the cause, and writes no list and no record:
+  - a version no release carries, `a-version-no-release-carries`;
+  - an `INSTALLABLES` wrapped onto two lines,
+    `installables-wrapped-onto-two-lines`;
+  - an `INSTALLABLES` declared twice, whose refusal counts 2 lines,
+    `installables-declared-twice`;
+  - a name that is not one file name, `a-name-that-is-not-one-file-name`;
+  - a name given twice, `a-name-twice`;
+  - an `INSTALLABLES` that would leave out `lanes-edit.sh`,
+    `a-list-without-lanes-edit-sh`;
+  - a wheel missing a payload file, `a-payload-file-missing`.
+
+  It also refuses a list that reads back as other bytes than were written,
+  its own name a link to `/dev/null`, and records nothing
+  (`test_release_build_the_digest_list_step_refuses_a_list_that_reads_back_as_other_bytes`).
+- The build's step 15 and `--install` in a stamped package make the same
+  file, byte for byte.
+- `asset`'s first step and its tag step are `pypi`'s, line for line. Its
+  last step is run under a fake forge in each case of `ASSET_CASES`
+  (`test_release_asset_the_release_holds_the_list_at_the_recorded_sha256`):
+  - it passes with no release on the tag yet, which makes a draft holding
+    the list (`no-release-yet`, `a-release-of-another-tag-alone`); a release
+    without the list, which gets it (`a-draft-without-the-list`,
+    `a-published-release-with-another-asset`); and a release already
+    holding the list, where nothing is uploaded (`the-list-already-there`);
+  - it refuses another file under its name (`another-file-under-its-name`);
+    two releases on the tag (`two-releases-on-the-tag`); a release list the
+    forge cannot give (`the-forge-cannot-list-its-releases`,
+    `the-forge-answers-a-page`); a draft that cannot be made
+    (`the-draft-cannot-be-made`); an upload the forge refuses
+    (`the-upload-is-refused`); a list already on the release that cannot be
+    read (`an-existing-list-that-cannot-be-read`); a copy that cannot be
+    read back (`the-list-cannot-be-read-back`); and a release that serves
+    other bytes after the upload (`the-release-serves-other-bytes`).
+
+  Each case names the `gh release` calls the step makes, in order, and the
+  test holds them exactly, with no `--clobber` in any. Every refusal exits 1
+  with an `::error::` line, and prints no traceback.
 - Each upload job's empty-index check and served check are run against a
   fake index on 127.0.0.1. The empty-index check reads once. The served
   check reads again after a 404, a server error, a read with no answer and
