@@ -2018,10 +2018,10 @@ lane 3's ruling.
   step 9 (:5879–5880) and in part 1's "Where the mode is asked"
   (:4677–4679).
 - **(f) The erratum, the service's "never a writer":**
-  socket-api.md:150 ("**every writer:** "No writer is a client (4A): a
-  write's snapshot and commit open their own connections with the
-  REGISTER-WRITER credential, and never wait for or start the
-  service""), and :375 (who starts the service: "**and never a
+  socket-api.md:150 at `69ebdccd` ("**every writer:** "No writer is a
+  client (4A): a write's snapshot and commit open their own connections
+  with the REGISTER-WRITER credential, and never wait for or start the
+  service""), and :375 there (who starts the service: "**and never a
   writer**"), are Y:3829–3831's, whose words are scoped: a write's own
   snapshot and commit. They hold for those, which connect as the writer
   (`lanes-index`:4559–4560) and never reach `register read`, the one
@@ -2036,7 +2036,7 @@ lane 3's ruling.
   file from another install, unless a failure stamp is fresh
   (`register_read_ask`, :10205–10209; `register_serve_ask`, :9817–9818,
   :9843); a `.direct` that an earlier read left, which `reg_flush` keeps
-  (:6884), stops both. Two tails read:
+  (:6884), stops both. Two of the tails that read are:
   - `request-handoff`'s wait on primary, the tail that always does: each
     poll drops the family (`reg_flush`, :33842) and reads the binding
     through `lane_binding_scan` (:33844);
@@ -2050,8 +2050,10 @@ lane 3's ruling.
     (:26775).
   So each statement is scoped, not excepted: it reads "a write's own
   snapshot and commit", and a writer's tail reads as a reader does. The
-  manual reads so (spec#73, lane 5's #165 6915847203). Lane 5 confirms
-  this reading of the code at merge216 `941caa67`.
+  manual reads so (spec#73, lane 5's #165 6915847203), and so does
+  socket-api.md since spec#79, at :157 and :382 (see "Folded since",
+  below). Lane 5 confirms this reading of the code at merge216
+  `941caa67`.
 - **(g) The erratum, `ready`'s checks 4 and 11:** ops:448 (Y's :447),
   check 4, has "each role" connect, and ops:455 (Y's :454), check 11,
   reads "each role's connection", with "Any role reads both, and lane 1
@@ -2082,7 +2084,7 @@ lane 3's ruling.
   `37fcac14` (its :17047 and :17051).
 - **In place:** ops:202, :206, :220, :281, :426, :455, :482–485,
   :488, :501 and :589, quickstart.md:26 and :37–38,
-  tasks.md:336, register-cli.md:374, socket-api.md:150 and :375, and
+  tasks.md:336, register-cli.md:374, and
   exit-codes.md:146–149, :181, :186 and :187 keep their words, so this
   entry is their erratum. For (h), exit-codes.md gains no row: a row
   would move every later line of a file that other files cite by line.
@@ -2095,6 +2097,13 @@ lane 3's ruling.
   `761c37b0`). Fix round 11 changes words of ops:206 (the way back),
   :372, :377 and :483 (a repeated `login add`), none of which this
   entry's errata touch.
+- **Folded since, in spec#79 (T511's follow-up 2):** socket-api.md:150
+  and :375 were not left in place either: spec#79 words them as (f)
+  reads, in lane 5's words (#165 6915888950). Section 1's bullet, now
+  at :157, is labelled "every write's own snapshot and commit", and
+  section 8.1's line, now at :382, reads "and never a write's own
+  snapshot or commit". (f)'s two quotes are of the lines at `69ebdccd`
+  and at `f2098c21`, which hold the same words.
 - **Whose:** (a) to (c) are lane 3's, from the two Opus reviews of
   spec#73 at `fa22b7bd`, which lane 3 took in fix round 1:
   `opus-spec-73-roles-fa22b7bda6a7.md` (s73a, sha256
@@ -2120,7 +2129,8 @@ lane 3's ruling.
 - **Source:** Y:3829–3831 and :5011; ops:202, :206, :220, :281, :334,
   :402, :414, :426, :448, :455, :482–485, :488, :501, :508 and :589;
   quickstart.md:26, :34 and :37–38; tasks.md:323–328 and :336;
-  register-cli.md:374 and :821; socket-api.md:150 and :375;
+  register-cli.md:374 and :821; socket-api.md:150 and :375 at
+  `69ebdccd` and :157 and :382 at spec#79's `eb2de390`;
   exit-codes.md:27, :146–149, :172, :181, :186 and :187; at line R's
   merge216 `941caa67`, `lanes-index`:4559–4560, :5861–5865, :7355–7357,
   :9817–9818, :9843, :10183–10215, :11810–11813, :11826, :12437–12440,
