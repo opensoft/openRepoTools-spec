@@ -332,7 +332,7 @@ lanes-edit.sh                   # CHANGED. Governed whole (PC-16).
 │           refusals (R16); T421 claim and release; T422 rename-lane's tail (R18);
 │           T423 request-handoff; T424 append-line's refusals (R04); T425
 │           --landing-expired; T426 key()'s trim (R31); T427 start-record
-│   B [L5]  T510 the bind's phase-2 half (L5-B1; R33); T514 answer 2's later contract parts (T502's parts 8 to 63), on T510's lines
+│   B [L5]  T510 the bind's phase-2 half (L5-B1; R33); T514 answer 2's later contract parts (T502's parts 8 to 69, 78, 79 and 83), on T510's lines
 │   S [L5]  T513 the SessionStart block starts the service
 lane-start                      # A [L4] T402 reads through register-text; read arms
 │                               # A [L5] T503 --bind's idempotent read rule
