@@ -215,7 +215,7 @@ its own test's name included (section 3.3).
 1. **The guard's 4.5 s** is asserted as stated.
 2. **Every other upper bound the design states** (D9's timers, `bound_s`,
    D7's 30 s, the try windows, AT-F6 case 1's `T0 + 1 s`, AT-F8's "under
-   3 s", and the like) is asserted at **twice its value**. This still
+   10 s", and the like) is asserted at **twice its value**. This still
    catches a missing or wrong timer, because the faults the tests use would
    otherwise hang far longer. The measured time against the design's own
    bound is **recorded**, with its margin, in the test's output.
@@ -3616,7 +3616,7 @@ lane 3's ruling 6 (#165 comment 6578020193).
   |---|---|---|---|
   | the guard's direct read | its connect `c`, which may exceed its share; the read cut to the parse's start line, `T0 + 3.75 s`; `T0 + 3.65 s` under a declaration naming this database (SVC-8) | 2, for F1 to F3, and for F1 at `connect_timeout=3` (section 4.4's case 5) | under 4.5 s, strictly |
   | the service's connection, per request | 200 ms, or the workstation's round trip plus 100 ms where `register_rtt_ms=` is over 100 (SVC-6), inside the client's wait, the timer plus 100 ms: 300 ms here, and 350 ms at `register_rtt_ms=150`; 150 ms and 180 ms at the server | `unavailable`, then the client's direct read; `refuse db` only where the refusal is definitive (SVC-7); the timer's lower bound is AT-10's | the client's wait: 300 ms here, and 350 ms at `register_rtt_ms=150` |
-  | the guard's answer 2 | none of its own: the bind runs detached in `guard-bind`, under a writer's bounds and a bound of its own, `bound_s`, which `guard-bind` computes from `c` and `N_a`: 500 s here, with `timeout -k 10 490` around the body (`LANES_BIND_BOUND_S` for tests; AT-F6's cases 1 and 22) | 2, "BINDING" | under 4.5 s, strictly |
+  | the guard's answer 2 | none of its own: the bind runs detached in `guard-bind`, under a writer's bounds and a bound of its own, `bound_s`, which `guard-bind` computes from `c` and `N_a`: 520 s here, with `timeout -k 10 510` around the body (`LANES_BIND_BOUND_S` for tests; AT-F6's cases 1 and 22) | 2, "BINDING" | under 4.5 s, strictly |
   | a writer's snapshot, and `act-begin`'s | 8 s | F1 and F2: 69, since no commit was sent, and the same for `act-begin`. F3: a failed read, 69, as the table's snapshot row says. Where an earlier commit call of the same write was in doubt, the same failure is in doubt, not 69: the writer goes to its lookup (the commit's F2 row) | `S`, 8 s; where a call was in doubt, the commit's F2 row |
   | a writer's commit, F2 | 8 s; then the next attempt's snapshot, 8 s; then the lookup's tries, each to its own timer, `T_L`, 9 s here, started within a 10 s window that opens at once, since the commit ran its timer | in doubt, then 3, naming the id, the record kept | from the commit call's start in the shim's log: at least `C` + `S` + `T_L` = 8 + 8 + 9 = 25 s, since the first lookup try runs to its timer; at most `C` + `S` + `R` + `T_L` + `p` = 8 + 8 + 10 + 9 + 0.5 = 35.5 s, where the last 9 s is a lookup try begun at the window's end that meets the silent relay, and `p` is the design's 0.5 s for the `lanes-index` starts |
   | a writer's commit, F3 | 2000 ms `lock_timeout` per attempt | 55P03 at about 2 s, a new attempt, then 75 at the deadline (`LANES_REGISTER_DEADLINE_S=3` here) | from the first snapshot call's start: at most the deadline, then one attempt's `S` and `C`, 3 + 8 + 8 = 19 s; no snapshot call starts after the deadline, 3 s |
@@ -3634,7 +3634,7 @@ lane 3's ruling 6 (#165 comment 6578020193).
   | `outage declare`'s database probe (§2.5) | 2 s; 2000 ms; 5000 ms; 8 s | on a person's word, the declaration is written, since the database does not answer from this host. In the `--rollback` form, 2 and no file, the switch being unread. Where the probe does read the switch, AT-D20 owns the rules | 8 s |
   | `import --single <sha>` and `render --revert <sha>`, their commit call | 2 s; 2000 ms; 5000 ms; 8 s a call, under D7's 30 s deadline | in doubt, as a writer's commit: the lookup, then 3 | the commit's F2 row, and no call starts after the deadline |
   | the same two, their other database calls | 2 s; 2000 ms; 5000 ms; 8 s a call, under D7's 30 s deadline | the snapshot read: 69, or in doubt where an earlier commit call of the same entry was; the lookup: its row above; the render that follows: the renderer's row | 8 s for the snapshot |
-  | the mode query, `lanes-index mode` (lane 3, comments 6710770304 and 6711028142) | a 2 s client timer; no `connect_timeout`, `lock_timeout` or `statement_timeout`, since the query reads only the configuration | the query killed; files mode, with a warning naming the timeout (F8's table); on a SQL estate the marker check after S3's fetch then refuses with 69, and nothing is written (D3; the delta's "The mode query fails") | the query's 2 s timer. Its fault is AT-F8's hanging stand-in, not one of F1 to F4, and AT-F8's test owns the case and asserts its bound |
+  | the mode query, `lanes-index mode` (lane 3, comments 6710770304 and 6711028142) | a 5 s client timer (2 s in the `SessionStart` block); no `connect_timeout`, `lock_timeout` or `statement_timeout`, since the query reads only the configuration | the query killed; files mode, with a warning naming the timeout (F8's table); on a SQL estate the marker check after S3's fetch then refuses with 69, and nothing is written (D3; the delta's "The mode query fails") | the query's 5 s timer. Its fault is AT-F8's hanging stand-in, not one of F1 to F4, and AT-F8's test owns the case and asserts its bound |
 
   F4, on every row that sets a `statement_timeout`: the shim's log shows
   the call ending with 57014, the server's bound and not the client timer,
@@ -6037,8 +6037,8 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
   - the offer file is the record, with the child's pid, and its start time where it can be read
     (`pid_start_of`) as its liveness test, its host and container, the
     attempt (1 to 3), its start, its bound, `bound_s`, which `guard-bind`
-    computes at the start from `c`, `N_a` and `w_s_ms`: 500 s at `c` = 2 and 530 s at
-    `c` = 3 with one address, where `w_s_ms` is low enough, 473 giving 530 s and 474 giving 540 s there (case 22; `bound_s = (437000 + 28000·n_a·c + 19·w_s_ms + 9999) / 10000 · 10`; `LANES_BIND_BOUND_S` for tests), `bounded`
+    computes at the start from `c`, `N_a` and `w_s_ms`: 520 s at `c` = 2 and 550 s at
+    `c` = 3 with one address, where `w_s_ms` is low enough, 473 giving 550 s and 474 giving 560 s there (case 22; `bound_s = (457000 + 28000·n_a·c + 19·w_s_ms + 9999) / 10000 · 10`; `LANES_BIND_BOUND_S` for tests), `bounded`
     (`yes` where `timeout`
     exists) and `deadline_epoch` (the start plus `bound_s` plus 5 s),
     and, on primary, `act`. The outer, when it writes an outcome other
@@ -6047,7 +6047,7 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     session's `start-record` pending record, where that record holds a
     `call` line;
   - the child, `guard-bind`'s outer, runs its body, `guard-bind --body`,
-    under one `timeout -k 10 "$(( bound_s - 10 ))"`, 490 s at `c` = 2:
+    under one `timeout -k 10 "$(( bound_s - 10 ))"`, 510 s at `c` = 2:
     `lane-start --no-launch --bind`, then
     the `set-row-state` on the lane the window left, then
     `guard_bound_check`'s read. The outer stays outside the bound and
@@ -6107,10 +6107,10 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
      The order is rule 3's, and does not rest on the clock: the runner logs
      the hook's exit and its EOF before the stub logs the end of its sleep.
      Under the default bound, `c` = 2 with one address, the record holds
-     `bound_s=500`, `bounded=yes` and a `deadline_epoch` 505 s after
-     `started_utc`, "BINDING" says "bounded at 500 s" and to send the work
+     `bound_s=520`, `bounded=yes` and a `deadline_epoch` 525 s after
+     `started_utc`, "BINDING" says "bounded at 520 s" and to send the work
      again in a minute or so, and the body runs as
-     `timeout -k 10 490 … guard-bind --body <uuid>`;
+     `timeout -k 10 510 … guard-bind --body <uuid>`;
   2. the child survives a group `SIGKILL` and a group `SIGHUP`, and the
      record ends `bound`. Its `ended_utc` less `started_utc` is recorded
      beside `bound_s`, never asserted (lane 4's row 37);
@@ -6249,20 +6249,20 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
       lane 2's question 3 (#165 6722518182; section 7's point 23), with
       75 ms added each way and TLS on (AT-D9c (d)'s link), and
       `connect_timeout=3` with one address in the configuration, with the image cache filled (the offer made over the cluster's own port, whose whole-file fetch fills it) and no service (a state home whose socket path is over 103 bytes, so the client reads directly and starts none):
-      `guard-bind` records `bound_s=530`, the bind ends `bound`, which its
+      `guard-bind` records `bound_s=550`, the bind ends `bound`, which its
       `timeout` allows only inside it, with its `ended_utc` less
-      `started_utc` recorded beside the 530 s, and the shim's log shows no
+      `started_utc` recorded beside the 550 s, and the shim's log shows no
       step at its timer. The guard's register read is the `2`'s own prefetch, `register read --for guard` in form 2 (the register-read contract's section 3.6), a call through the relay at `c` = 3 under the guard's 1500 ms statement bound, and the hook's last
       database call in the shim's log, so answer 2 adds none, and the
       exit's lag after the read is asserted and recorded as case 1's is;
   22. `bound_s` as `guard-bind` computes it from the configuration, with a
-      stub body that exits 0 (FM): 500 at `c` = 2 and 530 at `c` = 3 with
-      one address, with the service's socket configured or not; 550 and
-      610 with `register_addresses=2`, and 560 and 620 with the socket;
-      still 500 at `c` = 2 with `register_rtt_ms=120`, and 530 at `c` = 3
+      stub body that exits 0 (FM): 520 at `c` = 2 and 550 at `c` = 3 with
+      one address, with the service's socket configured or not; 570 and
+      630 with `register_addresses=2`, and 580 and 640 with the socket;
+      still 520 at `c` = 2 with `register_rtt_ms=120`, and 550 at `c` = 3
       with `register_rtt_ms=270`, where SVC-6 raises the service's timer.
       Each record's `deadline_epoch` is its start plus `bound_s` plus 5 s,
-      and its body runs under `timeout -k 10` at `bound_s` − 10. At `c` = 3 with one address the 540 s band's two adjacent values of `w_s_ms` are cases of their own, `[c3-w473]` and `[c3-w474]`: `w_s_ms` = 473 gives 530 and 474 gives 540, by `bound_s = (437000 + 28000·n_a·c + 19·w_s_ms + 9999) / 10000 · 10`, (437000 + 84000 + 8987 + 9999) / 10000 · 10 = 530 and (437000 + 84000 + 9006 + 9999) / 10000 · 10 = 540, so that a bound clamped to 530 fails the second (spec#47's draft 13 of `bind-record.md` (`2e8cd460`, on the branch head `cd578400`), section 4, "The 540 s band, in those integers", and section 8; Codex's re-review of spec#47 at `746e931c` (`spec-47-746e931c0f43.md`, sha256 `75956a84…`), its SHOULD 8; Codex's re-review r6 of spec#17 at `870ed1fb` (`spec17-33eb0829-r6.md`, sha256 `bc841020…`), its finding 2; the two ids are the fold writer's, as section 8 names none; confirmed by lane 2, #165 6882513333 and 6886011858). At `c` = 2 with one address the two adjacent values of `w_s_ms` are cases of their own too, `[c2-w368]` and `[c2-w369]`: `w_s_ms` = 368 gives 500 and 369 gives 510, by the same formula, (437000 + 56000 + 6992 + 9999) / 10000 · 10 = 500 and (437000 + 56000 + 7011 + 9999) / 10000 · 10 = 510, with the body under `timeout -k 10` at 490 and 500, so that a bound clamped to 500 fails the second (draft 4.31 of the register CLI contract, K12; Codex's re-review r8 of spec#17 at `d1a66b2e` (`spec17-33eb0829-r8.md`, sha256 `7a8b8dcb…`), its BLOCKING finding; the two ids are lane 3's, on the `[c3-w473]` pattern, and lane 2 confirms them, #165 6882513333).
+      and its body runs under `timeout -k 10` at `bound_s` − 10. At `c` = 3 with one address the 560 s band's two adjacent values of `w_s_ms` are cases of their own, `[c3-w473]` and `[c3-w474]`: `w_s_ms` = 473 gives 550 and 474 gives 560, by `bound_s = (457000 + 28000·n_a·c + 19·w_s_ms + 9999) / 10000 · 10`, (457000 + 84000 + 8987 + 9999) / 10000 · 10 = 550 and (457000 + 84000 + 9006 + 9999) / 10000 · 10 = 560, so that a bound clamped to 550 fails the second (spec#47's draft 13 of `bind-record.md` (`2e8cd460`, on the branch head `cd578400`), section 4, "The 540 s band, in those integers", and section 8; Codex's re-review of spec#47 at `746e931c` (`spec-47-746e931c0f43.md`, sha256 `75956a84…`), its SHOULD 8; Codex's re-review r6 of spec#17 at `870ed1fb` (`spec17-33eb0829-r6.md`, sha256 `bc841020…`), its finding 2; the two ids are the fold writer's, as section 8 names none; confirmed by lane 2, #165 6882513333 and 6886011858). At `c` = 2 with one address the two adjacent values of `w_s_ms` are cases of their own too, `[c2-w368]` and `[c2-w369]`: `w_s_ms` = 368 gives 520 and 369 gives 530, by the same formula, (457000 + 56000 + 6992 + 9999) / 10000 · 10 = 520 and (457000 + 56000 + 7011 + 9999) / 10000 · 10 = 530, with the body under `timeout -k 10` at 510 and 520, so that a bound clamped to 520 fails the second (draft 4.31 of the register CLI contract, K12; Codex's re-review r8 of spec#17 at `d1a66b2e` (`spec17-33eb0829-r8.md`, sha256 `7a8b8dcb…`), its BLOCKING finding; the two ids are lane 3's, on the `[c3-w473]` pattern, and lane 2 confirms them, #165 6882513333).
       `LANES_BIND_BOUND_S` overrides the sum.
 - **Four rows of lane 4's guard table that none of the twenty-two cases
   reaches.** Each is a case of its own, with the oracle the table gives for
@@ -6497,11 +6497,11 @@ lane 3's ruling of lane 4's row 24 (comment 6710770304).
     estate the write exits 0 in files mode. On a SQL estate the marker check
     after S3's fetch refuses it, as test 3 does, and no file is written.
   - **The hang** (D9's row for the mode query; lane 3, comments 6710770304
-    and 6711028142). The query's client timer, 2 s, kills the stand-in,
+    and 6711028142). The query's client timer, 5 s, kills the stand-in,
     which would otherwise sleep 60 s: its process is gone once the verb
-    returns, and the query ends under 4 s, twice D9's 2 s timer, the
+    returns, and the query ends under 10 s, twice D9's 5 s timer, the
     design's bound (section 4's rule 2); the query's measured end is
-    recorded beside the 2 s with its margin. The verb then runs in files
+    recorded beside the 5 s with its margin. The verb then runs in files
     mode with one warning on stderr naming the timeout. On a files estate
     the write exits 0; on a SQL estate the marker check refuses it with 69,
     and no file is written.
@@ -7557,7 +7557,7 @@ and the probes' numbers are recorded beside its result, never asserted.
 1. **The guard's 4.5 s** is asserted as stated.
 2. **Every other upper bound the design states** (D9's timers, `bound_s`,
    D7's 30 s, the try windows, AT-F6 case 1's `T0 + 1 s`, AT-F8's "under
-   3 s", and the like) is asserted at **twice its value**. This still
+   10 s", and the like) is asserted at **twice its value**. This still
    catches a missing or wrong timer, because the faults the tests use would
    otherwise hang far longer. The measured time against the design's own
    bound is **recorded**, with its margin, in the test's output.
@@ -7913,8 +7913,8 @@ The decision rules, and what the measurements of 2026-11-02 decided:
   6710770304), so M9 is recorded, never asserted, and is taken again in
   both modes once the bind is `start-record`, which exists in both. It is
   recorded beside the child's bound, `bound_s`, which `guard-bind` computes
-  from the configuration, `c`, `N_a` and `w_s_ms`: 500 s at `c` = 2 and 530 s at `c` = 3 with one
-  address, where `w_s_ms` is low enough, 473 giving 530 s and 474 giving 540 s at `c` = 3 with one address (case 22), with `timeout -k 10 "$(( bound_s - 10 ))"` around the body and
+  from the configuration, `c`, `N_a` and `w_s_ms`: 520 s at `c` = 2 and 550 s at `c` = 3 with one
+  address, where `w_s_ms` is low enough, 473 giving 550 s and 474 giving 560 s at `c` = 3 with one address (case 22), with `timeout -k 10 "$(( bound_s - 10 ))"` around the body and
   `LANES_BIND_BOUND_S` for tests (lane 4's section, "The record, and its
   liveness test"), which lane 3 accepted as arithmetic, with
   `LANES_GIT_TIMEOUT=45` in the child (lane 4's row 37), and which phase
@@ -8265,7 +8265,7 @@ them. Those totals use A's measured network share, its median less its
   register read is M5's request or, with the service down, a direct read.
   M13 counts each verb's reads.
 - **M9:** the Rule 3 stamp is a git push, not the database. Every total is
-  inside `bound_s`, 500 s at `c` = 2 and 530 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5499`),
+  inside `bound_s`, 520 s at `c` = 2 and 550 s at `c` = 3 with one address, where `w_s_ms` is low enough (473 gives 550 s and 474 gives 560 s at one address: `design.md:5499`),
   and the phase plan puts the healthy bind at about 18 s at 20 ms, 44 s at
   150 ms and 75 s at 300 ms ("Answer 2's detached bind").
   `start-record` may change the read count; M13 counts it.
@@ -9069,7 +9069,7 @@ frame do not yet make it. None adds a requirement.
     1. **The guard's 4.5 s** is asserted as stated.
     2. **Every other upper bound the design states** (D9's timers,
        `bound_s`, D7's 30 s, the try windows, AT-F6 case 1's `T0 + 1 s`,
-       AT-F8's "under 3 s", and the like) is asserted at **twice its
+       AT-F8's "under 10 s", and the like) is asserted at **twice its
        value**. This still catches a missing or wrong timer, because the
        faults the tests use would otherwise hang far longer. The measured
        time against the design's own bound is **recorded**, with its
@@ -9174,8 +9174,8 @@ marked against V:
    test depends on that.
 5. **Row 37.** Answered by the design's table of the bind child's variables,
    in lane 4's section ("Answer 2's detached bind"): `LANES_GIT_TIMEOUT` is
-   45, beside the bind's bound, `bound_s`: 500 s at `c` = 2 and 530 s at `c`
-   = 3, with one address, where `w_s_ms` is low enough (473 gives 530 s and 474 gives 540 s at one address: `design.md:5499`) (W). AT-F6's case 13 asserts it.
+   45, beside the bind's bound, `bound_s`: 520 s at `c` = 2 and 550 s at `c`
+   = 3, with one address, where `w_s_ms` is low enough (473 gives 550 s and 474 gives 560 s at one address: `design.md:5499`) (W). AT-F6's case 13 asserts it.
 6. **Row 10's fork in phase W.** Answered yes: the phase plan says a stub
    test asserts the fork's argv. AT-14 has it,
    `test_a_primary_write_forks_render_checkout_on_the_lane_checkout_detached[<case>]`,

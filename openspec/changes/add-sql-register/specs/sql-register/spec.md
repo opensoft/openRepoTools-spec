@@ -22,7 +22,7 @@ On a workstation configured `mode=primary` the lane register is a database: each
 - **THEN** `lanes-index` refuses it with exit 2, as it does today
 
 #### Scenario: The mode query fails
-- **WHEN** `lanes-index mode` fails with a configuration it refuses, a crash, an exit 127 or a timeout of its 2 s client timer
+- **WHEN** `lanes-index mode` fails with a configuration it refuses, a crash, an exit 127 or a timeout of its 5 s client timer
 - **THEN** the write runs in files mode and stderr carries a warning naming the failure
 - **AND** where the fetched tree carries `lanes/STORE`, the files-mode marker check refuses the write with 69 and nothing is written
 
