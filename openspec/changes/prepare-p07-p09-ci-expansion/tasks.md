@@ -4,7 +4,7 @@
 
 - [x] 1.1 Preserve the prior worktrees and create an isolated paired feature; verify bases and unchanged active source controls.
 - [x] 1.2 Document the disabled cohort contract and request final owner heads/reviews; verify coordination comment6927765450 and keep P08 held.
-- [ ] 1.3 Bind only actual final owner heads and fresh exact-head review/consent references, or explicitly retain pending draft bindings; verify against live owning-repository records.
+- [x] 1.3 Bind only actual final owner heads and fresh exact-head review/consent references, or explicitly retain pending draft bindings; verify against live owning-repository records.
 
 ## 2. Implement and validate
 
@@ -373,3 +373,27 @@ disabled bounds/inventory delta only. Task1.3 remains pending final qualified
 bindings; no required fast check is waived and no live control changes.
 The following task-status documentation update needs exact-head confirmation
 before publication; current published111/78 heads remain unchanged.
+
+## Final preparation bindings verified
+
+The preceding pending state is superseded. This disabled preparation records
+P07 `cab8fcfdee749dbeac5fc916d1c9b642e6d6cc4c` (40 commits, consent 6947653181,
+review 6948304918) and P09 `1d16c0cc5092fd8704a67399acee81ef2436f21a`
+(165 commits, consent 6956070097, review 6958093018). The owner order ruling
+6962326701 allows one combined candidate only in P07-before-P09 order.
+Spec PR 80 is already landed at `c245bc3726bfd80aea8ddbe4b8d167c64916e0c9`.
+
+Lane 1's checked event records 6989687345 and 6990504892 identify the
+fresh successful fast runs P07 44382695364 and P09 44388864691, first attempt
+on base `804a97be1ab5305e3ed9d4f778e2cf89dacc55f5`, with reopened event
+IDs 36570687390 and 36573935140, respectively. P07 full CI 44382695538 and
+P09 full preparation CI 44380683647 passed; the preparation-only failures
+are not fast-run success evidence. The final histories are bound without
+changing either head or body. Review and consent links remain context, not
+authenticated machine receipts.
+
+Full CI and the original active P05/P06 policy remain in force. These
+bindings are not queue admission, fast-only evidence, a foundation
+transition, or activation. P08 remains held, lanes 1–5 and all exclusions
+are preserved, and the separate enablement/canary still requires fresh
+evidence on its own tested base.

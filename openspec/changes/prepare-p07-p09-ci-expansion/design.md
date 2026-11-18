@@ -46,9 +46,9 @@ assembly adoption, installed tools or running-lane changes.
    from their declared anchors. P07's complete40-commit CX-37 chain is owner-confirmed
    in code97 comment6947653181. P09's complete165-commit CX-36 chain is confirmed
    in code103 comment6956070097 and agreed by lane3 in6956738431, not inferred
-   from an intermediate draft or an arbitrary global increase. Both heads remain
-   unbound pending full CI and all
-   consent gates. Every SHA and
+   from an intermediate draft or an arbitrary global increase. The disabled
+   manifest binds the exact final pair after green full/preparation and fresh
+   fast CI. Consent remains conditional. Every SHA and
    cumulative cut remains checked. A ceiling is not an owner head binding or
    approval; changed chains above it require another reviewed update, never
    truncation, implicit acceptance or rewriting another lane's history.
