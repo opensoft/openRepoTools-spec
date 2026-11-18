@@ -939,8 +939,7 @@ are lane 3's rulings memo's).
 - **FR-002**: `lanes-edit.sh` MUST ask `lanes-index mode` only where a
   configuration file exists, or `LANES_INDEX_CONFIG` is set and not empty.
   - Every failure but 78 MUST run files mode with a warning.
-  - The query's client timer is 5 s where `timeout` is installed, and 2 s
-    in the `SessionStart` block, inside its hook's 5 s (contract §3.1).
+  - The query's client timer is 5 s where `timeout` is installed, and 2 s in the `SessionStart` block, inside its hook's 5 s (contract §3.1).
   - `c`, `N_a` and `w_s` MUST come from `lanes-index`'s reports of its own
     configuration: `lanes-edit.sh` parses none of it (R05).
   - Sources: D3 (Y:368); F8's table (Y:5703); spec:9.
