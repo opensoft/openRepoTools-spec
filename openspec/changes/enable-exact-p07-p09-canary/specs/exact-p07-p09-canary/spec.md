@@ -12,8 +12,9 @@ extending the existing efficiency policy to other work.
 The route SHALL bind #97 P07 and #103 P09 to their unchanged exact source
 heads, bodies, reviewed linear histories and path/marker inventories in
 trusted main. Source omission SHALL require fresh exact current-base fast
-evidence and live rereads, with review and owner receipt checks for queue
-admission. All other new, mixed, drifted or uncertain cases SHALL retain
+evidence and live rereads. Candidate policy SHALL verify fresh local Codex
+reviews on the exact heads and current base; the operator SHALL verify fresh
+owner consent before manually queueing either source. All other new, mixed, drifted or uncertain cases SHALL retain
 full CI under their existing policy.
 
 #### Scenario: An old green or unknown source is presented
